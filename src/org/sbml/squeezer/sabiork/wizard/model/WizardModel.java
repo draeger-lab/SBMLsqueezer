@@ -29,6 +29,8 @@ import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Logger;
+
 import org.sbml.jsbml.CVTerm;
 import org.sbml.jsbml.KineticLaw;
 import org.sbml.jsbml.Reaction;
@@ -44,6 +46,11 @@ import org.sbml.squeezer.SubmodelController;
  */
 public class WizardModel implements PropertyChangeListener {
 
+	/**
+	 * A {@link Logger} for this class.
+	 */
+	private static final transient Logger logger = Logger.getLogger(WizardModel.class.getName());
+	
 	private final PropertyChangeSupport propertyChangeSupport;
 	private Reaction selectedReaction;
 	private KineticLaw selectedKineticLaw;
@@ -81,10 +88,18 @@ public class WizardModel implements PropertyChangeListener {
 		this(sbmlDocument, null, overwriteExistingLaws);
 	}
 
+	/**
+	 * 
+	 * @param listener
+	 */
 	public void addPropertyChangeListener(PropertyChangeListener listener) {
 		this.propertyChangeSupport.addPropertyChangeListener(listener);
 	}
 
+	/**
+	 * 
+	 * @param listener
+	 */
 	public void removePropertyChangeListener(PropertyChangeListener listener) {
 		this.propertyChangeSupport.removePropertyChangeListener(listener);
 	}
@@ -102,12 +117,15 @@ public class WizardModel implements PropertyChangeListener {
 	 * @return
 	 */
 	public SubmodelController getResult() {
-		if(deleted) {
+		if (deleted) {
 			return null;
 		}
 		return submodelController;
 	}
 	
+	/**
+	 * 
+	 */
 	public void deleteResult() {
 		deleted = true;
 	}
@@ -231,10 +249,8 @@ public class WizardModel implements PropertyChangeListener {
 		for (CVTerm cvTerm : cvTerms) {
 			for (String resource : cvTerm.getResources()) {
 				if (resource.matches("urn:miriam:kegg.reaction:.*")) {
-					keggReactionID = resource.replaceAll(
-							"urn:miriam:kegg.reaction:", "");
-				} else if (resource
-						.matches("http://identifiers.org/kegg.reaction/.*")) {
+					keggReactionID = resource.replaceAll("urn:miriam:kegg.reaction:", "");
+				} else if (resource.matches("http://identifiers.org/kegg.reaction/.*")) {
 					keggReactionID = resource.replaceAll(
 							"http://identifiers.org/kegg.reaction/", "");
 				}
@@ -243,26 +259,50 @@ public class WizardModel implements PropertyChangeListener {
 		return keggReactionID;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public Reaction getSelectedReaction() {
 		return selectedReaction;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public KineticLaw getSelectedKineticLaw() {
 		return selectedKineticLaw;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public KineticLawImporter getSelectedKineticLawImporter() {
 		return selectedKineticLawImporter;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public List<Reaction> getSelectedReactions() {
 		return selectedReactions;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public List<KineticLawImporter> getSelectedKineticLawImporters() {
 		return selectedKineticLawImporters;
 	}
 
+	/**
+	 * 
+	 * @param selectedReaction
+	 */
 	public void setSelectedReaction(Reaction selectedReaction) {
 		Reaction oldValue = this.selectedReaction;
 		Reaction newValue = selectedReaction;
@@ -271,6 +311,10 @@ public class WizardModel implements PropertyChangeListener {
 				newValue);
 	}
 
+	/**
+	 * 
+	 * @param selectedKineticLaw
+	 */
 	public void setSelectedKineticLaw(KineticLaw selectedKineticLaw) {
 		KineticLaw oldValue = this.selectedKineticLaw;
 		KineticLaw newValue = selectedKineticLaw;
@@ -279,6 +323,10 @@ public class WizardModel implements PropertyChangeListener {
 				oldValue, newValue);
 	}
 
+	/**
+	 * 
+	 * @param selectedKineticLawImporter
+	 */
 	public void setSelectedKineticLawImporter(
 			KineticLawImporter selectedKineticLawImporter) {
 		KineticLawImporter oldValue = this.selectedKineticLawImporter;
@@ -288,6 +336,10 @@ public class WizardModel implements PropertyChangeListener {
 				oldValue, newValue);
 	}
 
+	/**
+	 * 
+	 * @param selectedReactions
+	 */
 	public void setSelectedReactions(List<Reaction> selectedReactions) {
 		List<Reaction> oldValue = this.selectedReactions;
 		List<Reaction> newValue = selectedReactions;
@@ -296,6 +348,10 @@ public class WizardModel implements PropertyChangeListener {
 				newValue);
 	}
 
+	/**
+	 * 
+	 * @param selectedKineticLawImporters
+	 */
 	public void setSelectedKineticLawImporters(
 			List<KineticLawImporter> selectedKineticLawImporters) {
 		List<KineticLawImporter> oldValue = this.selectedKineticLawImporters;
@@ -305,32 +361,55 @@ public class WizardModel implements PropertyChangeListener {
 				oldValue, newValue);
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public boolean hasSelectedReaction() {
 		return (selectedReaction != null);
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public boolean hasSelectedKineticLaw() {
 		return (selectedKineticLaw != null);
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public boolean hasSelectedKineticLawImporter() {
 		return (selectedKineticLawImporter != null);
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public boolean hasSelectedReactions() {
 		return !selectedReactions.isEmpty();
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public boolean hasSelectedKineticLawImporters() {
 		return !selectedKineticLawImporters.isEmpty();
 	}
 
+	/* (non-Javadoc)
+	 * @see java.beans.PropertyChangeListener#propertyChange(java.beans.PropertyChangeEvent)
+	 */
 	public void propertyChange(PropertyChangeEvent e) {
 		if (e.getSource().equals(this)) {
-			System.out.println("Model");
-			System.out.println("PropertyName: " + e.getPropertyName());
-			System.out.println("OldValue: " + e.getOldValue());
-			System.out.println("NewValue: " + e.getNewValue());
+			logger.info("Model");
+			logger.info("PropertyName: " + e.getPropertyName());
+			logger.info("OldValue: " + e.getOldValue());
+			logger.info("NewValue: " + e.getNewValue());
 		}
 	}
 

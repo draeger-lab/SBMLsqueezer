@@ -28,8 +28,8 @@ import javax.swing.JComboBox;
 
 /**
  * A class that allows the creation of a combo box containing {@link Double}
- * values from <code>minimum</code> to <code>maximum</code> (step size of
- * <code>0.1</code>).
+ * values from {@code minimum} to {@code maximum} (step size of
+ * {@code 0.1}).
  * 
  * @author Matthias Rall
  * @version $Rev$
@@ -63,8 +63,8 @@ public class JComboBoxInterval extends JComboBox {
 	}
 
 	/**
-	 * Adds all values from <code>lowerValue</code> to <code>upperValue</code>
-	 * to the model (step size of <code>0.1</code>).
+	 * Adds all values from {@code lowerValue} to {@code upperValue}
+	 * to the model (step size of {@code 0.1}).
 	 * 
 	 * @param lowerValue
 	 * @param upperValue

@@ -46,9 +46,9 @@ import org.sbml.squeezer.sabiork.wizard.model.WizardModel;
 import org.sbml.squeezer.sabiork.wizard.model.WizardProperties;
 
 /**
-* @author Matthias Rall
-* @version $Rev$
-*/
+ * @author Matthias Rall
+ * @version $Rev$
+ */
 public class CardReactionsM extends Card implements ListSelectionListener,
 		ActionListener, PropertyChangeListener {
 
@@ -71,8 +71,7 @@ public class CardReactionsM extends Card implements ListSelectionListener,
 	private void initialize() {
 		comboBoxReactionFiltersModel = new ComboBoxModelReactionFilters();
 		comboBoxReactionFilters = new JComboBox(comboBoxReactionFiltersModel);
-		comboBoxReactionFilters.setRenderer(comboBoxReactionFiltersModel
-				.getRenderer());
+		comboBoxReactionFilters.setRenderer(comboBoxReactionFiltersModel.getRenderer());
 		comboBoxReactionFilters.addActionListener(this);
 
 		tableReactionsModel = new TableModelReactions();
@@ -81,14 +80,11 @@ public class CardReactionsM extends Card implements ListSelectionListener,
 		tableReactions.setColumnSelectionAllowed(false);
 		tableReactions.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		tableReactions.getSelectionModel().addListSelectionListener(this);
-		tableReactions.getColumnModel().getColumn(1)
-				.setCellRenderer(new TableCellRendererReactions());
-		tableReactions.getColumnModel().getColumn(2)
-				.setCellRenderer(new TableCellRendererBooleans());
-		tableReactions.getColumnModel().getColumn(3)
-				.setCellRenderer(new TableCellRendererBooleans());
-		tableReactions.getColumnModel().getColumn(4)
-				.setCellRenderer(new TableCellRendererBooleans());
+		tableReactions.getColumnModel().getColumn(1).setCellRenderer(new TableCellRendererReactions());
+		tableReactions.getColumnModel().getColumn(2).setCellRenderer(new TableCellRendererBooleans());
+		tableReactions.getColumnModel().getColumn(3).setCellRenderer(new TableCellRendererBooleans());
+		tableReactions.getColumnModel().getColumn(4).setCellRenderer(new TableCellRendererBooleans());
+		tableReactions.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		tableReactionsScrollPane = new JScrollPane(tableReactions);
 
 		setLayout(new BorderLayout());
@@ -128,7 +124,7 @@ public class CardReactionsM extends Card implements ListSelectionListener,
 	}
 
 	/**
-	 * Returns the reactions according to the <code>reactionFilter</code>.
+	 * Returns the reactions according to the {@code reactionFilter}.
 	 * 
 	 * @param reactionFilter
 	 * @return a list of {@link Reaction}

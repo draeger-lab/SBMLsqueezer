@@ -30,6 +30,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.swing.BorderFactory;
 import javax.swing.JComboBox;
 import javax.swing.JScrollPane;
@@ -37,11 +38,11 @@ import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+
 import org.sbml.jsbml.Reaction;
 import org.sbml.squeezer.sabiork.wizard.gui.ComboBoxModelReactionFilters.ReactionFilter;
 import org.sbml.squeezer.sabiork.wizard.gui.JDialogWizard.ButtonState;
 import org.sbml.squeezer.sabiork.wizard.gui.JDialogWizard.CardID;
-
 import org.sbml.squeezer.sabiork.wizard.model.WizardModel;
 import org.sbml.squeezer.sabiork.wizard.model.WizardProperties;
 
@@ -65,12 +66,20 @@ public class CardReactionsA extends Card implements ListSelectionListener,
 	private JTable tableReactions;
 	private TableModelReactions tableReactionsModel;
 
+	/**
+	 * 
+	 * @param dialog
+	 * @param model
+	 */
 	public CardReactionsA(JDialogWizard dialog, WizardModel model) {
 		super(dialog, model);
 		model.addPropertyChangeListener(this);
 		initialize();
 	}
 
+	/**
+	 * 
+	 */
 	private void initialize() {
 		comboBoxReactionFiltersModel = new ComboBoxModelReactionFilters();
 		comboBoxReactionFilters = new JComboBox(comboBoxReactionFiltersModel);
@@ -82,19 +91,15 @@ public class CardReactionsA extends Card implements ListSelectionListener,
 		tableReactions = new JTable(tableReactionsModel);
 		tableReactions.setRowSelectionAllowed(true);
 		tableReactions.setColumnSelectionAllowed(false);
-		tableReactions
-				.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+		tableReactions.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		tableReactions.getSelectionModel().addListSelectionListener(this);
-		tableReactions.getColumnModel().getColumn(1)
-				.setCellRenderer(new TableCellRendererReactions());
-		tableReactions.getColumnModel().getColumn(2)
-				.setCellRenderer(new TableCellRendererBooleans());
-		tableReactions.getColumnModel().getColumn(3)
-				.setCellRenderer(new TableCellRendererBooleans());
-		tableReactions.getColumnModel().getColumn(4)
-				.setCellRenderer(new TableCellRendererBooleans());
+		tableReactions.getColumnModel().getColumn(1).setCellRenderer(new TableCellRendererReactions());
+		tableReactions.getColumnModel().getColumn(2).setCellRenderer(new TableCellRendererBooleans());
+		tableReactions.getColumnModel().getColumn(3).setCellRenderer(new TableCellRendererBooleans());
+		tableReactions.getColumnModel().getColumn(4).setCellRenderer(new TableCellRendererBooleans());
+		tableReactions.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		tableReactionsScrollPane = new JScrollPane(tableReactions);
-
+		
 		setLayout(new BorderLayout());
 		setBorder(BorderFactory.createTitledBorder(
 				BorderFactory.createEtchedBorder(),
@@ -103,17 +108,26 @@ public class CardReactionsA extends Card implements ListSelectionListener,
 		add(tableReactionsScrollPane, BorderLayout.CENTER);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.sbml.squeezer.sabiork.wizard.gui.Card#performBeforeShowing()
+	 */
+	@Override
 	public void performBeforeShowing() {
 		dialog.setButtonState(ButtonState.NEXT_DISABLED);
-		tableReactionsModel
-				.setReactions(getFilteredReactions(comboBoxReactionFiltersModel
-						.getSelectedReactionFilter()));
+		tableReactionsModel.setReactions(
+			getFilteredReactions(comboBoxReactionFiltersModel.getSelectedReactionFilter()));
 	}
 
+	/* (non-Javadoc)
+	 * @see org.sbml.squeezer.sabiork.wizard.gui.Card#getPreviousCardID()
+	 */
 	public CardID getPreviousCardID() {
 		return CardID.METHOD;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.sbml.squeezer.sabiork.wizard.gui.Card#getNextCardID()
+	 */
 	public CardID getNextCardID() {
 		return CardID.SEARCH_A;
 	}
@@ -124,14 +138,13 @@ public class CardReactionsA extends Card implements ListSelectionListener,
 	private void setSelectedReactions() {
 		List<Reaction> selectedReactions = new ArrayList<Reaction>();
 		for (int index : tableReactions.getSelectedRows()) {
-			selectedReactions
-					.add(tableReactionsModel.getReactions().get(index));
+			selectedReactions.add(tableReactionsModel.getReactions().get(index));
 		}
 		model.setSelectedReactions(selectedReactions);
 	}
 
 	/**
-	 * Returns the reactions according to the <code>reactionFilter</code>.
+	 * Returns the reactions according to the {@code reactionFilter}.
 	 * 
 	 * @param reactionFilter
 	 * @return a list of {@link Reaction}
@@ -164,6 +177,9 @@ public class CardReactionsA extends Card implements ListSelectionListener,
 		return reactions;
 	}
 
+	/* (non-Javadoc)
+	 * @see javax.swing.event.ListSelectionListener#valueChanged(javax.swing.event.ListSelectionEvent)
+	 */
 	public void valueChanged(ListSelectionEvent e) {
 		if (e.getSource().equals(tableReactions.getSelectionModel())) {
 			if (!e.getValueIsAdjusting()) {
@@ -172,6 +188,9 @@ public class CardReactionsA extends Card implements ListSelectionListener,
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+	 */
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource().equals(comboBoxReactionFilters)) {
 			tableReactionsModel
@@ -180,6 +199,9 @@ public class CardReactionsA extends Card implements ListSelectionListener,
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see java.beans.PropertyChangeListener#propertyChange(java.beans.PropertyChangeEvent)
+	 */
 	public void propertyChange(PropertyChangeEvent e) {
 		if (e.getSource().equals(model)
 				&& e.getPropertyName().equals("selectedReactions")) {

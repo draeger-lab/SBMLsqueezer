@@ -35,6 +35,7 @@ import java.beans.PropertyChangeListener;
 
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
 import javax.swing.UIManager;
 
 import org.sbml.jsbml.KineticLaw;
@@ -97,16 +98,20 @@ public class KineticLawWindowAdapter extends WindowAdapter implements
 		Model model = sbmlIO.getSelectedModel();
 		reaction = model.getReaction(reactionID);
 		try {
-		klg = new KineticLawGenerator(model);
-		messagePanel = new KineticLawSelectionPanel(klg, reaction);
+			klg = new KineticLawGenerator(model);
+			messagePanel = new KineticLawSelectionPanel(klg, reaction);
 		} catch (Throwable exc) {
 			exc.printStackTrace();
 			GUITools.showErrorMessage(dialog, exc);
 		}
 		
-		pane = new JOptionPane(messagePanel, JOptionPane.QUESTION_MESSAGE,
-				JOptionPane.OK_CANCEL_OPTION, UIManager.getIcon("ICON_LEMON_SMALL"), null,
-				null);
+		JScrollPane scroll = new JScrollPane(messagePanel);
+		scroll.setBorder(null);
+		GUITools.setOpaqueForAllElements(scroll, true);
+		
+		pane = new JOptionPane(scroll,
+			JOptionPane.QUESTION_MESSAGE, JOptionPane.OK_CANCEL_OPTION,
+			UIManager.getIcon("ICON_LEMON_SMALL"), null, null);
 		pane.setInitialValue(null);
 		Window owner = dialog.getOwner();
 		pane.setComponentOrientation(((owner == null) ? JOptionPane

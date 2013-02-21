@@ -41,33 +41,56 @@ public class TableModelReactions extends AbstractTableModel {
 	 * Generated serial version identifier.
 	 */
 	private static final long serialVersionUID = 5524642810924954865L;
+	
+	/**
+	 * 
+	 */
 	private String[] columnNames;
+
+	/**
+	 * 
+	 */
 	private List<Reaction> reactions;
 
+	/**
+	 * 
+	 */
 	public TableModelReactions() {
 		this.columnNames = new String[] {
 				WizardProperties.getText("TABLE_MODEL_REACTIONS_TEXT_NAME/ID"),
 				WizardProperties.getText("TABLE_MODEL_REACTIONS_TEXT_REACTION"),
-				WizardProperties
-						.getText("TABLE_MODEL_REACTIONS_TEXT_KINETIC_LAW"),
-				WizardProperties
-						.getText("TABLE_MODEL_REACTIONS_TEXT_REVERSIBLE"),
-				WizardProperties.getText("TABLE_MODEL_REACTIONS_TEXT_FAST") };
+				WizardProperties.getText("TABLE_MODEL_REACTIONS_TEXT_KINETIC_LAW"),
+				WizardProperties.getText("TABLE_MODEL_REACTIONS_TEXT_REVERSIBLE"),
+				WizardProperties.getText("TABLE_MODEL_REACTIONS_TEXT_FAST")
+		};
 		this.reactions = new ArrayList<Reaction>();
 	}
 
+	/* (non-Javadoc)
+	 * @see javax.swing.table.TableModel#getColumnCount()
+	 */
 	public int getColumnCount() {
 		return columnNames.length;
 	}
 
+	/* (non-Javadoc)
+	 * @see javax.swing.table.AbstractTableModel#getColumnName(int)
+	 */
+	@Override
 	public String getColumnName(int column) {
 		return columnNames[column];
 	}
 
+	/* (non-Javadoc)
+	 * @see javax.swing.table.TableModel#getRowCount()
+	 */
 	public int getRowCount() {
 		return reactions.size();
 	}
 
+	/* (non-Javadoc)
+	 * @see javax.swing.table.TableModel#getValueAt(int, int)
+	 */
 	public Object getValueAt(int rowIndex, int columnIndex) {
 		Reaction reaction = (Reaction) reactions.get(rowIndex);
 		switch (columnIndex) {
@@ -86,6 +109,10 @@ public class TableModelReactions extends AbstractTableModel {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see javax.swing.table.AbstractTableModel#getColumnClass(int)
+	 */
+	@Override
 	public Class<?> getColumnClass(int columnIndex) {
 		switch (columnIndex) {
 		case 0:
@@ -103,14 +130,26 @@ public class TableModelReactions extends AbstractTableModel {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see javax.swing.table.AbstractTableModel#isCellEditable(int, int)
+	 */
+	@Override
 	public boolean isCellEditable(int rowIndex, int columnIndex) {
 		return false;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public List<Reaction> getReactions() {
 		return reactions;
 	}
 
+	/**
+	 * 
+	 * @param reactions
+	 */
 	public void setReactions(List<Reaction> reactions) {
 		this.reactions = reactions;
 		fireTableDataChanged();

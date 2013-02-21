@@ -39,35 +39,44 @@ public class ComboBoxModelReactionFilters extends ComboBoxModelCaptions {
 	 */
 	private static final long serialVersionUID = -8088462929075616570L;
 
+	/**
+	 * 
+	 * @author Matthias Rall
+	 * @version $Rev$
+	 */
 	public enum ReactionFilter {
 
-		ALL_REACTIONS(WizardProperties
-				.getText("COMBO_BOX_MODEL_REACTION_FILTERS_TEXT_ALL_REACTIONS")), REACTIONS_WITH_KINETICLAW(
-				WizardProperties
-						.getText("COMBO_BOX_MODEL_REACTION_FILTERS_TEXT_REACTIONS_WITH_KINETICLAW")), REACTIONS_WITHOUT_KINETICLAW(
-				WizardProperties
-						.getText("COMBO_BOX_MODEL_REACTION_FILTERS_TEXT_REACTIONS_WITHOUT_KINETICLAW")), REVERSIBLE_REACTIONS(
-				WizardProperties
-						.getText("COMBO_BOX_MODEL_REACTION_FILTERS_TEXT_REVERSIBLE_REACTIONS")), IRREVERSIBLE_REACTIONS(
-				WizardProperties
-						.getText("COMBO_BOX_MODEL_REACTION_FILTERS_TEXT_IRREVERSIBLE_REACTIONS")), FAST_REACTIONS(
-				WizardProperties
-						.getText("COMBO_BOX_MODEL_REACTION_FILTERS_TEXT_FAST_REACTIONS")), SLOW_REACTIONS(
-				WizardProperties
-						.getText("COMBO_BOX_MODEL_REACTION_FILTERS_TEXT_SLOW_REACTIONS"));
+		ALL_REACTIONS(WizardProperties.getText("COMBO_BOX_MODEL_REACTION_FILTERS_TEXT_ALL_REACTIONS")),
+		REACTIONS_WITH_KINETICLAW(WizardProperties.getText("COMBO_BOX_MODEL_REACTION_FILTERS_TEXT_REACTIONS_WITH_KINETICLAW")),
+		REACTIONS_WITHOUT_KINETICLAW(WizardProperties.getText("COMBO_BOX_MODEL_REACTION_FILTERS_TEXT_REACTIONS_WITHOUT_KINETICLAW")),
+		REVERSIBLE_REACTIONS(WizardProperties.getText("COMBO_BOX_MODEL_REACTION_FILTERS_TEXT_REVERSIBLE_REACTIONS")),
+		IRREVERSIBLE_REACTIONS(WizardProperties.getText("COMBO_BOX_MODEL_REACTION_FILTERS_TEXT_IRREVERSIBLE_REACTIONS")),
+		FAST_REACTIONS(WizardProperties.getText("COMBO_BOX_MODEL_REACTION_FILTERS_TEXT_FAST_REACTIONS")),
+		SLOW_REACTIONS(WizardProperties.getText("COMBO_BOX_MODEL_REACTION_FILTERS_TEXT_SLOW_REACTIONS"));
 
 		private final String name;
 
+		/**
+		 * 
+		 * @param name
+		 */
 		private ReactionFilter(String name) {
 			this.name = name;
 		}
 
+		/* (non-Javadoc)
+		 * @see java.lang.Enum#toString()
+		 */
+		@Override
 		public String toString() {
 			return name;
 		}
 
 	}
 
+	/**
+	 * 
+	 */
 	public ComboBoxModelReactionFilters() {
 		addCaption(WizardProperties
 				.getText("COMBO_BOX_MODEL_REACTION_FILTERS_FILTER_OPTIONS"));
@@ -82,6 +91,10 @@ public class ComboBoxModelReactionFilters extends ComboBoxModelCaptions {
 		setSelectedItem(ReactionFilter.ALL_REACTIONS);
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public ReactionFilter getSelectedReactionFilter() {
 		return ((ReactionFilter) getSelectedItem());
 	}

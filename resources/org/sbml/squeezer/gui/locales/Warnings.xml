@@ -41,6 +41,8 @@
   <entry key="FILE_CONTAINS_NO_MODEL">File contains no model. Nothing to do.</entry>
   <entry key="INVALID_TEX_FILE">no valid TeX file: {0}</entry>
   <entry key="NO_TEX_FILE_PROVIDED">no TeX file was provided</entry>
+  <entry key="COULD_NOT_LOAD_IMAGE">Could not load image {0}</entry>
+  <entry key="INVALID_URL">Invalid URL {0}</entry>
   
   <!-- SBMLio -->
   

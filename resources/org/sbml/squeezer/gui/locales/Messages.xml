@@ -242,21 +242,23 @@
   
   <!-- SBMLsqueezer -->
   
-  <entry key="DONE_IN_MS">done in {0} ms.</entry>
-  <entry key="LOADING_USER_SETTINGS">loading user settings...</entry>
-  <entry key="DONE">done.</entry>
-  <entry key="LOADING_LIBSBML">Loading library libSBML</entry>
-  <entry key="LOADING_JSBML">Loading library JSBML</entry>
-  <entry key="READING_SBML_FILE">reading SBML file...</entry>
-  <entry key="EMPTY_INPUT_FILE_LIST">Empty list of input files. Nothing to do.</entry>
-  <entry key="SAVING_TO_FILE">Saving changes and writing SBML file...</entry>
-  <entry key="WRITING_LATEX_OUTPUT">writing LaTeX output...</entry>
   <entry key="CREATING_KINETIC_LAWS">Creating kinetic laws.</entry>
+  <entry key="DONE">done.</entry>
+  <entry key="DONE_IN_MS">done in {0} ms.</entry>
+  <entry key="EMPTY_INPUT_FILE_LIST">Empty list of input files. Nothing to do.</entry>
+  <entry key="KEYWORDS">[Analytics;Kinetic modeling]</entry>
+  <entry key="LOADING_JSBML">Loading library JSBML</entry>
+  <entry key="LOADING_LIBSBML">Loading library libSBML</entry>
+  <entry key="LOADING_USER_SETTINGS">loading user settings...</entry>
+  <entry key="PROGRAM_DESCRIPTION">SBMLsqueezer generates kinetic equations for biochemical networks according to context of each reaction. When used as a plug-in for CellDesigner it uses the information from the SBGN representation of all network components. In the stand-alone mode, SBMLsqueezer evaluates the Systems Biology Ontology (SBO) annotations to extract this information. An online version of SBMLsqueezer is available that runs without instally any software on the local machine. The rate laws that can be produced by SBMLsqueezer include several types of generalized mass action; detailed and generalized enzyme kinetics, various types of Hill equations, S- and H-systems, and additive models for gene regulation. User defined settings specify which equation to apply for any type of reaction and how to ensure unit consistency of the model. Equations can be created using contextual menus. All newly created parameters are equipped with the derived unit and annotated with SBO terms if available and meaningful textual names. MathML is inserted directly into the SBML file. LaTeX or text export of ordinary differential equations is provided.</entry>
+  <entry key="READING_SBML_FILE">reading SBML file...</entry>
+  <entry key="SAVE_BEFORE_CLOSING">Would you like to save your changes of the SBML document in file {0}?</entry>
+  <entry key="SAVE_BEFORE_CLOSING_TITLE">Save before closing</entry>
+  <entry key="SAVING_TO_FILE">Saving changes and writing SBML file...</entry>
   <entry key="SCANNING_INPUT_FILES">Scanning input files</entry>
   <entry key="SQUEEZING_FILE">Squeezing file {0} into {1}</entry>
   <entry key="TIME_NEEDED_FOR_SQUEEZING">{0,number} s needed for squeezing file {1}.</entry>
-  <entry key="SAVE_BEFORE_CLOSING">Would you like to save your changes of the SBML document in file {0}?</entry>
-  <entry key="SAVE_BEFORE_CLOSING_TITLE">Save before closing</entry>
+  <entry key="WRITING_LATEX_OUTPUT">writing LaTeX output...</entry>
   
   <!-- SBMLsqueezerUI -->
   

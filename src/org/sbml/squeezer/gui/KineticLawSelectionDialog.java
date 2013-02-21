@@ -23,6 +23,7 @@
  */
 package org.sbml.squeezer.gui;
 
+import java.awt.Dimension;
 import java.awt.Frame;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
@@ -109,7 +110,8 @@ public class KineticLawSelectionDialog extends JDialog {
 			sbmlIO, reactionID);
 		
 		pack();
-		setResizable(false);
+		setMinimumSize(new Dimension(500, 450));
+		setResizable(true);
 		setLocationRelativeTo(owner);
 		setVisible(true);
 		

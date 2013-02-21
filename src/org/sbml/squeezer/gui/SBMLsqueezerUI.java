@@ -53,7 +53,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.JEditorPane;
 import javax.swing.JFileChooser;
-import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
@@ -185,16 +184,26 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 				"SBMLsqueezerIcon_256.png",
 				"SBMLsqueezerIcon_128.png",
 				"SBMLsqueezerIcon_48.png",
+				"SBMLsqueezerIcon_64.png",
 				"SBMLsqueezerIcon_32.png",
 				"SBMLsqueezerIcon_16.png",
 				"SBMLsqueezerLogo_256.png",
+				"SBMLsqueezerLogo_128.png",
+				"SBMLsqueezerLogo_64.png",
 				"SBMLsqueezerLogo_16.png",
 				"SBMLsqueezerWatermark.png"
 		};
+		String prefix = "resources/img/";
 		for (String path : iconPaths) {
-			URL u = SBMLsqueezerUI.class.getResource("../resources/img/" + path);
-			if (u != null) {
-				UIManager.put(path.substring(0, path.lastIndexOf('.')), new ImageIcon(u));
+			URL url = SBMLsqueezer.class.getResource(prefix + path);
+			if (url != null) {
+				String key = path.substring(0, path.lastIndexOf('.'));
+				UIManager.put(key, new ImageIcon(url));
+				if (UIManager.getIcon(key) == null) {
+					logger.warning(MessageFormat.format("COULD_NOT_LOAD_IMAGE", prefix + path));
+				}
+			} else {
+				logger.warning(MessageFormat.format("INVALID_URL", prefix + path));
 			}
 		}
 	}
@@ -297,20 +306,27 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 					sbmlIO.writeSelectedModelToSBML(file.getAbsolutePath());
 				} catch (IOException exc) {
 					GUITools.showErrorMessage(this, exc);
-				}	
+				}
 			}
 			GarudaFileSender sender = new GarudaFileSender(this, garudaBackend, file, "SBML");
 			sender.execute();
 		} else {
+			SBMLModelSplitPane split = (SBMLModelSplitPane) tabbedPane.getSelectedComponent();
+			
 			switch (Command.valueOf(e.getActionCommand())) {
 				case SABIO_RK:
 					SBMLDocument sbmlDoc = sbmlIO.getSelectedModel().getSBMLDocument();
 					SBPreferences prefs = SBPreferences.getPreferencesFor(OptionsGeneral.class);
 					if (e.getSource() instanceof Reaction) {
 						SABIORKWizard.getResultGUI(this,
-							ModalityType.APPLICATION_MODAL, sbmlDoc, ((Reaction)e.getSource()).getId());
+							ModalityType.APPLICATION_MODAL, sbmlDoc, ((Reaction) e.getSource()).getId());
 					} else {
 						SABIORKWizard.getResultGUI(this, ModalityType.APPLICATION_MODAL, sbmlDoc, (prefs.getBoolean(OptionsGeneral.OVERWRITE_EXISTING_RATE_LAWS)));
+					}
+					try {
+						split.updateUI();
+					} catch (Exception exc) {
+						exc.printStackTrace();
 					}
 					break;
 				case SQUEEZE:
@@ -332,7 +348,6 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 						KineticsAndParametersStoredInSBML = wizard.isKineticsAndParametersStoredInSBML();
 					}
 					if (KineticsAndParametersStoredInSBML) {
-						SBMLModelSplitPane split = (SBMLModelSplitPane) tabbedPane.getSelectedComponent();
 						try {
 							split.updateUI();
 						} catch (Exception exc) {
@@ -459,32 +474,24 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 	}
 
 	/* (non-Javadoc)
-	 * @see de.zbit.gui.BaseFrame#additionalMenus()
-	 */
-	@Override
-	protected JMenu[] additionalMenus() {
-		if (appConf.getCmdArgs().containsKey(GarudaOptions.CONNECT_TO_GARUDA)
-				&& !appConf.getCmdArgs().getBoolean(GarudaOptions.CONNECT_TO_GARUDA)) {
-			return super.additionalMenus();
-		}
-		return new JMenu[] { GarudaGUIfactory.createGarudaMenu(this) };
-	}
-
-	/* (non-Javadoc)
 	 * @see de.zbit.gui.BaseFrame#additionalEditMenuItems()
 	 */
 	@Override
 	protected JMenuItem[] additionalEditMenuItems() {
-		return new JMenuItem[] {
-				GUITools.createJMenuItem(this,
-					Command.SABIO_RK, UIManager.getIcon("ICON_SABIO-RK_16")),
-				GUITools.createJMenuItem(this,
+		List<JMenuItem> items = new ArrayList<JMenuItem>(4);
+		items.add(GUITools.createJMenuItem(this,
+					Command.SABIO_RK, UIManager.getIcon("ICON_SABIO-RK_16")));
+		items.add(GUITools.createJMenuItem(this,
 					Command.SQUEEZE, UIManager.getIcon("SBMLsqueezerLogo_16"),
-					KeyStroke.getKeyStroke('Q', InputEvent.CTRL_DOWN_MASK)),
-				GUITools.createJMenuItem(this,
+					KeyStroke.getKeyStroke('Q', InputEvent.CTRL_DOWN_MASK)));
+		items.add(GUITools.createJMenuItem(this,
 					Command.TO_LATEX, UIManager.getIcon("ICON_LATEX_16"),
-					KeyStroke.getKeyStroke('E', InputEvent.CTRL_DOWN_MASK)),
-		};
+					KeyStroke.getKeyStroke('E', InputEvent.CTRL_DOWN_MASK)));
+		if (!appConf.getCmdArgs().containsKey(GarudaOptions.CONNECT_TO_GARUDA)
+				|| appConf.getCmdArgs().getBoolean(GarudaOptions.CONNECT_TO_GARUDA)) {
+			items.add(GarudaGUIfactory.createGarudaMenu(this));
+		}
+		return items.toArray(new JMenuItem[0]);
 	}
 
 	/**

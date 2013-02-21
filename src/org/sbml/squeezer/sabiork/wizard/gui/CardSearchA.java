@@ -128,6 +128,7 @@ public class CardSearchA extends Card implements ActionListener,
 		tableSearchTermsScrollPane.setBorder(BorderFactory.createTitledBorder(
 				BorderFactory.createEtchedBorder(),
 				WizardProperties.getText("CARD_SEARCH_A_TEXT_CONSTRAINTS")));
+		tableSearchTerms.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		tableSearchTermsScrollPane.setBackground(getBackground());
 
 		progressBar = new JProgressBar(0, 100);
@@ -150,6 +151,7 @@ public class CardSearchA extends Card implements ActionListener,
 				.setCellRenderer(new TableCellRendererSearchAResults());
 		tableResults.getColumnModel().getColumn(5)
 				.setCellRenderer(new TableCellRendererSearchAResults());
+		tableResults.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		tableResultsScrollPane = new JScrollPane(tableResults);
 
 		panelSearchInput = new JPanel(new BorderLayout());

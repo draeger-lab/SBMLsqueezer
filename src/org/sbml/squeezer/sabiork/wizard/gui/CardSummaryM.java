@@ -39,7 +39,7 @@ import org.sbml.squeezer.sabiork.wizard.model.WizardProperties;
  * A class that provides a short summary of the changes made by the SABIO-RK
  * wizard.
  * 
-* @author Matthias Rall
+ * @author Matthias Rall
  * @version $Rev$
  */
 public class CardSummaryM extends Card {

@@ -335,14 +335,14 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
    * @see de.zbit.Launcher#getVersionNumber()
    */
   public String getVersionNumber() {
-    return "1.4.0";
+    return "1.4";
   }
   
   /* (non-Javadoc)
    * @see de.zbit.Launcher#getYearOfProgramRelease()
    */
   public short getYearOfProgramRelease() {
-    return (short) 2012;
+    return (short) 2013;
   }
   
   /* (non-Javadoc)
@@ -362,28 +362,33 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
     }
     final Window gui = new SBMLsqueezerUI(getSBMLIO(), appConf);
 		if (getCmdLineOptions().contains(GarudaOptions.class)
-				&& (!appConf.getCmdArgs().containsKey(GarudaOptions.CONNECT_TO_GARUDA) || appConf
-						.getCmdArgs().getBoolean(GarudaOptions.CONNECT_TO_GARUDA))) {
+				&& (!appConf.getCmdArgs().containsKey(GarudaOptions.CONNECT_TO_GARUDA) ||
+						appConf.getCmdArgs().getBoolean(GarudaOptions.CONNECT_TO_GARUDA))) {
     	new Thread(new Runnable() {
+    		/* (non-Javadoc)
+    		 * @see java.lang.Runnable#run()
+    		 */
     		public void run() {
     			try {
-    				/*
-    				 *     				List<FileFormat> listOfInputFileFormats = new LinkedList<FileFormat>();
-    				listOfInputFileFormats.add(new FileFormat("xml", "SBML"));
-    				listOfInputFileFormats.add(new FileFormat("sbml", "SBML"));
-    				List<FileFormat> listOfOutputFileFormats = new LinkedList<FileFormat>();
-    				listOfOutputFileFormats.add(new FileFormat("xml", "SBML"));
-    				listOfOutputFileFormats.add(new FileFormat("sbml", "SBML"));
-    				 */
-    				GarudaSoftwareBackend garudaBackend = new GarudaSoftwareBackend((UserInterface) gui);
+    				String localPath = SBMLsqueezer.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+            String folder = new File(localPath).getParent() + "/resources/org/sbml/squeezer/resources/img/";
+    				String icon = folder + "SBMLsqueezerIcon_64.png";
+    				                				
+    				GarudaSoftwareBackend garudaBackend = new GarudaSoftwareBackend(
+    					"dd624b40-7bc0-11e2-b92a-0800200c9a66",
+    					(UserInterface) gui,
+    					icon,
+    					MESSAGES.getString("PROGRAM_DESCRIPTION"),
+    					Arrays.asList(MESSAGES.getStringArray("KEYWORDS")),
+							Arrays.asList(new String[] { 
+									folder + "Screenshot_1.png",
+									folder + "Screenshot_2.png",
+									folder + "Screenshot_3.png"})
+    				);
     				garudaBackend.addInputFileFormat("xml", "SBML");
     				garudaBackend.addInputFileFormat("sbml", "SBML");
-    				garudaBackend.addInputFileFormat("xml", "SBMLsqueezer");
-    				garudaBackend.addInputFileFormat("xml", "NewTestSoftwareA");
     				garudaBackend.addOutputFileFormat("xml", "SBML");
     				garudaBackend.addOutputFileFormat("sbml", "SBML");
-    				garudaBackend.addOutputFileFormat("xml", "SBMLsqueezer");
-    				garudaBackend.addOutputFileFormat("xml", "NewTestSoftwareA");
     				garudaBackend.init();
     				garudaBackend.registedSoftwareToGaruda();
     			} catch (NetworkException exc) {
