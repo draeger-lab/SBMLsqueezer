@@ -149,7 +149,11 @@ public class SABIORK {
 					resourceResponse.append(line);
 				}
 				return resourceResponse.toString();
-			} else {
+			}
+			else if(resourceConnection.getResponseCode() == 404) {
+				return "No results found for query";
+			}
+			else {
 				throw new WebServiceResponseException(
 						"SABIO-RK returned HTTP response code "
 								+ resourceConnection.getResponseCode()
