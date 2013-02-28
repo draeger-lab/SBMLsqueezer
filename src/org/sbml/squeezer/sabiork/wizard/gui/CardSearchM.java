@@ -420,6 +420,22 @@ public class CardSearchM extends Card implements ActionListener,
 			}
 		}
 	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.squeezer.sabiork.wizard.gui.Card#performAfterPressingBack()
+	 */
+	public void performAfterPressingBack() {
+		search.cancel();
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.squeezer.sabiork.wizard.gui.Card#performAfterCancel()
+	 */
+	public void performAfterCancel() {
+		search.cancel();
+	}
 
 	/**
 	 * A class to perform the search.

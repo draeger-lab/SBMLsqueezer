@@ -76,4 +76,18 @@ public abstract class Card extends JPanel {
 	 */
 	public abstract CardID getNextCardID();
 
+	/**
+	 * 
+	 */
+	public void performAfterPressingBack() {
+	}
+
+	/**
+	 * 
+	 */
+	public void performAfterCancel() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

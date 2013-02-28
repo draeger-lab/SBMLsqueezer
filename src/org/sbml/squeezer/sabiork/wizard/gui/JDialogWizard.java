@@ -425,9 +425,12 @@ public class JDialogWizard extends JDialog implements ActionListener, WindowList
 				case BACK:
 					currentCard = cards.get(currentCardID);
 					showCard(currentCard.getPreviousCardID());
+					currentCard.performAfterPressingBack();
 					break;
 				case CANCEL:
 					model.deleteResult();
+					currentCard = cards.get(currentCardID);
+					currentCard.performAfterCancel();
 					dispose();
 					break;
 				case FINISH:
