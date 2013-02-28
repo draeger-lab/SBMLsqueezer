@@ -81,7 +81,7 @@ public class WebServiceResponseException extends Exception {
 
 	/**
 	 * 
-	 * @return
+	 * @return responseCode the response code of the exception
 	 */
 	public int getResponseCode() {
 		return responseCode;

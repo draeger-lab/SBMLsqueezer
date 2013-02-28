@@ -62,12 +62,20 @@ public class CardReactionsM extends Card implements ListSelectionListener,
 	private JTable tableReactions;
 	private TableModelReactions tableReactionsModel;
 
+	/**
+	 * 
+	 * @param dialog
+	 * @param model
+	 */
 	public CardReactionsM(JDialogWizard dialog, WizardModel model) {
 		super(dialog, model);
 		model.addPropertyChangeListener(this);
 		initialize();
 	}
 
+	/**
+	 * 
+	 */
 	private void initialize() {
 //		comboBoxReactionFiltersModel = new ComboBoxModelReactionFilters();
 //		comboBoxReactionFilters = new JComboBox(comboBoxReactionFiltersModel);
@@ -95,6 +103,10 @@ public class CardReactionsM extends Card implements ListSelectionListener,
 		add(tableReactionsScrollPane, BorderLayout.CENTER);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.squeezer.sabiork.wizard.gui.Card#performBeforeShowing()
+	 */
 	public void performBeforeShowing() {
 		dialog.setButtonState(ButtonState.START);
 		tableReactionsModel
@@ -105,10 +117,18 @@ public class CardReactionsM extends Card implements ListSelectionListener,
 		setSelectedReaction();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.squeezer.sabiork.wizard.gui.Card#getPreviousCardID()
+	 */
 	public CardID getPreviousCardID() {
 		return CardID.METHOD;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.squeezer.sabiork.wizard.gui.Card#getNextCardID()
+	 */
 	public CardID getNextCardID() {
 		return CardID.SEARCH_M;
 	}
@@ -160,6 +180,10 @@ public class CardReactionsM extends Card implements ListSelectionListener,
 		return reactions;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see javax.swing.event.ListSelectionListener#valueChanged(javax.swing.event.ListSelectionEvent)
+	 */
 	public void valueChanged(ListSelectionEvent e) {
 		if (e.getSource().equals(tableReactions.getSelectionModel())) {
 			if (!e.getValueIsAdjusting()) {
@@ -168,6 +192,10 @@ public class CardReactionsM extends Card implements ListSelectionListener,
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+	 */
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource().equals(comboBoxReactionFilters)) {
 			tableReactionsModel
@@ -179,6 +207,10 @@ public class CardReactionsM extends Card implements ListSelectionListener,
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see java.beans.PropertyChangeListener#propertyChange(java.beans.PropertyChangeEvent)
+	 */
 	public void propertyChange(PropertyChangeEvent e) {
 		if (e.getSource().equals(model)
 				&& e.getPropertyName().equals("selectedReaction")) {

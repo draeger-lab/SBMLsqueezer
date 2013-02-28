@@ -116,9 +116,17 @@ public class JComboBoxSearchField extends JComboBox implements KeyListener {
 		this.suggestionQueryField = suggestionQueryField;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see java.awt.event.KeyListener#keyPressed(java.awt.event.KeyEvent)
+	 */
 	public void keyPressed(KeyEvent e) {
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see java.awt.event.KeyListener#keyReleased(java.awt.event.KeyEvent)
+	 */
 	public void keyReleased(KeyEvent e) {
 		if (e.getSource().equals(textFieldSearch)) {
 			if (e.getKeyCode() != KeyEvent.VK_UP
@@ -144,6 +152,10 @@ public class JComboBoxSearchField extends JComboBox implements KeyListener {
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see java.awt.event.KeyListener#keyTyped(java.awt.event.KeyEvent)
+	 */
 	public void keyTyped(KeyEvent e) {
 	}
 
@@ -158,6 +170,11 @@ public class JComboBoxSearchField extends JComboBox implements KeyListener {
 		private SABIORK.QueryField queryField;
 		private String partialString;
 
+		/**
+		 * 
+		 * @param queryField
+		 * @param partialString
+		 */
 		public SuggestionSearch(SABIORK.QueryField queryField,
 				String partialString) {
 			this.queryField = queryField;
@@ -181,8 +198,9 @@ public class JComboBoxSearchField extends JComboBox implements KeyListener {
 			cancel(true);
 		}
 
-		/**
-		 * Performs the search process.
+		/*
+		 * (non-Javadoc)
+		 * @see javax.swing.SwingWorker#doInBackground()
 		 */
 		protected List<String> doInBackground() {
 			List<String> suggestions = new ArrayList<String>();
@@ -202,8 +220,9 @@ public class JComboBoxSearchField extends JComboBox implements KeyListener {
 			return suggestions;
 		}
 
-		/**
-		 * Displays the results.
+		/*
+		 * (non-Javadoc)
+		 * @see javax.swing.SwingWorker#done()
 		 */
 		protected void done() {
 			try {

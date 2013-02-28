@@ -48,6 +48,9 @@ public class TableModelSearchAResults extends AbstractTableModel {
 	private String[] columnNames;
 	private List<SearchAResult> searchAResults;
 
+	/**
+	 * 
+	 */
 	public TableModelSearchAResults() {
 		this.columnNames = new String[] {
 				WizardProperties
@@ -65,18 +68,34 @@ public class TableModelSearchAResults extends AbstractTableModel {
 		this.searchAResults = new ArrayList<SearchAResult>();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see javax.swing.table.TableModel#getColumnCount()
+	 */
 	public int getColumnCount() {
 		return columnNames.length;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see javax.swing.table.AbstractTableModel#getColumnName(int)
+	 */
 	public String getColumnName(int column) {
 		return columnNames[column];
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see javax.swing.table.TableModel#getRowCount()
+	 */
 	public int getRowCount() {
 		return searchAResults.size();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see javax.swing.table.TableModel#getValueAt(int, int)
+	 */
 	public Object getValueAt(int rowIndex, int columnIndex) {
 		SearchAResult searchAResult = (SearchAResult) searchAResults
 				.get(rowIndex);
@@ -115,6 +134,10 @@ public class TableModelSearchAResults extends AbstractTableModel {
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see javax.swing.table.AbstractTableModel#getColumnClass(int)
+	 */
 	public Class<?> getColumnClass(int columnIndex) {
 		switch (columnIndex) {
 		case 0:
@@ -134,19 +157,35 @@ public class TableModelSearchAResults extends AbstractTableModel {
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see javax.swing.table.AbstractTableModel#isCellEditable(int, int)
+	 */
 	public boolean isCellEditable(int rowIndex, int columnIndex) {
 		return false;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public List<SearchAResult> getSearchAResults() {
 		return searchAResults;
 	}
 
+	/**
+	 * 
+	 * @param searchAResults
+	 */
 	public void setSearchAResults(List<SearchAResult> searchAResults) {
 		this.searchAResults = searchAResults;
 		fireTableDataChanged();
 	}
-
+	
+	/**
+	 * 
+	 * @param searchAResult
+	 */
 	public void add(SearchAResult searchAResult) {
 		if (!this.searchAResults.contains(searchAResult)) {
 			this.searchAResults.add(searchAResult);
@@ -154,11 +193,22 @@ public class TableModelSearchAResults extends AbstractTableModel {
 		}
 	}
 
+	/**
+	 * 
+	 */
 	public void clear() {
 		searchAResults.clear();
 		fireTableDataChanged();
 	}
 
+	/**
+	 * 
+	 * @param reaction
+	 * @param possibleKineticLawImporters
+	 * @param impossibleKineticLawImporters
+	 * @param totalKineticLawImporters
+	 * @return
+	 */
 	public SearchAResult createSearchAResult(Reaction reaction,
 			List<KineticLawImporter> possibleKineticLawImporters,
 			List<KineticLawImporter> impossibleKineticLawImporters,
@@ -167,6 +217,11 @@ public class TableModelSearchAResults extends AbstractTableModel {
 				impossibleKineticLawImporters, totalKineticLawImporters);
 	}
 
+	/**
+	 * 
+	 * @author Roland Keller
+	 * @version $Rev$
+	 */
 	public class SearchAResult {
 
 		private Reaction reaction;
@@ -174,6 +229,13 @@ public class TableModelSearchAResults extends AbstractTableModel {
 		private List<KineticLawImporter> impossibleKineticLawImporters;
 		private List<KineticLawImporter> totalKineticLawImporters;
 
+		/**
+		 * 
+		 * @param reaction
+		 * @param possibleKineticLawImporters
+		 * @param impossibleKineticLawImporters
+		 * @param totalKineticLawImporters
+		 */
 		public SearchAResult(Reaction reaction,
 				List<KineticLawImporter> possibleKineticLawImporters,
 				List<KineticLawImporter> impossibleKineticLawImporters,
@@ -184,22 +246,42 @@ public class TableModelSearchAResults extends AbstractTableModel {
 			this.totalKineticLawImporters = totalKineticLawImporters;
 		}
 
+		/**
+		 * 
+		 * @return
+		 */
 		public Reaction getReaction() {
 			return reaction;
 		}
 
+		/**
+		 * 
+		 * @return
+		 */
 		public List<KineticLawImporter> getPossibleKineticLawImporters() {
 			return possibleKineticLawImporters;
 		}
 
+		/**
+		 * 
+		 * @return
+		 */
 		public List<KineticLawImporter> getImpossibleKineticLawImporters() {
 			return impossibleKineticLawImporters;
 		}
 
+		/**
+		 * 
+		 * @return
+		 */
 		public List<KineticLawImporter> getTotalKineticLawImporters() {
 			return totalKineticLawImporters;
 		}
 
+		/**
+		 * 
+		 * @return
+		 */
 		public KineticLawImporter getSelectedKineticLawImporter() {
 			KineticLawImporter selectedKineticLawImporter = null;
 			if (!possibleKineticLawImporters.isEmpty()) {

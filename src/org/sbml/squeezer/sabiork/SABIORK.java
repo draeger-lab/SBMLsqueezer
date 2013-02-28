@@ -79,16 +79,23 @@ public class SABIORK {
 
 		private final String name;
 
+		/**
+		 * 
+		 * @param name
+		 */
 		private QueryField(String name) {
 			this.name = name;
 		}
 
+		/*
+		 * (non-Javadoc)
+		 * @see java.lang.Enum#toString()
+		 */
 		public String toString() {
 			return name;
 		}
 
 	}
-
 	public enum Resource {
 
 		ENTRY_IDS_BY_QUERY(
@@ -112,6 +119,10 @@ public class SABIORK {
 
 		private final String url;
 
+		/**
+		 * 
+		 * @param url
+		 */
 		private Resource(String url) {
 			this.url = url;
 		}

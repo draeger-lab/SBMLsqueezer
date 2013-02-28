@@ -40,6 +40,9 @@ public class JComponentEtchedLine extends JComponent {
 	 */
 	private static final long serialVersionUID = 2648773760851854370L;
 
+	/**
+	 * 
+	 */
 	public JComponentEtchedLine() {
 		setBorder(new EtchedBorder(EtchedBorder.LOWERED));
 		setPreferredSize(new Dimension(1, 2));

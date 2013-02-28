@@ -96,6 +96,9 @@ public class JPanelFilterOptions extends JPanel implements ActionListener {
 	private JTextField textFieldCalendar;
 	private SimpleDateFormat dateFormat;
 
+	/**
+	 * 
+	 */
 	public JPanelFilterOptions() {
 		this.propertyChangeSupport = new PropertyChangeSupport(this);
 		this.isWildtype = true;
@@ -118,6 +121,9 @@ public class JPanelFilterOptions extends JPanel implements ActionListener {
 		initialize();
 	}
 
+	/**
+	 * 
+	 */
 	private void initialize() {
 		labelEnzyme = new JLabel(
 				WizardProperties.getText("JPANEL_FILTER_OPTIONS_TEXT_ENZYME"));
@@ -283,10 +289,18 @@ public class JPanelFilterOptions extends JPanel implements ActionListener {
 				new Insets(0, 0, 0, 0), 0, 0));
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see java.awt.Container#addPropertyChangeListener(java.beans.PropertyChangeListener)
+	 */
 	public void addPropertyChangeListener(PropertyChangeListener listener) {
 		this.propertyChangeSupport.addPropertyChangeListener(listener);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see java.awt.Component#removePropertyChangeListener(java.beans.PropertyChangeListener)
+	 */
 	public void removePropertyChangeListener(PropertyChangeListener listener) {
 		this.propertyChangeSupport.removePropertyChangeListener(listener);
 	}
@@ -325,54 +339,106 @@ public class JPanelFilterOptions extends JPanel implements ActionListener {
 		}
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public boolean isWildtype() {
 		return isWildtype;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public boolean isMutant() {
 		return isMutant;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public boolean isRecombinant() {
 		return isRecombinant;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public boolean hasKineticData() {
 		return hasKineticData;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public boolean isDirectSubmission() {
 		return isDirectSubmission;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public boolean isJournal() {
 		return isJournal;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public boolean isEntriesInsertedSince() {
 		return isEntriesInsertedSince;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public double getLowerpHValue() {
 		return lowerpHValue;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public double getUpperpHValue() {
 		return upperpHValue;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public double getLowerTemperature() {
 		return lowerTemperature;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public double getUpperTemperature() {
 		return upperTemperature;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public Date getDateSubmitted() {
 		return dateSubmitted;
 	}
 
+	/**
+	 * 
+	 * @param isWildtype
+	 */
 	public void setWildtype(boolean isWildtype) {
 		boolean oldValue = this.isWildtype;
 		boolean newValue = isWildtype;
@@ -381,6 +447,10 @@ public class JPanelFilterOptions extends JPanel implements ActionListener {
 				newValue);
 	}
 
+	/**
+	 * 
+	 * @param isMutant
+	 */
 	public void setMutant(boolean isMutant) {
 		boolean oldValue = this.isMutant;
 		boolean newValue = isMutant;
@@ -389,6 +459,10 @@ public class JPanelFilterOptions extends JPanel implements ActionListener {
 				.firePropertyChange("isMutant", oldValue, newValue);
 	}
 
+	/**
+	 * 
+	 * @param isRecombinant
+	 */
 	public void setRecombinant(boolean isRecombinant) {
 		boolean oldValue = this.isRecombinant;
 		boolean newValue = isRecombinant;
@@ -397,6 +471,10 @@ public class JPanelFilterOptions extends JPanel implements ActionListener {
 				newValue);
 	}
 
+	/**
+	 * 
+	 * @param hasKineticData
+	 */
 	public void setHasKineticData(boolean hasKineticData) {
 		boolean oldValue = this.hasKineticData;
 		boolean newValue = hasKineticData;
@@ -405,6 +483,10 @@ public class JPanelFilterOptions extends JPanel implements ActionListener {
 				newValue);
 	}
 
+	/**
+	 * 
+	 * @param isDirectSubmission
+	 */
 	public void setDirectSubmission(boolean isDirectSubmission) {
 		boolean oldValue = this.isDirectSubmission;
 		boolean newValue = isDirectSubmission;
@@ -413,6 +495,10 @@ public class JPanelFilterOptions extends JPanel implements ActionListener {
 				oldValue, newValue);
 	}
 
+	/**
+	 * 
+	 * @param isJournal
+	 */
 	public void setJournal(boolean isJournal) {
 		boolean oldValue = this.isJournal;
 		boolean newValue = isJournal;
@@ -421,6 +507,10 @@ public class JPanelFilterOptions extends JPanel implements ActionListener {
 				newValue);
 	}
 
+	/**
+	 * 
+	 * @param isEntriesInsertedSince
+	 */
 	public void setEntriesInsertedSince(boolean isEntriesInsertedSince) {
 		boolean oldValue = this.isEntriesInsertedSince;
 		boolean newValue = isEntriesInsertedSince;
@@ -428,7 +518,11 @@ public class JPanelFilterOptions extends JPanel implements ActionListener {
 		propertyChangeSupport.firePropertyChange("isEntriesInsertedSince",
 				oldValue, newValue);
 	}
-
+	
+	/**
+	 * 
+	 * @param lowerpHValue
+	 */
 	public void setLowerpHValue(double lowerpHValue) {
 		double oldValue = this.lowerpHValue;
 		double newValue = lowerpHValue;
@@ -437,6 +531,10 @@ public class JPanelFilterOptions extends JPanel implements ActionListener {
 				newValue);
 	}
 
+	/**
+	 * 
+	 * @param upperpHValue
+	 */
 	public void setUpperpHValue(double upperpHValue) {
 		double oldValue = this.upperpHValue;
 		double newValue = upperpHValue;
@@ -445,6 +543,10 @@ public class JPanelFilterOptions extends JPanel implements ActionListener {
 				newValue);
 	}
 
+	/**
+	 * 
+	 * @param lowerTemperature
+	 */
 	public void setLowerTemperature(double lowerTemperature) {
 		double oldValue = this.lowerTemperature;
 		double newValue = lowerTemperature;
@@ -453,6 +555,10 @@ public class JPanelFilterOptions extends JPanel implements ActionListener {
 				newValue);
 	}
 
+	/**
+	 * 
+	 * @param upperTemperature
+	 */
 	public void setUpperTemperature(double upperTemperature) {
 		double oldValue = this.upperTemperature;
 		double newValue = upperTemperature;
@@ -461,6 +567,10 @@ public class JPanelFilterOptions extends JPanel implements ActionListener {
 				newValue);
 	}
 
+	/**
+	 * 
+	 * @param dateSubmitted
+	 */
 	public void setDateSubmitted(Date dateSubmitted) {
 		Date oldValue = this.dateSubmitted;
 		Date newValue = dateSubmitted;
@@ -469,6 +579,10 @@ public class JPanelFilterOptions extends JPanel implements ActionListener {
 				newValue);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+	 */
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource().equals(checkBoxWildtype)) {
 			setWildtype(checkBoxWildtype.isSelected());

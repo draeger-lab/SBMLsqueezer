@@ -57,6 +57,9 @@ public class ComboBoxModelSearchItems extends ComboBoxModelCaptions {
 
 	}
 
+	/**
+	 * 
+	 */
 	public ComboBoxModelSearchItems() {
 		addCaption(WizardProperties
 				.getText("COMBO_BOX_MODEL_SEARCH_ITEMS_TEXT_ENTRY"));

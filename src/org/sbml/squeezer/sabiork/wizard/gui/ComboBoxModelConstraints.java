@@ -40,6 +40,9 @@ public class ComboBoxModelConstraints extends ComboBoxModelCaptions {
 	 */
 	private static final long serialVersionUID = 6268004298121183140L;
 
+	/**
+	 * 
+	 */
 	public ComboBoxModelConstraints() {
 		addCaption(WizardProperties
 				.getText("COMBO_BOX_MODEL_CONSTRAINTS_TEXT_REACTION/PATHWAY"));
@@ -54,10 +57,18 @@ public class ComboBoxModelConstraints extends ComboBoxModelCaptions {
 		setSelectedItem(SABIORK.QueryField.PATHWAY);
 	}
 
+	/**
+	 * 
+	 * @return queryField the selected query filed
+	 */
 	public SABIORK.QueryField getSelectedQueryField() {
 		return ((SABIORK.QueryField) getSelectedItem());
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public boolean isQueryFieldSelected() {
 		return (getSelectedItem() instanceof SABIORK.QueryField);
 	}

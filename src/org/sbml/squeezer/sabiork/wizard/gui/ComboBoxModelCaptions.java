@@ -77,7 +77,6 @@ public class ComboBoxModelCaptions extends DefaultComboBoxModel {
 	/* (non-Javadoc)
 	 * @see javax.swing.DefaultComboBoxModel#insertElementAt(java.lang.Object, int)
 	 */
-	@Override
 	public void insertElementAt(Object anObject, int index) {
 		List<Object> captions = new ArrayList<Object>();
 		for (int captionIndex : captionIndices) {
@@ -93,7 +92,6 @@ public class ComboBoxModelCaptions extends DefaultComboBoxModel {
 	/* (non-Javadoc)
 	 * @see javax.swing.DefaultComboBoxModel#removeAllElements()
 	 */
-	@Override
 	public void removeAllElements() {
 		super.removeAllElements();
 		captionIndices.clear();
@@ -102,7 +100,6 @@ public class ComboBoxModelCaptions extends DefaultComboBoxModel {
 	/* (non-Javadoc)
 	 * @see javax.swing.DefaultComboBoxModel#removeElement(java.lang.Object)
 	 */
-	@Override
 	public void removeElement(Object anObject) {
 		super.removeElement(anObject);
 		captionIndices.remove(getIndexOf(anObject));
@@ -111,7 +108,6 @@ public class ComboBoxModelCaptions extends DefaultComboBoxModel {
 	/* (non-Javadoc)
 	 * @see javax.swing.DefaultComboBoxModel#removeElementAt(int)
 	 */
-	@Override
 	public void removeElementAt(int index) {
 		captionIndices.remove(index);
 		List<Object> captions = new ArrayList<Object>();
@@ -128,7 +124,6 @@ public class ComboBoxModelCaptions extends DefaultComboBoxModel {
 	/* (non-Javadoc)
 	 * @see javax.swing.DefaultComboBoxModel#setSelectedItem(java.lang.Object)
 	 */
-	@Override
 	public void setSelectedItem(Object anObject) {
 		if (!captionIndices.contains(getIndexOf(anObject))) {
 			super.setSelectedItem(anObject);
@@ -154,7 +149,6 @@ public class ComboBoxModelCaptions extends DefaultComboBoxModel {
 		/* (non-Javadoc)
 		 * @see javax.swing.plaf.basic.BasicComboBoxRenderer#getListCellRendererComponent(javax.swing.JList, java.lang.Object, int, boolean, boolean)
 		 */
-		@Override
 		public Component getListCellRendererComponent(JList list, Object value,
 				int index, boolean isSelected, boolean cellHasFocus) {
 			JLabel label = new JLabel();

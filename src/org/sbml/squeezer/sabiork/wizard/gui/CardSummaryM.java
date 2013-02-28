@@ -51,11 +51,19 @@ public class CardSummaryM extends Card {
 	private JScrollPane textAreaSummaryScrollPane;
 	private JTextArea textAreaSummary;
 
+	/**
+	 * 
+	 * @param dialog
+	 * @param model
+	 */
 	public CardSummaryM(JDialogWizard dialog, WizardModel model) {
 		super(dialog, model);
 		initialize();
 	}
 
+	/**
+	 * 
+	 */
 	private void initialize() {
 		textAreaSummary = new JTextArea();
 		textAreaSummary.setEnabled(false);
@@ -68,6 +76,10 @@ public class CardSummaryM extends Card {
 		add(textAreaSummaryScrollPane, BorderLayout.CENTER);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.squeezer.sabiork.wizard.gui.Card#performBeforeShowing()
+	 */
 	public void performBeforeShowing() {
 		if (model.hasSelectedKineticLawImporter()) {
 			KineticLawImporter selectedKineticLawImporter = model
@@ -80,10 +92,18 @@ public class CardSummaryM extends Card {
 		dialog.setButtonState(ButtonState.FINISH);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.squeezer.sabiork.wizard.gui.Card#getPreviousCardID()
+	 */
 	public CardID getPreviousCardID() {
 		return CardID.MATCHING;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.squeezer.sabiork.wizard.gui.Card#getNextCardID()
+	 */
 	public CardID getNextCardID() {
 		return CardID.CONFIRM_DIALOG;
 	}

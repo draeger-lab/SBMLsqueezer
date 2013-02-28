@@ -93,7 +93,7 @@ public class CardMatching extends Card implements PropertyChangeListener {
 	}
 
 	/**
-	 * 
+	 * Initialization of the card.
 	 */
 	private void initialize() {
 		panelComponentMatchEntries = new JPanel(new GridLayout(0, 1, 0, 5));
@@ -267,6 +267,9 @@ public class CardMatching extends Card implements PropertyChangeListener {
 		private String textReferencedComponent;
 		private String textReferenceableComponents;
 
+		/**
+		 * 
+		 */
 		public JPanelComponentMatchEntry() {
 			this.color = WizardProperties
 					.getColor("JPANEL_COMPONENT_MATCH_ENTRY_RGB_COLOR_SELECTED_REACTION");
@@ -284,6 +287,11 @@ public class CardMatching extends Card implements PropertyChangeListener {
 			this.comboBoxReferenceableComponents.setEnabled(false);
 		}
 
+		
+		/**
+		 * 
+		 * @param referencedCompartment
+		 */
 		public JPanelComponentMatchEntry(Compartment referencedCompartment) {
 			this.color = WizardProperties
 					.getColor("JPANEL_COMPONENT_MATCH_ENTRY_RGB_COLOR_COMPARTMENT");
@@ -299,6 +307,11 @@ public class CardMatching extends Card implements PropertyChangeListener {
 			this.initialize();
 		}
 
+		
+		/**
+		 * 
+		 * @param referencedReaction
+		 */
 		public JPanelComponentMatchEntry(Reaction referencedReaction) {
 			this.color = WizardProperties
 					.getColor("JPANEL_COMPONENT_MATCH_ENTRY_RGB_COLOR_REACTION");
@@ -314,6 +327,10 @@ public class CardMatching extends Card implements PropertyChangeListener {
 			this.initialize();
 		}
 
+		/**
+		 * 
+		 * @param referencedSpecies
+		 */
 		public JPanelComponentMatchEntry(Species referencedSpecies) {
 			this.color = WizardProperties
 					.getColor("JPANEL_COMPONENT_MATCH_ENTRY_RGB_COLOR_SPECIES");
@@ -329,6 +346,10 @@ public class CardMatching extends Card implements PropertyChangeListener {
 			this.initialize();
 		}
 
+		/**
+		 * 
+		 * @param referencedSpeciesReference
+		 */
 		public JPanelComponentMatchEntry(
 				SpeciesReference referencedSpeciesReference) {
 			this.color = WizardProperties
@@ -345,6 +366,9 @@ public class CardMatching extends Card implements PropertyChangeListener {
 			this.initialize();
 		}
 
+		/**
+		 * 
+		 */
 		private void initialize() {
 			labelReferencedComponent = new JLabel(textReferencedComponent);
 			labelReferencedComponent.setFont(new Font(this.getFont().getName(),
@@ -440,6 +464,10 @@ public class CardMatching extends Card implements PropertyChangeListener {
 			return (comboBoxReferenceableComponents.getSelectedItem() != null);
 		}
 
+		/*
+		 * (non-Javadoc)
+		 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+		 */
 		public void actionPerformed(ActionEvent e) {
 			if (e.getSource().equals(comboBoxReferenceableComponents)) {
 				if (hasReferencedComponent() && hasReferenceableComponent()) {
@@ -484,6 +512,10 @@ public class CardMatching extends Card implements PropertyChangeListener {
 		private SBase referencedComponent;
 		private String textReferencedComponent;
 
+		/**
+		 * 
+		 * @param referencedFunctionDefinition
+		 */
 		public JPanelComponentImportEntry(
 				FunctionDefinition referencedFunctionDefinition) {
 			this.color = WizardProperties
@@ -494,6 +526,10 @@ public class CardMatching extends Card implements PropertyChangeListener {
 			this.initialize();
 		}
 
+		/**
+		 * 
+		 * @param referencedLocalParameter
+		 */
 		public JPanelComponentImportEntry(
 				LocalParameter referencedLocalParameter) {
 			this.color = WizardProperties
@@ -504,6 +540,10 @@ public class CardMatching extends Card implements PropertyChangeListener {
 			this.initialize();
 		}
 
+		/**
+		 * 
+		 * @param referencedParameter
+		 */
 		public JPanelComponentImportEntry(Parameter referencedParameter) {
 			this.color = WizardProperties
 					.getColor("JPANEL_COMPONENT_IMPORT_ENTRY_RGB_COLOR_PARAMETER");
@@ -513,6 +553,10 @@ public class CardMatching extends Card implements PropertyChangeListener {
 			this.initialize();
 		}
 
+		/**
+		 * 
+		 * @param referencedUnitDefinition
+		 */
 		public JPanelComponentImportEntry(
 				UnitDefinition referencedUnitDefinition) {
 			this.color = WizardProperties
@@ -523,6 +567,9 @@ public class CardMatching extends Card implements PropertyChangeListener {
 			this.initialize();
 		}
 
+		/**
+		 * 
+		 */
 		private void initialize() {
 			labelReferencedComponent = new JLabel(textReferencedComponent);
 			labelReferencedComponent.setFont(new Font(this.getFont().getName(),
