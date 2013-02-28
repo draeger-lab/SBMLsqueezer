@@ -24,30 +24,32 @@
 %\usepackage[utf8]{inputenc} %unicode support
 
 \hypersetup{
-              bookmarks={true},
-              bookmarksopen={true},
-              bookmarksopenlevel={0},
-              bookmarksnumbered={true},
-              breaklinks={true},
-              colorlinks={false},
-              pdfpagemode={UseOutlines},
-              pdftitle={SBMLsqueezer 2.0},
-              pdfauthor={Andreas Dr\"ager},
-              pdfsubject={User's Guide},
-              pdfkeywords={Key word 1} {Key word 1} {...} {Key word n}
-              pdftex,
-              pdffitwindow={true},
-              pdfstartview={FitV},
-              pdfnewwindow={false},
-              pdfdisplaydoctitle={true},
-              pdfhighlight={/P},
-              plainpages={false},
-              unicode={true},
-              urlcolor={blue}
+%  bookmarks={true},
+  bookmarksopen={true},
+  bookmarksopenlevel={0},
+  bookmarksnumbered={true},
+  breaklinks={true},
+  colorlinks={false},
+  pdfpagemode={UseOutlines},
+  pdftitle={SBMLsqueezer 2.0},
+  pdfauthor={Andreas Dr\"ager},
+  pdfsubject={User's Guide},
+%  pdftex,
+  pdffitwindow={true},
+  pdfstartview={FitV},
+  pdfnewwindow={false},
+  pdfdisplaydoctitle={true},
+  pagebackref={true},
+  pdfhighlight={/P},
+  plainpages={false},
+  unicode={true},
+  urlcolor={blue},
+  pdfkeywords={kinetics} {rate law} {enzyme kinetics} {SBML} {equation generation} {automatic} {generalized mass action} {gmak} {Michaelis-Menten} {convenience kinetics} {SBMLsqueezer}
 }
 
 %HYPHENATION
 \hyphenation{
+Cell-Designer
 }
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Gestaltung der Titelseite     %
@@ -55,22 +57,26 @@
 
 \newcolumntype{C}[1]{>{\centering\arraybackslash}m{#1}}
 \newcolumntype{L}[1]{>{\centering\arraybackslash}p{#1}}
+\newcommand{\SBMLLaTeX}{{\sffamily\upshape\raisebox{-.35ex}{S\hspace{-.425ex}BML}\hspace{-0.5ex}\begin{rotate}{-17.5}\raisebox{-.1ex}{2}\end{rotate}\hspace{1ex}\LaTeX}}
 
 \titlehead{\centering\includegraphics[width=0.75\textwidth]{img/UT_WBMW_mathnat_4C}}
 \subject{User's Guide}
 \title{
-\centering
-\begin{tabular}{C{5cm}L{5cm}}
-\includegraphics[width=.3\columnwidth]{img/LOGO.png} &
-SBMLsqueezer 2.0\\
-\end{tabular}
+%\centering
+%\begin{tabular}{C{5cm}L{5cm}}
+\includegraphics[width=3cm]{img/LOGO.png}\\% &
+SBMLsqueezer 2.0
+%\end{tabular}
 }
-\subtitle{Interesting sub title}
+\subtitle{Context-based generation of kinetic equations}
 
 
 \author{Andreas Dr\"ager\thanks{Corresponding author:
 \href{mailto:andreas.draeger@uni-tuebingen.de}{andreas.draegter@uni-tuebingen.de}}\and
-Roland Keller}
+Roland Keller\and
+Matthias Rall\and
+Johannes Eichner\and
+Andreas Zell}
 \date{\today}
 \publishers{Center for Bioinformatics Tuebingen (ZBIT)}
 
@@ -81,18 +87,18 @@ Roland Keller}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{document}
-
-
+% 
+% 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Titelei                       %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+%
 \pagenumbering{roman}		% kleine lateinische Seitenzahlen
 \maketitle
 \begin{abstract}
-\include{tex/00_abstract}
+\input{tex/00_abstract}
 \end{abstract}
-
+%
 \setcounter{tocdepth}{1}
 \tableofcontents		% Inhaltsverzeichnis
 % \listoffigures
@@ -100,14 +106,16 @@ Roland Keller}
 
 \cleardoublepage		% Erzeugt neue Leerseite. Muss ggf. auskommentiert werden.
 \pagenumbering{arabic}		% Ab hier mit arabischen Zahlen numerieren
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Beginn der eigentlichen Arbeit%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
 \include{tex/01_docuBody}
+
+% 
+% 
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% % Beginn der eigentlichen Arbeit%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 
+% 
+% \include{tex/01_docuBody}
 
 
 
