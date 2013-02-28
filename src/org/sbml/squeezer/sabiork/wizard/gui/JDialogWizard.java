@@ -232,9 +232,9 @@ public class JDialogWizard extends JDialog implements ActionListener, WindowList
 		registerCards();
 
 		if (manual) {
-			currentCardID = CardID.SEARCH_A; // CardID.REACTIONS_M;
+			currentCardID = CardID.REACTIONS_M;
 		} else {
-			currentCardID = CardID.SEARCH_A; // CardID.REACTIONS_A;
+			currentCardID = CardID.REACTIONS_A;
 		}
 
 		pack();
@@ -370,10 +370,10 @@ public class JDialogWizard extends JDialog implements ActionListener, WindowList
 			buttonBack.setVisible(false);
 			buttonNextFinish.setText(WizardProperties
 					.getText("JDIALOG_WIZARD_TEXT_BUTTON_NEXT"));
-			buttonNextFinish.setEnabled(true);
+			buttonNextFinish.setEnabled(false);
 			break;
 		case NEXT_ENABLED:
-			buttonBack.setVisible(true);
+			//buttonBack.setVisible(true);
 			buttonNextFinish.setText(WizardProperties
 					.getText("JDIALOG_WIZARD_TEXT_BUTTON_NEXT"));
 			buttonNextFinish.setEnabled(true);
