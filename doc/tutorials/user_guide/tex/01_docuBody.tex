@@ -1,7 +1,85 @@
 % 01_Introduction
-\chapter{Introduction}
+\chapter{Overview}
 
-TODO: Write some text. Write some Introduction for your application.
+The program SBMLsqueezer is a versatile generator for complex kinetic equations
+of reactions and processes in biochemical networks \citep{Draeger2008,
+Draeger2010a, Draeger2011a}. The kinds of equations supported by the program are
+numerous, including traditional approaches such as the (Henry-) Michaelis-Menten
+equation \citep{Michaelis1913} for uni-uni enzyme reactions, or very recent
+approaches, e.g., the modular rate laws \citep{Liebermeister2010}. It provides
+equations for gene-regulatory processes, such as the Hill-Hintze equation
+\citep{Hinze2007}.
+\nocite{Savageau1969, Segel1993, Heinrich1996, Weaver1999, Bisswanger2000,
+Cornish-Bowden2004, Liebermeister2006, Toepfer2007, Vu2007, Radde2007a}
+
+The data format understood by SBMLsqueezer is the Systems Biology Markup
+Language (SBML) in all of its levels and versions \citep{Hucka2001, Hucka2003,
+M.Hucka03012003, Hucka2007, Hucka2008, Hucka2010a, Finney2003, Finney2006}.
+All generated equations are stored, depending on the version of SBML, in form of
+infix formula strings (SBML Level~1) or MathML \citep{Buswell1999} expressions
+(for all other SBML versions).
+
+Kinetic equations contain a set of parameters, whose units must be derived to
+ensure that the overal equation can be interpreted in extent per time units.
+Users of SBMLsqueezer don't have to care much about units because the program
+does this for you. The program also annotates all created equations and
+parameters with appropriate terms from the Systems Biology Ontology and also
+with MIRIAM-compliant controlled vocabulary terms (Minimal Information Required
+In the Annotation of Models), where appropriate \citep{Le2005, Novere2006b,
+Laible2007, Courtot2011}.
+
+The selection of the kinetic equations is done automatically by the program,
+where several settings allow users to influence the algorithm's choice.
+In many cases, SBMLsqueezer suggests multiple equations for the same process,
+from which the user can choose as desired. This behavior of the program is
+important to ensure that only appropriate equations can be selected at any time.
+
+In order to decide, which equations can be applied to a reaction of interest,
+SBMLsqueezer analyzes several properties, such as the number and type of
+reactants, products, and modifiers, if the reaction is reversible, etc.
+Here, reaction of interest means that the user can either select individual
+reactions from a larger model and equip these with kinetic equations, or rate
+equations can be created in one go for the entire model.
+Thereby, already existing equations can either be kept or overwritten, depending
+on your choice.
+You can influence and change all choices of the program, even in the one-go-mode.
+
+If you are connected to the internet, you can also use SBMLsqueezer to extract
+experimentally determined kinetic equations from the rate law database SABIO-RK
+\citep{Wittig2006, Rojas2007, Krebs2007, Wittig2012}.
+To this end, SBMLsqueezer provides several settings, such as the organism,
+temperature, or pH value under which the reaction's rate was determined. Again,
+you can extract equations from SABIO-RK for an entire network in one go, or
+individually select reactions of interest. 
+
+The program itself can be customized and used in several ways. It remembers your
+last opened files, the window's size, your rate law selection and so forth.
+You can run it as a stand-alone tool, or as a plug-in for the well-known program
+CellDesigner \citep{Funahashi2003, Funahashi2006, Funahashi2007a,
+Funahashi2008}.
+By default, the stand-alone version is based on the JSBML backend 
+\citep{Draeger2011b}, but you can also use libSBML \citep{Bornstein2008} as its
+SBML backend instead if its more elaborated offline model validation matters.
+If you neither like to download SBMLsqueezer, nor to install any software on
+your local computer, you can even use SBMLsqueezer as a Galaxy-based webservice,
+available at \url{http://webservices.cs.uni-tuebingen.de/}. 
+
+Finally, the command-line mode of SBMLsqueezer provides all capabilities of the
+program without any restriction.
+Furhtermore, the fully accessible application programming interface can be used
+to integrate SBMLsqueezer as an equation generating core into your end-user
+program.
+You can hence equip a large number of files with kinetic equations without the
+need to open each file in a graphical user interface. The usefulness of this
+approach has recently been demonstrated as part of the path2models project, in
+which more than 142,000 SBML models have been processed with SBMLsqueezer.
+
+For the documentation of your model, SBMLsqueezer includes the program
+\SBMLLaTeX, which generates a comprehensive report of your model, including a
+detailed description of all components and equations \citep{Draeger2009b,
+Draeger2010a}.
+These reports can be very handy to support scientific writing, because you can
+easily copy the formulas into your paper.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -25,6 +103,12 @@ page\footnote{\url{http://www.oracle.com/technetwork/java/javase/downloads/index
 With at least 1\,GB main memory, you should be able to perform most tasks
 without any problem. For large datasets, you should have at least 2\,GB of main
 memory. \newline An active internet connection is required for most operations.
+
+\subsection{Installation as a plug-in for CellDesigner}
+
+\subsection{Using the libSBML backend}
+
+\subsection{Integration into GARUDA}
 
 \section{Starting the application}
 \label{startingTheProgram}
@@ -61,6 +145,22 @@ strongly depends on the size of your input datasets.
 
 TODO: Write some text.
 
+\section{General program features}
+\subsection{Open a model}
+\subsection{Starting the Application}
+\subsection{Adjusting the Preferences}
+\subsection{View the Results}
+\subsection{Equation Generation One by One}
+
+
+\chapter{Example use cases}
+
+\section{\emph{De-novo} creation of kineitc equations}
+\subsection{For an entire network}
+\subsection{For selected reactions}
+\section{Extraction of rate laws from SABIO-RK}
+\subsection{For an entire network}
+\subsection{For selected reations}
 
 % 03_Troubleshooting
 \chapter{FAQ / Troubleshooting}
@@ -115,3 +215,76 @@ about the \texttt{AboutHandler} for more information. On a Mac, you can update
 your Java installation through the Software Update menu item in the main Apple
 menu.
 
+\chapter{License}
+
+SBMLsqueezer is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version~3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but \textbf{without any warranty}; without even the implied warranty of
+\textbf{merchantability} or \textbf{fitness for a particular purpose}. See the
+GNU General Public License for more details.
+
+Each distributed version of SBMLsqueezer should contain a copy of the 
+GNU General Public License. If not, please see
+\href{http://www.gnu.org/licenses/gpl-3.0-standalone.html}{\nolinkurl{http://www.gnu.org/licenses/}}.
+
+\chapter{Acknowledgments}
+
+This work has been funded by the Federal Ministry of Education and Research
+(BMBF, Germany) in the projects National Genome Research Network (NGFN-Plus,
+project number 01GS08134) and the Virtual Liver Network (project number 0315756).
+
+During the years, many people contributed to this project.
+We are grateful to each contribution, such as source code, advice, proof reading
+etc. Special thanks goes to Oliver Kohlbacher and Leif J. Pallesen.
+The following list gives tribute to all people who have been working on the
+implementation of this application.
+
+\section{Core developers}
+
+The following people implemented wide parts of SBMLsqueezer:
+\begin{itemize}
+\item Andreas Dr\"ager, 
+  University of Tuebingen, Germany
+  \href{mailto:andreas.draeger@uni-tuebingen.de}{andreas.draeger@uni-tuebingen.de}
+\item Alexander D\"orr, 
+  University of Tuebingen, Germany
+  \href{mailto:alexander.doerr@uni-tuebingen.de}{alexander.doerr@uni-tuebingen.de}
+\item Roland Keller,
+  University of Tuebingen, Germany
+  \href{mailto:roland.keller@uni-tuebingen.de}{roland.keller@uni-tuebingen.de}
+\end{itemize}
+
+\section{Contributors}
+
+We like to acknowledge the valuable contribution of
+\begin{itemize}
+\item Johannes Eichner,
+  University of Tuebingen, Germany
+  \href{mailto:johannes.eichner@uni-tuebingen.de}{johannes.eichner@uni-tuebingen.de}
+\item Andreas Zell, 
+  University of Tuebingen, Germany
+  \href{mailto:andreas.zell@uni-tuebingen.de}{andreas.zell@uni-tuebingen.de}
+\end{itemize}
+
+\section{Alumni}
+
+We are greateful to our former colleagues and students
+Meike Aichele,
+Hannes Borch,
+Nadine Hassis,
+Marcel Kronfeld,
+Sarah Rachel M\"uller vom Hagen,
+Sebastian Nagel,
+Alexander Peltzer,
+Julianus Pfeuffer,
+Matthias Rall,
+Sandra Saliger,
+Simon Sch\"afer,
+Adrian Schr\"oder,
+Jochen Supper,
+Dieudonn\'e M. Wouamba,
+Michael J. Ziller
