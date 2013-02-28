@@ -96,12 +96,20 @@ public class CardSearchA extends Card implements ActionListener,
 	private TableModelSearchAResults tableResultsModel;
 	private TableModelSearchTerms tableSearchTermsModel;
 
+	/**
+	 * 
+	 * @param dialog
+	 * @param model
+	 */
 	public CardSearchA(JDialogWizard dialog, WizardModel model) {
 		super(dialog, model);
 		model.addPropertyChangeListener(this);
 		initialize();
 	}
 
+	/**
+	 * Initializes the card.
+	 */
 	private void initialize() {
 		comboBoxConstraintsModel = new ComboBoxModelConstraints();
 		comboBoxConstraints = new JComboBox(comboBoxConstraintsModel);
@@ -190,6 +198,10 @@ public class CardSearchA extends Card implements ActionListener,
 	
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.squeezer.sabiork.wizard.gui.Card#performBeforeShowing()
+	 */
 	public void performBeforeShowing() {
 		dialog.setButtonState(ButtonState.NEXT_DISABLED);
 		comboBoxConstraints.setSelectedItem(SABIORK.QueryField.PATHWAY);
@@ -198,10 +210,18 @@ public class CardSearchA extends Card implements ActionListener,
 		startSearch();
 	};
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.squeezer.sabiork.wizard.gui.Card#getPreviousCardID()
+	 */
 	public CardID getPreviousCardID() {
 		return CardID.REACTIONS_A;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.squeezer.sabiork.wizard.gui.Card#getNextCardID()
+	 */
 	public CardID getNextCardID() {
 		return CardID.SUMMARY_A;
 	}
@@ -276,6 +296,10 @@ public class CardSearchA extends Card implements ActionListener,
 		search.start();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+	 */
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource().equals(buttonAdd)) {
 			if (!comboBoxSearchField.getText().trim().isEmpty()) {
@@ -292,6 +316,10 @@ public class CardSearchA extends Card implements ActionListener,
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see java.beans.PropertyChangeListener#propertyChange(java.beans.PropertyChangeEvent)
+	 */
 	public void propertyChange(PropertyChangeEvent e) {
 		if (e.getSource().equals(search)
 				&& e.getPropertyName().equals("progress")) {
@@ -310,6 +338,10 @@ public class CardSearchA extends Card implements ActionListener,
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see javax.swing.event.TableModelListener#tableChanged(javax.swing.event.TableModelEvent)
+	 */
 	public void tableChanged(TableModelEvent e) {
 		if (e.getSource().equals(tableSearchTermsModel)) {
 			if (e.getType() == TableModelEvent.UPDATE) {
@@ -443,8 +475,9 @@ public class CardSearchA extends Card implements ActionListener,
 			return null;
 		}
 
-		/**
-		 * Displays the results.
+		/*
+		 * (non-Javadoc)
+		 * @see javax.swing.SwingWorker#process(java.util.List)
 		 */
 		protected void process(List<SearchAResult> chunks) {
 			progressBar.setIndeterminate(false);
@@ -456,6 +489,10 @@ public class CardSearchA extends Card implements ActionListener,
 			}
 		}
 
+		/*
+		 * (non-Javadoc)
+		 * @see javax.swing.SwingWorker#done()
+		 */
 		protected void done() {
 			try {
 				progressBar.setIndeterminate(false);

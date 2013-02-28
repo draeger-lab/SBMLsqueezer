@@ -77,17 +77,15 @@ public abstract class Card extends JPanel {
 	public abstract CardID getNextCardID();
 
 	/**
-	 * 
+	 * Actions to take place after the back button has been selected in the actual {@link Card}.
 	 */
 	public void performAfterPressingBack() {
 	}
 
 	/**
-	 * 
+	 * Actions to take place after the cancel button has been selected in the actual {@link Card}.
 	 */
 	public void performAfterCancel() {
-		// TODO Auto-generated method stub
-		
 	}
 
 }

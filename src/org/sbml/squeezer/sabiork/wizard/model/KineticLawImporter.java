@@ -73,6 +73,11 @@ public class KineticLawImporter {
 	private HashMap<CallableSBase, CallableSBase> matches;
 	private StringBuilder report;
 	
+	/**
+	 * 
+	 * @param kineticLaw
+	 * @param reaction
+	 */
 	public KineticLawImporter(KineticLaw kineticLaw, Reaction reaction) {
 		this.kineticLaw = kineticLaw;
 		this.reaction = reaction;
@@ -94,6 +99,9 @@ public class KineticLawImporter {
 		initialize();
 	}
 	
+	/**
+	 * 
+	 */
 	private void initialize() {
 		addReferencedComponents();
 		addReferenceableComponents();
@@ -624,62 +632,122 @@ public class KineticLawImporter {
 		return newID;
 	}
 	
+	/**
+	 * 
+	 * @return
+	 */
 	public KineticLaw getKineticLaw() {
 		return kineticLaw;
 	}
 	
+	/**
+	 * 
+	 * @return
+	 */
 	public Reaction getReaction() {
 		return reaction;
 	}
 	
+	/**
+	 * 
+	 * @return
+	 */
 	public HashSet<Compartment> getReferencedCompartments() {
 		return referencedCompartments;
 	}
 	
+	/**
+	 * 
+	 * @return
+	 */
 	public HashSet<FunctionDefinition> getReferencedFunctionDefinitions() {
 		return referencedFunctionDefinitions;
 	}
 	
+	/**
+	 * 
+	 * @return
+	 */
 	public HashSet<LocalParameter> getReferencedLocalParameters() {
 		return referencedLocalParameters;
 	}
 	
+	/**
+	 * 
+	 * @return
+	 */
 	public HashSet<Parameter> getReferencedParameters() {
 		return referencedParameters;
 	}
 	
+	/**
+	 * 
+	 * @return
+	 */
 	public HashSet<Reaction> getReferencedReactions() {
 		return referencedReactions;
 	}
 	
+	/**
+	 * 
+	 * @return
+	 */
 	public HashSet<Species> getReferencedSpecies() {
 		return referencedSpecies;
 	}
 	
+	/**
+	 * 
+	 * @return
+	 */
 	public HashSet<SpeciesReference> getReferencedSpeciesReferences() {
 		return referencedSpeciesReferences;
 	}
 	
+	/**
+	 * 
+	 * @return
+	 */
 	public HashSet<UnitDefinition> getReferencedUnitDefinitions() {
 		return referencedUnitDefinitions;
 	}
 	
+	/**
+	 * 
+	 * @return
+	 */
 	public HashSet<Compartment> getReferenceableCompartments() {
 		return referenceableCompartments;
 	}
 	
+	/**
+	 * 
+	 * @return
+	 */
 	public HashSet<Reaction> getReferenceableReactions() {
 		return referenceableReactions;
 	}
 	
+	/**
+	 * 
+	 * @return
+	 */
 	public HashSet<Species> getReferenceableSpecies() {
 		return referenceableSpecies;
 	}
 	
+	/**
+	 * 
+	 * @return
+	 */
 	public HashSet<SpeciesReference> getReferenceableSpeciesReferences() {
 		return referenceableSpeciesReferences;
 	}
 	
+	/**
+	 * 
+	 * @return
+	 */
 	public String getReport() {
 		return report.toString();
 	}

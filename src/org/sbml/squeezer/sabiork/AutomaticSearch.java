@@ -56,6 +56,7 @@ import org.sbml.squeezer.sabiork.wizard.model.KineticLawImporter;
 import de.zbit.io.filefilter.SBFileFilter;
 
 /**
+ * In this class the searching of kinetic equations in SABIO-RK for several models is implemented.
  * @author Matthias Rall
  * @author Roland Keller
  * @version $Rev$
@@ -70,7 +71,7 @@ public class AutomaticSearch {
 	/**
 	 * 
 	 * @param reaction
-	 * @return
+	 * @return keggReactionID the KEGG id of the given reaction
 	 */
 	private static String getKeggReactionID(Reaction reaction) {
 		String keggReactionID = "";
@@ -107,7 +108,7 @@ public class AutomaticSearch {
 	}
 	
 	/**
-	 * 
+	 * Automatic search for kinetic equations in SABIO-RK for several models in the rootFolder.
 	 * @param rootFolder
 	 * @param taxonomyFile
 	 * @param outputResultFile

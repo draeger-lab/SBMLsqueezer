@@ -48,6 +48,9 @@ public class TableModelSearchMResults extends AbstractTableModel {
 	private String[] columnNames;
 	private List<KineticLaw> kineticLaws;
 
+	/**
+	 * 
+	 */
 	public TableModelSearchMResults() {
 		this.columnNames = new String[] {
 				WizardProperties
@@ -63,18 +66,34 @@ public class TableModelSearchMResults extends AbstractTableModel {
 		this.kineticLaws = new ArrayList<KineticLaw>();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see javax.swing.table.TableModel#getColumnCount()
+	 */
 	public int getColumnCount() {
 		return columnNames.length;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see javax.swing.table.AbstractTableModel#getColumnName(int)
+	 */
 	public String getColumnName(int column) {
 		return columnNames[column];
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see javax.swing.table.TableModel#getRowCount()
+	 */
 	public int getRowCount() {
 		return kineticLaws.size();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see javax.swing.table.TableModel#getValueAt(int, int)
+	 */
 	public Object getValueAt(int rowIndex, int columnIndex) {
 		KineticLaw kineticLaw = (KineticLaw) kineticLaws.get(rowIndex);
 		switch (columnIndex) {
@@ -105,6 +124,10 @@ public class TableModelSearchMResults extends AbstractTableModel {
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see javax.swing.table.AbstractTableModel#getColumnClass(int)
+	 */
 	public Class<?> getColumnClass(int columnIndex) {
 		switch (columnIndex) {
 		case 0:
@@ -122,19 +145,35 @@ public class TableModelSearchMResults extends AbstractTableModel {
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see javax.swing.table.AbstractTableModel#isCellEditable(int, int)
+	 */
 	public boolean isCellEditable(int rowIndex, int columnIndex) {
 		return false;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public List<KineticLaw> getKineticLaws() {
 		return kineticLaws;
 	}
 
+	/**
+	 * 
+	 * @param kineticLaws
+	 */
 	public void setKineticLaws(List<KineticLaw> kineticLaws) {
 		this.kineticLaws = kineticLaws;
 		fireTableDataChanged();
 	}
 
+	/**
+	 * 
+	 * @param kineticLaw
+	 */
 	public void add(KineticLaw kineticLaw) {
 		if (!this.kineticLaws.contains(kineticLaw)) {
 			this.kineticLaws.add(kineticLaw);
@@ -142,6 +181,9 @@ public class TableModelSearchMResults extends AbstractTableModel {
 		}
 	}
 
+	/**
+	 * 
+	 */
 	public void clear() {
 		kineticLaws.clear();
 		fireTableDataChanged();

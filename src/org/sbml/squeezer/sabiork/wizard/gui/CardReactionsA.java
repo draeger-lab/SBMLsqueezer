@@ -33,6 +33,7 @@ import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.JComboBox;
+import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
@@ -65,7 +66,8 @@ public class CardReactionsA extends Card implements ListSelectionListener,
 	private JScrollPane tableReactionsScrollPane;
 	private JTable tableReactions;
 	private TableModelReactions tableReactionsModel;
-
+	private JLabel labelReactions;
+	
 	/**
 	 * 
 	 * @param dialog
@@ -87,6 +89,8 @@ public class CardReactionsA extends Card implements ListSelectionListener,
 				.getRenderer());
 		comboBoxReactionFilters.addActionListener(this);
 
+		labelReactions = new JLabel("Number of selected reactions: " );
+		
 		tableReactionsModel = new TableModelReactions();
 		tableReactions = new JTable(tableReactionsModel);
 		tableReactions.setRowSelectionAllowed(true);
@@ -106,6 +110,7 @@ public class CardReactionsA extends Card implements ListSelectionListener,
 				"Select the reactions you want to add kinetic equations to"));
 		add(comboBoxReactionFilters, BorderLayout.NORTH);
 		add(tableReactionsScrollPane, BorderLayout.CENTER);
+		add(labelReactions, BorderLayout.SOUTH);
 	}
 
 	/* (non-Javadoc)
@@ -118,6 +123,7 @@ public class CardReactionsA extends Card implements ListSelectionListener,
 			getFilteredReactions(comboBoxReactionFiltersModel.getSelectedReactionFilter()));
 		tableReactions.getSelectionModel().setSelectionInterval(0, tableReactionsModel.getReactions().size() - 1);
 		setSelectedReactions();
+		labelReactions.setText("Number of selected reactions: " + model.getSelectedReactions().size());
 	}
 
 	/* (non-Javadoc)
@@ -186,6 +192,7 @@ public class CardReactionsA extends Card implements ListSelectionListener,
 		if (e.getSource().equals(tableReactions.getSelectionModel())) {
 			if (!e.getValueIsAdjusting()) {
 				setSelectedReactions();
+				labelReactions.setText("Number of selected reactions: " + model.getSelectedReactions().size());
 			}
 		}
 	}
@@ -200,6 +207,7 @@ public class CardReactionsA extends Card implements ListSelectionListener,
 							.getSelectedReactionFilter()));
 			tableReactions.getSelectionModel().setSelectionInterval(0, tableReactionsModel.getReactions().size() - 1);
 			setSelectedReactions();
+			labelReactions.setText("Number of selected reactions: " + model.getSelectedReactions().size());
 		}
 	}
 
@@ -211,7 +219,9 @@ public class CardReactionsA extends Card implements ListSelectionListener,
 				&& e.getPropertyName().equals("selectedReactions")) {
 			if (model.hasSelectedReactions()) {
 				dialog.setButtonState(ButtonState.NEXT_ENABLED);
+				labelReactions.setText("Number of selected reactions: " + model.getSelectedReactions().size());
 			} else {
+				labelReactions.setText("Number of selected reactions: " + model.getSelectedReactions().size());
 				dialog.setButtonState(ButtonState.START);
 			}
 		}

@@ -59,6 +59,12 @@ public class JDialogCalendar extends JDialog implements ActionListener {
 	private JPanel panelNavigation;
 	private String[] dayNames;
 
+	/**
+	 * 
+	 * @param owner
+	 * @param modalityType
+	 * @param selectedDate
+	 */
 	public JDialogCalendar(Window owner, ModalityType modalityType,
 			Date selectedDate) {
 		super(owner, modalityType);
@@ -66,6 +72,9 @@ public class JDialogCalendar extends JDialog implements ActionListener {
 		initialize();
 	}
 
+	/**
+	 * 
+	 */
 	private void initialize() {
 		dateChanged = false;
 
@@ -135,17 +144,27 @@ public class JDialogCalendar extends JDialog implements ActionListener {
 			labelsDay[i].setOpaque(true);
 			labelsDay[i].addMouseListener(new MouseAdapter() {
 
+				/*
+				 * (non-Javadoc)
+				 * 
+				 * @see
+				 * java.awt.event.MouseAdapter#mouseClicked(java.awt.event.MouseEvent)
+				 */
 				public void mouseClicked(MouseEvent e) {
 					JLabel labelDay = (JLabel) e.getSource();
 					String labelDayText = labelDay.getText();
 					if (!labelDayText.isEmpty()) {
 						newCalendar.set(Calendar.DAY_OF_MONTH,
-								Integer.valueOf(labelDayText));
+							Integer.valueOf(labelDayText));
 						dateChanged = true;
 						dispose();
 					}
 				}
 
+				/*
+				 * (non-Javadoc)
+				 * @see java.awt.event.MouseAdapter#mouseEntered(java.awt.event.MouseEvent)
+				 */
 				public void mouseEntered(MouseEvent e) {
 					JLabel labelDay = (JLabel) e.getSource();
 					String labelDayText = labelDay.getText();
@@ -157,6 +176,10 @@ public class JDialogCalendar extends JDialog implements ActionListener {
 					}
 				}
 
+				/*
+				 * (non-Javadoc)
+				 * @see java.awt.event.MouseAdapter#mouseExited(java.awt.event.MouseEvent)
+				 */
 				public void mouseExited(MouseEvent e) {
 					JLabel labelDay = (JLabel) e.getSource();
 					String labelDayText = labelDay.getText();
@@ -259,6 +282,10 @@ public class JDialogCalendar extends JDialog implements ActionListener {
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+	 */
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource().equals(buttonPrevious)) {
 			newCalendar

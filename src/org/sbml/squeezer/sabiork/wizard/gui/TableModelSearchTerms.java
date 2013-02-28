@@ -46,6 +46,9 @@ public class TableModelSearchTerms extends AbstractTableModel {
 	private String[] columnNames;
 	private List<ValuePair<SABIORK.QueryField, String>> searchTerms;
 
+	/**
+	 * 
+	 */
 	public TableModelSearchTerms() {
 		this.columnNames = new String[] {
 				WizardProperties
@@ -56,18 +59,34 @@ public class TableModelSearchTerms extends AbstractTableModel {
 		this.searchTerms = new ArrayList<ValuePair<SABIORK.QueryField, String>>();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see javax.swing.table.TableModel#getColumnCount()
+	 */
 	public int getColumnCount() {
 		return columnNames.length;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see javax.swing.table.AbstractTableModel#getColumnName(int)
+	 */
 	public String getColumnName(int column) {
 		return columnNames[column];
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see javax.swing.table.TableModel#getRowCount()
+	 */
 	public int getRowCount() {
 		return searchTerms.size();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see javax.swing.table.TableModel#getValueAt(int, int)
+	 */
 	public Object getValueAt(int rowIndex, int columnIndex) {
 		ValuePair<SABIORK.QueryField, String> searchTerm = (ValuePair<SABIORK.QueryField, String>) searchTerms
 				.get(rowIndex);
@@ -83,12 +102,20 @@ public class TableModelSearchTerms extends AbstractTableModel {
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see javax.swing.table.AbstractTableModel#setValueAt(java.lang.Object, int, int)
+	 */
 	public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
 		if (columnIndex == 2) {
 			fireTableCellUpdated(rowIndex, columnIndex);
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see javax.swing.table.AbstractTableModel#getColumnClass(int)
+	 */
 	public Class<?> getColumnClass(int columnIndex) {
 		switch (columnIndex) {
 		case 0:
@@ -102,20 +129,36 @@ public class TableModelSearchTerms extends AbstractTableModel {
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see javax.swing.table.AbstractTableModel#isCellEditable(int, int)
+	 */
 	public boolean isCellEditable(int rowIndex, int columnIndex) {
 		return (columnIndex == 2);
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public List<ValuePair<SABIORK.QueryField, String>> getSearchTerms() {
 		return searchTerms;
 	}
 
+	/**
+	 * 
+	 * @param searchTerms
+	 */
 	public void setSearchTerms(
 			List<ValuePair<SABIORK.QueryField, String>> searchTerms) {
 		this.searchTerms = searchTerms;
 		fireTableDataChanged();
 	}
 
+	/**
+	 * 
+	 * @param searchTerm
+	 */
 	public void add(ValuePair<SABIORK.QueryField, String> searchTerm) {
 		if (!this.searchTerms.contains(searchTerm)) {
 			this.searchTerms.add(searchTerm);
@@ -123,16 +166,27 @@ public class TableModelSearchTerms extends AbstractTableModel {
 		}
 	}
 
+	/**
+	 * Clears the search terms.
+	 */
 	public void clear() {
 		searchTerms.clear();
 		fireTableDataChanged();
 	}
 
+	/**
+	 * 
+	 * @param index
+	 */
 	public void remove(int index) {
 		searchTerms.remove(index);
 		fireTableDataChanged();
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public String getSearchTermsQuery() {
 		return SABIORK.getSearchTermsQuery(searchTerms);
 	}

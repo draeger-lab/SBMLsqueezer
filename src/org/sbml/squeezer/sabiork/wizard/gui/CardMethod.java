@@ -68,11 +68,19 @@ public class CardMethod extends Card {
 	private JRadioButton radioButtonAutomatic;
 	private JRadioButton radioButtonManual;
 
+	/**
+	 * 
+	 * @param dialog
+	 * @param model
+	 */
 	public CardMethod(JDialogWizard dialog, WizardModel model) {
 		super(dialog, model);
 		initialize();
 	}
 
+	/**
+	 * 
+	 */
 	private void initialize() {
 		labelWelcome = new JLabel(
 				WizardProperties.getText("CARD_METHOD_TEXT_WELCOME"));
