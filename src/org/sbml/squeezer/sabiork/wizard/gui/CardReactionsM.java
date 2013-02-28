@@ -56,7 +56,7 @@ public class CardReactionsM extends Card implements ListSelectionListener,
 	 * Generated serial version identifier.
 	 */
 	private static final long serialVersionUID = -2273479139811227167L;
-	private ComboBoxModelReactionFilters comboBoxReactionFiltersModel;
+//	private ComboBoxModelReactionFilters comboBoxReactionFiltersModel;
 	private JComboBox comboBoxReactionFilters;
 	private JScrollPane tableReactionsScrollPane;
 	private JTable tableReactions;
@@ -69,10 +69,10 @@ public class CardReactionsM extends Card implements ListSelectionListener,
 	}
 
 	private void initialize() {
-		comboBoxReactionFiltersModel = new ComboBoxModelReactionFilters();
-		comboBoxReactionFilters = new JComboBox(comboBoxReactionFiltersModel);
-		comboBoxReactionFilters.setRenderer(comboBoxReactionFiltersModel.getRenderer());
-		comboBoxReactionFilters.addActionListener(this);
+//		comboBoxReactionFiltersModel = new ComboBoxModelReactionFilters();
+//		comboBoxReactionFilters = new JComboBox(comboBoxReactionFiltersModel);
+//		comboBoxReactionFilters.setRenderer(comboBoxReactionFiltersModel.getRenderer());
+//		comboBoxReactionFilters.addActionListener(this);
 
 		tableReactionsModel = new TableModelReactions();
 		tableReactions = new JTable(tableReactionsModel);
@@ -90,16 +90,19 @@ public class CardReactionsM extends Card implements ListSelectionListener,
 		setLayout(new BorderLayout());
 		setBorder(BorderFactory.createTitledBorder(
 				BorderFactory.createEtchedBorder(),
-				WizardProperties.getText("CARD_REACTIONS_M_TEXT_REACTIONS")));
-		add(comboBoxReactionFilters, BorderLayout.NORTH);
+				"Selected reaction"));
+		//add(comboBoxReactionFilters, BorderLayout.NORTH);
 		add(tableReactionsScrollPane, BorderLayout.CENTER);
 	}
 
 	public void performBeforeShowing() {
-		dialog.setButtonState(ButtonState.NEXT_DISABLED);
+		dialog.setButtonState(ButtonState.START);
 		tableReactionsModel
-				.setReactions(getFilteredReactions(comboBoxReactionFiltersModel
-						.getSelectedReactionFilter()));
+				.setReactions(model.getReactions());
+		if(tableReactionsModel.getReactions().size() > 0) {
+			tableReactions.getSelectionModel().setSelectionInterval(0, 0);
+		}
+		setSelectedReaction();
 	}
 
 	public CardID getPreviousCardID() {
@@ -168,8 +171,11 @@ public class CardReactionsM extends Card implements ListSelectionListener,
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource().equals(comboBoxReactionFilters)) {
 			tableReactionsModel
-					.setReactions(getFilteredReactions(comboBoxReactionFiltersModel
-							.getSelectedReactionFilter()));
+					.setReactions(model.getReactions());
+			if(tableReactionsModel.getReactions().size() > 0) {
+				tableReactions.getSelectionModel().setSelectionInterval(0, 0);
+			}
+			setSelectedReaction();
 		}
 	}
 
@@ -179,7 +185,7 @@ public class CardReactionsM extends Card implements ListSelectionListener,
 			if (model.hasSelectedReaction()) {
 				dialog.setButtonState(ButtonState.NEXT_ENABLED);
 			} else {
-				dialog.setButtonState(ButtonState.NEXT_DISABLED);
+				dialog.setButtonState(ButtonState.START);
 			}
 		}
 	}

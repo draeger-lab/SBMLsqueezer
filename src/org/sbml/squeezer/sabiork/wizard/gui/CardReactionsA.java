@@ -103,7 +103,7 @@ public class CardReactionsA extends Card implements ListSelectionListener,
 		setLayout(new BorderLayout());
 		setBorder(BorderFactory.createTitledBorder(
 				BorderFactory.createEtchedBorder(),
-				WizardProperties.getText("CARD_REACTIONS_A_TEXT_REACTIONS")));
+				"Select the reactions you want to add kinetic equations to"));
 		add(comboBoxReactionFilters, BorderLayout.NORTH);
 		add(tableReactionsScrollPane, BorderLayout.CENTER);
 	}
@@ -113,9 +113,11 @@ public class CardReactionsA extends Card implements ListSelectionListener,
 	 */
 	@Override
 	public void performBeforeShowing() {
-		dialog.setButtonState(ButtonState.NEXT_DISABLED);
+		dialog.setButtonState(ButtonState.START);
 		tableReactionsModel.setReactions(
 			getFilteredReactions(comboBoxReactionFiltersModel.getSelectedReactionFilter()));
+		tableReactions.getSelectionModel().setSelectionInterval(0, tableReactionsModel.getReactions().size() - 1);
+		setSelectedReactions();
 	}
 
 	/* (non-Javadoc)
@@ -196,6 +198,8 @@ public class CardReactionsA extends Card implements ListSelectionListener,
 			tableReactionsModel
 					.setReactions(getFilteredReactions(comboBoxReactionFiltersModel
 							.getSelectedReactionFilter()));
+			tableReactions.getSelectionModel().setSelectionInterval(0, tableReactionsModel.getReactions().size() - 1);
+			setSelectedReactions();
 		}
 	}
 
@@ -208,7 +212,7 @@ public class CardReactionsA extends Card implements ListSelectionListener,
 			if (model.hasSelectedReactions()) {
 				dialog.setButtonState(ButtonState.NEXT_ENABLED);
 			} else {
-				dialog.setButtonState(ButtonState.NEXT_DISABLED);
+				dialog.setButtonState(ButtonState.START);
 			}
 		}
 	}
