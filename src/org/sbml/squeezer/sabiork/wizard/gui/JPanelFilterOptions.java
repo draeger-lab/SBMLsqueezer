@@ -34,6 +34,9 @@ import java.beans.PropertyChangeSupport;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.MissingResourceException;
+import java.util.prefs.BackingStoreException;
+
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
@@ -43,8 +46,12 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
+
 import org.sbml.squeezer.sabiork.SABIORK;
+import org.sbml.squeezer.sabiork.SABIORKOptions;
 import org.sbml.squeezer.sabiork.wizard.model.WizardProperties;
+
+import de.zbit.util.prefs.SBPreferences;
 
 /**
  * A class that provides the possibility to set the different filter options.
@@ -101,23 +108,8 @@ public class JPanelFilterOptions extends JPanel implements ActionListener {
 	 */
 	public JPanelFilterOptions() {
 		this.propertyChangeSupport = new PropertyChangeSupport(this);
-		this.isWildtype = true;
-		this.isMutant = true;
-		this.isRecombinant = false;
-		this.hasKineticData = true;
-		this.isDirectSubmission = true;
-		this.isJournal = true;
-		this.isEntriesInsertedSince = false;
-		this.lowerpHValue = 0.0;
-		this.upperpHValue = 14.0;
-		this.lowerTemperature = -10.0;
-		this.upperTemperature = 115.0;
 		this.dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-		try {
-			this.dateSubmitted = dateFormat.parse("15/10/2008");
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
+		loadSettings();
 		initialize();
 	}
 
@@ -629,6 +621,135 @@ public class JPanelFilterOptions extends JPanel implements ActionListener {
 			textFieldCalendar.setText(dateFormat.format(dialogCalendar
 					.getSelectedDate()));
 			setDateSubmitted(dialogCalendar.getSelectedDate());
+		}
+	}
+	
+	/**
+	 * Saves the settings of the filtering
+	 */
+	public void saveSettings() {
+		SBPreferences prefs = SBPreferences
+				.getPreferencesFor(SABIORKOptions.class);
+		
+		prefs.put(SABIORKOptions.IS_WILDTYPE, this.isWildtype);
+		
+		prefs.put(SABIORKOptions.IS_MUTANT, this.isMutant);
+		
+		prefs.put(SABIORKOptions.IS_RECOMBINANT, this.isRecombinant);
+		
+		prefs.put(SABIORKOptions.HAS_KINETIC_DATA, this.hasKineticData);
+		
+		prefs.put(SABIORKOptions.IS_DIRECT_SUBMISSION, this.isDirectSubmission);
+		
+		prefs.put(SABIORKOptions.IS_JOURNAL, this.isJournal);
+
+		prefs.put(SABIORKOptions.IS_ENTRIES_INSERTED_SINCE, this.isEntriesInsertedSince);
+	
+		prefs.put(SABIORKOptions.LOWEST_PH_VALUE, this.lowerpHValue);
+		
+		prefs.put(SABIORKOptions.HIGHEST_PH_VALUE, this.upperpHValue);
+		
+		prefs.put(SABIORKOptions.LOWEST_TEMPERATURE_VALUE, this.lowerTemperature);
+		
+		prefs.put(SABIORKOptions.HIGHEST_TEMPERATURE_VALUE, this.upperTemperature);
+		
+		prefs.put(SABIORKOptions.LOWEST_DATE, dateFormat.format(dateSubmitted));
+		
+	
+		try {
+			prefs.flush();
+		} catch (BackingStoreException e) {
+			e.printStackTrace();
+		}
+		
+	}
+	
+	
+	/**
+	 * Loads the last settings of the filtering
+	 */
+	private void loadSettings() {
+		SBPreferences prefs = SBPreferences
+				.getPreferencesFor(SABIORKOptions.class);
+		
+		
+		this.isWildtype = true;
+		this.isMutant = true;
+		this.isRecombinant = false;
+		this.hasKineticData = true;
+		this.isDirectSubmission = true;
+		this.isJournal = true;
+		this.isEntriesInsertedSince = false;
+		this.lowerpHValue = 0.0;
+		this.upperpHValue = 14.0;
+		this.lowerTemperature = -10.0;
+		this.upperTemperature = 115.0;
+		try {
+			this.dateSubmitted = dateFormat.parse("15/10/2008");
+		}
+		catch(ParseException e) {
+			
+		}
+		
+		if (prefs != null) {
+			
+			if (prefs.containsKey(SABIORKOptions.IS_WILDTYPE)) {
+				this.isWildtype = prefs.getBoolean(SABIORKOptions.IS_WILDTYPE);
+			}
+			
+			if (prefs.containsKey(SABIORKOptions.IS_MUTANT)) {
+				this.isMutant = prefs.getBoolean(SABIORKOptions.IS_MUTANT);
+			}
+			
+			if (prefs.containsKey(SABIORKOptions.IS_RECOMBINANT)) {
+				this.isRecombinant = prefs.getBoolean(SABIORKOptions.IS_RECOMBINANT);
+			}
+			
+			if (prefs.containsKey(SABIORKOptions.HAS_KINETIC_DATA)) {
+				this.hasKineticData = prefs.getBoolean(SABIORKOptions.HAS_KINETIC_DATA);
+			}
+			
+			if (prefs.containsKey(SABIORKOptions.IS_DIRECT_SUBMISSION)) {
+				this.isDirectSubmission = prefs
+						.getBoolean(SABIORKOptions.IS_DIRECT_SUBMISSION);
+			}
+			
+			if (prefs.containsKey(SABIORKOptions.IS_JOURNAL)) {
+				this.isJournal = prefs.getBoolean(SABIORKOptions.IS_JOURNAL);
+			}
+			
+			if (prefs.containsKey(SABIORKOptions.IS_ENTRIES_INSERTED_SINCE)) {
+				this.isEntriesInsertedSince = prefs
+						.getBoolean(SABIORKOptions.IS_ENTRIES_INSERTED_SINCE);
+			}
+			
+			if (prefs.containsKey(SABIORKOptions.LOWEST_PH_VALUE)) {
+				this.lowerpHValue = prefs.getDouble(SABIORKOptions.LOWEST_PH_VALUE);
+			}
+			
+			if (prefs.containsKey(SABIORKOptions.HIGHEST_PH_VALUE)) {
+				this.upperpHValue = prefs.getDouble(SABIORKOptions.HIGHEST_PH_VALUE);
+			}
+			
+			if (prefs.containsKey(SABIORKOptions.LOWEST_TEMPERATURE_VALUE)) {
+				this.lowerTemperature = prefs
+						.getDouble(SABIORKOptions.LOWEST_TEMPERATURE_VALUE);
+			}
+			
+			if (prefs.containsKey(SABIORKOptions.HIGHEST_TEMPERATURE_VALUE)) {
+				this.upperTemperature = prefs
+						.getDouble(SABIORKOptions.HIGHEST_TEMPERATURE_VALUE);
+			}
+			
+			try {
+				if (prefs.containsKey(SABIORKOptions.LOWEST_DATE)) {
+					this.dateSubmitted = dateFormat.parse(prefs
+							.getString(SABIORKOptions.LOWEST_DATE));
+				}
+				
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 

@@ -88,4 +88,10 @@ public abstract class Card extends JPanel {
 	public void performAfterCancel() {
 	}
 
+	/**
+	 * Actions to take place after the next button has been selected in the actual {@link Card}.
+	 */
+	public void performAfterNext() {
+	}
+
 }
