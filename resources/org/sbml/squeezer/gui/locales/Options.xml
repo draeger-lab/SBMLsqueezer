@@ -139,7 +139,31 @@
   <entry key="GROUP_REVERSIBILITY_TOOLTIP">In some studies it has been found that treating all reactions as reversible processes comes closer to reality. Here you can select if you like to keep the given information about the reversibility of the reactions in the model as given, or if you prefer to set all reactions to reversible and create kinetic equations accordingly.</entry>
   
   <!-- SABIORKOptions -->
+  <entry key="SABIO_RK">Options for SABIO-RK search</entry>
+  <entry key="IS_WILDTYPE_TOOLTIP">Search for wildtype kinetics</entry>
+  <entry key="IS_MUTANT_TOOLTIP">Search for kinetics of mutants</entry>
+  <entry key="IS_RECOMBINANT_TOOLTIP">Search for kinetics of recombinant organisms</entry>
+  <entry key="HAS_KINETIC_DATA_TOOLTIP">Search for entries containing kinetic data</entry>
+  <entry key="IS_DIRECT_SUBMISSION_TOOLTIP">Search for entries directly submitted</entry>
+  <entry key="IS_JOURNAL_TOOLTIP">Search for entries referring to journal publications</entry>
+  <entry key="LOWEST_PH_VALUE_TOOLTIP">The lowest possible pH value for entries </entry>
+  <entry key="HIGHEST_PH_VALUE_TOOLTIP">The highest possible pH value for entries</entry>
+  <entry key="LOWEST_TEMPERATURE_VALUE_TOOLTIP">The lowest possible temperature for entries</entry>
+  <entry key="HIGHEST_TEMPERATURE_VALUE_TOOLTIP">The highest possible temperature for entries</entry>
+  <entry key="IS_ENTRIES_INSERTED_SINCE_TOOLTIP">Consider only entries inserted after the specified date</entry>
+  <entry key="LOWEST_DATE_TOOLTIP">The earliest date the entries have been inserted into SABIO-RK</entry>
   
-  <entry key="IS_WILDTYPE"></entry>
+  <entry key="IS_WILDTYPE">Wildtype kinetics</entry>
+  <entry key="IS_MUTANT">Mutant kinetics</entry>
+  <entry key="IS_RECOMBINANT">Recombinant kinetics</entry>
+  <entry key="HAS_KINETIC_DATA">Entries with kinetic data</entry>
+  <entry key="IS_DIRECT_SUBMISSION">Direct submission</entry>
+  <entry key="IS_JOURNAL">Journal entries</entry>
+  <entry key="LOWEST_PH_VALUE">Lower pH value</entry>
+  <entry key="HIGHEST_PH_VALUE">Upper ph value</entry>
+  <entry key="LOWEST_TEMPERATURE_VALUE">Lower temperature</entry>
+  <entry key="HIGHEST_TEMPERATURE_VALUE">Upper temperature</entry>
+  <entry key="IS_ENTRIES_INSERTED_SINCE">Consider earliest date </entry>
+  <entry key="LOWEST_DATE">Earliest date</entry>
   
 </properties>
