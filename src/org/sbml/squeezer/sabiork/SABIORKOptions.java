@@ -48,14 +48,15 @@ public interface SABIORKOptions extends KeyProvider {
 	/**
 	 * Helper variable that contains the
 	 * {@link Range} of possible pH values.
+	 * @return 
 	 */
-	public static final Range<Double> PH_RANGE = new Range<Double>(Double.class, 0d, 14d);
+	public static final Range<Double> PH_RANGE = new Range<Double>(Double.class, "{[0, 14]}");
 	
 	/**
 	 * Helper variable that contains the
 	 * {@link Range} of possible temperature values.
 	 */
-	public static final Range<Double> TEMPERATURE_RANGE = new Range<Double>(Double.class, -10d, 115d);
+	public static final Range<Double> TEMPERATURE_RANGE = new Range<Double>(Double.class, "{[-10, 115]}");
 	
 	
 	/**
