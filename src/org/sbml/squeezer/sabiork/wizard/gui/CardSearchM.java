@@ -462,6 +462,7 @@ public class CardSearchM extends Card implements ActionListener,
 	 * @see org.sbml.squeezer.sabiork.wizard.gui.Card#performAfterPressingBack()
 	 */
 	public void performAfterPressingBack() {
+		panelFilterOptions.saveSettings();
 		search.cancel();
 	}
 	
@@ -470,7 +471,16 @@ public class CardSearchM extends Card implements ActionListener,
 	 * @see org.sbml.squeezer.sabiork.wizard.gui.Card#performAfterCancel()
 	 */
 	public void performAfterCancel() {
+		panelFilterOptions.saveSettings();
 		search.cancel();
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.squeezer.sabiork.wizard.gui.Card#performAfterNext()
+	 */
+	public void performAfterNext() {
+		panelFilterOptions.saveSettings();
 	}
 
 	/**

@@ -436,6 +436,7 @@ public class JDialogWizard extends JDialog implements ActionListener, WindowList
 				case FINISH:
 					if (buttonNextFinish.isEnabled()) {
 						currentCard = cards.get(currentCardID);
+						currentCard.performAfterNext();
 						showCard(currentCard.getNextCardID());
 					}
 					break;
