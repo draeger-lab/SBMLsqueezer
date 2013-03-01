@@ -138,4 +138,8 @@
   <entry key="GROUP_REVERSIBILITY">Reversibility</entry>
   <entry key="GROUP_REVERSIBILITY_TOOLTIP">In some studies it has been found that treating all reactions as reversible processes comes closer to reality. Here you can select if you like to keep the given information about the reversibility of the reactions in the model as given, or if you prefer to set all reactions to reversible and create kinetic equations accordingly.</entry>
   
+  <!-- SABIORKOptions -->
+  
+  <entry key="IS_WILDTYPE"></entry>
+  
 </properties>
