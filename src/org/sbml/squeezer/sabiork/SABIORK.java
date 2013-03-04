@@ -27,6 +27,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
 import java.net.HttpURLConnection;
 import java.net.NoRouteToHostException;
 import java.net.URL;
@@ -36,6 +37,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.xml.stream.XMLStreamException;
@@ -131,6 +133,38 @@ public class SABIORK {
 			return url + URLEncoder.encode(query, "UTF-8");
 		}
 
+	}
+	
+	/**
+	 * The possible values for temperatures.
+	 * @return range
+	 */
+	public static final List<Double> getTemperatureRange() {
+		List<Double> values = new LinkedList<Double>();
+		BigDecimal d = new BigDecimal(-10d);
+		BigDecimal step = new BigDecimal(1).divide(new BigDecimal(10));
+		
+		while(d.doubleValue() <= 115) {
+			values.add(d.doubleValue());
+			d = d.add(step);
+		}
+		return values;
+	}
+	
+	/**
+	 * The possible values for pH
+	 * @return range
+	 */
+	public static final List<Double> getPHRange() {
+		List<Double> values = new LinkedList<Double>();
+		BigDecimal d = new BigDecimal(0d);
+		BigDecimal step = new BigDecimal(1).divide(new BigDecimal(10));
+		
+		while(d.doubleValue() <= 14) {
+			values.add(d.doubleValue());
+			d = d.add(step);
+		}
+		return values;
 	}
 
 	/**
