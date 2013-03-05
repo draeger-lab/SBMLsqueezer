@@ -1,0 +1,8 @@
+% Some helper macros, used later below:
+
+\newcommand{\plainIndexed}              [1]{#1\index{#1}\xspace}
+\newcommand{\codeIndexed}               [1]{\texttt{#1}\index{#1@\texttt{#1}}\xspace}
+\newcommand{\codeSubindexed}            [2]{\texttt{#1}\index{#2@\texttt{#2}!\texttt{#1}@\texttt{#1}}\xspace}
+
+% A
+%\newcommand{\Annotation}                {\codeSubindexed{Annotation}{annotations}}
