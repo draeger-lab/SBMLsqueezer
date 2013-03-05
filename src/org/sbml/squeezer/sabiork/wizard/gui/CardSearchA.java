@@ -44,6 +44,8 @@ import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.SwingWorker;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.xml.stream.XMLStreamException;
@@ -68,7 +70,7 @@ import org.sbml.squeezer.sabiork.wizard.model.WizardProperties;
  * @version $Rev$
  */
 public class CardSearchA extends Card implements ActionListener,
-		PropertyChangeListener, TableModelListener {
+		PropertyChangeListener, TableModelListener, ChangeListener {
 
 	/**
 	 * Generated serial version identifier.
@@ -100,8 +102,9 @@ public class CardSearchA extends Card implements ActionListener,
 	 * 
 	 * @param dialog
 	 * @param model
+	 * @throws IOException 
 	 */
-	public CardSearchA(JDialogWizard dialog, WizardModel model) {
+	public CardSearchA(JDialogWizard dialog, WizardModel model) throws IOException {
 		super(dialog, model);
 		model.addPropertyChangeListener(this);
 		initialize();
@@ -109,8 +112,9 @@ public class CardSearchA extends Card implements ActionListener,
 
 	/**
 	 * Initializes the card.
+	 * @throws IOException 
 	 */
-	private void initialize() {
+	private void initialize() throws IOException {
 		comboBoxConstraintsModel = new ComboBoxModelConstraints();
 		comboBoxConstraints = new JComboBox(comboBoxConstraintsModel);
 		comboBoxConstraints.setRenderer(comboBoxConstraintsModel.getRenderer());
@@ -125,7 +129,7 @@ public class CardSearchA extends Card implements ActionListener,
 		buttonAdd.addActionListener(this);
 
 		panelFilterOptions = new JPanelFilterOptions();
-		panelFilterOptions.addPropertyChangeListener(this);
+		panelFilterOptions.addChangeListener(this);
 
 		tableSearchTermsModel = new TableModelSearchTerms();
 		tableSearchTermsModel.addTableModelListener(this);
@@ -325,9 +329,6 @@ public class CardSearchA extends Card implements ActionListener,
 				&& e.getPropertyName().equals("progress")) {
 			progressBar.setValue((Integer) e.getNewValue());
 		}
-		if (e.getSource().equals(panelFilterOptions)) {
-			startSearch();
-		}
 		if (e.getSource().equals(model)
 				&& e.getPropertyName().equals("selectedKineticLawImporters")) {
 			if (model.hasSelectedKineticLawImporters()) {
@@ -516,6 +517,16 @@ public class CardSearchA extends Card implements ActionListener,
 			}
 		}
 
+	}
+
+	/* (non-Javadoc)
+	 * @see javax.swing.event.ChangeListener#stateChanged(javax.swing.event.ChangeEvent)
+	 */
+	public void stateChanged(ChangeEvent e) {
+		if ((!panelFilterOptions.isUserConfiguration())) {
+			startSearch();
+			panelFilterOptions.saveSettings();
+		}	
 	}
 
 }

@@ -43,8 +43,6 @@ import org.sbml.squeezer.sabiork.wizard.gui.JDialogWizard.ButtonState;
 import org.sbml.squeezer.sabiork.wizard.gui.JDialogWizard.CardID;
 
 import org.sbml.squeezer.sabiork.wizard.model.WizardModel;
-import org.sbml.squeezer.sabiork.wizard.model.WizardProperties;
-
 /**
  * @author Matthias Rall
  * @version $Rev$

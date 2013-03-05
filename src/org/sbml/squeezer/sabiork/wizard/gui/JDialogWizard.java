@@ -224,8 +224,12 @@ public class JDialogWizard extends JDialog implements ActionListener, WindowList
 		cards.put(CardID.METHOD, new CardMethod(this, model));
 		cards.put(CardID.REACTIONS_A, new CardReactionsA(this, model));
 		cards.put(CardID.REACTIONS_M, new CardReactionsM(this, model));
-		cards.put(CardID.SEARCH_A, new CardSearchA(this, model));
-		cards.put(CardID.SEARCH_M, new CardSearchM(this, model));
+		try {
+			cards.put(CardID.SEARCH_A, new CardSearchA(this, model));
+			cards.put(CardID.SEARCH_M, new CardSearchM(this, model));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		cards.put(CardID.SUMMARY_A, new CardSummaryA(this, model));
 		cards.put(CardID.SUMMARY_M, new CardSummaryM(this, model));
 

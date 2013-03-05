@@ -45,8 +45,6 @@ import org.sbml.squeezer.sabiork.wizard.gui.ComboBoxModelReactionFilters.Reactio
 import org.sbml.squeezer.sabiork.wizard.gui.JDialogWizard.ButtonState;
 import org.sbml.squeezer.sabiork.wizard.gui.JDialogWizard.CardID;
 import org.sbml.squeezer.sabiork.wizard.model.WizardModel;
-import org.sbml.squeezer.sabiork.wizard.model.WizardProperties;
-
 /**
  * A class that allows the selection of reactions which are considered in the
  * automatic search.

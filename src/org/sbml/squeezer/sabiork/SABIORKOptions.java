@@ -50,7 +50,7 @@ public interface SABIORKOptions extends KeyProvider {
 	 * {@link Range} of possible pH values.
 	 * @return 
 	 */
-	public static final Range<Double> PH_RANGE = new Range<Double>(Double.class, SABIORK.getPHRange());
+	public static final Range<Double> PH_RANGE = new Range<Double>(Double.class, "{[0,14]}");
 	
 	/**
 	 * Helper variable that contains the
