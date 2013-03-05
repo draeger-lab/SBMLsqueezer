@@ -74,7 +74,7 @@ public class SABIORK {
 				"Parametertype"), KINETIC_MECHANISM_TYPE("KineticMechanismType"), ASSOCIATED_SPECIES(
 				"AssociatedSpecies"), TITLE("Title"), AUTHOR("Author"), YEAR(
 				"Year"), PUBMED_ID("PubmedID"), EXPERIMENT_ID("ExperimentID"), ENZYME_TYPE(
-				"EnzymeType"), INFOSOURCE_TYPE("infosourceType"), HAS_KINETIC_DATA(
+				"enzymeType"), INFOSOURCE_TYPE("infosourceType"), HAS_KINETIC_DATA(
 				"hasKineticData"), IS_RECOMBINANT("isRecombinant"), PH_VALUE_RANGE(
 				"pHValueRange"), TEMPERATURE_RANGE("TemperatureRange"), DATE_SUBMITTED(
 				"DateSubmitted");
@@ -681,10 +681,10 @@ public class SABIORK {
 		if (!(isDirectSubmission && isJournal)) {
 			if (isDirectSubmission) {
 				filterOptionsQuery.append(" AND " + QueryField.INFOSOURCE_TYPE
-						+ ":\"Direct Submission\"");
+						+ ":\"direct submission\"");
 			} else {
 				filterOptionsQuery.append(" AND NOT " + QueryField.INFOSOURCE_TYPE
-						+ ":\"Direct Submission\"");
+						+ ":\"direct submission\"");
 			}
 			if (isJournal) {
 				filterOptionsQuery.append(" AND " + QueryField.INFOSOURCE_TYPE
