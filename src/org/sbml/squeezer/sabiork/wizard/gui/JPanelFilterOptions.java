@@ -96,8 +96,7 @@ public class JPanelFilterOptions extends PreferencesPanelForKeyProvider{
 	 * @return
 	 */
 	public String getFilterOptionsQuery() {
-		try {
-			return SABIORK.getFilterOptionsQuery(
+		return SABIORK.getFilterOptionsQuery(
 				this.getProperty(SABIORKOptions.IS_WILDTYPE),
 				this.getProperty(SABIORKOptions.IS_MUTANT),
 				this.getProperty(SABIORKOptions.IS_RECOMBINANT),
@@ -109,11 +108,8 @@ public class JPanelFilterOptions extends PreferencesPanelForKeyProvider{
 				this.getProperty(SABIORKOptions.IS_DIRECT_SUBMISSION),
 				this.getProperty(SABIORKOptions.IS_JOURNAL),
 				this.getProperty(SABIORKOptions.IS_ENTRIES_INSERTED_SINCE),
-				dateFormat.parse(this.getProperty(SABIORKOptions.LOWEST_DATE)));
-		} catch (ParseException e) {
-			e.printStackTrace();
-			return null;
-		}
+				this.getProperty(SABIORKOptions.LOWEST_DATE));
+		
 	}
 
 	

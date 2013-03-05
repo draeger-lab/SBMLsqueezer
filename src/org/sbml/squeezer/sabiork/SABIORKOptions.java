@@ -23,6 +23,7 @@
  */
 package org.sbml.squeezer.sabiork;
 
+import java.util.Date;
 import java.util.ResourceBundle;
 
 import org.sbml.squeezer.util.Bundles;
@@ -56,8 +57,8 @@ public interface SABIORKOptions extends KeyProvider {
 	 * Helper variable that contains the
 	 * {@link Range} of possible temperature values.
 	 */
-	public static final Range<Double> TEMPERATURE_RANGE = new Range<Double>(Double.class, SABIORK.getTemperatureRange());
-	
+	public static final Range<Double> TEMPERATURE_RANGE = new Range<Double>(Double.class, "{[-10,115]}");
+
 	
 	/**
 	 * If {@code true} the application searches for wildtype kinetics.
@@ -165,11 +166,11 @@ public interface SABIORKOptions extends KeyProvider {
 	/**
 	 * The earliest date for the entries.
 	 */
-	public static final Option<String> LOWEST_DATE = new Option<String>(
+	public static final Option<Date> LOWEST_DATE = new Option<Date>(
 			"LOWEST_DATE",
-			String.class, 
+			Date.class, 
 			OPTIONS_BUNDLE,
-			"15/10/2008");
+			SABIORK.getDefaultDate());
 	
 	/**
 	 * 

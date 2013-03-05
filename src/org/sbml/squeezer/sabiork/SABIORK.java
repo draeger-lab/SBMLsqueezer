@@ -136,37 +136,21 @@ public class SABIORK {
 	}
 	
 	/**
-	 * The possible values for temperatures.
-	 * @return range
+	 * Returns the default date
+	 * @return
 	 */
-	public static final List<Double> getTemperatureRange() {
-		List<Double> values = new LinkedList<Double>();
-		BigDecimal d = new BigDecimal(-10d);
-		BigDecimal step = new BigDecimal(1).divide(new BigDecimal(10));
-		
-		while(d.doubleValue() <= 115) {
-			values.add(d.doubleValue());
-			d = d.add(step);
+	public static Date getDefaultDate() {
+		SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+		Date defaultDate = null;
+		try {
+			defaultDate = format.parse("15/10/2008");
+		} catch (ParseException e) {
+			e.printStackTrace();
 		}
-		return values;
+		return defaultDate;
 	}
 	
-	/**
-	 * The possible values for pH
-	 * @return range
-	 */
-	public static final List<Double> getPHRange() {
-		List<Double> values = new LinkedList<Double>();
-		BigDecimal d = new BigDecimal(0d);
-		BigDecimal step = new BigDecimal(1).divide(new BigDecimal(10));
-		
-		while(d.doubleValue() <= 14) {
-			values.add(d.doubleValue());
-			d = d.add(step);
-		}
-		return values;
-	}
-
+	
 	/**
 	 * Returns the direct response from the SABIO-RK resource.
 	 * 
