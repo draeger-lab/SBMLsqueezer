@@ -74,8 +74,8 @@ public class SABIORK {
 				"Parametertype"), KINETIC_MECHANISM_TYPE("KineticMechanismType"), ASSOCIATED_SPECIES(
 				"AssociatedSpecies"), TITLE("Title"), AUTHOR("Author"), YEAR(
 				"Year"), PUBMED_ID("PubmedID"), EXPERIMENT_ID("ExperimentID"), ENZYME_TYPE(
-				"EnzymeType"), INFOSOURCE_TYPE("InfosourceType"), HAS_KINETIC_DATA(
-				"hasKineticData"), IS_RECOMBINANT("IsRecombinant"), PH_VALUE_RANGE(
+				"EnzymeType"), INFOSOURCE_TYPE("infosourceType"), HAS_KINETIC_DATA(
+				"hasKineticData"), IS_RECOMBINANT("isRecombinant"), PH_VALUE_RANGE(
 				"pHValueRange"), TEMPERATURE_RANGE("TemperatureRange"), DATE_SUBMITTED(
 				"DateSubmitted");
 
@@ -655,14 +655,14 @@ public class SABIORK {
 				filterOptionsQuery.append(" AND " + QueryField.ENZYME_TYPE
 						+ ":wildtype");
 			} else {
-				filterOptionsQuery.append(" NOT " + QueryField.ENZYME_TYPE
+				filterOptionsQuery.append(" AND NOT " + QueryField.ENZYME_TYPE
 						+ ":wildtype");
 			}
 			if (isMutant) {
 				filterOptionsQuery.append(" AND " + QueryField.ENZYME_TYPE
 						+ ":mutant");
 			} else {
-				filterOptionsQuery.append(" NOT " + QueryField.ENZYME_TYPE
+				filterOptionsQuery.append(" AND NOT " + QueryField.ENZYME_TYPE
 						+ ":mutant");
 			}
 		}
@@ -683,14 +683,14 @@ public class SABIORK {
 				filterOptionsQuery.append(" AND " + QueryField.INFOSOURCE_TYPE
 						+ ":\"Direct Submission\"");
 			} else {
-				filterOptionsQuery.append(" NOT " + QueryField.INFOSOURCE_TYPE
+				filterOptionsQuery.append(" AND NOT " + QueryField.INFOSOURCE_TYPE
 						+ ":\"Direct Submission\"");
 			}
 			if (isJournal) {
 				filterOptionsQuery.append(" AND " + QueryField.INFOSOURCE_TYPE
 						+ ":Journal");
 			} else {
-				filterOptionsQuery.append(" NOT " + QueryField.INFOSOURCE_TYPE
+				filterOptionsQuery.append(" AND NOT " + QueryField.INFOSOURCE_TYPE
 						+ ":Journal");
 			}
 		}

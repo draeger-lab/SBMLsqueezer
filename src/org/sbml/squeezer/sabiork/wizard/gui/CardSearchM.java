@@ -48,6 +48,8 @@ import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingWorker;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
@@ -71,7 +73,7 @@ import org.sbml.squeezer.sabiork.wizard.model.WizardProperties;
  * @version $Rev$
  */
 public class CardSearchM extends Card implements ActionListener,
-		PropertyChangeListener, ListSelectionListener, TableModelListener {
+		PropertyChangeListener, ListSelectionListener, TableModelListener, ChangeListener {
 
 	/**
 	 * Generated serial version identifier.
@@ -104,17 +106,19 @@ public class CardSearchM extends Card implements ActionListener,
 	 * 
 	 * @param dialog
 	 * @param model
+	 * @throws IOException 
 	 */
-	public CardSearchM(JDialogWizard dialog, WizardModel model) {
+	public CardSearchM(JDialogWizard dialog, WizardModel model) throws IOException {
 		super(dialog, model);
 		model.addPropertyChangeListener(this);
 		initialize();
 	}
 
 	/**
+	 * @throws IOException 
 	 * 
 	 */
-	private void initialize() {
+	private void initialize() throws IOException {
 		comboBoxSearchItemsModel = new ComboBoxModelSearchItems();
 		comboBoxSearchItems = new JComboBox(comboBoxSearchItemsModel);
 		comboBoxSearchItems.setRenderer(comboBoxSearchItemsModel.getRenderer());
@@ -129,7 +133,7 @@ public class CardSearchM extends Card implements ActionListener,
 		buttonSearch.addActionListener(this);
 
 		panelFilterOptions = new JPanelFilterOptions();
-		panelFilterOptions.addPropertyChangeListener(this);
+		panelFilterOptions.addChangeListener(this);
 
 		tableSearchTermsModel = new TableModelSearchTerms();
 		tableSearchTermsModel.addTableModelListener(this);
@@ -411,9 +415,6 @@ public class CardSearchM extends Card implements ActionListener,
 				&& e.getPropertyName().equals("progress")) {
 			progressBar.setValue((Integer) e.getNewValue());
 		}
-		if (e.getSource().equals(panelFilterOptions)) {
-			startSearch();
-		}
 		if (e.getSource().equals(model)
 				&& e.getPropertyName().equals("selectedKineticLaw")) {
 			if (model.hasSelectedKineticLaw()) {
@@ -619,6 +620,16 @@ public class CardSearchM extends Card implements ActionListener,
 			}
 		}
 
+	}
+	
+	/* (non-Javadoc)
+	 * @see javax.swing.event.ChangeListener#stateChanged(javax.swing.event.ChangeEvent)
+	 */
+	public void stateChanged(ChangeEvent e) {
+		if ((!panelFilterOptions.isUserConfiguration())) {
+			startSearch();
+			panelFilterOptions.saveSettings();
+		}	
 	}
 
 }
