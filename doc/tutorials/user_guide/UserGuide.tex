@@ -23,6 +23,13 @@
 \usepackage{hyperref} % Links im dokument
 %\usepackage[utf8]{inputenc} %unicode support
 
+%\usepackage{makeidx}
+%\usepackage[font=small,totoc]{idxlayout}
+
+\makeindex
+\input{tex/macros.tex}
+\input{tex/hyphenation.tex}
+
 \hypersetup{
 %  bookmarks={true},
   bookmarksopen={true},
@@ -47,10 +54,8 @@
   pdfkeywords={kinetics} {rate law} {enzyme kinetics} {SBML} {equation generation} {automatic} {generalized mass action} {gmak} {Michaelis-Menten} {convenience kinetics} {SBMLsqueezer}
 }
 
-%HYPHENATION
-\hyphenation{
-Cell-Designer
-}
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Gestaltung der Titelseite     %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -61,26 +66,21 @@ Cell-Designer
 
 \titlehead{\centering\includegraphics[width=0.75\textwidth]{img/UT_WBMW_mathnat_4C}}
 \subject{User's Guide}
-\title{
-%\centering
-%\begin{tabular}{C{5cm}L{5cm}}
-\includegraphics[width=3cm]{img/LOGO.png}\\% &
-SBMLsqueezer 2.0
-%\end{tabular}
-}
-\subtitle{Context-based generation of kinetic equations}
+\title{SBMLsqueezer~2}
+\subtitle{A context-based generator of kinetic equations}
 
-
-\author{Andreas Dr\"ager\thanks{Corresponding author:
-\href{mailto:andreas.draeger@uni-tuebingen.de}{andreas.draegter@uni-tuebingen.de}}\and
+\author{Andreas Dr\"ager%
+%\thanks{Corresponding author: \href{mailto:andreas.draeger@uni-tuebingen.de}{andreas.draegter@uni-tuebingen.de}}
+\and
 Roland Keller\and
-Matthias Rall\and
+%Matthias Rall\and
 Johannes Eichner\and
 Andreas Zell}
-\date{\today}
+\date{\today\\[2cm]\includegraphics[width=2.5cm]{img/LOGO.png}}
 \publishers{Center for Bioinformatics Tuebingen (ZBIT)}
 
-
+\usepackage{makeidx}
+\makeindex
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Beginn des Dokumentes         %
@@ -122,8 +122,9 @@ Andreas Zell}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Das Literaturverzeichnis      %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+\appendix
 \bibliographystyle{natbib}
 \bibliography{tex/literature}
+\printindex
 
 \end{document}

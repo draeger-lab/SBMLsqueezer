@@ -26,7 +26,9 @@ import javax.swing.JDialog;
 
 import org.junit.Ignore;
 import org.sbml.jsbml.Model;
+import org.sbml.jsbml.SBMLDocument;
 
+import de.zbit.io.OpenedFile;
 import de.zbit.sbml.gui.SBMLModelSplitPane;
 
 /**
@@ -102,7 +104,7 @@ public class ModelDialog extends JDialog {
 		setModal(true);
 		setTitle("JSBML Model structure");
 		try {
-			getContentPane().add(new SBMLModelSplitPane(model.getSBMLDocument(), true));
+			getContentPane().add(new SBMLModelSplitPane(new OpenedFile<SBMLDocument>(model.getSBMLDocument()), true));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

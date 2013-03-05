@@ -337,7 +337,7 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
    * @see de.zbit.Launcher#getVersionNumber()
    */
   public String getVersionNumber() {
-    return "1.4";
+    return "2.0";
   }
   
   /* (non-Javadoc)

@@ -4,35 +4,44 @@
 The program SBMLsqueezer is a versatile generator for complex kinetic equations
 of reactions and processes in biochemical networks \citep{Draeger2008,
 Draeger2010a, Draeger2011a}. The kinds of equations supported by the program are
-numerous, including traditional approaches such as the (Henry-) Michaelis-Menten
-equation \citep{Michaelis1913} for uni-uni enzyme reactions, or very recent
-approaches, e.g., the modular rate laws \citep{Liebermeister2010}. It provides
-equations for gene-regulatory processes, such as the Hill-Hintze equation
-\citep{Hinze2007}.
-\nocite{Savageau1969, Segel1993, Heinrich1996, Weaver1999, Bisswanger2000,
-Cornish-Bowden2004, Liebermeister2006, Toepfer2007, Vu2007, Radde2007a}
+numerous, including traditional approaches \citep{Guldberg1879, Michaelis1913}
+just like very recent equations \citep{Liebermeister2006, Liebermeister2010}.
+It provides equations for gene-regulatory processes
+\citep{Hinze2007, Radde2007a, Toepfer2007, Vu2007,Weaver1999} and approximative
+rate laws \citep{Savageau1969}.
+In addition, SBMLsqueezer covers a large variety of standard rate laws for
+biochemical reactions from relevant text books
+\citep{Segel1993, Heinrich1996, Bisswanger2000, Cornish-Bowden2004}.
+A list of currently supported rate laws can be found in
+Section~\vref{chap:RateLaws}
 
 The data format understood by SBMLsqueezer is the Systems Biology Markup
-Language (SBML) in all of its levels and versions \citep{Hucka2001, Hucka2003,
-M.Hucka03012003, Hucka2007, Hucka2008, Hucka2010a, Finney2003, Finney2006}.
+Language\footnote{\url{http://sbml.org}} (SBML) in all of its levels and
+versions \citep{Hucka2001, Hucka2003, M.Hucka03012003, Hucka2007, Hucka2008,
+Hucka2010a, Finney2003, Finney2006}.
 All generated equations are stored, depending on the version of SBML, in form of
 infix formula strings (SBML Level~1) or MathML \citep{Buswell1999} expressions
 (for all other SBML versions).
 
 Kinetic equations contain a set of parameters, whose units must be derived to
-ensure that the overal equation can be interpreted in extent per time units.
-Users of SBMLsqueezer don't have to care much about units because the program
-does this for you. The program also annotates all created equations and
-parameters with appropriate terms from the Systems Biology Ontology and also
-with MIRIAM-compliant controlled vocabulary terms (Minimal Information Required
-In the Annotation of Models), where appropriate \citep{Le2005, Novere2006b,
+ensure that the overal equation can be interpreted in extent of the respective
+reaction per time units.
+When using SBMLsqueezer you do not have to care much about units because the
+program does this for you.
+The program also annotates all created equations and parameters with appropriate
+terms from the Systems Biology 
+Ontology\footnote{\url{http://www.ebi.ac.uk/sbo/main/}} (SBO) and also
+with MIRIAM-compliant\footnote{\url{http://co.mbine.org/standards/miriam}}
+controlled vocabulary terms (Minimal Information Required In the Annotation of
+Models), where appropriate \citep{Le2005, Novere2006b,
 Laible2007, Courtot2011}.
 
 The selection of the kinetic equations is done automatically by the program,
 where several settings allow users to influence the algorithm's choice.
 In many cases, SBMLsqueezer suggests multiple equations for the same process,
-from which the user can choose as desired. This behavior of the program is
-important to ensure that only appropriate equations can be selected at any time.
+from which the user can choose as desired.
+This behavior of the program is important to ensure that only appropriate
+equations can be selected at any time.
 
 In order to decide, which equations can be applied to a reaction of interest,
 SBMLsqueezer analyzes several properties, such as the number and type of
@@ -46,17 +55,18 @@ You can influence and change all choices of the program, even in the one-go-mode
 
 If you are connected to the internet, you can also use SBMLsqueezer to extract
 experimentally determined kinetic equations from the rate law database SABIO-RK
-\citep{Wittig2006, Rojas2007, Krebs2007, Wittig2012}.
+\citep[System for the Analysis of Biochemical Pathways -- Reaction Kinetics,][]{
+Wittig2006, Rojas2007, Krebs2007, Wittig2012}.
 To this end, SBMLsqueezer provides several settings, such as the organism,
 temperature, or pH value under which the reaction's rate was determined. Again,
 you can extract equations from SABIO-RK for an entire network in one go, or
-individually select reactions of interest. 
+individually select reactions of interest.
 
 The program itself can be customized and used in several ways. It remembers your
 last opened files, the window's size, your rate law selection and so forth.
 You can run it as a stand-alone tool, or as a plug-in for the well-known program
-CellDesigner \citep{Funahashi2003, Funahashi2006, Funahashi2007a,
-Funahashi2008}.
+CellDesigner\footnote{\url{http://www.celldesigner.org/}}
+\citep{Funahashi2003, Funahashi2006, Funahashi2007a, Funahashi2008}.
 By default, the stand-alone version is based on the JSBML backend 
 \citep{Draeger2011b}, but you can also use libSBML \citep{Bornstein2008} as its
 SBML backend instead if its more elaborated offline model validation matters.
@@ -70,14 +80,15 @@ Furhtermore, the fully accessible application programming interface can be used
 to integrate SBMLsqueezer as an equation generating core into your end-user
 program.
 You can hence equip a large number of files with kinetic equations without the
-need to open each file in a graphical user interface. The usefulness of this
-approach has recently been demonstrated as part of the path2models project, in
-which more than 142,000 SBML models have been processed with SBMLsqueezer.
+need to open each file in a graphical user interface.
+The usefulness of this approach has recently been demonstrated as part of the
+path2models project\footnote{\url{http://www.ebi.ac.uk/biomodels-main/path2models}},
+in which more than 142,000 SBML models have been processed with SBMLsqueezer.
 
 For the documentation of your model, SBMLsqueezer includes the program
-\SBMLLaTeX, which generates a comprehensive report of your model, including a
-detailed description of all components and equations \citep{Draeger2009b,
-Draeger2010a}.
+\SBMLLaTeX\footnote{\url{http://www.cogsys.cs.uni-tuebingen.de/software/SBML2LaTeX/}},
+which generates a comprehensive report of your model, including a detailed
+description of all components and equations \citep{Draeger2009b, Draeger2010a}.
 These reports can be very handy to support scientific writing, because you can
 easily copy the formulas into your paper.
 
@@ -85,24 +96,34 @@ easily copy the formulas into your paper.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % 02_Installation
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \chapter{Installation}
 
-TODO: This is some template text. Please modify / replace it with your own.
+After downloading SBMLsqueezer from the website
+\url{http://www.cogsys.cs.uni-tuebingen.de/software/SBMLsqueezer/} you will
+obtain a JAR file (Java\texttrademark{} Archive File) that can be launched by
+double-cliking on its icon, provided that a Java Virtual Machine (JVM) is 
+installed on your system.
+See Section~\vref{ch:faq} if you encounter any problems. 
 
 
 \section{Requirements}
 \subsection{Software}
 
-InCroMAP is entirely written in Java\TTra and runs on any operating system
-where a suitable Java Virtual Machine (JDK version 1.6 or newer) is installed.
-See, for example, the Java SE download
-page\footnote{\url{http://www.oracle.com/technetwork/java/javase/downloads/index.html}\label{fn:jvmldl}}.
+SBMLsqueezer is entirely implemented in Java and runs on any operating system
+where a suitable Java Virtual Machine (JDK version 1.5 or newer) is installed.
+For instructions how to obtain an up-to-date JVM for your system, see, for 
+example, the Java SE download page\footnote{\url{http://www.oracle.com/technetwork/java/javase/downloads/index.html}\label{fn:jvmldl}}.
+SBMLsqueezer has successfully been tested with Microsoft Windows~7 Professional,
+Mac OS X (version 10.8.2), and Ubuntu Linux (version 12.01).
+
 
 \subsection{Hardware}
 
 With at least 1\,GB main memory, you should be able to perform most tasks
-without any problem. For large datasets, you should have at least 2\,GB of main
-memory. \newline An active internet connection is required for most operations.
+without any problem. For large models, you should have at least 2\,GB of main
+memory. An active internet connection is required for accessing the SABIO-RK
+database.
 
 \subsection{Installation as a plug-in for CellDesigner}
 
@@ -162,8 +183,67 @@ TODO: Write some text.
 \subsection{For an entire network}
 \subsection{For selected reations}
 
+
+\chapter{Supported rate laws}\label{chap:RateLaws}
+
+Here, we give a short overview of all equations that are currently implemented
+in SBMLsqueezer. 
+
+\section{Rate laws for metabolic processes}
+\begin{itemize}
+  \item (Generalized) mass-action rate law with numerous orders \citep[p.~16]{Guldberg1879, Heinrich1996}
+  \item Uni-uni Michaelis-Menten kinetics \citep{Michaelis1913}
+  \item Irreversible non-modulated non-interacting reactant enzymes (SBO)
+  \item Bi-uni enzyme mechanisms \citep{Segel1993, Bisswanger2000, Cornish-Bowden2004}
+  \begin{itemize}
+    \item Random-order mechanism
+    \item Ordered mechanism
+  \end{itemize}
+  \item Bi-bi enzyme reactions \citep{Segel1993, Bisswanger2000, Cornish-Bowden2004}
+  \begin{itemize}
+    \item Random-order mechanism \citep[p.~169]{Cornish-Bowden2004}
+    \item Ordered mechanism
+    \item Ping-pong mechanism
+  \end{itemize}
+  \item Modular rate laws for enzymati reactions \citep{Liebermeister2010}
+  \begin{itemize}
+    \item Power-law modular rate law (PM)
+    \item Common modular rate law (CM)
+    \item Direct binding modular rate law (DM)
+    \item Simultaneous binding modular rate law (SM)
+    \item Force-dependent modular rate law (FM)
+  \end{itemize}
+  \item Convenience kinetics \citep{Liebermeister2006}
+  \begin{itemize}
+    \item Thermodynamically dependent form
+    \item Thermodynamically independent form
+  \end{itemize}
+  \item (Generalized) Hill equation \citep[p.~314]{Hill1910, Cornish-Bowden2004}
+\end{itemize}
+
+\section{Rate laws for gene-regulatory processes}
+\begin{itemize}
+  \item Hill-Hinze equation \citep{Hinze2007}
+  \item Hill-Radde equation \citep{Radde2007a, Radde2007}
+  \item Linear additive network models
+    \begin{itemize}
+      \item General form
+      \item NetGenerator form \citep{Toepfer2007}
+    \end{itemize}
+  \item Non-linear additive network models
+    \begin{itemize}
+      \item General form
+      \item NetGenerator form \citep{Toepfer2007}
+      \item Vohradsk{\'y}'s equation \citep{Vu2007}
+      \item Weaver's equation \citep{Weaver1999}
+    \end{itemize}
+  \item S-systems \citep{Savageau1969, spieth04optimizing, Tournier2005, Spieth2006, Hecker2009}
+  \item H-systems \citep{Spieth2006}
+\end{itemize}
+
+
 % 03_Troubleshooting
-\chapter{FAQ / Troubleshooting}
+\chapter{FAQ and troubleshooting}
 \label{ch:faq}
 
 TODO: These are some template questions. Add new ones and modify/ remove the
