@@ -24,21 +24,10 @@
 package org.sbml.squeezer.sabiork.wizard.gui;
 
 import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.prefs.BackingStoreException;
-
-import javax.swing.BoxLayout;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
 
 import org.sbml.squeezer.sabiork.SABIORK;
 import org.sbml.squeezer.sabiork.SABIORKOptions;
-import org.sbml.squeezer.sabiork.wizard.model.WizardProperties;
-
 import de.zbit.gui.prefs.PreferencesPanelForKeyProvider;
 import de.zbit.util.prefs.SBPreferences;
 
@@ -57,7 +46,6 @@ public class JPanelFilterOptions extends PreferencesPanelForKeyProvider{
 	public JPanelFilterOptions()
 		throws IOException {
 		super(SABIORKOptions.class);
-		dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 	}
 
 
@@ -65,29 +53,6 @@ public class JPanelFilterOptions extends PreferencesPanelForKeyProvider{
 	 * Generated serial version identifier.
 	 */
 	private static final long serialVersionUID = 5448185584732193553L;
-	private Date dateSubmitted;
-	private JButton buttonCalendar;
-	private JPanel panelCalendar;
-	private JTextField textFieldCalendar;
-	private SimpleDateFormat dateFormat;
-
-	/**
-	 * 
-	 */
-	private void initialize() {
-		textFieldCalendar = new JTextField();
-		textFieldCalendar.setText(dateFormat.format(dateSubmitted));
-		textFieldCalendar.setEnabled(false);
-
-		buttonCalendar = new JButton(new ImageIcon(this.getClass().getResource(
-				WizardProperties
-						.getText("JPANEL_FILTER_OPTIONS_IMAGE_CALENDAR"))));
-		
-		panelCalendar = new JPanel();
-		panelCalendar.setLayout(new BoxLayout(panelCalendar, BoxLayout.X_AXIS));
-		panelCalendar.add(textFieldCalendar);
-		panelCalendar.add(buttonCalendar);
-	}
 
 
 	/**
