@@ -477,7 +477,7 @@ public class UnitFactory {
 			ListOf<SpeciesReference> participants,
 			ListOf<ModifierSpeciesReference> modifiers, boolean zerothOrder) {
 		UnitDefinition ud = unitPerTimeAndConcentrationOrSubstance(participants, zerothOrder);
-		ListOf<? extends SimpleSpeciesReference> l = (ListOf<? extends SimpleSpeciesReference>) modifiers.filterList(new SBOFilter(SBO.getCatalyst()));
+		ListOf<? extends SimpleSpeciesReference> l = (ListOf<? extends SimpleSpeciesReference>) modifiers.filterList(new SBOFilter(SBO.getCatalyst(), SBO.getCatalysis()));
 		if (l.size() > 0) {
 	    UnitDefinition amount = unitConcentrationOrSubstance(l, zerothOrder);
 	    ud = ud.clone();

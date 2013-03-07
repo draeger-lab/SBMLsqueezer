@@ -275,6 +275,7 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
     list.add(IOOptions.class);
     list.add(OptionsGeneral.class);
     list.add(OptionsRateLaws.class);
+    list.add(SABIORKOptions.class);
     list.add(GUIOptions.class);
     list.add(LaTeXOptions.class);
     list.add(GarudaOptions.class);

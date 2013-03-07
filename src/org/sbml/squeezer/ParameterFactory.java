@@ -975,7 +975,7 @@ public class ParameterFactory {
 							.getListOfReactants(), h, defaultParamValue,
 							defaultParamValue);
 			ListOf<? extends SimpleSpeciesReference> l = (ListOf<? extends SimpleSpeciesReference>) 
-					r.getListOfModifiers().filterList(new SBOFilter(SBO.getCatalyst()));
+					r.getListOfModifiers().filterList(new SBOFilter(SBO.getCatalyst(), SBO.getCatalysis()));
 			for (SimpleSpeciesReference ssr : l) {
 				Species s = ssr.getSpeciesInstance();
 				if (unitFactory.getBringToConcentration()
