@@ -513,7 +513,7 @@ public class ReactionType {
 			// inhibitors.add(modifier.getSpecies());
 			// activators.add(modifier.getSpecies());
 			// }
-			if (SBO.isCatalyst(type)) {
+			if (SBO.isCatalyst(type) || SBO.isChildOf(type, SBO.getCatalysis())) {
 				if (SBO.isEnzymaticCatalysis(type)) {
 					if (LogUtil.getCurrentLogLevel().intValue() <=  Level.FINE.intValue()) {
 						logger.fine(MessageFormat.format(MESSAGES.getString("IS_ENZYMATIC_CATALYST"), modifier));
@@ -531,7 +531,7 @@ public class ReactionType {
 					logger.fine(MessageFormat.format(MESSAGES.getString("IS_TRANSCRIPTIONAL_OR_TRANSLATIONAL_INHIBITOR"), modifier));
 				}
 				inhibitors.add(modifier.getSpecies());
-			} else if (SBO.isInhibitor(type)) {
+			} else if (SBO.isInhibitor(type) || SBO.isChildOf(type, SBO.getInhibition())) {
 				if (LogUtil.getCurrentLogLevel().intValue() <=  Level.FINE.intValue()) {
 					logger.fine(MessageFormat.format(MESSAGES.getString("IS_INHIBITOR"), modifier));
 				}
@@ -542,7 +542,9 @@ public class ReactionType {
 					logger.fine(MessageFormat.format(MESSAGES.getString("IS_TRANSCRIPTIONAL_OR_TRANSLATIONAL_ACTIVATOR"), modifier));
 				}
 				activators.add(modifier.getSpecies());
-			} else if (SBO.isTrigger(type) || SBO.isStimulator(type)) {
+			} else if (SBO.isTrigger(type) || SBO.isStimulator(type)
+					|| SBO.isChildOf(type, SBO.getStimulation())
+					|| SBO.isChildOf(type, SBO.getNecessaryStimulation())) {
 				// no extra support for unknown catalysis anymore...
 				// physical stimulation is now also a stimulator.
 				if (LogUtil.getCurrentLogLevel().intValue() <=  Level.FINE.intValue()) {

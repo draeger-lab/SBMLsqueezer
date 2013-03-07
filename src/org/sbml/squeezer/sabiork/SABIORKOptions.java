@@ -57,7 +57,7 @@ public interface SABIORKOptions extends KeyProvider {
 	 * Helper variable that contains the
 	 * {@link Range} of possible temperature values.
 	 */
-	public static final Range<Double> TEMPERATURE_RANGE = new Range<Double>(Double.class, "{[-10,115]}");
+	public static final Range<Double> TEMPERATURE_RANGE = new Range<Double>(Double.class, "{[-271.15,1000]}");
 
 	
 	/**
@@ -171,15 +171,29 @@ public interface SABIORKOptions extends KeyProvider {
 			Date.class, 
 			OPTIONS_BUNDLE,
 			SABIORK.getDefaultDate());
+
+	/**
+	 * 
+	 */
+	@SuppressWarnings({ "unchecked" })
+	public static final OptionGroup<Boolean> GROUP_GENERAL_PROPERTIES = new OptionGroup<Boolean>(
+			"GROUP_GENERAL_PROPERTIES", OPTIONS_BUNDLE, IS_WILDTYPE, IS_MUTANT,
+			IS_RECOMBINANT, HAS_KINETIC_DATA, IS_DIRECT_SUBMISSION, IS_JOURNAL,
+			IS_ENTRIES_INSERTED_SINCE);
+
+	/**
+	 * 
+	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public static final OptionGroup<Double> GROUP_TEMPERATURE = new OptionGroup(
+		"GROUP_TEMPERATURE", OPTIONS_BUNDLE, LOWEST_TEMPERATURE_VALUE,
+		HIGHEST_TEMPERATURE_VALUE);
 	
 	/**
 	 * 
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public static final OptionGroup<?> SABIO_RK = new OptionGroup("SABIO_RK",
-		OPTIONS_BUNDLE, IS_WILDTYPE, IS_MUTANT, IS_RECOMBINANT, HAS_KINETIC_DATA,
-		IS_DIRECT_SUBMISSION, IS_JOURNAL, LOWEST_PH_VALUE, HIGHEST_PH_VALUE,
-		LOWEST_TEMPERATURE_VALUE, HIGHEST_TEMPERATURE_VALUE,
-		IS_ENTRIES_INSERTED_SINCE, LOWEST_DATE);
-
+	public static final OptionGroup<Double> GROUP_PH_VALUE = new OptionGroup(
+		"GROUP_PH_VALUE", OPTIONS_BUNDLE, LOWEST_PH_VALUE, HIGHEST_PH_VALUE);
+	
 }
