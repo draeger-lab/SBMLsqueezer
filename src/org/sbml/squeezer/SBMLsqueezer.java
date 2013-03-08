@@ -55,6 +55,7 @@ import org.sbml.squeezer.io.SqSBMLReader;
 import org.sbml.squeezer.io.SqSBMLWriter;
 import org.sbml.squeezer.kinetics.OptionsRateLaws;
 import org.sbml.squeezer.sabiork.SABIORKOptions;
+import org.sbml.squeezer.sabiork.SABIORKPreferences;
 import org.sbml.squeezer.util.Bundles;
 import org.sbml.tolatex.LaTeXOptions;
 import org.sbml.tolatex.SBML2LaTeX;
@@ -133,11 +134,12 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
    * @return
    */
   public static Class<? extends KeyProvider>[] getInteractiveConfigOptionsArray() {
-  	Class<? extends KeyProvider>[] list = new Class[4];
+  	Class<? extends KeyProvider>[] list = new Class[5];
     list[0] = OptionsGeneral.class;
     list[1] = OptionsRateLaws.class;
     list[2] = SABIORKOptions.class;
-    list[3] = LaTeXOptions.class;
+    list[3] = SABIORKPreferences.class;
+    list[4] = LaTeXOptions.class;
     return list;
 	}
 
@@ -275,6 +277,7 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
     list.add(IOOptions.class);
     list.add(OptionsGeneral.class);
     list.add(OptionsRateLaws.class);
+    list.add(SABIORKPreferences.class);
     list.add(SABIORKOptions.class);
     list.add(GUIOptions.class);
     list.add(LaTeXOptions.class);
