@@ -140,8 +140,8 @@
   
   <!-- SABIORKOptions -->
   
-  <entry key="SABIORKOptions">SABIO-RK search</entry>
-  <entry key="SABIORKOptions_TOOLTIP">Here you can constrain your search for reaction kinetics in the online database SABIO-RK (System for the Analysis of Biochemical Pathways&#8212;Reaction Kinetics).</entry>
+  <entry key="SABIORKPreferences">SABIO-RK search preferences</entry>
+  <entry key="SABIORKPreferences_TOOLTIP">Here you can constrain your search for reaction kinetics in the online database SABIO-RK (System for the Analysis of Biochemical Pathways&#8212;Reaction Kinetics).</entry>
   
   <entry key="IS_WILDTYPE">Wildtype kinetics</entry>
   <entry key="IS_WILDTYPE_TOOLTIP">Search for wildtype kinetics</entry>
@@ -170,9 +170,29 @@
   
   <entry key="GROUP_GENERAL_PROPERTIES">General properties</entry>
   <entry key="GROUP_GENERAL_PROPERTIES_TOOLTIP">Define key features to restrict the results of your search for reaction kinetics in SABIO-RK.</entry>
-  <entry key="GROUP_TEMPERATURE">Temperature</entry>
+   <entry key="GROUP_TEMPERATURE">Temperature</entry>
   <entry key="GROUP_TEMPERATURE_TOOLTIP">Define a plausible temperature range for your reaction system.</entry>
   <entry key="GROUP_PH_VALUE">Range of pH values</entry>
   <entry key="GROUP_PH_VALUE_TOOLTIP">Constrict the selection of reaction kinetics to plausible conditions by selecting a meaningful range of pH values.</entry>
+ 
   
+  <!-- SABIORKOptions -->
+  
+  <entry key="SABIORKOptions">SABIO-RK search options</entry>
+  <entry key="SABIORKOptions_TOOLTIP">Here you can constrain your search for reaction kinetics in the online database SABIO-RK (System for the Analysis of Biochemical Pathways&#8212;Reaction Kinetics).</entry>
+  
+  
+  <entry key="PATHWAY">Pathway</entry>
+  <entry key="PATHWAY_TOOLTIP">Define the pathway for which the kinetics are to be determined.</entry>
+  <entry key="TISSUE">Tissue</entry>
+  <entry key="TISSUE_TOOLTIP">Define the tissue for which the kinetics are to be determined.</entry>
+  <entry key="CELLULAR_LOCATION">Cellular location</entry>
+  <entry key="CELLULAR_LOCATION_TOOLTIP">Define the cellular location for which the kinetics are to be determined.</entry>
+  <entry key="ORGANISM">Organism</entry>
+  <entry key="ORGANISM_TOOLTIP">Define the organism for which the kinetics are to be determined.</entry>
+  <entry key="REACTION_FILTER">Reaction filter</entry>
+  <entry key="REACTION_FILTER_TOOLTIP">Define the filter for reactions which the kinetics are to be determined.</entry>
+  
+  <entry key="GROUP_GENERAL_OPTIONS">General options</entry>
+  <entry key="GROUP_GENERAL_OPTIONS_TOOLTIP">Define key options to restrict the results of your search for reaction kinetics in SABIO-RK.</entry> 
 </properties>

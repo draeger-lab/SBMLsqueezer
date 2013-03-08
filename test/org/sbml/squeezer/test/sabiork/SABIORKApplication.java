@@ -107,7 +107,7 @@ public class SABIORKApplication {
 	 * @param output the output file
 	 */
 	public static void runConsole(File input, File output){
-		Integer reactionFilter = 4;
+		String reactionFilter = "Reactions";
 		String pathway = null;
 		String tissue = null;
 		String organism = null;
