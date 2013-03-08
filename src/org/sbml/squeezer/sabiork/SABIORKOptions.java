@@ -23,7 +23,6 @@
  */
 package org.sbml.squeezer.sabiork;
 
-import java.util.Date;
 import java.util.ResourceBundle;
 
 import org.sbml.squeezer.util.Bundles;
@@ -35,165 +34,52 @@ import de.zbit.util.prefs.OptionGroup;
 import de.zbit.util.prefs.Range;
 
 /**
- * Options for SABIO-RK search.
  * @author Roland Keller
  * @version $Rev$
  */
 public interface SABIORKOptions extends KeyProvider {
-	
+
 	/**
 	 * 
 	 */
 	public static final ResourceBundle OPTIONS_BUNDLE = ResourceManager.getBundle(Bundles.OPTIONS);
-	
+
 	/**
-	 * Helper variable that contains the
-	 * {@link Range} of possible pH values.
-	 * @return 
+	 * The range for the reaction filter.
 	 */
-	public static final Range<Double> PH_RANGE = new Range<Double>(Double.class, "{[0,14]}");
-	
-	/**
-	 * Helper variable that contains the
-	 * {@link Range} of possible temperature values.
-	 */
-	public static final Range<Double> TEMPERATURE_RANGE = new Range<Double>(Double.class, "{[-271.15,1000]}");
+	public static final Range<String> REACTION_SELECTION_RANGE = new Range<String>(String.class, new String[]{"Reactions", "Reactions with kinetic law", "Reactions without kinetic law", "Reversible reactions", "Irreversible reactions", "Fast reactions", "Slow reactions"});
 
 	
 	/**
-	 * If {@code true} the application searches for wildtype kinetics.
+	 * The pathway for which the kinetics have been determined.
 	 */
-	public static final Option<Boolean> IS_WILDTYPE = new Option<Boolean>(
-			"IS_WILDTYPE",
-			Boolean.class,			
-			OPTIONS_BUNDLE,
-			Boolean.valueOf(true));
+	public static final Option<String> PATHWAY = new Option<String>("PATHWAY", String.class, OPTIONS_BUNDLE, null);
 	
 	/**
-	 * If {@code true} the application searches for kinetics of mutants.
+	 * The tissue for which the kinetics have been determined.
 	 */
-	public static final Option<Boolean> IS_MUTANT = new Option<Boolean>(
-			"IS_MUTANT",
-			Boolean.class,			
-			OPTIONS_BUNDLE,
-			Boolean.valueOf(true));
+	public static final Option<String> TISSUE = new Option<String>("TISSUE", String.class, OPTIONS_BUNDLE, null);
 	
 	/**
-	 * If {@code true} the application searches for kinetics of recombinant organisms.
+	 * The cellular location for which the kinetics have been determined.
 	 */
-	public static final Option<Boolean> IS_RECOMBINANT = new Option<Boolean>(
-			"IS_RECOMBINANT",
-			Boolean.class,			
-			OPTIONS_BUNDLE,
-			Boolean.valueOf(false));
+	public static final Option<String> CELLULAR_LOCATION = new Option<String>("CELLULAR_LOCATION", String.class, OPTIONS_BUNDLE, null);
 	
 	/**
-	 * If {@code true} the application only searches for reactions with given kinetic data.
+	 * The organism for which the kinetics have been determined.
 	 */
-	public static final Option<Boolean> HAS_KINETIC_DATA = new Option<Boolean>(
-			"HAS_KINETIC_DATA",
-			Boolean.class,			
-			OPTIONS_BUNDLE,
-			Boolean.valueOf(true));
+	public static final Option<String> ORGANISM = new Option<String>("ORGANISM", String.class, OPTIONS_BUNDLE, null);
 	
+		
 	/**
-	 * If {@code true} the application only searches for direct submissions.
+	 * The reactions to equip with kinetics from SABIO-RK
 	 */
-	public static final Option<Boolean> IS_DIRECT_SUBMISSION = new Option<Boolean>(
-			"IS_DIRECT_SUBMISSION",
-			Boolean.class,			
-			OPTIONS_BUNDLE,
-			Boolean.valueOf(true));
-	
-	/**
-	 * If {@code true} the application only searches for entries from journal publications.
-	 */
-	public static final Option<Boolean> IS_JOURNAL = new Option<Boolean>(
-			"IS_JOURNAL",
-			Boolean.class,			
-			OPTIONS_BUNDLE,
-			Boolean.valueOf(true));
-	
-	/**
-	 * The lowest possible pH value for found entries.
-	 */
-	public static final Option<Double> LOWEST_PH_VALUE = new Option<Double>(
-			"LOWEST_PH_VALUE",
-			Double.class, 
-			OPTIONS_BUNDLE,
-			PH_RANGE,
-			Double.valueOf(0d));
-	
-	/**
-	 * The highest possible pH value for found entries.
-	 */
-	public static final Option<Double> HIGHEST_PH_VALUE = new Option<Double>(
-			"HIGHEST_PH_VALUE",
-			Double.class, 
-			OPTIONS_BUNDLE,
-			PH_RANGE,
-			Double.valueOf(14d));
-	
-	/**
-	 * The lowest possible temperature value for found entries.
-	 */
-	public static final Option<Double> LOWEST_TEMPERATURE_VALUE = new Option<Double>(
-			"LOWEST_TEMPERATURE_VALUE",
-			Double.class, 
-			OPTIONS_BUNDLE,
-			TEMPERATURE_RANGE,
-			Double.valueOf(-10d));
-	
-	/**
-	 * The highest possible temperature value for found entries.
-	 */
-	public static final Option<Double> HIGHEST_TEMPERATURE_VALUE = new Option<Double>(
-			"HIGHEST_TEMPERATURE_VALUE",
-			Double.class, 
-			OPTIONS_BUNDLE,
-			TEMPERATURE_RANGE,
-			Double.valueOf(115d));
-	
-	/**
-	 * If {@code true} the application only searches for entries inserted after the given date.
-	 */
-	public static final Option<Boolean> IS_ENTRIES_INSERTED_SINCE = new Option<Boolean>(
-			"IS_ENTRIES_INSERTED_SINCE",
-			Boolean.class,			
-			OPTIONS_BUNDLE,
-			Boolean.valueOf(false));
-	
-	/**
-	 * The earliest date for the entries.
-	 */
-	public static final Option<Date> LOWEST_DATE = new Option<Date>(
-			"LOWEST_DATE",
-			Date.class, 
-			OPTIONS_BUNDLE,
-			SABIORK.getDefaultDate());
+	public static final Option<String> REACTION_FILTER = new Option<String>("REACTION_FILTER", String.class, OPTIONS_BUNDLE, REACTION_SELECTION_RANGE, "Reactions");
 
-	/**
-	 * 
-	 */
+	
+	
 	@SuppressWarnings({ "unchecked" })
-	public static final OptionGroup<Boolean> GROUP_GENERAL_PROPERTIES = new OptionGroup<Boolean>(
-			"GROUP_GENERAL_PROPERTIES", OPTIONS_BUNDLE, IS_WILDTYPE, IS_MUTANT,
-			IS_RECOMBINANT, HAS_KINETIC_DATA, IS_DIRECT_SUBMISSION, IS_JOURNAL,
-			IS_ENTRIES_INSERTED_SINCE);
+	public static final OptionGroup<String> GROUP_GENERAL_OPTIONS = new OptionGroup<String>(
+			"GROUP_GENERAL_OPTIONS", OPTIONS_BUNDLE, PATHWAY, TISSUE, CELLULAR_LOCATION, ORGANISM, REACTION_FILTER);
 
-	/**
-	 * 
-	 */
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public static final OptionGroup<Double> GROUP_TEMPERATURE = new OptionGroup(
-		"GROUP_TEMPERATURE", OPTIONS_BUNDLE, LOWEST_TEMPERATURE_VALUE,
-		HIGHEST_TEMPERATURE_VALUE);
-	
-	/**
-	 * 
-	 */
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public static final OptionGroup<Double> GROUP_PH_VALUE = new OptionGroup(
-		"GROUP_PH_VALUE", OPTIONS_BUNDLE, LOWEST_PH_VALUE, HIGHEST_PH_VALUE);
-	
 }

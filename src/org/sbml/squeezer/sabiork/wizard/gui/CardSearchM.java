@@ -215,6 +215,7 @@ public class CardSearchM extends Card implements ActionListener,
 		comboBoxSearchItems.setSelectedItem(SABIORK.QueryField.ENTRY_ID);
 		comboBoxSearchField.setText("");
 		setSearchState(SearchState.RESET);
+		tableSearchTermsModel.loadSettings();
 		performSelectedReactionKeggIDSearch();
 	};
 
@@ -464,6 +465,7 @@ public class CardSearchM extends Card implements ActionListener,
 	 */
 	public void performAfterPressingBack() {
 		panelFilterOptions.saveSettings();
+		tableSearchTermsModel.saveSettings();
 		search.cancel();
 	}
 	
@@ -473,6 +475,7 @@ public class CardSearchM extends Card implements ActionListener,
 	 */
 	public void performAfterCancel() {
 		panelFilterOptions.saveSettings();
+		tableSearchTermsModel.saveSettings();
 		search.cancel();
 	}
 	
@@ -482,6 +485,7 @@ public class CardSearchM extends Card implements ActionListener,
 	 */
 	public void performAfterNext() {
 		panelFilterOptions.saveSettings();
+		tableSearchTermsModel.saveSettings();
 	}
 
 	/**
@@ -629,6 +633,7 @@ public class CardSearchM extends Card implements ActionListener,
 		if ((!panelFilterOptions.isUserConfiguration())) {
 			startSearch();
 			panelFilterOptions.saveSettings();
+			tableSearchTermsModel.saveSettings();
 		}	
 	}
 

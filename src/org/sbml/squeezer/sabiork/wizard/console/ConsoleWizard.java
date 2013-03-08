@@ -52,7 +52,7 @@ import org.sbml.squeezer.sabiork.wizard.model.WizardModel;
 public class ConsoleWizard {
 
 	private WizardModel model;
-	private Integer reactionFilter;
+	private String reactionFilter;
 	private String pathway;
 	private String tissue;
 	private String organism;
@@ -91,7 +91,7 @@ public class ConsoleWizard {
 	 * @param isEntriesInsertedSince
 	 * @param dateSubmitted
 	 */
-	public ConsoleWizard(SBMLDocument sbmlDocument, Integer reactionFilter,
+	public ConsoleWizard(SBMLDocument sbmlDocument, String reactionFilter,
 			String pathway, String tissue, String organism,
 			String cellularLocation, Boolean isWildtype, Boolean isMutant,
 			Boolean isRecombinant, Boolean hasKineticData, Double lowerpHValue,
@@ -125,41 +125,36 @@ public class ConsoleWizard {
 	 * 
 	 * @param reactionFilter
 	 *            a filter that specifies which type of {@link Reaction} should
-	 *            be considered. All reactions (1), reactions with a
-	 *            {@link KineticLaw} (2), reactions without a {@link KineticLaw}
-	 *            (3), reversible reactions (4), irreversible reactions (5),
-	 *            fast reactions (6) and slow reactions (7)
+	 *            be considered. All reactions, reactions with a
+	 *            {@link KineticLaw}, reactions without a {@link KineticLaw}, 
+	 *            reversible reactions, irreversible reactions,
+	 *            fast reactions and slow reactions
 	 * @return a list of {@link Reaction}
 	 */
-	private List<Reaction> getSelectedReactions(Integer reactionFilter) {
+	private List<Reaction> getSelectedReactions(String reactionFilter) {
 		List<Reaction> reactions = new ArrayList<Reaction>();
-		if (reactionFilter instanceof Integer) {
-			switch (reactionFilter) {
-			case 1:
-				reactions = model.getReactions();
-				break;
-			case 2:
-				reactions = model.getReactionsWithKineticLaw();
-				break;
-			case 3:
-				reactions = model.getReactionsWithoutKineticLaw();
-				break;
-			case 4:
-				reactions = model.getReversibleReactions();
-				break;
-			case 5:
-				reactions = model.getIrreversibleReactions();
-				break;
-			case 6:
-				reactions = model.getFastReactions();
-				break;
-			case 7:
-				reactions = model.getSlowReactions();
-				break;
-			default:
-				reactions = model.getReactions();
-			}
-		} else {
+		if((reactionFilter == null) || (reactionFilter.equals("Reactions"))) {
+			reactions = model.getReactions();
+		}
+		else if(reactionFilter.equals("Reactions with kinetic law")){
+			reactions = model.getReactionsWithKineticLaw();
+		}
+		else if(reactionFilter.equals("Reactions without kinetic law")){
+			reactions = model.getReactionsWithoutKineticLaw();
+		}
+		else if(reactionFilter.equals("Reversible reactions")){
+			reactions = model.getReversibleReactions();
+		}
+		else if(reactionFilter.equals("Irreversible reactions")){
+			reactions = model.getIrreversibleReactions();
+		}
+		else if(reactionFilter.equals("Fast reactions")){
+			reactions = model.getFastReactions();
+		}
+		else if(reactionFilter.equals("Slow reactions")){
+			reactions = model.getSlowReactions();
+		}
+		else {
 			reactions = model.getReactions();
 		}
 		return reactions;
