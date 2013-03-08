@@ -95,7 +95,7 @@ public class SABIORKWizard {
 	 * @return the resulting {@link SBMLDocument}
 	 */
 	public static SubmodelController getResultConsole(SBMLDocument sbmlDocument,
-			Integer reactionFilter, String pathway, String tissue,
+			String reactionFilter, String pathway, String tissue,
 			String organism, String cellularLocation, Boolean isWildtype,
 			Boolean isMutant, Boolean isRecombinant, Boolean hasKineticData,
 			Double lowerpHValue, Double upperpHValue, Double lowerTemperature,

@@ -27,7 +27,7 @@ import java.io.IOException;
 import java.util.prefs.BackingStoreException;
 
 import org.sbml.squeezer.sabiork.SABIORK;
-import org.sbml.squeezer.sabiork.SABIORKOptions;
+import org.sbml.squeezer.sabiork.SABIORKPreferences;
 import de.zbit.gui.prefs.PreferencesPanelForKeyProvider;
 import de.zbit.util.prefs.SBPreferences;
 
@@ -45,7 +45,7 @@ public class JPanelFilterOptions extends PreferencesPanelForKeyProvider{
 	 */
 	public JPanelFilterOptions()
 		throws IOException {
-		super(SABIORKOptions.class);
+		super(SABIORKPreferences.class);
 	}
 
 
@@ -62,18 +62,18 @@ public class JPanelFilterOptions extends PreferencesPanelForKeyProvider{
 	 */
 	public String getFilterOptionsQuery() {
 		return SABIORK.getFilterOptionsQuery(
-				this.getProperty(SABIORKOptions.IS_WILDTYPE),
-				this.getProperty(SABIORKOptions.IS_MUTANT),
-				this.getProperty(SABIORKOptions.IS_RECOMBINANT),
-				this.getProperty(SABIORKOptions.HAS_KINETIC_DATA),
-				this.getProperty(SABIORKOptions.LOWEST_PH_VALUE), 
-				this.getProperty(SABIORKOptions.HIGHEST_PH_VALUE),
-				this.getProperty(SABIORKOptions.LOWEST_TEMPERATURE_VALUE),
-				this.getProperty(SABIORKOptions.HIGHEST_TEMPERATURE_VALUE),
-				this.getProperty(SABIORKOptions.IS_DIRECT_SUBMISSION),
-				this.getProperty(SABIORKOptions.IS_JOURNAL),
-				this.getProperty(SABIORKOptions.IS_ENTRIES_INSERTED_SINCE),
-				this.getProperty(SABIORKOptions.LOWEST_DATE));
+				this.getProperty(SABIORKPreferences.IS_WILDTYPE),
+				this.getProperty(SABIORKPreferences.IS_MUTANT),
+				this.getProperty(SABIORKPreferences.IS_RECOMBINANT),
+				this.getProperty(SABIORKPreferences.HAS_KINETIC_DATA),
+				this.getProperty(SABIORKPreferences.LOWEST_PH_VALUE), 
+				this.getProperty(SABIORKPreferences.HIGHEST_PH_VALUE),
+				this.getProperty(SABIORKPreferences.LOWEST_TEMPERATURE_VALUE),
+				this.getProperty(SABIORKPreferences.HIGHEST_TEMPERATURE_VALUE),
+				this.getProperty(SABIORKPreferences.IS_DIRECT_SUBMISSION),
+				this.getProperty(SABIORKPreferences.IS_JOURNAL),
+				this.getProperty(SABIORKPreferences.IS_ENTRIES_INSERTED_SINCE),
+				this.getProperty(SABIORKPreferences.LOWEST_DATE));
 		
 	}
 
@@ -85,31 +85,31 @@ public class JPanelFilterOptions extends PreferencesPanelForKeyProvider{
 	 */
 	public void saveSettings() {
 		SBPreferences prefs = SBPreferences
-				.getPreferencesFor(SABIORKOptions.class);
+				.getPreferencesFor(SABIORKPreferences.class);
 		
-		prefs.put(SABIORKOptions.IS_WILDTYPE, this.getProperty(SABIORKOptions.IS_WILDTYPE));
+		prefs.put(SABIORKPreferences.IS_WILDTYPE, this.getProperty(SABIORKPreferences.IS_WILDTYPE));
 		
-		prefs.put(SABIORKOptions.IS_MUTANT, this.getProperty(SABIORKOptions.IS_MUTANT));
+		prefs.put(SABIORKPreferences.IS_MUTANT, this.getProperty(SABIORKPreferences.IS_MUTANT));
 		
-		prefs.put(SABIORKOptions.IS_RECOMBINANT, this.getProperty(SABIORKOptions.IS_RECOMBINANT));
+		prefs.put(SABIORKPreferences.IS_RECOMBINANT, this.getProperty(SABIORKPreferences.IS_RECOMBINANT));
 		
-		prefs.put(SABIORKOptions.HAS_KINETIC_DATA, this.getProperty(SABIORKOptions.HAS_KINETIC_DATA));
+		prefs.put(SABIORKPreferences.HAS_KINETIC_DATA, this.getProperty(SABIORKPreferences.HAS_KINETIC_DATA));
 		
-		prefs.put(SABIORKOptions.IS_DIRECT_SUBMISSION, this.getProperty(SABIORKOptions.IS_DIRECT_SUBMISSION));
+		prefs.put(SABIORKPreferences.IS_DIRECT_SUBMISSION, this.getProperty(SABIORKPreferences.IS_DIRECT_SUBMISSION));
 		
-		prefs.put(SABIORKOptions.IS_JOURNAL, this.getProperty(SABIORKOptions.IS_JOURNAL));
+		prefs.put(SABIORKPreferences.IS_JOURNAL, this.getProperty(SABIORKPreferences.IS_JOURNAL));
 
-		prefs.put(SABIORKOptions.IS_ENTRIES_INSERTED_SINCE, this.getProperty(SABIORKOptions.IS_ENTRIES_INSERTED_SINCE));
+		prefs.put(SABIORKPreferences.IS_ENTRIES_INSERTED_SINCE, this.getProperty(SABIORKPreferences.IS_ENTRIES_INSERTED_SINCE));
 	
-		prefs.put(SABIORKOptions.LOWEST_PH_VALUE, this.getProperty(SABIORKOptions.LOWEST_PH_VALUE));
+		prefs.put(SABIORKPreferences.LOWEST_PH_VALUE, this.getProperty(SABIORKPreferences.LOWEST_PH_VALUE));
 		
-		prefs.put(SABIORKOptions.HIGHEST_PH_VALUE, this.getProperty(SABIORKOptions.HIGHEST_PH_VALUE));
+		prefs.put(SABIORKPreferences.HIGHEST_PH_VALUE, this.getProperty(SABIORKPreferences.HIGHEST_PH_VALUE));
 		
-		prefs.put(SABIORKOptions.LOWEST_TEMPERATURE_VALUE, this.getProperty(SABIORKOptions.LOWEST_TEMPERATURE_VALUE));
+		prefs.put(SABIORKPreferences.LOWEST_TEMPERATURE_VALUE, this.getProperty(SABIORKPreferences.LOWEST_TEMPERATURE_VALUE));
 		
-		prefs.put(SABIORKOptions.HIGHEST_TEMPERATURE_VALUE, this.getProperty(SABIORKOptions.HIGHEST_TEMPERATURE_VALUE));
+		prefs.put(SABIORKPreferences.HIGHEST_TEMPERATURE_VALUE, this.getProperty(SABIORKPreferences.HIGHEST_TEMPERATURE_VALUE));
 		
-		prefs.put(SABIORKOptions.LOWEST_DATE, this.getProperty(SABIORKOptions.LOWEST_DATE));
+		prefs.put(SABIORKPreferences.LOWEST_DATE, this.getProperty(SABIORKPreferences.LOWEST_DATE));
 		
 	
 		try {

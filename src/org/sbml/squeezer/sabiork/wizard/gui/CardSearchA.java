@@ -211,6 +211,7 @@ public class CardSearchA extends Card implements ActionListener,
 		comboBoxConstraints.setSelectedItem(SABIORK.QueryField.PATHWAY);
 		comboBoxSearchField.setText("");
 		setSearchState(SearchState.RESET);
+		tableSearchTermsModel.loadSettings();
 		startSearch();
 	};
 
@@ -362,6 +363,7 @@ public class CardSearchA extends Card implements ActionListener,
 	 */
 	public void performAfterPressingBack() {
 		panelFilterOptions.saveSettings();
+		tableSearchTermsModel.saveSettings();
 		search.cancel();
 	}
 	
@@ -371,6 +373,7 @@ public class CardSearchA extends Card implements ActionListener,
 	 */
 	public void performAfterCancel() {
 		panelFilterOptions.saveSettings();
+		tableSearchTermsModel.saveSettings();
 		search.cancel();
 	}
 	
@@ -380,6 +383,7 @@ public class CardSearchA extends Card implements ActionListener,
 	 */
 	public void performAfterNext() {
 		panelFilterOptions.saveSettings();
+		tableSearchTermsModel.saveSettings();
 	}
 
 	/**
@@ -526,6 +530,7 @@ public class CardSearchA extends Card implements ActionListener,
 		if ((!panelFilterOptions.isUserConfiguration())) {
 			startSearch();
 			panelFilterOptions.saveSettings();
+			tableSearchTermsModel.saveSettings();
 		}	
 	}
 
