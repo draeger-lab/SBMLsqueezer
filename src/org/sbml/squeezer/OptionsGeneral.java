@@ -293,6 +293,13 @@ public interface OptionsGeneral extends KeyProvider {
 			Boolean.valueOf(true));
 	
 	/**
+	 * Determines whether kinetics from SABIO-RK are to be searched.
+	 */
+	public static final Option<Boolean> READ_FROM_SABIO_RK = new Option<Boolean>(
+		"READ_FROM_SABIO_RK", Boolean.class, OPTIONS_BUNDLE, Boolean.valueOf(true));
+
+	
+	/**
 	 * How to ensure unit consistency in kinetic equations? One way is to set
 	 * each participating species to an initial amount and to set the unit to
 	 * mmole. The other way is to set the initial concentration of each species,
@@ -323,7 +330,8 @@ public interface OptionsGeneral extends KeyProvider {
 			REMOVE_UNNECESSARY_PARAMETERS_AND_UNITS,
 			NEW_PARAMETERS_GLOBAL,
 			WARNINGS_FOR_TOO_MANY_REACTANTS,
-			SHOW_SBML_WARNINGS);
+			SHOW_SBML_WARNINGS,
+			READ_FROM_SABIO_RK);
 	
 	/**
 	 * Default values
@@ -365,5 +373,6 @@ public interface OptionsGeneral extends KeyProvider {
 		"GROUP_UNIT_CONSISTENCY",
 		OPTIONS_BUNDLE,
 		TYPE_UNIT_CONSISTENCY);
+
 
 }

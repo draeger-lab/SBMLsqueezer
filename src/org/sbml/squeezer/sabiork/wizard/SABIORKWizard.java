@@ -25,6 +25,10 @@ package org.sbml.squeezer.sabiork.wizard;
 
 import java.awt.Dialog.ModalityType;
 import java.awt.Window;
+import java.util.List;
+import java.util.Set;
+
+import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBMLDocument;
 import org.sbml.squeezer.SubmodelController;
 import org.sbml.squeezer.sabiork.wizard.console.ConsoleWizard;
@@ -69,12 +73,7 @@ public class SABIORKWizard {
 	 * 
 	 * @param sbmlDocument
 	 *            the {@link SBMLDocument}
-	 * @param reactionFilter
-	 *            a filter that specifies which type of {@link Reaction} should
-	 *            be considered. All reactions (1), reactions with a
-	 *            {@link KineticLaw} (2), reactions without a {@link KineticLaw}
-	 *            (3), reversible reactions (4), irreversible reactions (5),
-	 *            fast reactions (6) and slow reactions (7)
+	 * @param overwriteExistingRateLaws
 	 * @param pathway
 	 * @param tissue
 	 * @param organism
@@ -92,10 +91,10 @@ public class SABIORKWizard {
 	 * @param isEntriesInsertedSince
 	 * @param dateSubmitted
 	 *            a date of the format dd/MM/yyyy
-	 * @return the resulting {@link SBMLDocument}
+	 * @return the changed list of {@link Reaction}
 	 */
-	public static SubmodelController getResultConsole(SBMLDocument sbmlDocument,
-			String reactionFilter, String pathway, String tissue,
+	public static Set<Reaction> getResultConsole(SBMLDocument sbmlDocument,
+			boolean overwriteExistingRateLaws, String pathway, String tissue,
 			String organism, String cellularLocation, Boolean isWildtype,
 			Boolean isMutant, Boolean isRecombinant, Boolean hasKineticData,
 			Double lowerpHValue, Double upperpHValue, Double lowerTemperature,
@@ -103,7 +102,7 @@ public class SABIORKWizard {
 			Boolean isJournal, Boolean isEntriesInsertedSince,
 			String dateSubmitted) {
 		ConsoleWizard consoleWizard = new ConsoleWizard(sbmlDocument,
-				reactionFilter, pathway, tissue, organism, cellularLocation,
+				overwriteExistingRateLaws, pathway, tissue, organism, cellularLocation,
 				isWildtype, isMutant, isRecombinant, hasKineticData,
 				lowerpHValue, upperpHValue, lowerTemperature, upperTemperature,
 				isDirectSubmission, isJournal, isEntriesInsertedSince,

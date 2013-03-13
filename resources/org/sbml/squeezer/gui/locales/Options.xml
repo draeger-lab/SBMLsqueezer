@@ -79,6 +79,10 @@
   <entry key="WARNINGS_FOR_TOO_MANY_REACTANTS">Warnings for too many reactants</entry>
   <entry key="WARNINGS_FOR_TOO_MANY_REACTANTS_TOOLTIP">If true (default), warnings will be displayed for reactions with an unrealistic number of reactants. The maximal number of reactants that are believed to be still realistic can be defined if this option is selected.</entry>
   <entry key="WARNINGS_FOR_TOO_MANY_REACTANTS_TOOLTIP_TO_BE_MERGED">If checked, warnings will be shown for reactions with more reactants than specified here.</entry>
+  <entry key="READ_FROM_SABIO_RK">Read kinetics from SABIO-RK</entry>
+  <entry key="READ_FROM_SABIO_RK_TOOLTIP">This options lets the user choose whether to search for kinetics in SABIO-RK.</entry>
+ 
+  
   
   <entry key="GROUP_GENERAL">General Options</entry>
   <entry key="GROUP_GENERAL_TOOLTIP">Basic configuration of SBMLsqueezer</entry>
@@ -87,7 +91,7 @@
   <entry key="GROUP_UNIT_CONSISTENCY">How to ensure unit consistency</entry>
   <entry key="GROUP_UNIT_CONSISTENCY_TOOLTIP">Here you can choose how the unit consistency of your model should be ensured. Species can either be brought to units of concentration or amount. This selection influences how the compartment size is involved in the kinetic equation.</entry>
   <entry key="GROUP_ENZYMES">Species to be treated as enzymes</entry>
-  <entry key="GROUP_ENZYMES_TOOLTIP">Since it is not always obvious, which species can be considered as an enzyme, i.e., a bio catalyst, you have the possibility to select types of species that you like to consider an enzyme in your model.</entry>
+  <entry key="GROUP_ENZYMES_TOOLTIP">Since it is not always obvious, which species can be considered as an enzyme, i.e., a bio catalyst, you have the possibility to select types of species that you like to consider an enzyme in your model.</entry> 
   
   <!-- OptionsRateLaws -->
   
@@ -190,9 +194,7 @@
   <entry key="CELLULAR_LOCATION_TOOLTIP">Define the cellular location for which the kinetics are to be determined.</entry>
   <entry key="ORGANISM">Organism</entry>
   <entry key="ORGANISM_TOOLTIP">Define the organism for which the kinetics are to be determined.</entry>
-  <entry key="REACTION_FILTER">Reaction filter</entry>
-  <entry key="REACTION_FILTER_TOOLTIP">Define the filter for reactions which the kinetics are to be determined.</entry>
-  
+   
   <entry key="GROUP_GENERAL_OPTIONS">General options</entry>
   <entry key="GROUP_GENERAL_OPTIONS_TOOLTIP">Define key options to restrict the results of your search for reaction kinetics in SABIO-RK.</entry> 
 </properties>

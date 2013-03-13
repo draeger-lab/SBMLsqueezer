@@ -28,14 +28,16 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Scanner;
+import java.util.Set;
+
 import javax.xml.stream.XMLStreamException;
 import org.sbml.jsbml.KineticLaw;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.util.ValuePair;
-import org.sbml.squeezer.SubmodelController;
 import org.sbml.squeezer.sabiork.SABIORK;
 import org.sbml.squeezer.sabiork.SABIORK.QueryField;
 import org.sbml.squeezer.sabiork.util.WebServiceConnectException;
@@ -52,7 +54,7 @@ import org.sbml.squeezer.sabiork.wizard.model.WizardModel;
 public class ConsoleWizard {
 
 	private WizardModel model;
-	private String reactionFilter;
+	private boolean overwriteExistingRateLaws;
 	private String pathway;
 	private String tissue;
 	private String organism;
@@ -73,7 +75,7 @@ public class ConsoleWizard {
 	/**
 	 * 
 	 * @param sbmlDocument
-	 * @param reactionFilter
+	 * @param overwriteExistingRateLaws
 	 * @param pathway
 	 * @param tissue
 	 * @param organism
@@ -91,7 +93,7 @@ public class ConsoleWizard {
 	 * @param isEntriesInsertedSince
 	 * @param dateSubmitted
 	 */
-	public ConsoleWizard(SBMLDocument sbmlDocument, String reactionFilter,
+	public ConsoleWizard(SBMLDocument sbmlDocument, boolean overwriteExistingRateLaws,
 			String pathway, String tissue, String organism,
 			String cellularLocation, Boolean isWildtype, Boolean isMutant,
 			Boolean isRecombinant, Boolean hasKineticData, Double lowerpHValue,
@@ -99,9 +101,8 @@ public class ConsoleWizard {
 			Double upperTemperature, Boolean isDirectSubmission,
 			Boolean isJournal, Boolean isEntriesInsertedSince,
 			String dateSubmitted) {
-		//TODO check settings for overwriting laws
 		this.model = new WizardModel(sbmlDocument, true);
-		this.reactionFilter = reactionFilter;
+		this.overwriteExistingRateLaws = overwriteExistingRateLaws;
 		this.pathway = pathway;
 		this.tissue = tissue;
 		this.organism = organism;
@@ -121,41 +122,17 @@ public class ConsoleWizard {
 	}
 
 	/**
-	 * Returns the reactions according to the {@code reactionFilter}.
+	 * Returns the reactions according to the overwriteExistingLaws option.
 	 * 
-	 * @param reactionFilter
-	 *            a filter that specifies which type of {@link Reaction} should
-	 *            be considered. All reactions, reactions with a
-	 *            {@link KineticLaw}, reactions without a {@link KineticLaw}, 
-	 *            reversible reactions, irreversible reactions,
-	 *            fast reactions and slow reactions
-	 * @return a list of {@link Reaction}
+	 * @return a list of {@link Reaction} that can be equipped with laws from SABIO-RK
 	 */
-	private List<Reaction> getSelectedReactions(String reactionFilter) {
+	private List<Reaction> getSelectedReactions() {
 		List<Reaction> reactions = new ArrayList<Reaction>();
-		if((reactionFilter == null) || (reactionFilter.equals("Reactions"))) {
+		if(overwriteExistingRateLaws) {
 			reactions = model.getReactions();
-		}
-		else if(reactionFilter.equals("Reactions with kinetic law")){
-			reactions = model.getReactionsWithKineticLaw();
-		}
-		else if(reactionFilter.equals("Reactions without kinetic law")){
-			reactions = model.getReactionsWithoutKineticLaw();
-		}
-		else if(reactionFilter.equals("Reversible reactions")){
-			reactions = model.getReversibleReactions();
-		}
-		else if(reactionFilter.equals("Irreversible reactions")){
-			reactions = model.getIrreversibleReactions();
-		}
-		else if(reactionFilter.equals("Fast reactions")){
-			reactions = model.getFastReactions();
-		}
-		else if(reactionFilter.equals("Slow reactions")){
-			reactions = model.getSlowReactions();
 		}
 		else {
-			reactions = model.getReactions();
+			reactions = model.getReactionsWithoutKineticLaw();
 		}
 		return reactions;
 	}
@@ -233,12 +210,13 @@ public class ConsoleWizard {
 	}
 
 	/**
-	 * Starts the SABIO-RK wizard and returns the result of the wizard.
+	 * Starts the SABIO-RK wizard and returns the changed reactions.
 	 * 
-	 * @return the resulting {@link SBMLDocument}
+	 * @return the list of changed reactions
 	 */
-	public SubmodelController getResult() {
-		List<Reaction> selectedReactions = getSelectedReactions(reactionFilter);
+	public Set<Reaction> getResult() {
+		Set<Reaction> changedReactions = new HashSet<Reaction>();
+		List<Reaction> selectedReactions = getSelectedReactions();
 		String searchTermsQuery = getSearchTermsQuery(pathway, tissue,
 				organism, cellularLocation);
 		String filterOptionsQuery = getFilterOptionsQuery(isWildtype, isMutant,
@@ -268,16 +246,16 @@ public class ConsoleWizard {
 					kineticLaws = SABIORK.getKineticLaws(query.toString());
 				} catch (WebServiceConnectException e) {
 					System.err.println(e.getMessage());
-					return model.getResult();
+					return changedReactions;
 				} catch (WebServiceResponseException e) {
 					System.err.println(e.getMessage());
-					return model.getResult();
+					return changedReactions;
 				} catch (IOException e) {
 					System.err.println(e.getMessage());
-					return model.getResult();
+					return changedReactions;
 				} catch (XMLStreamException e) {
 					System.err.println(e.getMessage());
-					return model.getResult();
+					return changedReactions;
 				}
 				for (KineticLaw kineticLaw : kineticLaws) {
 					if (kineticLaw != null) {
@@ -319,28 +297,19 @@ public class ConsoleWizard {
 		 */
 		if (selectedKineticLawImporters.isEmpty()) {
 			System.out.println("No results were found for your query.");
-			return model.getResult();
 		} else {
 			for (KineticLawImporter selectedKineticLawImporter : selectedKineticLawImporters) {
 				if (selectedKineticLawImporter.isImportableKineticLaw()) {
 					selectedKineticLawImporter.importKineticLaw();
+					changedReactions.add(selectedKineticLawImporter.getReaction());
 					System.out.println("\n\n"
 							+ selectedKineticLawImporter.getReport());
 				}
 			}
-			Scanner scanner = new Scanner(System.in);
-			String confirmMessage = "\n\nThe specified changes will be applied to your model.\nPlease confirm to proceed.\n\nY = Yes\nN = No\n\nApply changes?";
-			System.out.println(confirmMessage);
-			String input = scanner.nextLine().toLowerCase();
-			while (!(input.equals("y") || input.equals("n"))) {
-				System.out.println(confirmMessage);
-				input = scanner.nextLine().toLowerCase();
-			}
-			if (input.equals("y")) {
-				model.applyChanges();
-			}
-			return model.getResult();
+			System.out.println("\n\nThe specified changes will be applied to your model.\n");
+			model.applyChanges();
 		}
+		return changedReactions;
 	}
 
 }

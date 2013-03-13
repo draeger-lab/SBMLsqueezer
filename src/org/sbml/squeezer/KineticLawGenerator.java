@@ -29,6 +29,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -176,6 +177,7 @@ public class KineticLawGenerator {
 	private boolean setBoundaryCondition;
 	private double defaultSpeciesInitVal;
 	private double defaultCompartmentInitSize;
+	private Set<Reaction> reactionsToExclude;
 
 	/**
 	 * Takes a {@link Model} as input, creates a copy of the {@link Model},
@@ -223,6 +225,21 @@ public class KineticLawGenerator {
 //		
 //
 //	}
+
+	/**
+	 * @param selectedModel
+	 * @param reactionsWithSABIOKinetics
+	 */
+	public KineticLawGenerator(Model selectedModel,
+		Set<Reaction> reactionsWithSABIOKinetics) throws ClassNotFoundException {
+		this(selectedModel);
+		if(reactionsWithSABIOKinetics != null) {
+			this.reactionsToExclude = reactionsWithSABIOKinetics;
+		}
+		else {
+			reactionsWithSABIOKinetics = new HashSet<Reaction>();
+		}
+	}
 
 	/**
 	 * 
@@ -533,8 +550,10 @@ public class KineticLawGenerator {
 				progressAdapter.progressOn();
 			}
 			
-			createKineticLaw(reaction, kineticsClass, isReversibility(),
+			if(!reactionsToExclude.contains(reaction)) {
+				createKineticLaw(reaction, kineticsClass, isReversibility(),
 				typeStandardVersion, typeUnitConsistency, defaultParamVal);
+			}
 			
 			if (progressAdapter != null) {
 				//progressAdapter.setNumberOfTags(modelOrig, miniModel, isRemoveUnnecessaryParameters());
