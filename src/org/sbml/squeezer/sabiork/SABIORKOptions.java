@@ -31,7 +31,6 @@ import de.zbit.util.ResourceManager;
 import de.zbit.util.prefs.KeyProvider;
 import de.zbit.util.prefs.Option;
 import de.zbit.util.prefs.OptionGroup;
-import de.zbit.util.prefs.Range;
 
 /**
  * @author Roland Keller
@@ -43,12 +42,6 @@ public interface SABIORKOptions extends KeyProvider {
 	 * 
 	 */
 	public static final ResourceBundle OPTIONS_BUNDLE = ResourceManager.getBundle(Bundles.OPTIONS);
-
-	/**
-	 * The range for the reaction filter.
-	 */
-	public static final Range<String> REACTION_SELECTION_RANGE = new Range<String>(String.class, new String[]{"Reactions", "Reactions with kinetic law", "Reactions without kinetic law", "Reversible reactions", "Irreversible reactions", "Fast reactions", "Slow reactions"});
-
 	
 	/**
 	 * The pathway for which the kinetics have been determined.
@@ -70,16 +63,9 @@ public interface SABIORKOptions extends KeyProvider {
 	 */
 	public static final Option<String> ORGANISM = new Option<String>("ORGANISM", String.class, OPTIONS_BUNDLE, null);
 	
-		
-	/**
-	 * The reactions to equip with kinetics from SABIO-RK
-	 */
-	public static final Option<String> REACTION_FILTER = new Option<String>("REACTION_FILTER", String.class, OPTIONS_BUNDLE, REACTION_SELECTION_RANGE, "Reactions");
-
-	
 	
 	@SuppressWarnings({ "unchecked" })
 	public static final OptionGroup<String> GROUP_GENERAL_OPTIONS = new OptionGroup<String>(
-			"GROUP_GENERAL_OPTIONS", OPTIONS_BUNDLE, PATHWAY, TISSUE, CELLULAR_LOCATION, ORGANISM, REACTION_FILTER);
+			"GROUP_GENERAL_OPTIONS", OPTIONS_BUNDLE, PATHWAY, TISSUE, CELLULAR_LOCATION, ORGANISM);
 
 }

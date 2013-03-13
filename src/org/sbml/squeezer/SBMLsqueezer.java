@@ -39,9 +39,13 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.xml.stream.XMLStreamException;
+
 import jp.sbi.garuda.platform.commons.exception.NetworkException;
 
 import org.sbml.jsbml.Model;
+import org.sbml.jsbml.Reaction;
+import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.SBMLException;
 import org.sbml.jsbml.SBMLInputConverter;
 import org.sbml.jsbml.SBMLOutputConverter;
@@ -56,6 +60,7 @@ import org.sbml.squeezer.io.SqSBMLWriter;
 import org.sbml.squeezer.kinetics.OptionsRateLaws;
 import org.sbml.squeezer.sabiork.SABIORKOptions;
 import org.sbml.squeezer.sabiork.SABIORKPreferences;
+import org.sbml.squeezer.sabiork.wizard.SABIORKWizard;
 import org.sbml.squeezer.util.Bundles;
 import org.sbml.tolatex.LaTeXOptions;
 import org.sbml.tolatex.SBML2LaTeX;
@@ -210,6 +215,11 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
    * 
    */
   private SBMLio sbmlIo;
+  
+  /**
+   * 
+   */
+	private AppConf appConf;
 
   /**
    * 
@@ -244,6 +254,7 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
    * @see de.zbit.Launcher#commandLineMode(de.zbit.AppConf)
    */
   public void commandLineMode(AppConf appConf) {
+  	this.appConf = appConf;
     SBProperties properties = appConf.getCmdArgs();
     if ((getSBMLIO().getNumErrors() > 0)
         && properties.getBoolean(OptionsGeneral.SHOW_SBML_WARNINGS)) {
@@ -253,8 +264,18 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
     }
     if (properties.containsKey(IOOptions.SBML_OUT_FILE)) {
       try {
+      	boolean searchSABIO = false;
+        if((properties.containsKey(OptionsGeneral.READ_FROM_SABIO_RK)) && (properties.getBoolean(OptionsGeneral.READ_FROM_SABIO_RK))) {
+        	searchSABIO = true;
+        }
+        else {
+        	SBPreferences preferences = new SBPreferences(OptionsGeneral.class);
+        	if(preferences.getBoolean(OptionsGeneral.READ_FROM_SABIO_RK)) {
+        		searchSABIO = true;
+        	}
+        }
         squeeze(properties.get(IOOptions.SBML_IN_FILE).toString(),
-          properties.get(IOOptions.SBML_OUT_FILE).toString());
+          properties.get(IOOptions.SBML_OUT_FILE).toString(), searchSABIO);
       } catch (Throwable e) {
         e.printStackTrace();
       }
@@ -452,9 +473,10 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
    * @param source
    * @param outFile
    * @param showProgress
+   * @param searchSABIO
    * @throws Throwable
    */
-  public void squeeze(File source, File outFile, boolean showProgress) throws Throwable {
+  public void squeeze(File source, File outFile, boolean showProgress, boolean searchSABIO) throws Throwable {
   	long workTime = System.currentTimeMillis();
   	readSBMLSource(source.getAbsolutePath());
   	boolean errorFatal = false;
@@ -469,13 +491,27 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
   		throw new SBMLException(exception);
   	} else if (!sbmlIo.getListOfOpenedFiles().isEmpty()) {
   		
-  		KineticLawGenerator klg = new KineticLawGenerator(sbmlIo.getSelectedModel());
+  		Set<Reaction> reactionsWithSABIOKinetics = null;
+  		if(searchSABIO) {
+  			boolean overwriteExistingRateLaws = false;
+  			
+  			if(appConf.getCmdArgs().containsKey(OptionsGeneral.OVERWRITE_EXISTING_RATE_LAWS)) {
+  				overwriteExistingRateLaws = appConf.getCmdArgs().getBoolean(OptionsGeneral.OVERWRITE_EXISTING_RATE_LAWS);
+  			}
+  			else {
+  				SBPreferences prefs = new SBPreferences(OptionsGeneral.class);
+  				overwriteExistingRateLaws = prefs.getBoolean(OptionsGeneral.OVERWRITE_EXISTING_RATE_LAWS);
+  			}
+  			reactionsWithSABIOKinetics = squeezeWithKineticsFromSABIORK(sbmlIo.getSelectedModel().getSBMLDocument(), overwriteExistingRateLaws);
+  		}
+  		KineticLawGenerator klg = new KineticLawGenerator(sbmlIo.getSelectedModel(), reactionsWithSABIOKinetics);
   		ProgressBar progressBar = null;
-  		
   		if (showProgress) {
   			progressBar = new ProgressBar(0);
   			klg.setProgressBar(progressBar);
   		}
+  		
+  		
   		long time = System.currentTimeMillis();
   		logger.info(MESSAGES.getString("CREATING_KINETIC_LAWS"));
   		klg.generateLaws();
@@ -525,9 +561,11 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
    *            The absolute path to a file where the result should be stored.
    *            This must be a file that ends with .xml or .sbml (case
    *            insensitive).
+   * @param searchSABIO
+   * 						Also search for kinetics in SABIO-RK and add them if possible
    * @throws Throwable
    */
-  public void squeeze(Object sbmlSource, String outfile) throws Throwable {
+  public void squeeze(Object sbmlSource, String outfile, boolean searchSABIO) throws Throwable {
   	File outFile = outfile != null ? new File(outfile) : null;
   	File inFile = sbmlSource != null ? new File(sbmlSource.toString()) : null;
   	logger.info(MESSAGES.getString("SCANNING_INPUT_FILES"));
@@ -543,7 +581,7 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
   					MESSAGES.getString("SQUEEZING_FILE"),
   					inFile.getAbsolutePath(),
   					outFile.getAbsolutePath()));
-  				squeeze(inFile, outFile, false);
+  				squeeze(inFile, outFile, false, searchSABIO);
   			} catch (Throwable t) {
   				logger.log(Level.SEVERE, MessageFormat.format(
   					WARNINGS.getString("SQUEEZE_ERROR"),
@@ -586,6 +624,153 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
     } else {
       logger.log(Level.WARNING, WARNINGS.getString("NO_TEX_FILE_PROVIDED"));
     }
+  }
+  
+  /**
+   * Searches for SABIO-RK kinetics
+   * @param sbmlDocument
+   * @param overwriteExistingRateLaws
+   * @return changedReactions
+   * @throws XMLStreamException
+   * @throws IOException
+   */
+  public Set<Reaction> squeezeWithKineticsFromSABIORK(SBMLDocument sbmlDocument, boolean overwriteExistingRateLaws) throws XMLStreamException, IOException {
+  	SBProperties properties = appConf.getCmdArgs();
+  	SBPreferences options = new SBPreferences(SABIORKOptions.class);
+  	SBPreferences prefs = new SBPreferences(SABIORKPreferences.class);
+  	
+  	
+  	
+  	String pathway = null;
+  	if(properties.containsKey(SABIORKOptions.PATHWAY)) {
+  		pathway = properties.get(SABIORKOptions.PATHWAY);
+  	}
+  	else {
+  		pathway = options.get(SABIORKOptions.PATHWAY);
+  	}
+  	
+  	String tissue = null;
+  	if(properties.containsKey(SABIORKOptions.TISSUE)) {
+  		tissue = properties.get(SABIORKOptions.TISSUE);
+  	}
+  	else {
+  		tissue = options.get(SABIORKOptions.TISSUE);
+  	}
+  	
+  	String organism = null;
+  	if(properties.containsKey(SABIORKOptions.ORGANISM)) {
+  		organism = properties.get(SABIORKOptions.ORGANISM);
+  	}
+  	else {
+  		organism = options.get(SABIORKOptions.ORGANISM);
+  	}
+  	
+  	String cellularLocation = null;
+  	if(properties.containsKey(SABIORKOptions.CELLULAR_LOCATION)) {
+  		cellularLocation = properties.get(SABIORKOptions.CELLULAR_LOCATION);
+  	}
+  	else {
+  		cellularLocation = options.get(SABIORKOptions.CELLULAR_LOCATION);
+  	}
+  	
+  	Boolean isWildtype = null;
+  	if(properties.containsKey(SABIORKPreferences.IS_WILDTYPE)) {
+  		isWildtype = properties.getBoolean(SABIORKPreferences.IS_WILDTYPE);
+  	}
+  	else {
+  		isWildtype = prefs.getBoolean(SABIORKPreferences.IS_WILDTYPE);
+  	}
+  	
+  	Boolean isMutant = null;
+  	if(properties.containsKey(SABIORKPreferences.IS_MUTANT)) {
+  		isMutant = properties.getBoolean(SABIORKPreferences.IS_MUTANT);
+  	}
+  	else {
+  		isMutant = prefs.getBoolean(SABIORKPreferences.IS_MUTANT);
+  	}
+  	
+  	Boolean isRecombinant = null;
+  	if(properties.containsKey(SABIORKPreferences.IS_RECOMBINANT)) {
+  		isRecombinant = properties.getBoolean(SABIORKPreferences.IS_RECOMBINANT);
+  	}
+  	else {
+  		isRecombinant = prefs.getBoolean(SABIORKPreferences.IS_RECOMBINANT);
+  	}
+  	
+  	Boolean hasKineticData = null;
+  	if(properties.containsKey(SABIORKPreferences.HAS_KINETIC_DATA)) {
+  		hasKineticData = properties.getBoolean(SABIORKPreferences.HAS_KINETIC_DATA);
+  	}
+  	else {
+  		hasKineticData = prefs.getBoolean(SABIORKPreferences.HAS_KINETIC_DATA);
+  	}
+  	
+  	Boolean isDirectSubmission = null;
+  	if(properties.containsKey(SABIORKPreferences.IS_DIRECT_SUBMISSION)) {
+  		isDirectSubmission = properties.getBoolean(SABIORKPreferences.IS_DIRECT_SUBMISSION);
+  	}
+  	else {
+  		isDirectSubmission = prefs.getBoolean(SABIORKPreferences.IS_DIRECT_SUBMISSION);
+  	}
+  	
+  	Boolean isJournal = null;
+  	if(properties.containsKey(SABIORKPreferences.IS_JOURNAL)) {
+  		isJournal = properties.getBoolean(SABIORKPreferences.IS_JOURNAL);
+  	}
+  	else {
+  		isJournal = prefs.getBoolean(SABIORKPreferences.IS_JOURNAL);
+  	}
+  	
+  	Boolean isEntriesInsertedSince = null;
+  	if(properties.containsKey(SABIORKPreferences.IS_ENTRIES_INSERTED_SINCE)) {
+  		isEntriesInsertedSince = properties.getBoolean(SABIORKPreferences.IS_ENTRIES_INSERTED_SINCE);
+  	}
+  	else {
+  		isEntriesInsertedSince = prefs.getBoolean(SABIORKPreferences.IS_ENTRIES_INSERTED_SINCE);
+  	}
+  	
+  	Double lowerpHValue = null;
+  	if(properties.containsKey(SABIORKPreferences.LOWEST_PH_VALUE)) {
+  		lowerpHValue = properties.getDouble(SABIORKPreferences.LOWEST_PH_VALUE);
+  	}
+  	else {
+  		lowerpHValue = prefs.getDouble(SABIORKPreferences.LOWEST_PH_VALUE);
+  	}
+  	
+  	Double upperpHValue = null;
+  	if(properties.containsKey(SABIORKPreferences.HIGHEST_PH_VALUE)) {
+  		upperpHValue = properties.getDouble(SABIORKPreferences.HIGHEST_PH_VALUE);
+  	}
+  	else {
+  		upperpHValue = prefs.getDouble(SABIORKPreferences.HIGHEST_PH_VALUE);
+  	}
+  	
+  	Double lowerTemperature = null;
+  	if(properties.containsKey(SABIORKPreferences.LOWEST_TEMPERATURE_VALUE)) {
+  		lowerTemperature = properties.getDouble(SABIORKPreferences.LOWEST_TEMPERATURE_VALUE);
+  	}
+  	else {
+  		lowerTemperature = prefs.getDouble(SABIORKPreferences.LOWEST_TEMPERATURE_VALUE);
+  	}
+  	
+  	Double upperTemperature = null;
+  	if(properties.containsKey(SABIORKPreferences.HIGHEST_TEMPERATURE_VALUE)) {
+  		upperTemperature = properties.getDouble(SABIORKPreferences.HIGHEST_TEMPERATURE_VALUE);
+  	}
+  	else {
+  		upperTemperature = prefs.getDouble(SABIORKPreferences.HIGHEST_TEMPERATURE_VALUE);
+  	}
+  	
+  	String dateSubmitted = null;
+  	if(properties.containsKey(SABIORKPreferences.LOWEST_DATE)) {
+  		dateSubmitted = properties.get(SABIORKPreferences.LOWEST_DATE);
+  	}
+  	else {
+  		dateSubmitted = prefs.get(SABIORKPreferences.LOWEST_DATE);
+  	}
+  	
+  	Set<Reaction> changedReactions = SABIORKWizard.getResultConsole(sbmlDocument, overwriteExistingRateLaws, pathway, tissue, organism, cellularLocation, isWildtype, isMutant, isRecombinant, hasKineticData, lowerpHValue, upperpHValue, lowerTemperature, upperTemperature, isDirectSubmission, isJournal, isEntriesInsertedSince, dateSubmitted);
+  	return changedReactions;
   }
   
 }
