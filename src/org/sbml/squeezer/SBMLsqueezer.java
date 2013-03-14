@@ -772,5 +772,14 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
   	Set<Reaction> changedReactions = SABIORKWizard.getResultConsole(sbmlDocument, overwriteExistingRateLaws, pathway, tissue, organism, cellularLocation, isWildtype, isMutant, isRecombinant, hasKineticData, lowerpHValue, upperpHValue, lowerTemperature, upperTemperature, isDirectSubmission, isJournal, isEntriesInsertedSince, dateSubmitted);
   	return changedReactions;
   }
+
+	/**
+	 * @param absolutePath
+	 * @param outputPath
+	 * @throws Throwable 
+	 */
+	public void squeeze(String absolutePath, String outputPath) throws Throwable {
+		squeeze(absolutePath, outputPath, false);
+	}
   
 }

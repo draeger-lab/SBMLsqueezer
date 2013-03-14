@@ -107,7 +107,6 @@ public class SABIORKApplication {
 	 * @param output the output file
 	 */
 	public static void runConsole(File input, File output){
-		String reactionFilter = "Reactions";
 		String pathway = null;
 		String tissue = null;
 		String organism = null;
@@ -125,8 +124,9 @@ public class SABIORKApplication {
 		Boolean isEntriesInsertedSince = false;
 		String dateSubmitted = "15/10/2008";
 		
-		SBMLDocument result = SABIORKWizard.getResultConsole(readSBMLDocument(input), reactionFilter, pathway, tissue, organism, cellularLocation, isWildtype, isMutant, isRecombinant, hasKineticData, lowerpHValue, upperpHValue, lowerTemperature, upperTemperature, isDirectSubmission, isJournal, isEntriesInsertedSince, dateSubmitted).getSBMLDocument();
-		writeSBMLDocument(result, output);
+		SBMLDocument doc = readSBMLDocument(input);
+		SABIORKWizard.getResultConsole(doc, true, pathway, tissue, organism, cellularLocation, isWildtype, isMutant, isRecombinant, hasKineticData, lowerpHValue, upperpHValue, lowerTemperature, upperTemperature, isDirectSubmission, isJournal, isEntriesInsertedSince, dateSubmitted);
+		writeSBMLDocument(doc, output);
 	}
 
 	/**
