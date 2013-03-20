@@ -1,19 +1,11 @@
 % 01_Introduction
 \chapter{Overview}
 
-The program SBMLsqueezer is a versatile generator for complex kinetic equations
-of reactions and processes in biochemical networks \citep{Draeger2008,
-Draeger2010a, Draeger2011a}. The kinds of equations supported by the program are
-numerous, including traditional approaches \citep{Guldberg1879, Michaelis1913}
-just like very recent equations \citep{Liebermeister2006, Liebermeister2010}.
-It provides equations for gene-regulatory processes
-\citep{Hinze2007, Radde2007a, Toepfer2007, Vu2007,Weaver1999} and approximative
-rate laws \citep{Savageau1969}.
-In addition, SBMLsqueezer covers a large variety of standard rate laws for
-biochemical reactions from relevant text books
-\citep{Segel1993, Heinrich1996, Bisswanger2000, Cornish-Bowden2004}.
-A list of currently supported rate laws can be found in
-Section~\vref{chap:RateLaws}
+The program SBMLsqueezer is a versatile tool for the assembly and assignment of
+complex kinetic equations of reactions and processes in biochemical networks
+\citep{Draeger2008, Draeger2010a, Draeger2011a}.
+A list of currently implemented rate laws can be found in 
+Section~\vref{chap:RateLaws}.
 
 The data format understood by SBMLsqueezer is the Systems Biology Markup
 Language\footnote{\url{http://sbml.org}} (SBML) in all of its levels and
@@ -24,8 +16,12 @@ infix formula strings (SBML Level~1) or MathML \citep{Buswell1999} expressions
 (for all other SBML versions).
 
 Kinetic equations contain a set of parameters, whose units must be derived to
-ensure that the overal equation can be interpreted in extent of the respective
-reaction per time units.
+ensure that the overal equation can be interpreted in units of the extent of the
+respective reaction per time units.
+To give an example for the most common scenario, you can assume that the units
+of the rate law will simplify to a substance unit per time unit, for instance,
+mole per second.
+Other constalations, however, are possible, too.
 When using SBMLsqueezer you do not have to care much about units because the
 program does this for you.
 The program also annotates all created equations and parameters with appropriate
@@ -92,6 +88,10 @@ description of all components and equations \citep{Draeger2009b, Draeger2010a}.
 These reports can be very handy to support scientific writing, because you can
 easily copy the formulas into your paper.
 
+\vspace{3cm}
+\begin{center}
+\includegraphics[width=2.5cm]{img/LOGO.png}
+\end{center}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % 02_Installation
@@ -99,24 +99,35 @@ easily copy the formulas into your paper.
 
 \chapter{Installation}
 
-After downloading SBMLsqueezer from the website
-\url{http://www.cogsys.cs.uni-tuebingen.de/software/SBMLsqueezer/} you will
-obtain a JAR file (Java\texttrademark{} Archive File) that can be launched by
-double-cliking on its icon, provided that a Java Virtual Machine (JVM) is 
-installed on your system.
-See Section~\vref{ch:faq} if you encounter any problems. 
+To obtain a local copy of SBMLsqueezer, you can download it in form of a JAR 
+file (Java\texttrademark{} Archive File) from the website
+\url{http://www.cogsys.cs.uni-tuebingen.de/software/SBMLsqueezer/}.
 
+In the most common scenario, you might want to launch the program as a
+stand-alone tool and access its graphical user interface. To do so, you can
+start SBMLsqueezer with a simple double click on the icon of the downloaded
+JAR file, provided that a Java  Virtual Machine (JVM) is installed on your
+system (see below).
 
 \section{Requirements}
-\subsection{Software}
 
-SBMLsqueezer is entirely implemented in Java and runs on any operating system
-where a suitable Java Virtual Machine (JDK version 1.5 or newer) is installed.
-For instructions how to obtain an up-to-date JVM for your system, see, for 
-example, the Java SE download page\footnote{\url{http://www.oracle.com/technetwork/java/javase/downloads/index.html}\label{fn:jvmldl}}.
-SBMLsqueezer has successfully been tested with Microsoft Windows~7 Professional,
-Mac OS X (version 10.8.2), and Ubuntu Linux (version 12.01).
-
+SBMLsqueezer can be be used in multiple ways, depending on your preferences:
+\begin{itemize}
+  \item As a stand-alone tool
+  \begin{itemize}
+    \item via its graphical user interface
+    \item via its command-line interface
+  \end{itemize}
+        In both cases, you can choose between JSBML or libSBML as your backend
+        for SBML.
+  \item As a plug-in for CellDesigner
+  \item As a gadget for GARUDA
+  \item As an online program
+  \item As a Java\texttrademark{} Web Start application
+  \item As a rate law core in an end-user application
+\end{itemize}
+Depending on how you like to use SBMLsqueezer, differnt requirements must be
+fulfilled before launching the program for the first time.
 
 \subsection{Hardware}
 
@@ -125,9 +136,67 @@ without any problem. For large models, you should have at least 2\,GB of main
 memory. An active internet connection is required for accessing the SABIO-RK
 database.
 
-\subsection{Installation as a plug-in for CellDesigner}
+\subsection{Software}
 
-\subsection{Using the libSBML backend}
+SBMLsqueezer is entirely implemented in Java and runs on any operating system
+where a suitable Java Virtual Machine (JDK version 1.5 or newer) is installed.
+For instructions how to obtain an up-to-date JVM for your system, see, for 
+example, the Java SE download page\footnote{\url{http://www.oracle.com/technetwork/java/javase/downloads/index.html}\label{fn:jvmldl}}.
+
+SBMLsqueezer has successfully been tested with
+Microsoft Windows~7 Professional (64~bit),
+Microsoft Windows~7 Professional (SP1, 64~bit),
+Mac OS X (version 10.8.2), and Ubuntu Linux (version 12.04, 64~bit).
+See Section~\vref{ch:faq} if you encounter any problems.
+
+\subsection{Stand-alone application}
+
+\subsubsection{Using the JSBML backend}
+
+No special actions are necessary if you like to use JSBML, because this is the
+default and JSBML is already included in the JAR file that you have downloaded.
+
+\subsubsection{Launching SBMLsqueezer with libSBML as backend}
+
+Follow the installation instructions of the Java binding for libSBML for your
+platform.
+You can find detailled instructions at the website of
+libSBML\footnote{\url{http://sbml.org/Software/libSBML}}.
+On some platforms, you may have to define an environment variable pointing
+to the installation directory of libSBML before being able to use its Java
+binding.
+On the most Units and Linux platforms, this variable is called
+\texttt{LD\_LIBRARY\_PATH}.
+On MacOS, you should instead define the variable \texttt{DYLD\_LIBRARY\_PATH}.
+Follow the instrcutions at \url{http://sbml.org/Software/libSBML/docs/cpp-api/libsbml-accessing.html#accessing-java}
+before launching SBMLsqueezer.
+\begin{lstlisting}[language=bash]
+VM_ARGS="-Xms32M -Xmx512M -Djava.library.path="
+
+# The following lines depend on your system's configuration; 
+# so here is just an example:
+VM_ARGS="${VM_ARGS}\
+/usr/lib/jvm/java-6-sun/jre/lib/i386/client:\
+/usr/lib/jvm/java-6-sun/jre/lib/i386:\
+/usr/lib/jvm/java-6-sun/lib:\
+/usr/local/lib"
+#:[path to xerces]/xerces/lib
+CLASS_PATH="/usr/local/share/java/libsbmlj.jar:\
+[path to ]SBMLsqueezer2.jar"
+
+# Set the environment variable; under Linux or most Unix systems this is
+LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:/usr/local/lib"
+# On Mac OS you have to use the following code instead:
+#DYLD_LIBRARY_PATH="${DYLD_LIBRARY_PATH}:/usr/local/lib"
+
+# Start SBMLsqueezer using the command-line options:
+MAIN_CLASS=org.sbml.squeezer.SBMLsqueezer 
+java ${VM_ARGS} -cp ${CLASS_PATH} ${MAIN_CLASS} --try-loading-libsbml=true\
+[further options]
+\end{lstlisting}
+
+\subsection{Plug-in for CellDesigner}
+
 
 \subsection{Integration into GARUDA}
 
@@ -184,10 +253,25 @@ TODO: Write some text.
 \subsection{For selected reations}
 
 
+\chapter{Command-line arguments}
+
 \chapter{Supported rate laws}\label{chap:RateLaws}
 
+The kinds of equations supported by the program are
+numerous, including traditional approaches \citep{Guldberg1879, Michaelis1913}
+just like very recent equations \citep{Liebermeister2006, Liebermeister2010}.
+It provides equations for gene-regulatory processes
+\citep{Hinze2007, Radde2007a, Toepfer2007, Vu2007,Weaver1999} and approximative
+rate laws \citep{Savageau1969}.
+In addition, SBMLsqueezer covers a large variety of standard rate laws for
+biochemical reactions from relevant text books
+\citep{Segel1993, Heinrich1996, Bisswanger2000, Cornish-Bowden2004}.
 Here, we give a short overview of all equations that are currently implemented
-in SBMLsqueezer. 
+in SBMLsqueezer, ordered by the categories metabolic or gene-regulatory.
+However, the actual algorithm that suggests applicable rate laws is more complex
+and considers several features of the reaction.
+It can therefore happen that SBMLsqueezer suggests multiple different rate
+equations for the same reaction.
 
 \section{Rate laws for metabolic processes}
 \begin{itemize}

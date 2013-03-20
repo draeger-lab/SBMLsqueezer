@@ -527,7 +527,7 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
   		logger.info(MESSAGES.getString("SAVING_TO_FILE"));
   		sbmlIo.saveChanges(this);
   		if ((outFile != null)
-  				&& (SBFileFilter.createSBMLFileFilter().accept(outFile))) {
+  				&& (SBFileFilter.hasFileType(outFile, SBFileFilter.FileType.SBML_FILES)) || SBFileFilter.createSBMLFileFilter().accept(outFile)) {
   			sbmlIo.writeSelectedModelToSBML(outFile.getAbsolutePath());
   			logger.info(MessageFormat.format(MESSAGES.getString("DONE_IN_MS"), (System.currentTimeMillis() - time)));
   			SBPreferences preferences = new SBPreferences(OptionsGeneral.class);

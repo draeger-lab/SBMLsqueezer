@@ -137,8 +137,7 @@ public class TestFolder extends Handler {
 						logger.info(String.format("Squeezing file: %s",
 								currentFile.getAbsolutePath()));
 						System.err.println("Processing:" + currentFilename);
-						squeezer.squeeze(currentFile.getAbsolutePath(),
-								outputPath);
+						squeezer.squeeze(currentFile.getAbsolutePath(), outputPath);
 					} catch (Throwable e) {
 						logger.log(Level.SEVERE, currentFile.getAbsolutePath(), e);
 						System.exit(1);

@@ -505,10 +505,13 @@ public class GeneralizedMassAction extends BasicKineticLaw implements
 				basis.raiseByThePowerOf(specRef);
 			} else {
 				double stoichiometry = specRef.getStoichiometry();
-				basis.raiseByThePowerOf(stoichiometry);
-				if ((stoichiometry != 0d) && (stoichiometry != 1d) && (getLevel() > 2)) {
-					// The right child must be the stoichiometric coefficient because we just set it as exponent.
-					basis.getRightChild().setUnits(Kind.DIMENSIONLESS);
+				if (stoichiometry != 1d) {
+					basis.raiseByThePowerOf(stoichiometry);
+					ASTNode exp = basis.getRightChild(); 
+					if ((stoichiometry != 0d) && (getLevel() > 2) && !exp.isSetUnits()) {
+						// The right child must be the stoichiometric coefficient because we just set it as exponent.
+						exp.setUnits(Kind.DIMENSIONLESS);
+					}
 				}
 			}
 			astNode.multiplyWith(basis);
