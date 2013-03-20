@@ -354,6 +354,127 @@
 		<delete dir="${dist.root}" includeEmptyDirs="true" quiet="yes">
 		</delete>
 	</target>
+	
+	
+	<!-- =================================================================== -->
+			<!-- Creates a minimal SysBio JAR                                        -->
+			<!-- =================================================================== -->
+			<target
+			  name="minimal_sysbio"
+			  depends="init"
+			  description="Build a minimal version of SysBio for SBML2LaTeX">
+
+			  <!-- The relative path of the SysBio project -->
+			  <property name="sysbio.dir" value="${basedir}/../SysBio"/>
+			  <property name="sysbio.lib" value="${sysbio.dir}/lib"/>
+			  <path id="sysbio.classpath">
+		        <fileset dir="${sysbio.lib}" includes="**.jar, **/*.jar, **.zip"/>
+			  </path>
+			  <path id="sysbio.sourcepath">
+			    <fileset dir="${sysbio.dir}/src"/>
+			  	<fileset dir="${sysbio.dir}/test"/>
+			  	<fileset dir="${sysbio.dir}/resources"/>
+			  	<fileset dir="${sysbio.dir}/examples"/>
+			  </path>
+				
+			  <!-- Determine the revision number of SysBio -->
+			  <exec executable="svnversion" outputproperty="sysbio.revision">
+		        <arg line="-c ${sysbio.dir}"/>
+		        <redirector>
+		          <outputfilterchain>
+		            <tokenfilter>
+		              <replaceregex pattern="[0-9]+\:" replace="" />
+		              <replaceregex pattern="[PM]+" replace="" />
+		            </tokenfilter>
+		          </outputfilterchain>
+		        </redirector>
+		      </exec>
+
+			  <!-- Delete all previous versions of SysBio JAR files -->
+			  <delete verbose="true">
+			  	<fileset dir="${jars.dir}">
+			  	  <include name="SysBio**.jar"/>
+			  	</fileset>
+			  </delete>
+
+		      <!-- Compile the entire SysBio project -->
+			  <delete dir="${sysbio.dir}/bin"/>
+			  <mkdir dir="${sysbio.dir}/bin"/>
+			  <javac srcdir="${sysbio.dir}/src"
+			  	compiler="${build.compiler}"
+			  	listfiles="yes"
+			  	debug="${debug}"
+			  	deprecation="${deprecation}"
+			  	nowarn="no"
+			  	memoryMaximumSize="512M"
+				destdir="${sysbio.dir}/bin"
+				verbose="${verbose}"
+				source="1.6"
+				target="1.6"
+				optimize="${optimize}"
+				sourcepathref="sysbio.sourcepath"
+			  	classpathref="sysbio.classpath"
+			  />
+			  <!-- <copy todir="${sysbio.dir}/bin"/> -->
+
+		      <!-- Pack a minimal JAR file containing only parts required for SBML2LaTeX -->
+			  <jar jarfile="${jars.dir}/SysBio-rev${sysbio.revision}.jar">
+			  	
+			  	<manifest>
+			      <attribute name="Built-By" value="${user.name}"/>
+			  	  <section name="SysBio">
+			  	    <attribute name="Specification-Title" value="SysBio"/>
+		            <attribute name="Specification-Version" value="Revision ${sysbio.revision}"/>
+			        <attribute name="Specification-Vendor" value="Center for Bioinformatics Tuebingen (ZBIT)"/>
+			  	  	<attribute name="Implementation-Title" value="SysBio"/>
+			  	  	<attribute name="Implementation-Version" value="Revision ${sysbio.revision} ${TODAY} (Build ${DSTAMP}-${TSTAMP})"/>
+			        <attribute name="Implementation-Vendor" value="University of Tuebingen"/>
+			  	  </section>
+				</manifest>
+			  	<fileset dir="${sysbio.dir}">
+			      <include name="licenses/COPYING.txt"/>
+			  	  <include name="licenses/lib-licenses/*.txt"/>
+			  	  <include name="licenses/lib-licenses/*.html"/>
+			  	  <include name="licenses/AUTHORS.txt"/>
+			  	</fileset>
+			  	<fileset dir="${sysbio.dir}/bin" excludes="**/.svn*, **/package-info.class">
+			  	  <include name="de/zbit/**.class"/>
+			  	  <include name="de/zbit/gui/actioncommand/**.class"/>
+			  	  <include name="de/zbit/gui/layout/**.class"/>
+			  	  <exclude name="de/zbit/gui/layout/SpringUtilities.class"/>
+			  	  <exclude name="de/zbit/gui/layout/VerticalLayout.class"/>
+			  	  <include name="de/zbit/gui/panels/**.class"/>
+			  	  <include name="de/zbit/gui/prefs/**.class"/>
+			  	  <include name="de/zbit/gui/table/**.class"/>
+			  	  <include name="de/zbit/gui/wizard/**.class"/>
+			  	  <include name="de/zbit/gui/**.class"/>
+			  	  <include name="de/zbit/io/**"/>
+			  	  <include name="de/zbit/math/**.class"/>
+			  	  <include name="de/zbit/resources/**.class"/>
+			  	  <include name="de/zbit/sbml/**.class"/>
+			  	  <include name="de/zbit/sbml/gui/*.class"/>
+			  	  <include name="de/zbit/sbml/io/*.class"/>
+			  	  <include name="de/zbit/sbml/layout/*.class"/>
+			  	  <exclude name="de/zbit/sbml/layout/y"/>
+			  	  <include name="de/zbit/text/**.class"/>
+			  	  <include name="de/zbit/util/argparser/**.class"/>
+			  	  <include name="de/zbit/util/logging/**.class"/>
+			  	  <include name="de/zbit/util/objectwrapper/**.class"/>
+			  	  <include name="de/zbit/util/prefs/**.class"/>
+			  	  <include name="de/zbit/util/progressbar/**.class"/>
+			  	  <include name="de/zbit/util/**.class"/>
+			  	</fileset>
+			  	<fileset dir="${sysbio.dir}/resources" excludes="**/.svn*, de/zbit/locales/Base*.xml">
+			  	  <include name="de/zbit/gui/img/**.class, UT_*.png"/>
+			  	  <include name="de/zbit/locales/**.xml"/>
+			  	  <include name="de/zbit/sbml/locales/**.xml"/>
+			  	</fileset>
+			  	
+			  	<zipfileset excludes="META-INF/*" src="${sysbio.dir}/lib/sysbio-osx-support.jar"/>
+			  	
+			  </jar>
+
+			</target>
 
 </project>
 

@@ -174,7 +174,7 @@
   
   <entry key="GROUP_GENERAL_PROPERTIES">General properties</entry>
   <entry key="GROUP_GENERAL_PROPERTIES_TOOLTIP">Define key features to restrict the results of your search for reaction kinetics in SABIO-RK.</entry>
-   <entry key="GROUP_TEMPERATURE">Temperature</entry>
+  <entry key="GROUP_TEMPERATURE">Temperature</entry>
   <entry key="GROUP_TEMPERATURE_TOOLTIP">Define a plausible temperature range for your reaction system.</entry>
   <entry key="GROUP_PH_VALUE">Range of pH values</entry>
   <entry key="GROUP_PH_VALUE_TOOLTIP">Constrict the selection of reaction kinetics to plausible conditions by selecting a meaningful range of pH values.</entry>
@@ -197,4 +197,5 @@
    
   <entry key="GROUP_GENERAL_OPTIONS">General options</entry>
   <entry key="GROUP_GENERAL_OPTIONS_TOOLTIP">Define key options to restrict the results of your search for reaction kinetics in SABIO-RK.</entry> 
+
 </properties>
