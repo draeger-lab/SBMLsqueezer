@@ -22,13 +22,11 @@
 \usepackage{array}   %stellt den Befehl \newcolumntype bereit
 \usepackage{hyperref} % Links im dokument
 %\usepackage[utf8]{inputenc} %unicode support
+\usepackage[T1]{fontenc}
 
-%\usepackage{makeidx}
 %\usepackage[font=small,totoc]{idxlayout}
 
-\makeindex
-\input{tex/macros.tex}
-\input{tex/hyphenation.tex}
+\usepackage[printonlyused]{acronym}
 
 \hypersetup{
 %  bookmarks={true},
@@ -87,7 +85,10 @@ Andreas Zell}
 % Beginn des Dokumentes         %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+\input{tex/macros.tex}
+\input{tex/hyphenation.tex}
 \begin{document}
+
 % 
 % 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -123,6 +124,7 @@ Andreas Zell}
 % Das Literaturverzeichnis      %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \appendix
+\input{tex/abbreviations.tex}
 \bibliographystyle{natbib}
 \bibliography{tex/literature}
 \printindex
