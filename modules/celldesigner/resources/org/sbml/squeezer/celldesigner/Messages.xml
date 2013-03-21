@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+  <comment>
+    * $Id$
+    * $URL$
+    * ---------------------------------------------------------------------
+    * This file is part of SBMLsqueezer, a Java program that creates rate 
+    * equations for reactions in SBML files (http://sbml.org).
+    *
+    * Copyright (C) 2006-2013 by the University of Tuebingen, Germany.
+    *
+    * This program is free software: you can redistribute it and/or modify
+    * it under the terms of the GNU General Public License as published by
+    * the Free Software Foundation, either version 3 of the License, or
+    * (at your option) any later version.
+    *
+    * This program is distributed in the hope that it will be useful,
+    * but WITHOUT ANY WARRANTY; without even the implied warranty of
+    * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+    * GNU General Public License for more details.
+    *
+    * You should have received a copy of the GNU General Public License
+    * along with this program. If not, see http://www.gnu.org/licenses/.
+    * ---------------------------------------------------------------------
+    * 
+    * Version: $Rev$
+ 
+	This configuration provides locale-dependent names for warnings and error
+	messages in a (graphical) user interface.
+	Although the preferred way would be to have separate key-value pairs for
+	actual labels and their corresponding tooltips, you may want to use just 
+	one key-value pair, in which the tooltip is located after the separator 
+	";". Otherwise, please use the suffix "_TOOLTIP" to indicate a tooltip 
+	for some label.
+	
+	Please see the JavaDoc for MessageFormatter and Formatter. 
+  </comment>
+  
+  <entry key="CANNOT_INITIALIZE_SBMLSQUEEZER">Unable to initialize SBMLsqueezer</entry>
+  <entry key="CONFIGURE">Preferences</entry>
+  <entry key="CONFIGURE_TOOLTIP">Define your preferences for the behavior of SBMLsqueezer</entry>
+  <entry key="DEFAULT_OPTION">invalid option</entry>
+  <entry key="EXPORT_ALL">Export model to other format</entry>
+  <entry key="EXPORT_ALL_TOOLTIP">Save the content of the current model in some format other than SBML, e.g., as a comprehensive model report.</entry>
+  <entry key="EXPORT_REACTION">Export reaction to other format</entry>
+  <entry key="EXPORT_REACTION_TOOLTIP">Create a report file describing the current reaction with all of its participants and components and store it in a file.</entry>
+  <entry key="INTERNAL_DATA_STRUCTURE">Internal JSBML data structure</entry>
+  <entry key="NO_SELECTED_MODEL_AVAILABLE">No selected model available</entry>
+  <entry key="ONLINE_HELP">Help</entry>
+  <entry key="ONLINE_HELP_TOOLTIP">Display the online help including basic information about SBMLsqueezer, command-line usage and further information.</entry>
+  <entry key="SQUEEZE_ALL">Squeeze kinetic laws</entry>
+  <entry key="SQUEEZE_ALL_TOOLTIP">Open the kinetic law wizard and create equations for all reactions within the model in a single go.</entry>
+  <entry key="SQUEEZE_REACTION">Squeeze kinetic law</entry>
+  <entry key="SQUEEZE_REACTION_TOOLTIP">Generate a kinetic law for the currently selected reaction.</entry>
+  <entry key="SHOW_JSBML_MODEL">Show the data structure</entry>
+  <entry key="SHOW_JSBML_MODEL_TOOLTIP">Display the content of the current model in an alternative way, including all model components.</entry>
+  <entry key="UNSUPPORTED_ACTION">Unsupported action {0}</entry>
+  <entry key="UNSUPPORTED_SOURCE_OF_ACTION">Unsupported source of action {0}</entry>
+  
+</properties>

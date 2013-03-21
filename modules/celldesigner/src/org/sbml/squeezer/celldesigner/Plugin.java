@@ -24,7 +24,10 @@
 package org.sbml.squeezer.celldesigner;
 
 import java.awt.Dialog;
+import java.text.MessageFormat;
 import java.util.Arrays;
+import java.util.ResourceBundle;
+import java.util.logging.Logger;
 
 import javax.swing.JDialog;
 
@@ -36,13 +39,13 @@ import jp.sbi.celldesigner.plugin.PluginSBase;
 
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.SBMLDocument;
-import org.sbml.jsbml.SBMLException;
 import org.sbml.jsbml.SBO;
 import org.sbml.jsbml.cdplugin.PluginChangeListener;
 import org.sbml.jsbml.cdplugin.PluginSBMLReader;
 import org.sbml.jsbml.cdplugin.PluginSBMLWriter;
 import org.sbml.squeezer.SBMLsqueezer;
 import org.sbml.squeezer.gui.KineticLawSelectionDialog;
+import org.sbml.squeezer.gui.LaTeXRenderer;
 import org.sbml.squeezer.gui.SBMLsqueezerUI;
 import org.sbml.squeezer.gui.wizard.KineticLawSelectionWizard;
 import org.sbml.squeezer.io.SBMLio;
@@ -54,6 +57,7 @@ import de.zbit.gui.prefs.PreferencesDialog;
 import de.zbit.io.OpenedFile;
 import de.zbit.sbml.gui.SBMLModelSplitPane;
 import de.zbit.sbml.io.SBMLfileChangeListener;
+import de.zbit.util.ResourceManager;
 
 /**
  * This is the main class for the CellDesigner plugin mode of SBMLsqueezer.
@@ -65,6 +69,17 @@ import de.zbit.sbml.io.SBMLfileChangeListener;
  * @since 1.0
  */
 public class Plugin extends CellDesignerPlugin {
+	
+	/**
+	 * A {@link Logger} for this class.
+	 */
+	private static final transient Logger logger = Logger.getLogger(Plugin.class.getName());
+	
+	/**
+	 * Localization support.
+	 */
+	private static final transient ResourceBundle bundle = ResourceManager.getBundle(Plugin.class.getPackage().getName() + ".Messages");
+	
 
 	/**
 	 * 
@@ -95,25 +110,28 @@ public class Plugin extends CellDesignerPlugin {
 			 * Initializing CellDesigner's menu entries
 			 */
 			PluginAction action = new PluginAction(this);
-			String title = "SBMLsqueezer " + sbmlSqueezer.getVersionNumber();
+			String title = sbmlSqueezer.getAppName() + ' ' + sbmlSqueezer.getVersionNumber();
 			PluginMenu menu = new PluginMenu(title);
 			// Squeeze all
-			PluginMenuItem menuItem = new PluginMenuItem(Mode.SQUEEZE_ALL
-					.getText(), action);
+			PluginMenuItem menuItem = new PluginMenuItem(Mode.SQUEEZE_ALL.getText(), action);
+			menuItem.setToolTipText(Mode.SQUEEZE_ALL.getToolTipText());
 			menu.add(menuItem);
 			// Export
 			menuItem = new PluginMenuItem(Mode.EXPORT_ALL.getText(), action);
+			menuItem.setToolTipText(Mode.EXPORT_ALL.getToolTipText());
 			menu.add(menuItem);
 			// Options
 			menuItem = new PluginMenuItem(Mode.CONFIGURE.getText(), action);
+			menuItem.setToolTipText(Mode.CONFIGURE.getToolTipText());
 			menu.add(menuItem);
 			// Help
 			menuItem = new PluginMenuItem(Mode.ONLINE_HELP.getText(), action);
+			menuItem.setToolTipText(Mode.ONLINE_HELP.getToolTipText());
 			menu.add(menuItem);
 			addCellDesignerPluginMenu(menu);
 			// Debug
-			menuItem = new PluginMenuItem(Mode.SHOW_JSBML_MODEL.getText(),
-					action);
+			menuItem = new PluginMenuItem(Mode.SHOW_JSBML_MODEL.getText(), action);
+			menuItem.setToolTipText(Mode.SHOW_JSBML_MODEL.getToolTipText());
 			menu.add(menuItem);
 			addCellDesignerPluginMenu(menu);
 
@@ -131,7 +149,7 @@ public class Plugin extends CellDesignerPlugin {
 			addReactionPopupMenuSeparator();
 			addReactionPopupMenu(contextMenu);
 		} catch (Exception exc) {
-			System.err.println("unable to initialize SBMLsqueezer");
+			logger.severe(bundle.getString("CANNOT_INITIALIZE_SBMLSQUEEZER"));
 			exc.printStackTrace();
 		}
 	}
@@ -225,28 +243,28 @@ public class Plugin extends CellDesignerPlugin {
 		 * @return
 		 */
 		public String getText() {
-			switch (this) {
-			case SQUEEZE_ALL:
-				return "Squeeze kinetic laws";
-			case SQUEEZE_REACTION:
-				return "Squeeze kinetic law";
-			case CONFIGURE:
-				return "Preferences";
-			case EXPORT_REACTION:
-				return "Export reaction to other format";
-			case EXPORT_ALL:
-				return "Export model to other format";
-			case ONLINE_HELP:
-				return "Help";
-			case SHOW_JSBML_MODEL:
-				return "Show the JSBML data structure";
-			default:
-				return "invalid option";
+			String key = toString();
+			if (bundle.containsKey(key)) {
+				return bundle.getString(key);
 			}
+			return bundle.getString("DEFAULT_OPTION");
 		}
 
 		/**
-		 * Returns the mode for the given label or null.
+		 * A short description of the action.
+		 * 
+		 * @return
+		 */
+		public String getToolTipText() {
+			String key = toString() + "_TOOLTIP";
+			if (bundle.containsKey(key)) {
+				return bundle.getString(key);
+			}
+			return null;
+		}
+
+		/**
+		 * Returns the mode for the given label or {@code null}.
 		 * 
 		 * @param text
 		 * @return
@@ -266,60 +284,64 @@ public class Plugin extends CellDesignerPlugin {
 	 * export.
 	 * 
 	 * @param mode
-	 * @throws SBMLException
 	 */
-	public void startSBMLsqueezerPlugin(String mode) throws SBMLException {
-		SBMLio io = sbmlSqueezer.getSBMLIO();
-		Model convertedModel = io.convertModel(getSelectedModel());
-		SBMLDocument doc = new SBMLDocument(convertedModel.getLevel(),convertedModel.getVersion());
-		doc.setModel(convertedModel);
-		convertedModel.addTreeNodeChangeListener(new PluginChangeListener(doc, this));
-		switch (Mode.getMode(mode)) {
-		case SQUEEZE_ALL:
-				KineticLawSelectionWizard wizard;
-				wizard = new KineticLawSelectionWizard(null, io);
-			    wizard.showModalDialog();
-			    wizard.isKineticsAndParametersStoredInSBML();
-			break;
-		case SQUEEZE_REACTION:
-				try {
-					new KineticLawSelectionDialog(null, io, ((PluginReaction) getSelectedReactionNode().get(0)).getId());
-				} catch (Throwable exc) {
-					GUITools.showErrorMessage(null, exc+"\n" + Arrays.toString(exc.getStackTrace()));
-				}
-			break;
-		case CONFIGURE:
-			PreferencesDialog.showPreferencesDialog(SBMLsqueezer.getInteractiveConfigOptionsArray());
-			break;
-		case EXPORT_REACTION:
-				new LaTeXExportDialog((Dialog) null, convertedModel.getReaction(
-					((PluginReaction) getSelectedReactionNode().get(0)).getId()));
-			break;
-		case EXPORT_ALL:
-			if (getSelectedModel() != null) {
-				new LaTeXExportDialog((Dialog) null, convertedModel);
-			} else {
-				System.err.println("no selected model available");
+	public void startSBMLsqueezerPlugin(String mode) {
+		try {
+			SBMLio io = sbmlSqueezer.getSBMLIO();
+			Model convertedModel = io.convertModel(getSelectedModel());
+			SBMLDocument doc = convertedModel.getSBMLDocument();
+			convertedModel.addTreeNodeChangeListener(new PluginChangeListener(doc, this));
+			switch (Mode.getMode(mode)) {
+				case SQUEEZE_ALL:
+					KineticLawSelectionWizard wizard = new KineticLawSelectionWizard(null, io);
+					wizard.showModalDialog();
+					wizard.isKineticsAndParametersStoredInSBML();
+					break;
+				case SQUEEZE_REACTION:
+					try {
+						new KineticLawSelectionDialog(null, io, ((PluginReaction) getSelectedReactionNode().get(0)).getId());
+					} catch (Throwable exc) {
+						GUITools.showErrorMessage(null, exc);
+					}
+					break;
+				case CONFIGURE:
+					PreferencesDialog.showPreferencesDialog(SBMLsqueezer.getInteractiveConfigOptionsArray());
+					break;
+				case EXPORT_REACTION:
+					new LaTeXExportDialog((Dialog) null, convertedModel.getReaction(
+						((PluginReaction) getSelectedReactionNode().get(0)).getId()));
+					break;
+				case EXPORT_ALL:
+					if (getSelectedModel() != null) {
+						new LaTeXExportDialog((Dialog) null, convertedModel);
+					} else {
+						logger.warning(bundle.getString("NO_SELECTED_MODEL_AVAILABLE"));
+					}
+					break;
+				case ONLINE_HELP:
+					new SBMLsqueezerUI(io, null).showOnlineHelp();
+					break;
+				case SHOW_JSBML_MODEL:
+					JDialog d = new JDialog();
+					d.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+					d.setTitle(bundle.getString("INTERNAL_DATA_STRUCTURE"));
+					OpenedFile<SBMLDocument> openedFile = new OpenedFile<SBMLDocument>(doc);
+					doc.addTreeNodeChangeListener(new SBMLfileChangeListener(openedFile));
+					SBMLModelSplitPane split = new SBMLModelSplitPane(openedFile, true);
+					split.setEquationRenderer(new LaTeXRenderer());
+					d.getContentPane().add(split);
+					d.pack();
+					d.setLocationRelativeTo(null);
+					d.setModal(true);
+					d.setVisible(true);
+					break;
+				default:
+					logger.warning(MessageFormat.format(bundle.getString("UNSUPPORTED_ACTION"), mode));
+					break;
 			}
-			break;
-		case ONLINE_HELP:
-			new SBMLsqueezerUI(io, null).showOnlineHelp();
-			break;
-		case SHOW_JSBML_MODEL:
-			JDialog d = new JDialog();
-			d.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-			d.setTitle("Internal JSBML data structure");
-			OpenedFile<SBMLDocument> openedFile = new OpenedFile<SBMLDocument>(doc);
-			doc.addTreeNodeChangeListener(new SBMLfileChangeListener(openedFile));
-			d.getContentPane().add(new SBMLModelSplitPane(openedFile, true));
-			d.pack();
-			d.setLocationRelativeTo(null);
-			d.setModal(true);
-			d.setVisible(true);
-			break;
-		default:
-			System.err.println("unsuported action");
-			break;
+		} catch (Throwable t) {
+			String message = Arrays.toString(t.getStackTrace()).replace(',', '\n');
+			GUITools.showErrorMessage(null, t, message.substring(1, message.length() - 1));
 		}
 	}
 

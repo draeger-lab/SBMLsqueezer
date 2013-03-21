@@ -81,8 +81,7 @@ public class PluginTest {
 								continue;
 							}
 							Class<?> pluginClass = classLoader.loadClass(entry);
-							CellDesignerPlugin plugin = (CellDesignerPlugin) pluginClass
-									.newInstance();
+							CellDesignerPlugin plugin = (CellDesignerPlugin) pluginClass.newInstance();
 
 							// add Plugin
 							// listOfPlugin.add(plugin);

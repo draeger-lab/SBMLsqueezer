@@ -330,24 +330,23 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 					}
 					break;
 				case SQUEEZE:
-					boolean KineticsAndParametersStoredInSBML = false;
+					boolean kineticsAndParametersStoredInSBML = false;
 					if (e.getSource() instanceof Reaction) {
 						// single reaction
 						try {
 							KineticLawSelectionDialog klsd = new KineticLawSelectionDialog(this, sbmlIO, ((Reaction) e.getSource()).getId());
-							KineticsAndParametersStoredInSBML = klsd.isKineticsAndParametersStoredInSBML();
+							kineticsAndParametersStoredInSBML = klsd.isKineticsAndParametersStoredInSBML();
 						} catch (Throwable exc) {
 							GUITools.showErrorMessage(this, exc);
 						}
 					} else {
 						// whole model
-						KineticLawSelectionWizard wizard;
-						wizard = new KineticLawSelectionWizard(this, sbmlIO);
+						KineticLawSelectionWizard wizard = new KineticLawSelectionWizard(this, sbmlIO);
 						wizard.getDialog().addWindowListener(EventHandler.create(WindowListener.class, this, "windowClosed", ""));
 						wizard.showModalDialog();
-						KineticsAndParametersStoredInSBML = wizard.isKineticsAndParametersStoredInSBML();
+						kineticsAndParametersStoredInSBML = wizard.isKineticsAndParametersStoredInSBML();
 					}
-					if (KineticsAndParametersStoredInSBML) {
+					if (kineticsAndParametersStoredInSBML) {
 						try {
 							split.updateUI();
 						} catch (Exception exc) {

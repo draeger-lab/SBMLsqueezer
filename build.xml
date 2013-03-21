@@ -1,362 +1,397 @@
 <?xml version="1.0"?>
 <!-- $Id$ -->
 
-<project default ="usage" basedir=".">	
+<project default ="usage" basedir=".">  
 
-	
-	<!-- =================================================================== -->
-	<!-- Initialization target                                               -->
-	<!-- =================================================================== -->
+  <target
+   name="init"
+   description="Initialization target"
+  >
+    <tstamp>
+      <format property="YEAR" pattern="yyyy"/>
+    </tstamp>
 
-	<target name="init">
-		<tstamp>
-			<format property="YEAR" pattern="yyyy"/>
-		</tstamp>
+    <property name="Name" value="SBMLsqueezer"/>
+    <property name="version" value="2.0"/>
+    <property name="api.version" value="2.0.0"/>
 
-		<property name="Name" value="SBMLsqueezer"/>
-		<property name="name" value="SBMLsqueezer"/>
-		<property name="version" value="2.0"/>
-		<property name="api.version" value="2.0.0"/>
+    <property name="year" value="${YEAR}"/>
 
-		<property name="year" value="${YEAR}"/>
+    <echo message="----------- ${Name} ${version} [${year}] ------------"/>
+    <echo message="-----------     ${TODAY}   ------------"/>
+    <echo message="-----------     ${DSTAMP} ${TSTAMP}       ------------"/>
 
-		<echo message="----------- ${Name} ${version} [${year}] ------------"/>
-		<echo message="-----------     ${TODAY}   ------------"/>
-		<echo message="-----------     ${DSTAMP} ${TSTAMP}       ------------"/>
+    <property environment="env"/>
+    <property name="build.compiler" value="modern"/>
+    <property name="debug" value="on"/>
+    <property name="optimize" value="on"/>
+    <property name="deprecation" value="false"/>
+    <property name="verbose" value="false"/>
 
-		<property environment="env"/>
-		<property name="build.compiler" value="modern"/>
-		<property name="build.sysclasspath" value="ignore"/>
-		<property name="debug" value="on"/>
-		<property name="optimize" value="on"/>
-		<property name="deprecation" value="false"/>
-		<property name="depend" value="true"/>
-		<property name="verbose" value="false"/>
+    <property name="build.number" value="${DSTAMP}-${TSTAMP}"/>
+    <property name="build.name" value="${version} (build ${build.number})"/>
 
-		<property name="build.number" value="${DSTAMP}-${TSTAMP}"/>
-		<property name="build.name" value="${version} (build ${build.number})"/>
+    <property name="src.dir" value="${basedir}/src"/>
+  	<property name="classes" location="${basedir}/bin"/>
+    <property name="test.src.dir" value="${basedir}/test"/>
+    <property name="build.dir" value="${basedir}/build"/>
+    <property name="build.src" value="${basedir}/build/src"/>
+    <property name="build.dest" value="${basedir}/build/classes"/>
+    <property name="build.javadocs" value="${basedir}/build/apidocs"/>
+    <property name="jars.dir" value="${basedir}/lib"/>
+    <property name="dist" value="${basedir}/dist"/>
+    <property name="dist.dir" value="${dist}/${name}-${version}"/>
+    <property name="package.dir" value="${basedir}/build/package"/>
+    <property name="resource.dir" value="${basedir}/resources"/>
+  	
+  	<property name="appJar" value="${dist}/${Name}"/>
 
-		<property name="src.dir" value="${basedir}/src"/>
-		<property name="test.src.dir" value="${basedir}/test"/>
-		<property name="build.dir" value="${basedir}/build"/>
-		<property name="build.src" value="${basedir}/build/src"/>
-		<property name="build.dest" value="${basedir}/build/classes"/>
-		<property name="build.javadocs" value="${basedir}/build/apidocs"/>
-		<property name="jars.dir" value="${basedir}/lib"/>
-		<property name="dist.root" value="${basedir}/dist"/>
-		<property name="dist.dir" value="${dist.root}/${name}-${version}"/>
-		<property name="package.dir" value="${basedir}/build/package"/>
-		<property name="resource.dir" value="${basedir}/resources"/>
+    <filter token="year" value="${year}"/>
+    <filter token="version" value="${version}"/>
+    <filter token="date" value="${TODAY}"/>
+    <filter token="log" value="true"/>
+    <filter token="verbose" value="true"/>
 
-		<filter token="year" value="${year}"/>
-		<filter token="version" value="${version}"/>
-		<filter token="date" value="${TODAY}"/>
-		<filter token="log" value="true"/>
-		<filter token="verbose" value="true"/>
+    <!-- add everything needed to the classpath -->
+    <!-- adjust the settings to your local environment -->
+    <path id="classpath">
+      <fileset dir="${jars.dir}" includes="*.jar *.zip"/>
+    </path>  
 
-		<!-- add everything needed to the classpath -->
-		<!-- adjust the settings to your local environment -->
-		<path id="classpath">
-			<fileset dir="${jars.dir}" includes="*.jar *.zip"/>
-		</path>	
+  </target>
 
-	</target>
+  <target
+   name="usage"
+   depends="init"
+   description="Help on usage"
+  >
+    <echo message=""/>
+    <echo message=""/>
+    <echo message=" ${Name} Build file"/>
+    <echo message=" -------------------------------------------------------------"/>
+    <echo message=""/>
+    <echo message=" available targets are:"/>
+    <echo message=""/>
+    <echo message="   compile     --> compiles the source code"/>
+    <echo message="   jar         --> generates the ${name}.jar file"/>
+    <echo message="   bigjar      --> generates the ${name}-with-dependencies.jar file"/>
+    <echo message="   javadoc     --> generates the API documentation"/>
+    <echo message="   clean       --> cleans up the directory"/>
+    <echo message=""/>
+    <echo message=" See the comments inside the build.xml file for more details."/>
+    <echo message=" -------------------------------------------------------------"/>
+    <echo message=""/>
+    <echo message=""/>
+  </target>
 
-	<!-- =================================================================== -->
-	<!-- Help on usage                                                       -->
-	<!-- =================================================================== -->
-	<target name="usage" depends="init">
-		<echo message=""/>
-		<echo message=""/>
-		<echo message=" ${Name} Build file"/>
-		<echo message=" -------------------------------------------------------------"/>
-		<echo message=""/>
-		<echo message=" available targets are:"/>
-		<echo message=""/>
-		<echo message="   compile     --> compiles the source code"/>
-		<echo message="   jar         --> generates the ${name}.jar file"/>
-		<echo message="   bigjar      --> generates the ${name}-with-dependencies.jar file"/>
-		<echo message="   javadoc     --> generates the API documentation"/>
-		<echo message="   clean       --> cleans up the directory"/>
-		<echo message=""/>
-		<echo message=" See the comments inside the build.xml file for more details."/>
-		<echo message=" -------------------------------------------------------------"/>
-		<echo message=""/>
-		<echo message=""/>
-	</target>
+  <target name="prepare" depends="init" description="Prepares the build directory">
+    <mkdir dir="${build.dir}"/>
+    <echo message="Done"/>
+  </target>
 
-	<!-- =================================================================== -->
-	<!-- Prepares the build directory                                        -->
-	<!-- =================================================================== -->
-	<target name="prepare" depends="init">
-		<mkdir dir="${build.dir}"/>
-		<echo message="Done"/>
-	</target>
+  <target name="prepare-src" depends="prepare" description="Prepares the source code">
+    <!-- create directories -->
+    <mkdir dir="${build.src}"/>
+    <mkdir dir="${build.dest}"/>
+    <mkdir dir="${build.dest}/META-INF"/>
+    <mkdir dir="${package.dir}"/>
+    <mkdir dir="${dist}"/>
+    <mkdir dir="${dist.dir}"/>
 
-	<!-- =================================================================== -->
-	<!-- Prepares the source code                                            -->
-	<!-- =================================================================== -->
-	<target name="prepare-src" depends="prepare">
-		<!-- create directories -->
-		<mkdir dir="${build.src}"/>
-		<mkdir dir="${build.dest}"/>
-		<mkdir dir="${build.dest}/META-INF"/>
-		<mkdir dir="${package.dir}"/>
-		<mkdir dir="${dist.root}"/>
-		<mkdir dir="${dist.dir}"/>
-
-		<!-- copy src files -->
-		<copy todir="${build.src}" overwrite="yes">
-			<fileset 
+    <!-- copy src files -->
+    <copy todir="${build.src}" overwrite="yes">
+      <fileset 
             dir="${src.dir}"
             excludes="**/.svn*, **/*.class, **/*~, **/*.tgz, **/*.zip">
-			</fileset>
-		</copy>
+      </fileset>
+    </copy>
 
-		<!--<copy todir="${build.src}" overwrite="yes">
-			<fileset 
-  	            dir="${test.src.dir}"
-  	        	includes="org/sbml/squeezer/**"
-  	            excludes="**/.svn*, **/*.class, **/*~, **/*.tgz, **/*.zip">
-			</fileset>
-		</copy>-->
+    <!--<copy todir="${build.src}" overwrite="yes">
+      <fileset 
+                dir="${test.src.dir}"
+              includes="org/sbml/squeezer/**"
+                excludes="**/.svn*, **/*.class, **/*~, **/*.tgz, **/*.zip">
+      </fileset>
+    </copy>-->
 
-		<copy todir="${build.src}" overwrite="yes">
-			<fileset 
-  	  	            dir="${resource.dir}"
-  	  	        	includes="org/sbml/squeezer/**, **/*.properties"
-  	  	            excludes="**/.svn*, **/*~, **/*.tgz, **/*.zip">
-			</fileset>
-		</copy>
-		
-		<copy todir="${build.dest}" overwrite="yes">
-			<fileset 
-  	  	            dir="${resource.dir}"
-  	  	        	includes="**/html/**">
-			</fileset>
-		</copy>
+    <copy todir="${build.src}" overwrite="yes">
+      <fileset 
+                    dir="${resource.dir}"
+                  includes="org/sbml/squeezer/**, **/*.properties"
+                    excludes="**/.svn*, **/*~, **/*.tgz, **/*.zip">
+      </fileset>
+    </copy>
+    
+    <copy todir="${build.dest}" overwrite="yes">
+      <fileset 
+                    dir="${resource.dir}"
+                  includes="**/html/**">
+      </fileset>
+    </copy>
 
-	</target>
+  </target>
 
 
-	<!-- =================================================================== -->
-	<!-- Modify somes files                                                  -->
-	<!-- =================================================================== -->
-	<target name="gen-build-number" unless="dev.mode">
-		<echo message="Updating the files with the build number..."/>
+  <target name="gen-build-number" unless="dev.mode" description="Modify somes files">
+    <echo message="Updating the files with the build number..."/>
 
-		<replace file="${basedir}/doc/Readme.html"
+    <replace file="${basedir}/doc/Readme.html"
                 token="[BUILD.NUMBER]"
-                value="${build.name}" />
+                value="${build.name}"/>
+  </target>
 
+  <target name="gen-build-number-back" depends="jar" unless="dev.mode" description="Modify back somes files">
+    <echo message="Updating back the files with [BUILD.NUMBER]..."/>
 
-	</target>
-
-	<!-- =================================================================== -->
-	<!-- Modify back somes files                                             -->
-	<!-- =================================================================== -->
-	<target name="gen-build-number-back" depends="jar" unless="dev.mode">
-		<echo message="Updating back the files with [BUILD.NUMBER]..."/>
-
-
-		<replace file="${basedir}/doc/Readme.html"
+    <replace file="${basedir}/doc/Readme.html"
                 token="${build.name}"
-                value="[BUILD.NUMBER]" />
+                value="[BUILD.NUMBER]"/>
 
-	</target>
+  </target>
 
-
-	<!-- =================================================================== -->
-	<!-- Compiles the source directory                                       -->
-	<!-- =================================================================== -->
-	<target name="compile" depends="prepare-src">
-		<javac srcdir="${build.src}"
-           destdir="${build.dest}"
-           debug="${debug}"
-           optimize="${optimize}"
-           verbose="${verbose}"
-           source="1.5"
-           target="1.5"
-           classpathref="classpath">
-		</javac>
-		<manifest file="${build.dest}/META-INF/MANIFEST.MF">
-			<attribute name="Main-Class" value="org.sbml.squeezer.SBMLsqueezer"/>
-			<attribute name="Built-By" value="Center for Bioinformatics Tuebingen (ZBIT)"/>
-			<attribute name="SplashScreen-Image" value="org/sbml/squeezer/resources/img/SBMLsqueezerSplash.gif"/>
-			<section name="${Name}">
-				<attribute name="Specification-Title" value="${Name}"/>
-				<attribute name="Specification-Version" value="${api.version}"/>
-				<attribute name="Implementation-Title" value="${Name}"/>
-				<attribute name="Implementation-Version" value="${version}"/>
-			</section>
-		</manifest>
-	</target>
+  <target name="compile" depends="prepare-src" description="Compiles the source directory">
+    <javac
+          classpathref="classpath"
+      compiler="${build.compiler}"
+          debug="${debug}"
+          destdir="${build.dest}"
+          optimize="${optimize}"
+          source="1.5"
+      srcdir="${build.src}"
+          target="1.5"
+          verbose="${verbose}"
+    />
+    <manifest file="${build.dest}/META-INF/MANIFEST.MF">
+      <attribute name="Main-Class" value="org.sbml.squeezer.SBMLsqueezer"/>
+      <attribute name="Built-By" value="Center for Bioinformatics Tuebingen (ZBIT)"/>
+      <attribute name="SplashScreen-Image" value="org/sbml/squeezer/resources/img/SBMLsqueezerSplash.gif"/>
+      <section name="${Name}">
+        <attribute name="Specification-Title" value="${Name}"/>
+        <attribute name="Specification-Version" value="${api.version}"/>
+        <attribute name="Implementation-Title" value="${Name}"/>
+        <attribute name="Implementation-Version" value="${version}"/>
+      </section>
+    </manifest>
+  </target>
 
 
-	<!-- =================================================================== -->
-	<!-- Creates the class package                                           -->
-	<!-- =================================================================== -->
-	<target name="jar" depends="compile">
+  <target name="jar" depends="compile" description="Creates the class package">
 
-		<copy todir="${build.dest}">
-			<fileset dir="${build.src}" 
-				includes="**/*.png **/*.gif **/*.xsd **/*.tmpl **/data/* **/*.xml **/*.cfg **/*.obo **/*.properties">
-			</fileset>
-		</copy>
-		<jar jarfile="${build.dir}/${name}-${version}.jar" basedir="${build.dest}" manifest="${build.dest}/META-INF/MANIFEST.MF"/>
-	</target>
+    <copy todir="${build.dest}">
+      <fileset dir="${build.src}" 
+        includes="**/*.png **/*.gif **/*.xsd **/*.tmpl **/data/* **/*.xml **/*.cfg **/*.obo **/*.properties">
+      </fileset>
+    </copy>
+    <jar jarfile="${build.dir}/${name}-${version}.jar" basedir="${build.dest}" manifest="${build.dest}/META-INF/MANIFEST.MF"/>
+  </target>
 
-	<!-- =================================================================== -->
-	<!-- Creates the class package and include all the dependencies jars     -->
-	<!-- into a big jsbml jar file.                                          -->
-	<!-- =================================================================== -->
-	<target name="jar-src" depends="prepare-src">
+  <target name="jar-src" depends="prepare-src" description="Creates the class package and include all the dependencies jars into a big SBMLsqueezer JAR file.">
+    <jar jarfile="${build.dir}/${name}-${version}-src.jar" basedir="${build.src}" includes="**/*.java"/>
+  </target>
 
-		<jar jarfile="${build.dir}/${name}-${version}-src.jar" basedir="${build.src}" includes="**/*.java"/>
+  <target name="bigjar" depends="compile" description="Creates the class package and include all the dependencies jars into a big SBMLsqueezer jar file.">
 
-	</target>
-
-	<!-- =================================================================== -->
-	<!-- Creates the class package and include all the dependencies jars     -->
-	<!-- into a big jsbml jar file.                                          -->
-	<!-- =================================================================== -->
-	<target name="bigjar" depends="compile">
-
-		<!-- we use the ${build.src} to include the sources of jsbml in the resulting jar -->
-		<copy todir="${build.dest}">
-			<fileset
+    <!-- we use the ${build.src} to include the sources of jsbml in the resulting jar -->
+    <copy todir="${build.dest}">
+      <fileset
             dir="${build.src}"
             includes="**/*.png **/*.gif **/*.xsd **/*.tmpl **/data/* **/*.xml **/*.cfg **/*.obo **/*.properties **/*.java" >
-			</fileset>
-		</copy>
-		<jar jarfile="${build.dir}/${name}-${version}-with-dependencies.jar"
+      </fileset>
+    </copy>
+    <jar jarfile="${build.dir}/${name}-${version}-with-dependencies.jar"
          basedir="${build.dest}"  manifest="${build.dest}/META-INF/MANIFEST.MF">
-			<zipgroupfileset dir="${jars.dir}" includes="*.jar" excludes="jsbmlbridge.jar"/>
-		</jar>
-	</target>
-
-	<!-- =================================================================== -->
-	<!-- Creates the API documentation                                       -->
-	<!-- =================================================================== -->
-	<target name="javadoc" depends="prepare-src">
-		<mkdir dir="${build.javadocs}"/>
-		<javadoc packagenames="org.*"
-    		 excludepackagenames="org.sbml.squeezer.test.*"
-             sourcepath="${build.src}"
-             destdir="${build.javadocs}"
-             classpathref="classpath"
-             maxmemory="96m"
-             author="true"
-             version="true"
-             use="true"
-             splitindex="true"
-             noindex="false"
-             windowtitle="${Name} ${version} API Specification"
-             doctitle="${Name} ${version} API Specification"
-    	     breakiterator="yes"
-    		 access="public">
-			
-			<link href="http://java.sun.com/j2se/1.5.0/docs/api"/>
-			<link href="http://www.biojava.org/docs/api17"/>
-			<tag name="sbml.deprecated" description="Deprecated in SBML since :"/>
-			<tag name="jsbml.note" description="Note"/>
-			<tag name="jsbml.warning"/>
-			<tag name="doc.note"  description="Documentation note"/>
-			
-		</javadoc>
-	</target>
-
-	<!-- =================================================================== -->
-	<!-- Creates the javadocs jar package                                      -->
-	<!-- =================================================================== -->
-	<target name="jar-javadoc" depends="javadoc">
-
-		<jar jarfile="${build.dir}/${name}-${version}-javadoc.jar" basedir="${build.javadocs}" />
-
-	</target>
-
-	<!-- =================================================================== -->
-	<!-- Creates the distribution                                            -->
-	<!-- =================================================================== -->
-	<target name="dist" depends="prepare-src">
-
-		<!-- Creates the standard jar file -->
-
-		<antcall target="clean"/>
-
-		<antcall target="jar"/>
-		<antcall target="jar-src"/>
-		<copy todir="${dist.dir}" file="${build.dir}/${name}-${version}-src.jar"/>
-
-		<copy todir="${dist.dir}" file="${build.dir}/${name}-${version}.jar"/>
-		<copy todir="${dist.root}" file="${build.dir}/${name}-${version}.jar"/>
-
-		<!-- Creates the jar file including all the dependencies -->
-
-		<antcall target="bigjar"/>
-
-		<copy todir="${dist.dir}" file="${build.dir}/${name}-${version}-with-dependencies.jar"/>
-		<copy todir="${dist.root}" file="${build.dir}/${name}-${version}-with-dependencies.jar"/>
-
-		<!-- Creates and copy the generated javadoc -->
-		<antcall target="jar-javadoc"/>
-
-		<copy todir="${dist.dir}/doc/api">
-			<fileset dir="${build.javadocs}/" includes="**/*">
-			</fileset>
-		</copy>
-		<copy todir="${dist.dir}" file="${build.dir}/${name}-${version}-javadoc.jar"/>
-
-		<!-- Copy the source files -->
-		<copy todir="${dist.dir}/src">
-			<fileset dir="${build.src}/" includes="**/*">
-			</fileset>
-		</copy>
-
-		<!-- Copy all the dependencies jar files -->
-		<copy todir="${dist.dir}/lib">
-			<fileset dir="${jars.dir}/" includes="*.jar">
-			</fileset>
-		</copy>
-
-		<copy todir="${dist.dir}">
-			<fileset dir="${basedir}/" includes="LICENSE.txt NEWS.txt README AUTHORS.txt build.xml">
-			</fileset>
-		</copy>
-		
-		<copy todir="${dist.dir}/licenses">
-			<fileset dir="${basedir}/licenses" includes="**/*">
-			</fileset>
-		</copy>
-
-		<copy todir="${dist.dir}/doc">
-			<fileset dir="${basedir}/doc" includes="**/*.pdf **/*.jpg **/*.java" excludes="posters/** publications/** templates/**">
-
-			</fileset>
-		</copy>
-
-		<!-- Creates the archives to be distributed -->
-		<zip basedir="${dist.root}" destfile="${dist.root}/${name}-${version}.zip" includes="${name}-${version}/**"/>
-
-		<!-- Not generating a tar.gz a having only a zip file should be enough -->
-		<!-- <tar basedir="${dist.root}" destfile="${dist.root}/${name}-${version}.tar.gz" includes="${name}-${version}/**" compression="gzip"/> -->
-
-	</target>
+      <zipgroupfileset dir="${jars.dir}" includes="*.jar" excludes="jsbmlbridge.jar"/>
+    </jar>
+  </target>
+  
+  <target
+   name="svnrevision"
+   description="Determines the current SVN revions number of SBMLsqueezer and stores it in a variable."
+  >
+    <exec executable="svnversion" outputproperty="revision">
+      <arg line="-c ${basedir}"/>
+      <redirector>
+        <outputfilterchain>
+          <tokenfilter>
+            <replaceregex pattern="[0-9]+\:" replace="" />
+            <replaceregex pattern="[PM]+" replace="" />
+          </tokenfilter>
+        </outputfilterchain>
+      </redirector>
+    </exec>
+  	<echo message="Current revision is ${revision}" />
+  	  	
+    <property name="build.name" value="Revision ${revision} ${TODAY} (Build ${build.number})"/>
+  </target>
 
 
-	<!-- =================================================================== -->
-	<!-- Cleans everything                                                   -->
-	<!-- =================================================================== -->
-	<target name="clean" depends="init">
-		<delete includeEmptyDirs="true" quiet="yes">
-			<fileset dir="${build.dir}" includes="**/*"/>
-		</delete>
-		<delete dir="${dist.root}" includeEmptyDirs="true" quiet="yes">
-		</delete>
-	</target>
-	
-	
-	<!-- =================================================================== -->
+  <!-- =================================================================== -->
+  <!-- JAR including libs                                                  -->
+  <!-- =================================================================== -->
+  <target
+   name="jar_incl-libs"
+   depends="init, svnrevision"
+   description="Creates a JAR file including all class files and all third-party libraries, but no source files."
+  >
+
+    <delete file="${appJar}_v${version}_incl-libs.jar"/>
+    <jar jarfile="${appJar}_v${version}_incl-libs.jar">
+      <manifest>
+        <attribute name="Main-Class" value="org.sbml.squeezer.SBMLsqueezer"/>
+        <attribute name="Built-By" value="${user.name}"/>
+        <section name="${Name}">
+          <attribute name="Specification-Title" value="${Name}"/>
+          <attribute name="Specification-Version" value="${build.name}"/>
+          <attribute name="Specification-Vendor" value="Center for Bioinformatics Tuebingen (ZBIT)"/>
+          <attribute name="Implementation-Title" value="${Name}"/>
+          <attribute name="Implementation-Version" value="Revision ${revision} ${TODAY}"/>
+          <attribute name="Implementation-Vendor" value="University of Tuebingen"/>
+        </section>
+      </manifest>
+      
+      <!-- TODO: compile! Include modules, test, src... -->
+    	
+      <!-- SBMLsqueezer Classes -->
+      <fileset dir="${classes}">
+        <exclude name="**/package.html"/>
+      </fileset>
+      <fileset dir="${basedir}/modules/celldesigner/resources/">
+      	<include name="**.xml"/>
+      </fileset>
+      <fileset dir="${basedir}">
+        <include name="LICENSE.txt"/>
+        <include name="README.txt"/>
+      </fileset>
+      <fileset dir="${basedir}/licenses">
+        <include name="AUTHORS.txt"/>
+      </fileset>
+      
+      <!-- These libraries are required by most classes -->
+      <zipfileset excludes="META-INF/*" src="${jars.dir}/SBML2LaTeX-0.9.9_slim.jar"/>
+      <zipfileset excludes="META-INF/*" src="${jars.dir}/jsbml-libSBMLio-0.8.15.jar"/>
+      <zipfileset excludes="META-INF/*" src="${jars.dir}/jlatexmath-1.0.0.jar"/>
+      <zipfileset excludes="META-INF/*" src="${jars.dir}/jsbml-1.0-a1-with-dependencies.jar"/>
+      <zipfileset excludes="META-INF/*" src="${jars.dir}/SysBio.jar"/>
+      <zipfileset excludes="META-INF/*" src="${jars.dir}/quaqua.jar"/>
+      <zipfileset excludes="META-INF/*" src="${jars.dir}/garuda/garuda-csr.jar"/>
+      <zipfileset excludes="META-INF/*" src="${jars.dir}/garuda/jsonic-1.2.10.jar"/>
+      <zipfileset excludes="META-INF/*" src="${jars.dir}/garuda/log4j-1.2.16.jar"/>
+
+    </jar>
+    
+  </target>
+
+  <target name="javadoc" depends="prepare-src" description="Creates the API documentation">
+    <mkdir dir="${build.javadocs}"/>
+    <javadoc
+    	packagenames="org.*"
+        excludepackagenames="org.sbml.squeezer.test.*"
+         sourcepath="${build.src}"
+         destdir="${build.javadocs}"
+         classpathref="classpath"
+         maxmemory="96m"
+         author="true"
+         version="true"
+         use="true"
+         splitindex="true"
+         noindex="false"
+         windowtitle="${Name} ${version} API Specification"
+         doctitle="${Name} ${version} API Specification"
+       breakiterator="yes"
+     access="public">
+      
+      <link href="http://java.sun.com/j2se/1.5.0/docs/api"/>
+      <link href="http://www.biojava.org/docs/api17"/>
+      <tag name="sbml.deprecated" description="Deprecated in SBML since :"/>
+      <tag name="jsbml.note" description="Note"/>
+      <tag name="jsbml.warning"/>
+      <tag name="doc.note"  description="Documentation note"/>
+      
+    </javadoc>
+  </target>
+
+  <target name="jar-javadoc" depends="javadoc" description="Creates the javadocs jar package">
+
+    <jar jarfile="${build.dir}/${name}-${version}-javadoc.jar" basedir="${build.javadocs}"/>
+
+  </target>
+
+  <target name="dist" depends="prepare-src" description="Creates the distribution">
+
+    <!-- Creates the standard jar file -->
+
+    <antcall target="clean"/>
+
+    <antcall target="jar"/>
+    <antcall target="jar-src"/>
+    <copy todir="${dist.dir}" file="${build.dir}/${name}-${version}-src.jar"/>
+
+    <copy todir="${dist.dir}" file="${build.dir}/${name}-${version}.jar"/>
+    <copy todir="${dist}" file="${build.dir}/${name}-${version}.jar"/>
+
+    <!-- Creates the jar file including all the dependencies -->
+
+    <antcall target="bigjar"/>
+
+    <copy todir="${dist.dir}" file="${build.dir}/${name}-${version}-with-dependencies.jar"/>
+    <copy todir="${dist}" file="${build.dir}/${name}-${version}-with-dependencies.jar"/>
+
+    <!-- Creates and copy the generated javadoc -->
+    <antcall target="jar-javadoc"/>
+
+    <copy todir="${dist.dir}/doc/api">
+      <fileset dir="${build.javadocs}/" includes="**/*">
+      </fileset>
+    </copy>
+    <copy todir="${dist.dir}" file="${build.dir}/${name}-${version}-javadoc.jar"/>
+
+    <!-- Copy the source files -->
+    <copy todir="${dist.dir}/src">
+      <fileset dir="${build.src}/" includes="**/*">
+      </fileset>
+    </copy>
+
+    <!-- Copy all the dependencies jar files -->
+    <copy todir="${dist.dir}/lib">
+      <fileset dir="${jars.dir}/" includes="*.jar">
+      </fileset>
+    </copy>
+
+    <copy todir="${dist.dir}">
+      <fileset dir="${basedir}/" includes="LICENSE.txt NEWS.txt README AUTHORS.txt build.xml">
+      </fileset>
+    </copy>
+    
+    <copy todir="${dist.dir}/licenses">
+      <fileset dir="${basedir}/licenses" includes="**/*">
+      </fileset>
+    </copy>
+
+    <copy todir="${dist.dir}/doc">
+      <fileset dir="${basedir}/doc" includes="**/*.pdf **/*.jpg **/*.java" excludes="posters/** publications/** templates/**">
+
+      </fileset>
+    </copy>
+
+    <!-- Creates the archives to be distributed -->
+    <zip basedir="${dist}" destfile="${dist}/${name}-${version}.zip" includes="${name}-${version}/**"/>
+
+    <!-- Not generating a tar.gz a having only a zip file should be enough -->
+    <!-- <tar basedir="${dist}" destfile="${dist}/${name}-${version}.tar.gz" includes="${name}-${version}/**" compression="gzip"/> -->
+
+  </target>
+
+
+  <target name="clean" depends="init" description="Cleans everything">
+    <delete includeEmptyDirs="true" quiet="yes">
+      <fileset dir="${build.dir}" includes="**/*"/>
+    </delete>
+    <delete dir="${dist}" includeEmptyDirs="true" quiet="yes">
+    </delete>
+  </target>
+  
+  
+    <!-- =================================================================== -->
     <!-- Creates a minimal SysBio JAR                                        -->
     <!-- =================================================================== -->
     <target
@@ -368,123 +403,122 @@
       <property name="sysbio.dir" value="${basedir}/../SysBio"/>
       <property name="sysbio.lib" value="${sysbio.dir}/lib"/>
       <path id="sysbio.classpath">
-	    <fileset dir="${sysbio.lib}" includes="**.jar, **/*.jar, **.zip"/>
+      <fileset dir="${sysbio.lib}" includes="**.jar, **/*.jar, **.zip"/>
       </path>
       <path id="sysbio.sourcepath">
         <fileset dir="${sysbio.dir}/src"/>
-      	<fileset dir="${sysbio.dir}/test"/>
-      	<fileset dir="${sysbio.dir}/resources"/>
-      	<fileset dir="${sysbio.dir}/examples"/>
+        <fileset dir="${sysbio.dir}/test"/>
+        <fileset dir="${sysbio.dir}/resources"/>
+        <fileset dir="${sysbio.dir}/examples"/>
       </path>
-    	
+      
       <!-- Determine the revision number of SysBio -->
       <exec executable="svnversion" outputproperty="sysbio.revision">
-	    <arg line="-c ${sysbio.dir}"/>
-	    <redirector>
-	      <outputfilterchain>
-	        <tokenfilter>
-	          <replaceregex pattern="[0-9]+\:" replace="" />
-	          <replaceregex pattern="[PM]+" replace="" />
-	        </tokenfilter>
-	      </outputfilterchain>
-	    </redirector>
+      <arg line="-c ${sysbio.dir}"/>
+      <redirector>
+        <outputfilterchain>
+          <tokenfilter>
+            <replaceregex pattern="[0-9]+\:" replace=""/>
+            <replaceregex pattern="[PM]+" replace=""/>
+          </tokenfilter>
+        </outputfilterchain>
+      </redirector>
       </exec>
 
       <!-- Delete all previous versions of SysBio JAR files -->
       <delete verbose="true">
-      	<fileset dir="${jars.dir}">
-      	  <include name="SysBio**.jar"/>
-      	</fileset>
+        <fileset dir="${jars.dir}">
+          <include name="SysBio**.jar"/>
+        </fileset>
       </delete>
 
-	  <!-- Compile the entire SysBio project -->
+      <!-- Compile the entire SysBio project -->
       <delete dir="${sysbio.dir}/bin"/>
       <mkdir dir="${sysbio.dir}/bin"/>
-      <javac srcdir="${sysbio.dir}/src"
-      	compiler="${build.compiler}"
-      	listfiles="yes"
-      	debug="${debug}"
-      	deprecation="${deprecation}"
-      	nowarn="no"
-      	memoryMaximumSize="512M"
-    	destdir="${sysbio.dir}/bin"
-    	verbose="${verbose}"
-    	source="1.6"
-    	target="1.6"
-    	optimize="${optimize}"
-    	sourcepathref="sysbio.sourcepath"
-      	classpathref="sysbio.classpath"
+      <javac
+        classpathref="sysbio.classpath"
+        compiler="${build.compiler}"
+        debug="${debug}"
+        deprecation="${deprecation}"
+        destdir="${sysbio.dir}/bin"
+        listfiles="yes"
+        memoryMaximumSize="512M"
+        nowarn="no"
+        optimize="${optimize}"
+        source="1.6"
+        sourcepathref="sysbio.sourcepath"
+        srcdir="${sysbio.dir}/src"
+        target="1.6"
+        verbose="${verbose}"
       />
       <!-- <copy todir="${sysbio.dir}/bin"/> -->
 
-	  <!-- Pack a minimal JAR file containing only parts required for SBMLsqueezer -->
+      <!-- Pack a minimal JAR file containing only parts required for SBMLsqueezer -->
       <jar jarfile="${jars.dir}/SysBio.jar">
-      	
-      	<manifest>
+        
+        <manifest>
           <attribute name="Built-By" value="${user.name}"/>
-      	  <section name="SysBio">
-      	    <attribute name="Specification-Title" value="SysBio"/>
-	        <attribute name="Specification-Version" value="Revision ${sysbio.revision}"/>
+          <section name="SysBio">
+            <attribute name="Specification-Title" value="SysBio"/>
+          <attribute name="Specification-Version" value="Revision ${sysbio.revision}"/>
             <attribute name="Specification-Vendor" value="Center for Bioinformatics Tuebingen (ZBIT)"/>
-      	  	<attribute name="Implementation-Title" value="SysBio"/>
-      	  	<attribute name="Implementation-Version" value="Revision ${sysbio.revision} ${TODAY} (Build ${DSTAMP}-${TSTAMP})"/>
+            <attribute name="Implementation-Title" value="SysBio"/>
+            <attribute name="Implementation-Version" value="Revision ${sysbio.revision} ${TODAY} (Build ${DSTAMP}-${TSTAMP})"/>
             <attribute name="Implementation-Vendor" value="University of Tuebingen"/>
-      	  </section>
-    	</manifest>
-      	<fileset dir="${sysbio.dir}">
+          </section>
+      </manifest>
+        <fileset dir="${sysbio.dir}">
           <include name="licenses/COPYING.txt"/>
-      	  <include name="licenses/lib-licenses/*.txt"/>
-      	  <include name="licenses/lib-licenses/*.html"/>
-      	  <include name="licenses/AUTHORS.txt"/>
-      	</fileset>
-      	<fileset dir="${sysbio.dir}/bin" excludes="**/.svn*, **/package-info.class">
-      	  <include name="de/zbit/**.class"/>
-      	  <include name="de/zbit/collection/**.class"/>
-      	  <include name="de/zbit/garuda/**.class"/>
-      	  <include name="de/zbit/gui/**.class"/>
-      	  <include name="de/zbit/gui/csv/**.class"/>
-      	  <include name="de/zbit/gui/actioncommand/**.class"/>
-      	  <include name="de/zbit/gui/layout/**.class"/>
-      	  <exclude name="de/zbit/gui/layout/SpringUtilities.class"/>
-      	  <exclude name="de/zbit/gui/layout/VerticalLayout.class"/>
-      	  <include name="de/zbit/gui/panels/**.class"/>
-      	  <include name="de/zbit/gui/prefs/**.class"/>
-      	  <include name="de/zbit/gui/table/**.class"/>
-      	  <include name="de/zbit/gui/table/renderer/**.class"/>
-      	  <include name="de/zbit/gui/wizard/**.class"/>
-      	  <include name="de/zbit/gui/**.class"/>
-      	  <include name="de/zbit/io/**"/>
-      	  <include name="de/zbit/math/**.class"/>
-      	  <include name="de/zbit/resources/**.class"/>
-      	  <include name="de/zbit/sbml/**.class"/>
-      	  <include name="de/zbit/sbml/gui/*.class"/>
-      	  <include name="de/zbit/sbml/io/*.class"/>
-      	  <include name="de/zbit/sbml/layout/*.class"/>
-      	  <exclude name="de/zbit/sbml/layout/y"/>
-      	  <include name="de/zbit/sbml/util/*.class"/>
-      	  <include name="de/zbit/text/**.class"/>
-      	  <include name="de/zbit/util/*.class"/>
-      	  <include name="de/zbit/util/argparser/**.class"/>
-      	  <include name="de/zbit/util/logging/**.class"/>
-      	  <include name="de/zbit/util/objectwrapper/**.class"/>
-      	  <include name="de/zbit/util/prefs/**.class"/>
-      	  <include name="de/zbit/util/progressbar/**"/>
-      	  <include name="de/zbit/util/**.class"/>
-      	</fileset>
-      	<fileset dir="${sysbio.dir}/resources" excludes="**/.svn*, package-info.*">
-      	  <include name="de/zbit/garuda/img/**.png"/>
-      	  <include name="de/zbit/garuda/locales/**.xml"/>
-      	  <include name="de/zbit/gui/img/**.class, **.png"/>
-      	  <include name="de/zbit/locales/**.xml"/>
-      	  <include name="de/zbit/sbml/locales/**.xml"/>
-      	</fileset>
-      	
-      	<zipfileset excludes="META-INF/*" src="${sysbio.dir}/lib/sysbio-osx-support.jar"/>
-      	
+          <include name="licenses/lib-licenses/*.txt"/>
+          <include name="licenses/lib-licenses/*.html"/>
+          <include name="licenses/AUTHORS.txt"/>
+        </fileset>
+        <fileset dir="${sysbio.dir}/bin" excludes="**/.svn*, **/package-info.class">
+          <include name="de/zbit/**.class"/>
+          <include name="de/zbit/collection/**.class"/>
+          <include name="de/zbit/garuda/**.class"/>
+          <include name="de/zbit/gui/**.class"/>
+          <include name="de/zbit/gui/csv/**.class"/>
+          <include name="de/zbit/gui/actioncommand/**.class"/>
+          <include name="de/zbit/gui/layout/**.class"/>
+          <exclude name="de/zbit/gui/layout/SpringUtilities.class"/>
+          <exclude name="de/zbit/gui/layout/VerticalLayout.class"/>
+          <include name="de/zbit/gui/panels/**.class"/>
+          <include name="de/zbit/gui/prefs/**.class"/>
+          <include name="de/zbit/gui/table/**.class"/>
+          <include name="de/zbit/gui/table/renderer/**.class"/>
+          <include name="de/zbit/gui/wizard/**.class"/>
+          <include name="de/zbit/gui/**.class"/>
+          <include name="de/zbit/io/**"/>
+          <include name="de/zbit/math/**.class"/>
+          <include name="de/zbit/resources/**.class"/>
+          <include name="de/zbit/sbml/**.class"/>
+          <include name="de/zbit/sbml/gui/*.class"/>
+          <include name="de/zbit/sbml/io/*.class"/>
+          <include name="de/zbit/sbml/layout/*.class"/>
+          <exclude name="de/zbit/sbml/layout/y"/>
+          <include name="de/zbit/sbml/util/*.class"/>
+          <include name="de/zbit/text/**.class"/>
+          <include name="de/zbit/util/*.class"/>
+          <include name="de/zbit/util/argparser/**.class"/>
+          <include name="de/zbit/util/logging/**.class"/>
+          <include name="de/zbit/util/objectwrapper/**.class"/>
+          <include name="de/zbit/util/prefs/**.class"/>
+          <include name="de/zbit/util/progressbar/**"/>
+          <include name="de/zbit/util/**.class"/>
+        </fileset>
+        <fileset dir="${sysbio.dir}/resources" excludes="**/.svn*, package-info.*">
+          <include name="de/zbit/garuda/img/**.png"/>
+          <include name="de/zbit/garuda/locales/**.xml"/>
+          <include name="de/zbit/gui/img/**.png"/>
+          <include name="de/zbit/locales/**.xml"/>
+          <include name="de/zbit/sbml/locales/**.xml"/>
+        </fileset>
+        
+        <zipfileset excludes="META-INF/*" src="${sysbio.dir}/lib/sysbio-osx-support.jar"/>
+        
       </jar>
 
     </target>
 
 </project>
-
-<!-- End of file -->
