@@ -148,10 +148,13 @@ public class SBMLio implements SBMLInputConverter, SBMLOutputConverter,
 			}
 			convertedModel.putUserObject(ORIGINAL_MODEL_KEY, origModel);
 			openedModel = convertedModel;
-			openedDocument = new OpenedFile<SBMLDocument>(file, convertedModel.getSBMLDocument());
-			if (openedDocument.isSetDocument()) {
-				openedDocument.getDocument().addTreeNodeChangeListener(new SBMLfileChangeListener(openedDocument));
+			SBMLDocument doc = convertedModel.getSBMLDocument();
+			if (doc == null) {
+				doc = new SBMLDocument(convertedModel.getLevel(), convertedModel.getVersion());
+				doc.setModel(convertedModel);
 			}
+			openedDocument = new OpenedFile<SBMLDocument>(file, convertedModel.getSBMLDocument());
+			openedDocument.getDocument().addTreeNodeChangeListener(new SBMLfileChangeListener(openedDocument));
 			listOfOpenedFiles.add(openedDocument);
 			selectedModel = listOfOpenedFiles.size() - 1;
 			return convertedModel;

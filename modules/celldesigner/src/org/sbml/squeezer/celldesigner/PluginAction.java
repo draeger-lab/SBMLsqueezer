@@ -24,11 +24,16 @@
 package org.sbml.squeezer.celldesigner;
 
 import java.awt.event.ActionEvent;
+import java.text.MessageFormat;
+import java.util.ResourceBundle;
+import java.util.logging.Logger;
 
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 
 import org.sbml.jsbml.SBMLException;
+
+import de.zbit.util.ResourceManager;
 
 /**
  * This class starts SBMLsqueezer from as a CellDesigner plug-in. Actually, this
@@ -40,6 +45,16 @@ import org.sbml.jsbml.SBMLException;
  * @since 1.0
  */
 public class PluginAction extends jp.sbi.celldesigner.plugin.PluginAction {
+	
+	/**
+	 * A {@link Logger} for this class.
+	 */
+	private static transient final Logger logger = Logger.getLogger(PluginAction.class.getName());
+	
+	/**
+	 * Localization support.
+	 */
+	private static transient final ResourceBundle bundle = ResourceManager.getBundle(PluginAction.class.getPackage().getName() + ".Messages");
 
 	/**
 	 * A serial version number.
@@ -81,8 +96,9 @@ public class PluginAction extends jp.sbi.celldesigner.plugin.PluginAction {
 				}
 			}).start();
 		} else
-			System.err.printf("Unsupported source of action %s\n", e
-					.getSource().getClass().getName());
+			logger.warning(MessageFormat.format(
+				bundle.getString("UNSUPPORTED_SOURCE_OF_ACTION"),
+				e.getSource().getClass().getName()));
 	}
 
 }
