@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!-- $Id$ -->
 
-<project default ="usage" basedir=".">  
+<project name="SBMLsqueezer" default ="usage" basedir=".">  
 
   <target
    name="init"
@@ -18,7 +18,7 @@
     <property name="year" value="${YEAR}"/>
 
     <echo message="----------- ${Name} ${version} [${year}] ------------"/>
-    <echo message="-----------     ${TODAY}   ------------"/>
+    <echo message="-----------     ${TODAY}       ------------"/>
     <echo message="-----------     ${DSTAMP} ${TSTAMP}       ------------"/>
 
     <property environment="env"/>
@@ -31,18 +31,22 @@
     <property name="build.number" value="${DSTAMP}-${TSTAMP}"/>
     <property name="build.name" value="${version} (build ${build.number})"/>
 
-    <property name="src.dir" value="${basedir}/src"/>
+    <property name="src" value="${basedir}/src"/>
   	<property name="classes" location="${basedir}/bin"/>
-    <property name="test.src.dir" value="${basedir}/test"/>
+    <property name="test" value="${basedir}/test"/>
     <property name="build.dir" value="${basedir}/build"/>
     <property name="build.src" value="${basedir}/build/src"/>
     <property name="build.dest" value="${basedir}/build/classes"/>
-    <property name="build.javadocs" value="${basedir}/build/apidocs"/>
+    <property name="doc" value="${basedir}/doc/api"/>
     <property name="jars.dir" value="${basedir}/lib"/>
     <property name="dist" value="${basedir}/dist"/>
     <property name="dist.dir" value="${dist}/${name}-${version}"/>
     <property name="package.dir" value="${basedir}/build/package"/>
-    <property name="resource.dir" value="${basedir}/resources"/>
+    <property name="resources" value="${basedir}/resources"/>
+  	<property name="celldesigner" value="${basedir}/modules/celldesigner"/>
+  	<property name="celldesigner.src" value="${celldesigner}/src"/>
+  	<property name="celldesigner.test" value="${celldesigner}/test"/>
+  	<property name="celldesigner.resources" value="${celldesigner}/resources"/>
   	
   	<property name="appJar" value="${dist}/${Name}"/>
 
@@ -56,10 +60,23 @@
     <!-- adjust the settings to your local environment -->
     <path id="classpath">
       <fileset dir="${jars.dir}" includes="*.jar *.zip"/>
-    </path>  
+      <fileset dir="${jars.dir}/garuda" includes="*.jar *.zip"/>
+      <fileset dir="${celldesigner}/lib" includes="*.jar *.zip"/>
+    </path>
+	<path id="sourcepath">
+	  <fileset dir="${src}"/>
+	  <fileset dir="${test}"/>
+	  <fileset dir="${resources}"/>
+	  <fileset dir="${celldesigner.src}"/>
+	  <fileset dir="${celldesigner.test}"/>
+	  <fileset dir="${celldesigner.resources}"/>
+    </path>
 
   </target>
 
+  <!-- =================================================================== -->
+  <!-- Displays a help message                                             -->
+  <!-- =================================================================== -->
   <target
    name="usage"
    depends="init"
@@ -101,14 +118,14 @@
     <!-- copy src files -->
     <copy todir="${build.src}" overwrite="yes">
       <fileset 
-            dir="${src.dir}"
+            dir="${src}"
             excludes="**/.svn*, **/*.class, **/*~, **/*.tgz, **/*.zip">
       </fileset>
     </copy>
 
     <!--<copy todir="${build.src}" overwrite="yes">
       <fileset 
-                dir="${test.src.dir}"
+                dir="${test}"
               includes="org/sbml/squeezer/**"
                 excludes="**/.svn*, **/*.class, **/*~, **/*.tgz, **/*.zip">
       </fileset>
@@ -116,17 +133,14 @@
 
     <copy todir="${build.src}" overwrite="yes">
       <fileset 
-                    dir="${resource.dir}"
-                  includes="org/sbml/squeezer/**, **/*.properties"
-                    excludes="**/.svn*, **/*~, **/*.tgz, **/*.zip">
+        dir="${resources}"
+        includes="org/sbml/squeezer/**, **/*.properties"
+        excludes="**/.svn*, **/*~, **/*.tgz, **/*.zip">
       </fileset>
     </copy>
     
     <copy todir="${build.dest}" overwrite="yes">
-      <fileset 
-                    dir="${resource.dir}"
-                  includes="**/html/**">
-      </fileset>
+      <fileset dir="${resources}" includes="**/html/**"/>
     </copy>
 
   </target>
@@ -149,17 +163,21 @@
 
   </target>
 
-  <target name="compile" depends="prepare-src" description="Compiles the source directory">
+  <target
+    name="compile"
+  	depends="prepare-src"
+  	description="Compiles the source directory"
+  >
     <javac
-          classpathref="classpath"
+      classpathref="classpath"
       compiler="${build.compiler}"
-          debug="${debug}"
-          destdir="${build.dest}"
-          optimize="${optimize}"
-          source="1.5"
-      srcdir="${build.src}"
-          target="1.5"
-          verbose="${verbose}"
+      debug="${debug}"
+      destdir="${build.dest}"
+      optimize="${optimize}"
+      source="1.5"
+      sourcepathref="sourcepath"
+      target="1.5"
+      verbose="${verbose}"
     />
     <manifest file="${build.dest}/META-INF/MANIFEST.MF">
       <attribute name="Main-Class" value="org.sbml.squeezer.SBMLsqueezer"/>
@@ -204,6 +222,9 @@
     </jar>
   </target>
   
+  <!-- =================================================================== -->
+  <!-- Determines the current SVN revision number of the project           -->
+  <!-- =================================================================== -->
   <target
    name="svnrevision"
    description="Determines the current SVN revions number of SBMLsqueezer and stores it in a variable."
@@ -255,7 +276,7 @@
       <fileset dir="${classes}">
         <exclude name="**/package.html"/>
       </fileset>
-      <fileset dir="${basedir}/modules/celldesigner/resources/">
+      <fileset dir="${celldesigner.resources}">
       	<include name="**.xml"/>
       </fileset>
       <fileset dir="${basedir}">
@@ -281,38 +302,61 @@
     
   </target>
 
-  <target name="javadoc" depends="prepare-src" description="Creates the API documentation">
-    <mkdir dir="${build.javadocs}"/>
+  <!-- =================================================================== -->
+  <!-- Creates JavaDoc                                                     -->
+  <!-- =================================================================== -->
+  <target
+	name="javadoc"
+  	depends="init, svnrevision"
+  	description="Creates the API documentation"
+  >
+  	<property name="api.doc.dir" value="${doc}/version_${version}"/>
+    <mkdir dir="${api.doc.dir}"/>
     <javadoc
-    	packagenames="org.*"
-        excludepackagenames="org.sbml.squeezer.test.*"
-         sourcepath="${build.src}"
-         destdir="${build.javadocs}"
-         classpathref="classpath"
-         maxmemory="96m"
-         author="true"
-         version="true"
-         use="true"
-         splitindex="true"
-         noindex="false"
-         windowtitle="${Name} ${version} API Specification"
-         doctitle="${Name} ${version} API Specification"
+       access="public"
+       author="true"
        breakiterator="yes"
-     access="public">
-      
+       classpathref="classpath"
+       defaultexcludes="true"
+       destdir="${api.doc.dir}"
+       doctitle="${Name} ${version}"
+       excludepackagenames="org.sbml.squeezer.test.*"
+       footer="Generated ${TODAY}"
+       header="Version ${build.name}"
+       maxmemory="96m"
+       noindex="false"
+       nodeprecated="false"
+       nodeprecatedlist="false"
+       nonavbar="false"
+       notree="false"
+       overview="${src}/overview.html"
+       packagenames="org.*"
+       source="1.5"
+       sourcepath="${src}:${test}:${resources}:${celldesigner.src}:${celldesigner.test}:${celldesigner.resources}"
+       splitindex="true"
+       stylesheetfile="${doc}/javadoc-style.css"
+       use="true"
+       version="true"
+       windowtitle="${Name} ${version} API Specification"
+    >
       <link href="http://java.sun.com/j2se/1.5.0/docs/api"/>
       <link href="http://www.biojava.org/docs/api17"/>
-      <tag name="sbml.deprecated" description="Deprecated in SBML since :"/>
+      <link href="http://javasourcecode.org/html/open-source/junit/junit-4.8/"/>
+      <link href="http://sbml.org/Special/Software/JSBML/latest-stable/build/apidocs/"/>
+      <link href="http://celldesigner.org/help/plugin/"/>
+      <link href="http://www.jarvana.com/jarvana/view/org/scilab/forge/jlatexmath/0.9.6/jlatexmath-0.9.6-javadoc.jar!/"/>
+      <link href="http://sbml.org/Software/libSBML/docs/java-api/"/>
+      <link href="http://www.cogsys.cs.uni-tuebingen.de/software/SBML2LaTeX/doc/api/"/>
+      <tag name="sbml.deprecated" description="Deprecated in SBML since:"/>
       <tag name="jsbml.note" description="Note"/>
       <tag name="jsbml.warning"/>
-      <tag name="doc.note"  description="Documentation note"/>
-      
+      <tag name="doc.note" description="Documentation note"/> 
     </javadoc>
   </target>
 
   <target name="jar-javadoc" depends="javadoc" description="Creates the javadocs jar package">
 
-    <jar jarfile="${build.dir}/${name}-${version}-javadoc.jar" basedir="${build.javadocs}"/>
+    <jar jarfile="${build.dir}/${name}-${version}-javadoc.jar" basedir="${doc}"/>
 
   </target>
 
@@ -340,7 +384,7 @@
     <antcall target="jar-javadoc"/>
 
     <copy todir="${dist.dir}/doc/api">
-      <fileset dir="${build.javadocs}/" includes="**/*">
+      <fileset dir="${doc}/" includes="**/*">
       </fileset>
     </copy>
     <copy todir="${dist.dir}" file="${build.dir}/${name}-${version}-javadoc.jar"/>
@@ -391,134 +435,135 @@
   </target>
   
   
-    <!-- =================================================================== -->
-    <!-- Creates a minimal SysBio JAR                                        -->
-    <!-- =================================================================== -->
-    <target
-      name="minimal_sysbio"
-      depends="init"
-      description="Build a minimal version of SysBio for SBMLsqueezer">
+  <!-- =================================================================== -->
+  <!-- Creates a minimal SysBio JAR                                        -->
+  <!-- =================================================================== -->
+  <target
+    name="minimal_sysbio"
+    depends="init"
+    description="Build a minimal version of SysBio for SBMLsqueezer"
+  >
 
-      <!-- The relative path of the SysBio project -->
-      <property name="sysbio.dir" value="${basedir}/../SysBio"/>
-      <property name="sysbio.lib" value="${sysbio.dir}/lib"/>
-      <path id="sysbio.classpath">
-      <fileset dir="${sysbio.lib}" includes="**.jar, **/*.jar, **.zip"/>
-      </path>
-      <path id="sysbio.sourcepath">
-        <fileset dir="${sysbio.dir}/src"/>
-        <fileset dir="${sysbio.dir}/test"/>
-        <fileset dir="${sysbio.dir}/resources"/>
-        <fileset dir="${sysbio.dir}/examples"/>
-      </path>
-      
-      <!-- Determine the revision number of SysBio -->
-      <exec executable="svnversion" outputproperty="sysbio.revision">
-      <arg line="-c ${sysbio.dir}"/>
-      <redirector>
-        <outputfilterchain>
-          <tokenfilter>
-            <replaceregex pattern="[0-9]+\:" replace=""/>
-            <replaceregex pattern="[PM]+" replace=""/>
-          </tokenfilter>
-        </outputfilterchain>
-      </redirector>
-      </exec>
+    <!-- The relative path of the SysBio project -->
+    <property name="sysbio.dir" value="${basedir}/../SysBio"/>
+    <property name="sysbio.lib" value="${sysbio.dir}/lib"/>
+    <path id="sysbio.classpath">
+    <fileset dir="${sysbio.lib}" includes="**.jar, **/*.jar, **.zip"/>
+    </path>
+    <path id="sysbio.sourcepath">
+      <fileset dir="${sysbio.dir}/src"/>
+      <fileset dir="${sysbio.dir}/test"/>
+      <fileset dir="${sysbio.dir}/resources"/>
+      <fileset dir="${sysbio.dir}/examples"/>
+    </path>
+    
+    <!-- Determine the revision number of SysBio -->
+    <exec executable="svnversion" outputproperty="sysbio.revision">
+    <arg line="-c ${sysbio.dir}"/>
+    <redirector>
+    <outputfilterchain>
+      <tokenfilter>
+      <replaceregex pattern="[0-9]+\:" replace=""/>
+      <replaceregex pattern="[PM]+" replace=""/>
+      </tokenfilter>
+    </outputfilterchain>
+    </redirector>
+    </exec>
 
-      <!-- Delete all previous versions of SysBio JAR files -->
-      <delete verbose="true">
-        <fileset dir="${jars.dir}">
-          <include name="SysBio**.jar"/>
-        </fileset>
-      </delete>
+    <!-- Delete all previous versions of SysBio JAR files -->
+    <delete verbose="true">
+    <fileset dir="${jars.dir}">
+      <include name="SysBio**.jar"/>
+    </fileset>
+    </delete>
 
-      <!-- Compile the entire SysBio project -->
-      <delete dir="${sysbio.dir}/bin"/>
-      <mkdir dir="${sysbio.dir}/bin"/>
-      <javac
-        classpathref="sysbio.classpath"
-        compiler="${build.compiler}"
-        debug="${debug}"
-        deprecation="${deprecation}"
-        destdir="${sysbio.dir}/bin"
-        listfiles="yes"
-        memoryMaximumSize="512M"
-        nowarn="no"
-        optimize="${optimize}"
-        source="1.6"
-        sourcepathref="sysbio.sourcepath"
-        srcdir="${sysbio.dir}/src"
-        target="1.6"
-        verbose="${verbose}"
-      />
-      <!-- <copy todir="${sysbio.dir}/bin"/> -->
+    <!-- Compile the entire SysBio project -->
+    <delete dir="${sysbio.dir}/bin"/>
+    <mkdir dir="${sysbio.dir}/bin"/>
+    <javac
+      classpathref="sysbio.classpath"
+      compiler="${build.compiler}"
+      debug="${debug}"
+      deprecation="${deprecation}"
+      destdir="${sysbio.dir}/bin"
+      listfiles="yes"
+      memoryMaximumSize="512M"
+      nowarn="no"
+      optimize="${optimize}"
+      source="1.6"
+      sourcepathref="sysbio.sourcepath"
+      srcdir="${sysbio.dir}/src"
+      target="1.6"
+      verbose="${verbose}"
+    />
+    <!-- <copy todir="${sysbio.dir}/bin"/> -->
 
-      <!-- Pack a minimal JAR file containing only parts required for SBMLsqueezer -->
-      <jar jarfile="${jars.dir}/SysBio.jar">
-        
-        <manifest>
-          <attribute name="Built-By" value="${user.name}"/>
-          <section name="SysBio">
-            <attribute name="Specification-Title" value="SysBio"/>
-          <attribute name="Specification-Version" value="Revision ${sysbio.revision}"/>
-            <attribute name="Specification-Vendor" value="Center for Bioinformatics Tuebingen (ZBIT)"/>
-            <attribute name="Implementation-Title" value="SysBio"/>
-            <attribute name="Implementation-Version" value="Revision ${sysbio.revision} ${TODAY} (Build ${DSTAMP}-${TSTAMP})"/>
-            <attribute name="Implementation-Vendor" value="University of Tuebingen"/>
-          </section>
-      </manifest>
-        <fileset dir="${sysbio.dir}">
-          <include name="licenses/COPYING.txt"/>
-          <include name="licenses/lib-licenses/*.txt"/>
-          <include name="licenses/lib-licenses/*.html"/>
-          <include name="licenses/AUTHORS.txt"/>
-        </fileset>
-        <fileset dir="${sysbio.dir}/bin" excludes="**/.svn*, **/package-info.class">
-          <include name="de/zbit/**.class"/>
-          <include name="de/zbit/collection/**.class"/>
-          <include name="de/zbit/garuda/**.class"/>
-          <include name="de/zbit/gui/**.class"/>
-          <include name="de/zbit/gui/csv/**.class"/>
-          <include name="de/zbit/gui/actioncommand/**.class"/>
-          <include name="de/zbit/gui/layout/**.class"/>
-          <exclude name="de/zbit/gui/layout/SpringUtilities.class"/>
-          <exclude name="de/zbit/gui/layout/VerticalLayout.class"/>
-          <include name="de/zbit/gui/panels/**.class"/>
-          <include name="de/zbit/gui/prefs/**.class"/>
-          <include name="de/zbit/gui/table/**.class"/>
-          <include name="de/zbit/gui/table/renderer/**.class"/>
-          <include name="de/zbit/gui/wizard/**.class"/>
-          <include name="de/zbit/gui/**.class"/>
-          <include name="de/zbit/io/**"/>
-          <include name="de/zbit/math/**.class"/>
-          <include name="de/zbit/resources/**.class"/>
-          <include name="de/zbit/sbml/**.class"/>
-          <include name="de/zbit/sbml/gui/*.class"/>
-          <include name="de/zbit/sbml/io/*.class"/>
-          <include name="de/zbit/sbml/layout/*.class"/>
-          <exclude name="de/zbit/sbml/layout/y"/>
-          <include name="de/zbit/sbml/util/*.class"/>
-          <include name="de/zbit/text/**.class"/>
-          <include name="de/zbit/util/*.class"/>
-          <include name="de/zbit/util/argparser/**.class"/>
-          <include name="de/zbit/util/logging/**.class"/>
-          <include name="de/zbit/util/objectwrapper/**.class"/>
-          <include name="de/zbit/util/prefs/**.class"/>
-          <include name="de/zbit/util/progressbar/**"/>
-          <include name="de/zbit/util/**.class"/>
-        </fileset>
-        <fileset dir="${sysbio.dir}/resources" excludes="**/.svn*, package-info.*">
-          <include name="de/zbit/garuda/img/**.png"/>
-          <include name="de/zbit/garuda/locales/**.xml"/>
-          <include name="de/zbit/gui/img/**.png"/>
-          <include name="de/zbit/locales/**.xml"/>
-          <include name="de/zbit/sbml/locales/**.xml"/>
-        </fileset>
-        
-        <zipfileset excludes="META-INF/*" src="${sysbio.dir}/lib/sysbio-osx-support.jar"/>
-        
-      </jar>
+    <!-- Pack a minimal JAR file containing only parts required for SBMLsqueezer -->
+    <jar jarfile="${jars.dir}/SysBio.jar">
+    
+    <manifest>
+      <attribute name="Built-By" value="${user.name}"/>
+      <section name="SysBio">
+      <attribute name="Specification-Title" value="SysBio"/>
+      <attribute name="Specification-Version" value="Revision ${sysbio.revision}"/>
+      <attribute name="Specification-Vendor" value="Center for Bioinformatics Tuebingen (ZBIT)"/>
+      <attribute name="Implementation-Title" value="SysBio"/>
+      <attribute name="Implementation-Version" value="Revision ${sysbio.revision} ${TODAY} (Build ${DSTAMP}-${TSTAMP})"/>
+      <attribute name="Implementation-Vendor" value="University of Tuebingen"/>
+      </section>
+    </manifest>
+    <fileset dir="${sysbio.dir}">
+      <include name="licenses/COPYING.txt"/>
+      <include name="licenses/lib-licenses/*.txt"/>
+      <include name="licenses/lib-licenses/*.html"/>
+      <include name="licenses/AUTHORS.txt"/>
+    </fileset>
+    <fileset dir="${sysbio.dir}/bin" excludes="**/.svn*, **/package-info.class">
+      <include name="de/zbit/**.class"/>
+      <include name="de/zbit/collection/**.class"/>
+      <include name="de/zbit/garuda/**.class"/>
+      <include name="de/zbit/gui/**.class"/>
+      <include name="de/zbit/gui/csv/**.class"/>
+      <include name="de/zbit/gui/actioncommand/**.class"/>
+      <include name="de/zbit/gui/layout/**.class"/>
+      <exclude name="de/zbit/gui/layout/SpringUtilities.class"/>
+      <exclude name="de/zbit/gui/layout/VerticalLayout.class"/>
+      <include name="de/zbit/gui/panels/**.class"/>
+      <include name="de/zbit/gui/prefs/**.class"/>
+      <include name="de/zbit/gui/table/**.class"/>
+      <include name="de/zbit/gui/table/renderer/**.class"/>
+      <include name="de/zbit/gui/wizard/**.class"/>
+      <include name="de/zbit/gui/**.class"/>
+      <include name="de/zbit/io/**"/>
+      <include name="de/zbit/math/**.class"/>
+      <include name="de/zbit/resources/**.class"/>
+      <include name="de/zbit/sbml/**.class"/>
+      <include name="de/zbit/sbml/gui/*.class"/>
+      <include name="de/zbit/sbml/io/*.class"/>
+      <include name="de/zbit/sbml/layout/*.class"/>
+      <exclude name="de/zbit/sbml/layout/y"/>
+      <include name="de/zbit/sbml/util/*.class"/>
+      <include name="de/zbit/text/**.class"/>
+      <include name="de/zbit/util/*.class"/>
+      <include name="de/zbit/util/argparser/**.class"/>
+      <include name="de/zbit/util/logging/**.class"/>
+      <include name="de/zbit/util/objectwrapper/**.class"/>
+      <include name="de/zbit/util/prefs/**.class"/>
+      <include name="de/zbit/util/progressbar/**"/>
+      <include name="de/zbit/util/**.class"/>
+    </fileset>
+    <fileset dir="${sysbio.dir}/resources" excludes="**/.svn*, package-info.*">
+      <include name="de/zbit/garuda/img/**.png"/>
+      <include name="de/zbit/garuda/locales/**.xml"/>
+      <include name="de/zbit/gui/img/**.png"/>
+      <include name="de/zbit/locales/**.xml"/>
+      <include name="de/zbit/sbml/locales/**.xml"/>
+    </fileset>
+    
+    <zipfileset excludes="META-INF/*" src="${sysbio.dir}/lib/sysbio-osx-support.jar"/>
+    
+    </jar>
 
-    </target>
+  </target>
 
 </project>
