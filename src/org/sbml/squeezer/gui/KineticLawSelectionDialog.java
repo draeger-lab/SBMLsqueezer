@@ -131,7 +131,7 @@ public class KineticLawSelectionDialog extends JDialog {
 	 * Method that indicates whether or not changes have been introduced into
 	 * the given model.
 	 * 
-	 * @return True if kinetic equations and parameters or anything else were
+	 * @return {@code true} if kinetic equations and parameters or anything else were
 	 *         changed by SBMLsqueezer.
 	 */
 	public boolean isKineticsAndParametersStoredInSBML() {

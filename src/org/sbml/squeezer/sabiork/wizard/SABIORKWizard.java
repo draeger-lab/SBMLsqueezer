@@ -25,7 +25,6 @@ package org.sbml.squeezer.sabiork.wizard;
 
 import java.awt.Dialog.ModalityType;
 import java.awt.Window;
-import java.util.List;
 import java.util.Set;
 
 import org.sbml.jsbml.Reaction;

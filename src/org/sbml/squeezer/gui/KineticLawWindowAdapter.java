@@ -175,8 +175,8 @@ public class KineticLawWindowAdapter extends WindowAdapter implements
 			klg.storeKineticLaw(kineticLaw);
 			sbmlio.saveChanges(reaction);
 			SBMLsqueezerUI.checkForSBMLErrors(dialog,
-				sbmlio.getSelectedModel(), sbmlio.getWriteWarnings(), prefsGeneral
-				.getBoolean(OptionsGeneral.SHOW_SBML_WARNINGS));
+				sbmlio.getSelectedModel(), sbmlio.getWriteWarnings(),
+				prefsGeneral.getBoolean(OptionsGeneral.SHOW_SBML_WARNINGS));
 			
 			kineticsAndParametersStoredInSBML = true;
 		} else {

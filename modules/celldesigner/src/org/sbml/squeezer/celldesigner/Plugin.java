@@ -24,9 +24,11 @@
 package org.sbml.squeezer.celldesigner;
 
 import java.awt.Dialog;
+import java.io.PrintStream;
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.swing.JDialog;
@@ -40,7 +42,6 @@ import jp.sbi.celldesigner.plugin.PluginSBase;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.SBO;
-import org.sbml.jsbml.cdplugin.PluginChangeListener;
 import org.sbml.jsbml.cdplugin.PluginSBMLReader;
 import org.sbml.jsbml.cdplugin.PluginSBMLWriter;
 import org.sbml.squeezer.SBMLsqueezer;
@@ -49,15 +50,20 @@ import org.sbml.squeezer.gui.LaTeXRenderer;
 import org.sbml.squeezer.gui.SBMLsqueezerUI;
 import org.sbml.squeezer.gui.wizard.KineticLawSelectionWizard;
 import org.sbml.squeezer.io.SBMLio;
+import org.sbml.squeezer.util.Bundles;
 import org.sbml.tolatex.gui.LaTeXExportDialog;
 
+import de.zbit.AppConf;
 import de.zbit.gui.GUITools;
 import de.zbit.gui.ImageTools;
+import de.zbit.gui.JHelpBrowser;
 import de.zbit.gui.prefs.PreferencesDialog;
 import de.zbit.io.OpenedFile;
 import de.zbit.sbml.gui.SBMLModelSplitPane;
 import de.zbit.sbml.io.SBMLfileChangeListener;
 import de.zbit.util.ResourceManager;
+import de.zbit.util.StringUtil;
+import de.zbit.util.logging.LogUtil;
 
 /**
  * This is the main class for the CellDesigner plugin mode of SBMLsqueezer.
@@ -97,14 +103,15 @@ public class Plugin extends CellDesignerPlugin {
 			 */
 			ImageTools.initImages();
 			SBMLsqueezerUI.initImages();
+			LogUtil.addHandler(new ConsoleHandler(), "org.sbml", "de.zbit");
 			
 			/*
 			 * Starting SBMLsqueezer...
 			 */
 			sbmlSqueezer = new SBMLsqueezer(
-					new PluginSBMLReader(SBO.getPossibleEnzymes(SBMLsqueezer
-							.getPossibleEnzymeTypes())), new PluginSBMLWriter(
-							this));
+					new PluginSBMLReader(SBO.getPossibleEnzymes(
+						SBMLsqueezer.getPossibleEnzymeTypes())), 
+						new PluginSBMLWriter(this));
 			sbmlSqueezer.checkForUpdate();
 			/*
 			 * Initializing CellDesigner's menu entries
@@ -287,10 +294,13 @@ public class Plugin extends CellDesignerPlugin {
 	 */
 	public void startSBMLsqueezerPlugin(String mode) {
 		try {
+			LogUtil.initializeLogging(Level.FINEST, "org.sbml", "de.zbit");
+
 			SBMLio io = sbmlSqueezer.getSBMLIO();
 			Model convertedModel = io.convertModel(getSelectedModel());
 			SBMLDocument doc = convertedModel.getSBMLDocument();
-			convertedModel.addTreeNodeChangeListener(new PluginChangeListener(doc, this));
+			// TODO: Doesn't work!!!
+			//convertedModel.addTreeNodeChangeListener(new PluginChangeListener(doc, this));
 			switch (Mode.getMode(mode)) {
 				case SQUEEZE_ALL:
 					KineticLawSelectionWizard wizard = new KineticLawSelectionWizard(null, io);
@@ -313,13 +323,21 @@ public class Plugin extends CellDesignerPlugin {
 					break;
 				case EXPORT_ALL:
 					if (getSelectedModel() != null) {
-						new LaTeXExportDialog((Dialog) null, convertedModel);
+						new LaTeXExportDialog((Dialog) null, doc);
 					} else {
 						logger.warning(bundle.getString("NO_SELECTED_MODEL_AVAILABLE"));
 					}
 					break;
 				case ONLINE_HELP:
-					new SBMLsqueezerUI(io, null).showOnlineHelp();
+					AppConf appConf = sbmlSqueezer.getAppConf();
+					ResourceBundle resources = ResourceManager
+							.getBundle(StringUtil.RESOURCE_LOCATION_FOR_LABELS);
+					JHelpBrowser.showOnlineHelp(null, null, String.format(
+						resources.getString("ONLINE_HELP_FOR_THE_PROGRAM"),
+						appConf.getApplicationName() + " " + appConf.getVersionNumber()),
+						SBMLsqueezer.class.getResource(
+							ResourceManager.getBundle(Bundles.MESSAGES).getString("URL_ONLINE_HELP")),
+							appConf.getCmdOptions());
 					break;
 				case SHOW_JSBML_MODEL:
 					JDialog d = new JDialog();
@@ -341,6 +359,10 @@ public class Plugin extends CellDesignerPlugin {
 			}
 		} catch (Throwable t) {
 			String message = Arrays.toString(t.getStackTrace()).replace(',', '\n');
+			if (t.getCause() != null) {
+				message += '\n' + t.getCause().getLocalizedMessage() + '\n';
+				message += Arrays.toString(t.getCause().getStackTrace()).replace(',', '\n');
+			}
 			GUITools.showErrorMessage(null, t, message.substring(1, message.length() - 1));
 		}
 	}

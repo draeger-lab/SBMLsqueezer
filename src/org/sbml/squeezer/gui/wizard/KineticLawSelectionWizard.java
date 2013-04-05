@@ -130,8 +130,10 @@ public class KineticLawSelectionWizard extends Wizard {
 		KineticLawSelectionEquationPanelDescriptor desc = (KineticLawSelectionEquationPanelDescriptor) this.getPanel(KineticLawSelectionEquationPanelDescriptor.IDENTIFIER);
 		try {
 			result = ((KineticLawSelectionEquationPanel) desc.getPanelComponent()).isKineticsAndParametersStoredInSBML();
+			logger.fine("stored kinetics: " + result);
 		} catch (Exception exc) {
 			logger.fine(exc.getLocalizedMessage());
+			exc.printStackTrace();
 		}
 		return result;
 	}

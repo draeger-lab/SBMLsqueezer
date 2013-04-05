@@ -233,10 +233,9 @@ public class KineticLawGenerator {
 	public KineticLawGenerator(Model selectedModel,
 		Set<Reaction> reactionsWithSABIOKinetics) throws ClassNotFoundException {
 		this(selectedModel);
-		if(reactionsWithSABIOKinetics != null) {
+		if (reactionsWithSABIOKinetics != null) {
 			this.reactionsToExclude = reactionsWithSABIOKinetics;
-		}
-		else {
+		} else {
 			reactionsWithSABIOKinetics = new HashSet<Reaction>();
 		}
 	}
@@ -550,7 +549,7 @@ public class KineticLawGenerator {
 				progressAdapter.progressOn();
 			}
 			
-			if(!reactionsToExclude.contains(reaction)) {
+			if ((reactionsToExclude != null) && !reactionsToExclude.contains(reaction)) {
 				createKineticLaw(reaction, kineticsClass, isReversibility(),
 				typeStandardVersion, typeUnitConsistency, defaultParamVal);
 			}

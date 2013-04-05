@@ -81,8 +81,6 @@
   <entry key="WARNINGS_FOR_TOO_MANY_REACTANTS_TOOLTIP_TO_BE_MERGED">If checked, warnings will be shown for reactions with more reactants than specified here.</entry>
   <entry key="READ_FROM_SABIO_RK">Read kinetics from SABIO-RK</entry>
   <entry key="READ_FROM_SABIO_RK_TOOLTIP">This options lets the user choose whether to search for kinetics in SABIO-RK.</entry>
- 
-  
   
   <entry key="GROUP_GENERAL">General Options</entry>
   <entry key="GROUP_GENERAL_TOOLTIP">Basic configuration of SBMLsqueezer</entry>
@@ -172,6 +170,7 @@
   <entry key="LOWEST_DATE">Date of insertion</entry>
   <entry key="LOWEST_DATE_TOOLTIP">Define the earliest acceptable date when the entries have been inserted into SABIO-RK.</entry>  
   
+  <entry key="GROUP_DATE">Date</entry>
   <entry key="GROUP_GENERAL_PROPERTIES">General properties</entry>
   <entry key="GROUP_GENERAL_PROPERTIES_TOOLTIP">Define key features to restrict the results of your search for reaction kinetics in SABIO-RK.</entry>
   <entry key="GROUP_TEMPERATURE">Temperature</entry>
@@ -184,7 +183,6 @@
   
   <entry key="SABIORKOptions">SABIO-RK search options</entry>
   <entry key="SABIORKOptions_TOOLTIP">Here you can constrain your search for reaction kinetics in the online database SABIO-RK (System for the Analysis of Biochemical Pathways&#8212;Reaction Kinetics).</entry>
-  
   
   <entry key="PATHWAY">Pathway</entry>
   <entry key="PATHWAY_TOOLTIP">Define the pathway for which the kinetics are to be determined.</entry>

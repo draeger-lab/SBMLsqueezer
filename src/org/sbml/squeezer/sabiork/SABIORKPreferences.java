@@ -42,7 +42,7 @@ import de.zbit.util.prefs.Range;
 public interface SABIORKPreferences extends KeyProvider {
 	
 	/**
-	 * 
+	 * Localization support.
 	 */
 	public static final ResourceBundle OPTIONS_BUNDLE = ResourceManager.getBundle(Bundles.OPTIONS);
 	
@@ -195,5 +195,12 @@ public interface SABIORKPreferences extends KeyProvider {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static final OptionGroup<Double> GROUP_PH_VALUE = new OptionGroup(
 		"GROUP_PH_VALUE", OPTIONS_BUNDLE, LOWEST_PH_VALUE, HIGHEST_PH_VALUE);
+	
+	/**
+	 * 
+	 */
+	@SuppressWarnings("unchecked")
+	public static final OptionGroup<Date> GROUP_DATE = new OptionGroup<Date>(
+		"GROUP_DATE", OPTIONS_BUNDLE, LOWEST_DATE);
 	
 }

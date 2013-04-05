@@ -64,7 +64,6 @@ import org.sbml.squeezer.sabiork.wizard.SABIORKWizard;
 import org.sbml.squeezer.util.Bundles;
 import org.sbml.tolatex.LaTeXOptions;
 import org.sbml.tolatex.SBML2LaTeX;
-import org.sbml.tolatex.io.LaTeXOptionsIO;
 
 import de.zbit.AppConf;
 import de.zbit.Launcher;
@@ -601,14 +600,14 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
    */
   public void toLaTeX(Object sbmlSource, String latexFile) throws IOException, SBMLException {
     readSBMLSource(sbmlSource);
-    SBPreferences prefsLaTeX = SBPreferences.getPreferencesFor(LaTeXOptionsIO.class);
-    String dir = prefsLaTeX.get(LaTeXOptionsIO.LATEX_DIR).toString();
+    SBPreferences prefsIO = SBPreferences.getPreferencesFor(GUIOptions.class);
+    String dir = prefsIO.get(GUIOptions.OPEN_DIR).toString();
     if (latexFile != null) {
       File out = new File(latexFile);
       if (SBFileFilter.createTeXFileFilter().accept(out)) {
         String path = out.getParent();
         if (!path.equals(dir)) {
-          prefsLaTeX.put(LaTeXOptionsIO.LATEX_DIR, path);
+          prefsIO.put(GUIOptions.OPEN_DIR, path);
         }
         if (!out.exists()) {
           long time = System.currentTimeMillis();
