@@ -299,8 +299,7 @@ public class KineticLawTable extends JTable implements MouseInputListener {
 						reaction.getId()).identifyPossibleKineticLaws();
 				final BasicKineticLaw possibleLaws[] = new BasicKineticLaw[possibleTypes.length];
 				int selected = 0;
-				final BasicKineticLaw oldLaw = ((BasicKineticLaw) klg
-						.getModifiedReaction(reaction.getId()).getKineticLaw());
+				final KineticLaw oldLaw = klg.getModifiedReaction(reaction.getId()).getKineticLaw();
 				SBPreferences prefs = SBPreferences.getPreferencesFor(OptionsGeneral.class);
 				double defaultParamVal = prefs.getDouble(OptionsGeneral.DEFAULT_NEW_PARAMETER_VAL);
 				UnitConsistencyType consistency = UnitConsistencyType.valueOf(prefs.get(OptionsGeneral.TYPE_UNIT_CONSISTENCY));
@@ -311,7 +310,8 @@ public class KineticLawTable extends JTable implements MouseInputListener {
 				for (int i = 0; i < possibleLaws.length; i++) {
 					possibleLaws[i] = klg.createKineticLaw(reaction,
 							possibleTypes[i], reversibility, version, consistency, defaultParamVal);
-					if (possibleLaws[i].getSimpleName().equals(oldLaw.getSimpleName())) {
+					if ((oldLaw instanceof BasicKineticLaw) &&
+							possibleLaws[i].getSimpleName().equals(((BasicKineticLaw) oldLaw).getSimpleName())) {
 						selected = i;
 					}
 				}

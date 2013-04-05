@@ -99,7 +99,7 @@ public class KineticLawSelectionOptionPanelDescriptor extends WizardPanelDescrip
 					+ " "
 					+ String.format(LABELS.getString("ONLINE_HELP_FOR_THE_PROGRAM"),
 						System.getProperty("app.version")),
-			SBMLsqueezer.class.getResource("resources/html/help.html"));
+						SBMLsqueezer.class.getResource("resources/html/help.html"));
 		helpBrowser.setLocationRelativeTo(this.getWizard().getDialog());
 		helpBrowser.setSize(640, 640);
 		

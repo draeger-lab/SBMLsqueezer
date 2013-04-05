@@ -32,7 +32,6 @@ import javax.swing.table.AbstractTableModel;
 import org.sbml.jsbml.util.ValuePair;
 import org.sbml.squeezer.sabiork.SABIORK;
 import org.sbml.squeezer.sabiork.SABIORKOptions;
-import org.sbml.squeezer.sabiork.SABIORKOptions;
 import org.sbml.squeezer.sabiork.wizard.model.WizardProperties;
 
 import de.zbit.util.prefs.SBPreferences;

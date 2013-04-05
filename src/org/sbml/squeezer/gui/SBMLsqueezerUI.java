@@ -78,6 +78,7 @@ import org.sbml.squeezer.io.SqSBMLReader;
 import org.sbml.squeezer.sabiork.wizard.SABIORKWizard;
 import org.sbml.squeezer.util.Bundles;
 import org.sbml.tolatex.LaTeXOptions;
+import org.sbml.tolatex.LaTeXOptions.PaperSize;
 import org.sbml.tolatex.gui.LaTeXExportDialog;
 import org.sbml.tolatex.io.LaTeXReportGenerator;
 import org.sbml.tolatex.io.TextExport;
@@ -559,9 +560,9 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 			LaTeXReportGenerator export = new LaTeXReportGenerator(lprefs
 					.getBoolean(LaTeXOptions.LANDSCAPE), lprefs
 					.getBoolean(LaTeXOptions.TYPEWRITER),
-					lprefs.getShort(LaTeXOptions.FONT_SIZE), lprefs
-							.get(LaTeXOptions.PAPER_SIZE), lprefs
-							.getBoolean(LaTeXOptions.SHOW_PREDEFINED_UNITS),
+					lprefs.getShort(LaTeXOptions.FONT_SIZE),
+					PaperSize.valueOf(lprefs.getString(LaTeXOptions.PAPER_SIZE)),
+					lprefs.getBoolean(LaTeXOptions.SHOW_PREDEFINED_UNITS),
 					lprefs.getBoolean(LaTeXOptions.TITLE_PAGE), lprefs
 							.getBoolean(LaTeXOptions.PRINT_NAMES_IF_AVAILABLE));
 			export.toLaTeX(sbmlIO.getSelectedModel(), out);

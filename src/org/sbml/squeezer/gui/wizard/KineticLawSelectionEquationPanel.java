@@ -67,6 +67,7 @@ import org.sbml.squeezer.gui.SBMLsqueezerUI;
 import org.sbml.squeezer.io.SBMLio;
 import org.sbml.squeezer.util.Bundles;
 import org.sbml.tolatex.LaTeXOptions;
+import org.sbml.tolatex.LaTeXOptions.PaperSize;
 import org.sbml.tolatex.io.LaTeXReportGenerator;
 import org.sbml.tolatex.io.TextExport;
 
@@ -115,7 +116,7 @@ public class KineticLawSelectionEquationPanel extends JPanel implements ActionLi
 	
 	private SBPreferences prefs;
 
-	private boolean KineticsAndParametersStoredInSBML = false;
+	private boolean kineticsAndParametersStoredInSBML = false;
 	
 	private int numOfWarnings = 0;
 	private JPanel reactionsPanel;
@@ -166,7 +167,7 @@ public class KineticLawSelectionEquationPanel extends JPanel implements ActionLi
 	 *         changed by SBMLsqueezer.
 	 */
 	public boolean isKineticsAndParametersStoredInSBML() {
-		return KineticsAndParametersStoredInSBML;
+		return kineticsAndParametersStoredInSBML;
 	}
 	
 	/**
@@ -192,7 +193,7 @@ public class KineticLawSelectionEquationPanel extends JPanel implements ActionLi
 								lprefs.getBoolean(LaTeXOptions.LANDSCAPE),
 								lprefs.getBoolean(LaTeXOptions.TYPEWRITER),
 								lprefs.getShort(LaTeXOptions.FONT_SIZE),
-								lprefs.get(LaTeXOptions.PAPER_SIZE),
+								PaperSize.valueOf(lprefs.getString(LaTeXOptions.PAPER_SIZE)),
 								lprefs.getBoolean(LaTeXOptions.SHOW_PREDEFINED_UNITS),
 								lprefs.getBoolean(LaTeXOptions.TITLE_PAGE),
 								lprefs.getBoolean(LaTeXOptions.PRINT_NAMES_IF_AVAILABLE));
@@ -233,9 +234,9 @@ public class KineticLawSelectionEquationPanel extends JPanel implements ActionLi
 	 * store generated kinetic laws in model
 	 */
 	public void apply() {
-		if (!KineticsAndParametersStoredInSBML && (klg != null)
+		if (!kineticsAndParametersStoredInSBML && (klg != null)
 				&& (sbmlIO != null)) {
-			KineticsAndParametersStoredInSBML = true;
+			kineticsAndParametersStoredInSBML = true;
 			reactionsPanel.removeAll();
 			JProgressBar progress = new JProgressBar();
 			ProgressBarSwing pbs = new ProgressBarSwing(progress);
@@ -265,7 +266,7 @@ public class KineticLawSelectionEquationPanel extends JPanel implements ActionLi
 						sbmlIO.getWriteWarnings(), 
 						prefs.getBoolean(OptionsGeneral.SHOW_SBML_WARNINGS)
 				  );
-					KineticsAndParametersStoredInSBML = true;
+					kineticsAndParametersStoredInSBML = true;
 					logger.log(Level.INFO, LABELS.getString("READY"));
 					for (WizardFinishingListener listener : listOfFinishingListeners) {
 						listener.wizardFinished();

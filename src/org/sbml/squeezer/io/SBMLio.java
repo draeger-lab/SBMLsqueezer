@@ -30,6 +30,8 @@ import java.text.MessageFormat;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -70,6 +72,11 @@ public class SBMLio implements SBMLInputConverter, SBMLOutputConverter,
 		TreeNodeChangeListener, ChangeListener {
 
 	public static final transient ResourceBundle WARNINGS = ResourceManager.getBundle(Bundles.WARNINGS);
+	
+	/**
+	 * A {@link Logger} for this class.
+	 */
+	private static final transient Logger logger = Logger.getLogger(SBMLio.class.getName());
 
 	public static final String ORIGINAL_MODEL_KEY = "org.sbml.squeezer.io.SBMLio.originalModelKey";
 
@@ -162,8 +169,9 @@ public class SBMLio implements SBMLInputConverter, SBMLOutputConverter,
 			// exc.fillInStackTrace();
 			exc.printStackTrace();
 			SBMLException sbmlExc = new SBMLException(
-				MessageFormat.format(WARNINGS.getString("CANT_READ_MODEL"), ""),
+				WARNINGS.getString("CANT_READ_MODEL"),
 				exc);
+			logger.log(Level.SEVERE, WARNINGS.getString("CANT_READ_MODEL"), exc);
 			sbmlExc.setCategory(Category.XML);
 			throw sbmlExc;
 		}
@@ -316,7 +324,10 @@ public class SBMLio implements SBMLInputConverter, SBMLOutputConverter,
 	 * @throws SBMLException
 	 */
 	public boolean saveChanges(Reaction reaction) throws SBMLException {
-		return writer.saveChanges(reaction, getSelectedModel().getUserObject(ORIGINAL_MODEL_KEY));
+		Object modelOrig = getSelectedModel().getUserObject(ORIGINAL_MODEL_KEY);
+		// TODO: Localize!
+		logger.fine("Syncronizing changes with " + modelOrig.getClass().getName());
+		return writer.saveChanges(reaction, modelOrig);
 	}
 
 	/* (non-Javadoc)
