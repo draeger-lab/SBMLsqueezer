@@ -77,7 +77,7 @@
     </path>
 
   	<!--For Garuda -->
-  	<property name="garuda.gadget" value="${dist.dir}/${jar.name}_v${version}_Garuda.zip"/>
+  	<property name="garuda.gadget" value="${dist.dir}/${jar.name}_Garuda.zip"/>
 	
   </target>
 
@@ -847,30 +847,30 @@
       level="9"
       update="true"
    	>
-    <mappedresources>
-  		<fileset file="${gadget.config}"/>
-      <globmapper from="*" to="${uuid}/*"/>
-    </mappedresources>
+      <mappedresources>
+  	    <fileset file="${gadget.config}"/>
+        <globmapper from="*" to="${uuid}/*"/>
+      </mappedresources>
       <mappedresources>
         <fileset file="${appJar}"/>
         <globmapper from="*" to="${uuid}/*"/>
       </mappedresources>
-    <mappedresources>
-    	<fileset file="${resources}/org/sbml/squeezer/resources/img/SBMLsqueezerIcon_64.png"/>
-    	<globmapper from="*" to="${uuid}/icons/*"/>
-    </mappedresources>
-    <mappedresources>
-      <fileset file="${resources}/org/sbml/squeezer/resources/img/Screenshot_1.png"/>
-      <globmapper from="*" to="${uuid}/snapshot/*"/>
-    </mappedresources>
-    <mappedresources>
-      <fileset file="${resources}/org/sbml/squeezer/resources/img/Screenshot_2.png"/>
-      <globmapper from="*" to="${uuid}/snapshot/*"/>
-    </mappedresources>
-    <mappedresources>
-      <fileset file="${resources}/org/sbml/squeezer/resources/img/Screenshot_3.png"/>
-      <globmapper from="*" to="${uuid}/snapshot/*"/>
-    </mappedresources>
+      <mappedresources>
+        <fileset file="${resources}/org/sbml/squeezer/resources/img/SBMLsqueezerIcon_64.png"/>
+        <globmapper from="*" to="${uuid}/icons/*"/>
+      </mappedresources>
+      <mappedresources>
+        <fileset file="${resources}/org/sbml/squeezer/resources/img/Screenshot_1.png"/>
+        <globmapper from="*" to="${uuid}/snapshot/*"/>
+      </mappedresources>
+      <mappedresources>
+        <fileset file="${resources}/org/sbml/squeezer/resources/img/Screenshot_2.png"/>
+        <globmapper from="*" to="${uuid}/snapshot/*"/>
+      </mappedresources>
+      <mappedresources>
+        <fileset file="${resources}/org/sbml/squeezer/resources/img/Screenshot_3.png"/>
+        <globmapper from="*" to="${uuid}/snapshot/*"/>
+      </mappedresources>
     </zip>
   	
   	<echo message="Reverting changes in Garuda gadget configuration file..."/>
@@ -898,7 +898,7 @@
   	<zip
     compress="true"
     comment="Full distribution of ${Name}"
-    destfile="${dist.dir}/${jar.name}_v${version}.zip"
+    destfile="${dist.dir}/${jar.name}.zip"
     encoding="utf-8"
     level="9"
     update="true"
@@ -910,9 +910,12 @@
       <zipfileset dir="${basedir}/licenses" prefix="licenses"  excludes="*svn*"/>
       <zipfileset dir="${basedir}"                             excludes="*svn*,${basedir}/files" includes="*.xml, *.txt"/>
       <zipfileset dir="${doc}/version_${version}" prefix="doc/api/" excludes="*svn*,${doc}/publications,${doc}/posters"/>
-      <zipfileset dir="${dist.dir}" prefix="dist/" includes="${appJar}"/>
       <mappedresources>
         <fileset file="${garuda.gadget}"/>
+        <globmapper from="*" to="dist/*"/>
+      </mappedresources>
+      <mappedresources>
+        <fileset file="${appJar}"/>
         <globmapper from="*" to="dist/*"/>
       </mappedresources>
     </zip>
