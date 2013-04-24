@@ -188,9 +188,6 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 				"SBMLsqueezerIcon_64.png",
 				"SBMLsqueezerIcon_32.png",
 				"SBMLsqueezerIcon_16.png",
-				"SBMLsqueezerLogo_256.png",
-				"SBMLsqueezerLogo_128.png",
-				"SBMLsqueezerLogo_64.png",
 				"SBMLsqueezerLogo_16.png",
 				"SBMLsqueezerWatermark.png"
 		};

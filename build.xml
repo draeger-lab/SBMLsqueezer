@@ -1,7 +1,11 @@
 <?xml version="1.0"?>
 <!-- $Id$ -->
 
-<project name="SBMLsqueezer" default ="usage" basedir=".">  
+<project
+  name="SBMLsqueezer"
+  default ="usage"
+  basedir="."
+>
 
   <target
    name="init"
@@ -12,8 +16,8 @@
     </tstamp>
 
     <property name="Name" value="SBMLsqueezer"/>
-    <property name="version" value="2.0"/>
-    <property name="api.version" value="2.0.0"/>
+    <property name="version" value="1.4"/>
+    <property name="api.version" value="2.0 alpha"/>
 
     <property name="year" value="${YEAR}"/>
 
@@ -38,29 +42,30 @@
     <property name="build.src" value="${basedir}/build/src"/>
     <property name="build.dest" value="${basedir}/build/classes"/>
     <property name="doc" value="${basedir}/doc/api"/>
-    <property name="jars.dir" value="${basedir}/lib"/>
+    <property name="lib" value="${basedir}/lib"/>
     <property name="dist" value="${basedir}/dist"/>
-    <property name="dist.dir" value="${dist}/${name}-${version}"/>
+    <property name="dist.dir" value="${dist}/${Name}-${version}"/>
     <property name="resources" value="${basedir}/resources"/>
   	<property name="celldesigner" value="${basedir}/modules/celldesigner"/>
   	<property name="celldesigner.src" value="${celldesigner}/src"/>
   	<property name="celldesigner.test" value="${celldesigner}/test"/>
   	<property name="celldesigner.resources" value="${celldesigner}/resources"/>
   	
-  	<property name="appJar" value="${dist}/${Name}"/>
+  	<property name="jar.name" value="${Name}_v${version}"/>
+  	<property name="appJar"   value="${dist.dir}/${jar.name}_incl-libs.jar"/>
 
-    <filter token="year" value="${year}"/>
+    <filter token="year"    value="${year}"/>
     <filter token="version" value="${version}"/>
-    <filter token="date" value="${TODAY}"/>
-    <filter token="log" value="true"/>
+    <filter token="date"    value="${TODAY}"/>
+    <filter token="log"     value="true"/>
     <filter token="verbose" value="true"/>
 
     <!-- add everything needed to the classpath -->
     <!-- adjust the settings to your local environment -->
     <path id="classpath">
-      <fileset dir="${jars.dir}" includes="*.jar *.zip"/>
-      <fileset dir="${jars.dir}/garuda" includes="*.jar *.zip"/>
-      <fileset dir="${celldesigner}/lib" includes="*.jar *.zip"/>
+      <fileset dir="${lib}"         includes="*.jar, *.zip"/>
+      <fileset dir="${lib}/garuda"  includes="*.jar, *.zip"/>
+      <fileset dir="${celldesigner}/lib" includes="*.jar, *.zip"/>
     </path>
 	<path id="sourcepath">
 	  <fileset dir="${src}"/>
@@ -71,6 +76,9 @@
 	  <fileset dir="${celldesigner.resources}"/>
     </path>
 
+  	<!--For Garuda -->
+  	<property name="garuda.gadget" value="${dist.dir}/${jar.name}_v${version}_Garuda.zip"/>
+	
   </target>
 
   <!-- =================================================================== -->
@@ -89,8 +97,8 @@
     <echo message=" available targets are:"/>
     <echo message=""/>
     <echo message="   compile     --> compiles the source code"/>
-    <echo message="   jar         --> generates the ${name}.jar file"/>
-    <echo message="   bigjar      --> generates the ${name}-with-dependencies.jar file"/>
+    <echo message="   jar         --> generates the ${Name}.jar file"/>
+    <echo message="   bigjar      --> generates the ${Name}-with-dependencies.jar file"/>
     <echo message="   javadoc     --> generates the API documentation"/>
     <echo message="   clean       --> cleans up the directory"/>
     <echo message=""/>
@@ -150,17 +158,16 @@
      />
    </copy>
 
-    <copy todir="${build.src}" overwrite="yes">
-      <fileset 
-        dir="${resources}"
-        includes="org/**, **/*.properties, **/*.xml"
-        excludes="**/.svn*, **/*~, **/*.tgz, **/*.zip"/>
-      <fileset 
-    	dir="${celldesigner.resources}"
-    	includes="org/**, **/*.properties, **/*.xml"
-    	excludes="**/.svn*, **/*~, **/*.tgz, **/*.zip"
-      />
-    </copy>
+   <copy todir="${build.src}" overwrite="yes">
+     <fileset 
+       dir="${resources}"
+       includes="org/**, **/*.properties, **/*.xml"
+       excludes="**/.svn*, **/*~, **/*.tgz, **/*.zip"/>
+     <fileset 
+       dir="${celldesigner.resources}"
+       includes="org/**, **/*.properties, **/*.xml"
+       excludes="**/.svn*, **/*~, **/*.tgz, **/*.zip"/>
+   </copy>
     
   </target>
 
@@ -218,16 +225,20 @@
     </javac>
   	
     <manifest file="${build.dest}/META-INF/MANIFEST.MF">
-      <attribute name="Main-Class" value="org.sbml.squeezer.SBMLsqueezer"/>
-      <attribute name="Built-By" value="${user.name}"/>
-      <attribute name="SplashScreen-Image" value="org/sbml/squeezer/resources/img/SBMLsqueezerSplash.gif"/>
+      <attribute name="Main-Class"             value="org.sbml.squeezer.SBMLsqueezer"/>
+      <attribute name="SplashScreen-Image"     value="org/sbml/squeezer/resources/img/SBMLsqueezerSplash.gif"/>
+      <attribute name="Bundle-Name"            value="${Name}" /> 
+      <attribute name="Built-By"               value="${user.name}"/>
+      <attribute name="Built-Date"             value="${TODAY}"/>
+      <attribute name="Bundle-Revision"        value="${repository.revision}" />
+	  <attribute name="Implementation-Title"   value="${Name}"/>
+	  <attribute name="Implementation-Vendor"  value="University of Tuebingen"/>
+	  <attribute name="Implementation-Version" value="Revision ${repository.revision} (Build ${build.number})"/>
+      <attribute name="Implementation-URL"     value="http://www.cogsys.cs.uni-tuebingen.de/software/SBMLsqueezer/"/>
       <section name="${Name}">
         <attribute name="Specification-Title"    value="${Name}"/>
-        <attribute name="Specification-Version"  value="${version}"/>
+        <attribute name="Specification-Version"  value="${api.version}"/>
         <attribute name="Specification-Vendor"   value="Center for Bioinformatics Tuebingen (ZBIT)"/>
-        <attribute name="Implementation-Title"   value="${Name}"/>
-        <attribute name="Implementation-Version" value="Revision ${revision} (Build ${build.number})"/>
-        <attribute name="Implementation-Vendor"  value="University of Tuebingen"/>
       </section>
     </manifest>
   
@@ -241,11 +252,11 @@
         includes="**/*.png **/*.gif **/*.xsd **/*.tmpl **/data/* **/*.xml **/*.cfg **/*.obo **/*.properties">
       </fileset>
     </copy>
-    <jar jarfile="${build.dir}/${name}-${version}.jar" basedir="${build.dest}" manifest="${build.dest}/META-INF/MANIFEST.MF"/>
+    <jar jarfile="${build.dir}/${Name}-${version}.jar" basedir="${build.dest}" manifest="${build.dest}/META-INF/MANIFEST.MF"/>
   </target>
 
   <target name="jar-src" depends="prepare-src" description="Creates the class package and include all the dependencies jars into a big SBMLsqueezer JAR file.">
-    <jar jarfile="${build.dir}/${name}-${version}-src.jar" basedir="${build.src}" includes="**/*.java"/>
+    <jar jarfile="${build.dir}/${Name}-${version}-src.jar" basedir="${build.src}" includes="**/*.java"/>
   </target>
 
   <target name="bigjar" depends="compile" description="Creates the class package and include all the dependencies jars into a big SBMLsqueezer jar file.">
@@ -257,9 +268,9 @@
             includes="**/*.png **/*.gif **/*.xsd **/*.tmpl **/data/* **/*.xml **/*.cfg **/*.obo **/*.properties **/*.java" >
       </fileset>
     </copy>
-    <jar jarfile="${build.dir}/${name}-${version}-with-dependencies.jar"
+    <jar jarfile="${build.dir}/${Name}-${version}-with-dependencies.jar"
          basedir="${build.dest}"  manifest="${build.dest}/META-INF/MANIFEST.MF">
-      <zipgroupfileset dir="${jars.dir}" includes="*.jar" excludes="jsbmlbridge.jar"/>
+      <zipgroupfileset dir="${lib}" includes="*.jar" excludes="jsbmlbridge.jar"/>
     </jar>
   </target>
   
@@ -270,7 +281,7 @@
    name="svnrevision"
    description="Determines the current SVN revions number of SBMLsqueezer and stores it in a variable."
   >
-    <exec executable="svnversion" outputproperty="revision">
+    <exec executable="svnversion" outputproperty="repository.revision">
       <arg line="-c ${basedir}"/>
       <redirector>
         <outputfilterchain>
@@ -281,7 +292,7 @@
         </outputfilterchain>
       </redirector>
     </exec>
-  	<echo message="Current revision is ${revision}" />
+  	<echo message="Current revision is ${repository.revision}" />
   </target>
 
 
@@ -293,11 +304,18 @@
    depends="compile"
    description="Creates a JAR file including all class files and all third-party libraries, but no source files."
   >
-
-    <delete file="${appJar}_v${version}_incl-libs.jar"/>
     <jar
-     jarfile="${appJar}_v${version}_incl-libs.jar"
-     manifest="${build.dest}/META-INF/MANIFEST.MF">
+      compress="true"
+      filesetmanifest="mergewithoutmain"
+      index="true"
+      indexMetaInf="true"
+      jarfile="${appJar}"
+      level="9"
+      manifest="${build.dest}/META-INF/MANIFEST.MF"
+      manifestencoding="utf-8"
+      strict="warn"
+      update="true"
+    >
       
       <!-- TODO: compile! Include modules, test, src... -->
     	
@@ -309,7 +327,7 @@
       />
       <fileset 
         dir="${build.src}"
-        includes="**.txt **/*.txt **.xml **/*.xml **.properties **/*.properties **.cfg **/*.cfg **.obo **/*.obo **/*.html **.html **/*.htm **.htm **/*.png **.png **/*.gif **.gif"
+        includes="**.txt, **/*.txt, **.xml, **/*.xml, **.properties, **/*.properties, **.cfg, **/*.cfg, **.obo, **/*.obo, **/*.html, **.html, **/*.htm, **.htm, **/*.png, **.png, **/*.gif, **.gif, **/*.jpg, **.jpg"
         excludes="**.java"
       />
       <fileset dir="${basedir}">
@@ -321,17 +339,30 @@
       </fileset>
       
       <!-- These libraries are required by most classes -->
-      <zipfileset excludes="META-INF/**" src="${jars.dir}/SBML2LaTeX-0.9.9_slim.jar"/>
-      <zipfileset excludes="META-INF/**" src="${jars.dir}/jsbml-libSBMLio-0.8.15.jar"/>
-      <zipfileset excludes="META-INF/**" src="${jars.dir}/jlatexmath-1.0.0.jar"/>
-      <zipfileset excludes="META-INF/**" src="${jars.dir}/jsbml-1.0-a1-with-dependencies.jar"/>
-      <zipfileset excludes="META-INF/**" src="${jars.dir}/SysBio.jar"/>
-      <zipfileset excludes="META-INF/**" src="${jars.dir}/quaqua.jar"/>
-      <zipfileset excludes="META-INF/**" src="${jars.dir}/garuda/garuda-csr.jar"/>
-      <zipfileset excludes="META-INF/**" src="${jars.dir}/garuda/jsonic-1.2.10.jar"/>
-      <zipfileset excludes="META-INF/**" src="${jars.dir}/garuda/log4j-1.2.16.jar"/>
+      <zipfileset excludes="META-INF/**, COPYING.txt, licenses/COPYING.txt, overview.html" src="${lib}/SBML2LaTeX_v1.0alpha.jar"/>
+      <zipfileset excludes="META-INF/**, COPYING.txt, licenses/COPYING.txt, overview.html" src="${lib}/jlatexmath-1.0.0.jar"/>
+      <zipfileset excludes="META-INF/**, COPYING.txt, licenses/COPYING.txt, overview.html" src="${lib}/jsbml-1.0-a1-with-dependencies.jar"/>
+      <zipfileset excludes="META-INF/**, COPYING.txt, licenses/COPYING.txt, overview.html" src="${lib}/SysBio.jar"/>
+      <zipfileset excludes="META-INF/**, COPYING.txt, licenses/COPYING.txt, overview.html" src="${lib}/quaqua.jar"/>
+      <zipfileset excludes="META-INF/**, COPYING.txt, licenses/COPYING.txt, overview.html" src="${lib}/garuda/garuda-csr.jar"/>
+      <zipfileset excludes="META-INF/**, COPYING.txt, licenses/COPYING.txt, overview.html" src="${lib}/garuda/jsonic-1.2.10.jar"/>
+      <!--
+      <zipfileset excludes="META-INF/**, COPYING.txt" src="${lib}/jsbml-libSBMLio-0.8.15.jar"/>
+      -->
     </jar>
     
+  </target>
+	
+  <!-- =================================================================== -->
+  <!-- Signs the JAR file                                                  -->
+  <!-- =================================================================== -->
+  <target
+    name="sign"
+  	depends="jar_incl-libs"
+   	description="Signs the JAR file"
+  >
+    <!-- Having an "keystore" file is required. Generate it with the "keytool" in the dist directory. -->  	
+	<signjar alias="${Name}" jar="${appJar}" keypass="d=dpfSBMLsqueezer!" keystore="${dist}/keystore" signedjar="${appJar}" storepass="d=dpfSBMLsqueezer!"/>
   </target>
 
   <!-- =================================================================== -->
@@ -342,19 +373,21 @@
   	depends="init, svnrevision"
   	description="Creates the API documentation"
   >
-  	<property name="api.doc.dir" value="${doc}/version_${version}"/>
-    <mkdir dir="${api.doc.dir}"/>
+  	<property name="doc.location" value="${doc}/version_${version}"/>
+  	<property name="icon.file.name" value="SBMLsqueezerIcon_48.png"/>
+  	
+    <mkdir dir="${doc.location}"/>
     <javadoc
        access="public"
        author="true"
        breakiterator="yes"
        classpathref="classpath"
        defaultexcludes="true"
-       destdir="${api.doc.dir}"
+       destdir="${doc.location}"
        doctitle="${Name} ${version}"
        excludepackagenames="org.sbml.squeezer.test.*"
-       footer="Generated ${TODAY}"
-       header="Version ${build.name}"
+       footer="Generated at ${TODAY}&lt;br/&gt;Version ${version} Revision ${repository.revision}"
+       header="&lt;img src=&quot;resources/${icon.file.name}&quot;/&gt;"
        maxmemory="96m"
        noindex="false"
        nodeprecated="false"
@@ -363,7 +396,7 @@
        notree="false"
        overview="${src}/overview.html"
        packagenames="org.*"
-       source="1.5"
+       source="1.6"
        sourcepath="${src}:${test}:${resources}:${celldesigner.src}:${celldesigner.test}:${celldesigner.resources}"
        splitindex="true"
        stylesheetfile="${doc}/javadoc-style.css"
@@ -371,7 +404,7 @@
        version="true"
        windowtitle="${Name} ${version} API Specification"
     >
-      <link href="http://java.sun.com/j2se/1.5.0/docs/api"/>
+      <link href="http://docs.oracle.com/javase/6/docs/api/"/>
       <link href="http://www.biojava.org/docs/api17"/>
       <link href="http://javasourcecode.org/html/open-source/junit/junit-4.8/"/>
       <link href="http://sbml.org/Special/Software/JSBML/latest-stable/build/apidocs/"/>
@@ -379,16 +412,29 @@
       <link href="http://www.jarvana.com/jarvana/view/org/scilab/forge/jlatexmath/0.9.6/jlatexmath-0.9.6-javadoc.jar!/"/>
       <link href="http://sbml.org/Software/libSBML/docs/java-api/"/>
       <link href="http://www.cogsys.cs.uni-tuebingen.de/software/SBML2LaTeX/doc/api/"/>
+    	
       <tag name="sbml.deprecated" description="Deprecated in SBML since:"/>
       <tag name="jsbml.note" description="Note"/>
       <tag name="jsbml.warning"/>
-      <tag name="doc.note" description="Documentation note"/> 
+      <tag name="doc.note" description="Documentation note"/>
+    
     </javadoc>
+
+    <!--
+      This is a hack: Actually, the header doesn't allow us to place img
+      tags; but we cheat by using HTML codes to hide it :-) This copies the
+      icon to the right folder:
+    -->
+    <property name="icon.file.src" value="${resources}/org/sbml/squeezer/resources/img/${icon.file.name}"/>
+    <property name="icon.file.dest" value="${doc.location}/resources/${icon.file.name}"/>
+    <echo message="Copying file ${icon.file.src} to file ${icon.file.dest}..."/>
+    <copy file="${icon.file.src}" tofile="${icon.file.dest}"/>
+
   </target>
 
   <target name="jar-javadoc" depends="javadoc" description="Creates the javadocs jar package">
 
-    <jar jarfile="${build.dir}/${name}-${version}-javadoc.jar" basedir="${doc}"/>
+    <jar jarfile="${build.dir}/${Name}-${version}-javadoc.jar" basedir="${doc}"/>
 
   </target>
 
@@ -400,17 +446,17 @@
 
     <antcall target="jar"/>
     <antcall target="jar-src"/>
-    <copy todir="${dist.dir}" file="${build.dir}/${name}-${version}-src.jar"/>
+    <copy todir="${dist.dir}" file="${build.dir}/${Name}-${version}-src.jar"/>
 
-    <copy todir="${dist.dir}" file="${build.dir}/${name}-${version}.jar"/>
-    <copy todir="${dist}" file="${build.dir}/${name}-${version}.jar"/>
+    <copy todir="${dist.dir}" file="${build.dir}/${Name}-${version}.jar"/>
+    <copy todir="${dist}" file="${build.dir}/${Name}-${version}.jar"/>
 
     <!-- Creates the jar file including all the dependencies -->
 
     <antcall target="bigjar"/>
 
-    <copy todir="${dist.dir}" file="${build.dir}/${name}-${version}-with-dependencies.jar"/>
-    <copy todir="${dist}" file="${build.dir}/${name}-${version}-with-dependencies.jar"/>
+    <copy todir="${dist.dir}" file="${build.dir}/${Name}-${version}-with-dependencies.jar"/>
+    <copy todir="${dist}" file="${build.dir}/${Name}-${version}-with-dependencies.jar"/>
 
     <!-- Creates and copy the generated javadoc -->
     <antcall target="jar-javadoc"/>
@@ -419,7 +465,7 @@
       <fileset dir="${doc}/" includes="**/*">
       </fileset>
     </copy>
-    <copy todir="${dist.dir}" file="${build.dir}/${name}-${version}-javadoc.jar"/>
+    <copy todir="${dist.dir}" file="${build.dir}/${Name}-${version}-javadoc.jar"/>
 
     <!-- Copy the source files -->
     <copy todir="${dist.dir}/src">
@@ -429,7 +475,7 @@
 
     <!-- Copy all the dependencies jar files -->
     <copy todir="${dist.dir}/lib">
-      <fileset dir="${jars.dir}/" includes="*.jar">
+      <fileset dir="${lib}/" includes="*.jar">
       </fileset>
     </copy>
 
@@ -444,25 +490,29 @@
     </copy>
 
     <copy todir="${dist.dir}/doc">
-      <fileset dir="${basedir}/doc" includes="**/*.pdf **/*.jpg **/*.java" excludes="posters/** publications/** templates/**">
+      <fileset dir="${basedir}/doc" includes="**/*.pdf, **/*.jpg, **/*.java" excludes="posters/** publications/** templates/**">
 
       </fileset>
     </copy>
 
     <!-- Creates the archives to be distributed -->
-    <zip basedir="${dist}" destfile="${dist}/${name}-${version}.zip" includes="${name}-${version}/**"/>
+    <zip basedir="${dist}" destfile="${dist}/${Name}-${version}.zip" includes="${Name}-${version}/**"/>
 
     <!-- Not generating a tar.gz a having only a zip file should be enough -->
-    <!-- <tar basedir="${dist}" destfile="${dist}/${name}-${version}.tar.gz" includes="${name}-${version}/**" compression="gzip"/> -->
+    <!-- <tar basedir="${dist}" destfile="${dist}/${Name}-${version}.tar.gz" includes="${Name}-${version}/**" compression="gzip"/> -->
 
   </target>
 
-
-  <target name="clean" depends="init" description="Cleans everything">
+  <!-- =================================================================== -->
+  <!-- Cleans up the workspace                                             -->
+  <!-- =================================================================== -->
+  <target
+	name="clean"
+  	depends="init"
+  	description="Cleans everything"
+  >
     <delete includeEmptyDirs="true" quiet="yes">
       <fileset dir="${build.dir}" includes="**/*"/>
-    </delete>
-    <delete dir="${dist}" includeEmptyDirs="true" quiet="yes">
     </delete>
   </target>
   
@@ -496,15 +546,6 @@
         </outputfilterchain>
       </redirector>
     </exec>
-  	
-  	<!--
-    <echo message="Deleting all previous versions of JSBML JAR files"/>
-    <delete verbose="true">
-      <fileset dir="${jars.dir}">
-        <include name="jsbml**.jar"/>
-      </fileset>
-    </delete>
-    -->
 
     <echo message="Compiling the entire JSBML project"/>
     <delete dir="${jsbml.dir}/bin"/>
@@ -582,7 +623,7 @@
       filesetmanifest="mergewithoutmain"
       index="true"
       indexMetaInf="true"
-      jarfile="${jars.dir}/jsbml-1.0-a1-with-dependencies.jar"
+      jarfile="${lib}/jsbml-1.0-a1-with-dependencies.jar"
       level="9"
       manifestencoding="utf-8"
       strict="warn"
@@ -611,26 +652,26 @@
     	excludes="**/.svn*, **/package-info.class"
       />
       <!-- Resources -->
-      <fileset dir="${jsbml.dir}/core/resources" includes="**.txt **/*.txt **.xml **/*.xml **.properties **/*.properties **.cfg **/*.cfg **.obo **/*.obo"/>
-      <fileset dir="${jsbml.dir}/extensions/comp/resources" includes="**.txt **/*.txt **.xml **/*.xml **.properties **/*.properties **.cfg **/*.cfg **.obo **/*.obo"/>
-      <fileset dir="${jsbml.dir}/extensions/fbc/resources" includes="**.txt **/*.txt **.xml **/*.xml **.properties **/*.properties **.cfg **/*.cfg **.obo **/*.obo"/>
-      <fileset dir="${jsbml.dir}/extensions/groups/resources" includes="**.txt **/*.txt **.xml **/*.xml **.properties **/*.properties **.cfg **/*.cfg **.obo **/*.obo"/>
-      <fileset dir="${jsbml.dir}/extensions/layout/resources" includes="**.txt **/*.txt **.xml **/*.xml **.properties **/*.properties **.cfg **/*.cfg **.obo **/*.obo"/>
-      <fileset dir="${jsbml.dir}/extensions/multi/resources" includes="**.txt **/*.txt **.xml **/*.xml **.properties **/*.properties **.cfg **/*.cfg **.obo **/*.obo"/>
-      <fileset dir="${jsbml.dir}/extensions/qual/resources" includes="**.txt **/*.txt **.xml **/*.xml **.properties **/*.properties **.cfg **/*.cfg **.obo **/*.obo"/>
-      <fileset dir="${jsbml.dir}/extensions/render/resources" includes="**.txt **/*.txt **.xml **/*.xml **.properties **/*.properties **.cfg **/*.cfg **.obo **/*.obo"/>
-      <!--<fileset dir="${jsbml.dir}/extensions/spatial/resources" includes="**.txt **/*.txt **.xml **/*.xml **.properties **/*.properties **.cfg **/*.cfg **.obo **/*.obo"/>-->
-      <fileset dir="${jsbml.dir}/modules/celldesigner/resources" includes="**.txt **/*.txt **.xml **/*.xml **.properties **/*.properties **.cfg **/*.cfg **.obo **/*.obo"/>
-      <fileset dir="${jsbml.dir}/modules/libSBMLio/resources" includes="**.txt **/*.txt **.xml **/*.xml **.properties **/*.properties **.cfg **/*.cfg **.obo **/*.obo"/>
+      <fileset dir="${jsbml.dir}/core/resources" includes="**.txt, **/*.txt, **.xml, **/*.xml, **.properties, **/*.properties, **.cfg, **/*.cfg, **.obo, **/*.obo"/>
+      <fileset dir="${jsbml.dir}/extensions/comp/resources" includes="**.txt, **/*.txt, **.xml, **/*.xml, **.properties, **/*.properties, **.cfg, **/*.cfg, **.obo, **/*.obo"/>
+      <fileset dir="${jsbml.dir}/extensions/fbc/resources" includes="**.txt, **/*.txt, **.xml, **/*.xml, **.properties, **/*.properties, **.cfg, **/*.cfg, **.obo, **/*.obo"/>
+      <fileset dir="${jsbml.dir}/extensions/groups/resources" includes="**.txt, **/*.txt, **.xml, **/*.xml, **.properties, **/*.properties, **.cfg, **/*.cfg, **.obo, **/*.obo"/>
+      <fileset dir="${jsbml.dir}/extensions/layout/resources" includes="**.txt, **/*.txt, **.xml, **/*.xml, **.properties, **/*.properties, **.cfg, **/*.cfg, **.obo, **/*.obo"/>
+      <fileset dir="${jsbml.dir}/extensions/multi/resources" includes="**.txt, **/*.txt, **.xml, **/*.xml, **.properties, **/*.properties, **.cfg, **/*.cfg, **.obo, **/*.obo"/>
+      <fileset dir="${jsbml.dir}/extensions/qual/resources" includes="**.txt, **/*.txt, **.xml, **/*.xml, **.properties, **/*.properties, **.cfg, **/*.cfg, **.obo, **/*.obo"/>
+      <fileset dir="${jsbml.dir}/extensions/render/resources" includes="**.txt, **/*.txt, **.xml, **/*.xml, **.properties, **/*.properties, **.cfg, **/*.cfg, **.obo, **/*.obo"/>
+      <!--<fileset dir="${jsbml.dir}/extensions/spatial/resources" includes="**.txt, **/*.txt, **.xml, **/*.xml, **.properties, **/*.properties, **.cfg, **/*.cfg, **.obo, **/*.obo"/>-->
+      <fileset dir="${jsbml.dir}/modules/celldesigner/resources" includes="**.txt, **/*.txt, **.xml, **/*.xml, **.properties, **/*.properties, **.cfg, **/*.cfg, **.obo, **/*.obo"/>
+      <fileset dir="${jsbml.dir}/modules/libSBMLio/resources" includes="**.txt, **/*.txt, **.xml, **/*.xml, **.properties, **/*.properties, **.cfg, **/*.cfg, **.obo, **/*.obo"/>
       <!-- 3rd party libraries -->
-      <zipfileset excludes="META-INF/** **/package-info.class **/package.html **/*.java readme.txt LICENSE" src="${jsbml.dir}/core/lib/biojava-1.7-ontology.jar"/>
-      <zipfileset excludes="META-INF/** **/package-info.class **/package.html **/*.java" src="${jsbml.dir}/core/lib/jigsaw-dateParser.jar"/>
-      <zipfileset excludes="META-INF/** **/package-info.class **/package.html **/*.java" src="${jsbml.dir}/core/lib/log4j-1.2.8.jar"/>
-      <zipfileset excludes="META-INF/** **/package-info.class **/package.html **/*.java" src="${jsbml.dir}/core/lib/stax-api-1.0.1.jar"/>
-      <zipfileset excludes="META-INF/** **/package-info.class **/package.html **/*.java" src="${jsbml.dir}/core/lib/stax2-api-3.0.3.jar"/>
-      <zipfileset excludes="META-INF/** **/package-info.class **/package.html **/*.java" src="${jsbml.dir}/core/lib/staxmate-2.0.0.jar"/>
-      <zipfileset excludes="META-INF/** **/package-info.class **/package.html **/*.java" src="${jsbml.dir}/core/lib/woodstox-core-lgpl-4.0.9.jar"/>
-      <zipfileset excludes="META-INF/** **/package-info.class **/package.html **/*.java" src="${jsbml.dir}/core/lib/xstream-1.3.1.jar"/>
+      <zipfileset excludes="META-INF/**, **/package-info.class, **/package.html, **/*.java readme.txt LICENSE" src="${jsbml.dir}/core/lib/biojava-1.7-ontology.jar"/>
+      <zipfileset excludes="META-INF/**, **/package-info.class, **/package.html, **/*.java" src="${jsbml.dir}/core/lib/jigsaw-dateParser.jar"/>
+      <zipfileset excludes="META-INF/**, **/package-info.class, **/package.html, **/*.java" src="${jsbml.dir}/core/lib/log4j-1.2.8.jar"/>
+      <zipfileset excludes="META-INF/**, **/package-info.class, **/package.html, **/*.java" src="${jsbml.dir}/core/lib/stax-api-1.0.1.jar"/>
+      <zipfileset excludes="META-INF/**, **/package-info.class, **/package.html, **/*.java" src="${jsbml.dir}/core/lib/stax2-api-3.0.3.jar"/>
+      <zipfileset excludes="META-INF/**, **/package-info.class, **/package.html, **/*.java" src="${jsbml.dir}/core/lib/staxmate-2.0.0.jar"/>
+      <zipfileset excludes="META-INF/**, **/package-info.class, **/package.html, **/*.java" src="${jsbml.dir}/core/lib/woodstox-core-lgpl-4.0.9.jar"/>
+      <zipfileset excludes="META-INF/**, **/package-info.class, **/package.html, **/*.java" src="${jsbml.dir}/core/lib/xstream-1.3.1.jar"/>
     </jar>
   	
   	<delete file="${jsbml.dir}/core/licenses/JSBML-AUTHORS.txt"/>
@@ -672,7 +713,7 @@
 
     <echo message="Deleting all previous versions of SysBio JAR files"/>
     <delete verbose="true">
-      <fileset dir="${jars.dir}">
+      <fileset dir="${lib}">
         <include name="SysBio**.jar"/>
       </fileset>
     </delete>
@@ -704,7 +745,7 @@
       filesetmanifest="mergewithoutmain"
       index="true"
       indexMetaInf="true"
-  	  jarfile="${jars.dir}/SysBio.jar"
+  	  jarfile="${lib}/SysBio.jar"
       level="9"
       manifestencoding="utf-8"
       strict="warn"
@@ -713,12 +754,12 @@
       <manifest>
         <attribute name="Built-By" value="${user.name}"/>
         <section name="SysBio">
-          <attribute name="Specification-Title" value="SysBio"/>
-          <attribute name="Specification-Version" value="Revision ${sysbio.revision}"/>
-          <attribute name="Specification-Vendor" value="Center for Bioinformatics Tuebingen (ZBIT)"/>
-          <attribute name="Implementation-Title" value="SysBio"/>
+          <attribute name="Specification-Title"    value="SysBio"/>
+          <attribute name="Specification-Version"  value="Revision ${sysbio.revision}"/>
+          <attribute name="Specification-Vendor"   value="Center for Bioinformatics Tuebingen (ZBIT)"/>
+          <attribute name="Implementation-Title"   value="SysBio"/>
           <attribute name="Implementation-Version" value="Revision ${sysbio.revision} ${TODAY} (Build ${DSTAMP}-${TSTAMP})"/>
-          <attribute name="Implementation-Vendor" value="University of Tuebingen"/>
+          <attribute name="Implementation-Vendor"  value="University of Tuebingen"/>
         </section>
       </manifest>
       <fileset dir="${sysbio.dir}">
@@ -744,6 +785,7 @@
         <include name="de/zbit/gui/wizard/**.class"/>
         <include name="de/zbit/gui/**.class"/>
         <include name="de/zbit/io/**"/>
+      	<include name="de/zbit/locales/**.xml"/>
         <include name="de/zbit/math/**.class"/>
         <include name="de/zbit/resources/**.class"/>
         <include name="de/zbit/sbml/**.class"/>
@@ -773,4 +815,129 @@
 
   </target>
 
+  <!-- =================================================================== -->
+  <!-- Creates a ZIP file for Garuda                                       -->
+  <!-- =================================================================== -->
+  <target
+    name="garuda"
+  	depends="sign"
+    description="Creates a ZIP file for Garuda">
+    
+  	<property name="uuid"           value="dd624b40-7bc0-11e2-b92a-0800200c9a66"/>
+  	<property name="gadget.config"  value="${dist}/gadget_config.xml"/>
+
+  	<echo message="Updating Garuda gadget configuration..."/>
+  	<replace
+  	  file="${gadget.config}"
+  	  token="[GADGET_UUID]"
+  	  value="${uuid}"
+    />
+  	<replace
+  	  file="${gadget.config}"
+  	  token="[JAR_NAME]"
+  	  value="${jar.name}_incl-libs.jar"
+  	/>
+  	
+  	<echo message="Generating ZIP archive for Garuda..."/>
+  	<zip
+      compress="true"
+      comment="Garuda Gadget ${Name}"
+      destfile="${garuda.gadget}"
+      encoding="utf-8"
+      level="9"
+      update="true"
+   	>
+    <mappedresources>
+  		<fileset file="${gadget.config}"/>
+      <globmapper from="*" to="${uuid}/*"/>
+    </mappedresources>
+      <mappedresources>
+        <fileset file="${appJar}"/>
+        <globmapper from="*" to="${uuid}/*"/>
+      </mappedresources>
+    <mappedresources>
+    	<fileset file="${resources}/org/sbml/squeezer/resources/img/SBMLsqueezerIcon_64.png"/>
+    	<globmapper from="*" to="${uuid}/icons/*"/>
+    </mappedresources>
+    <mappedresources>
+      <fileset file="${resources}/org/sbml/squeezer/resources/img/Screenshot_1.png"/>
+      <globmapper from="*" to="${uuid}/snapshot/*"/>
+    </mappedresources>
+    <mappedresources>
+      <fileset file="${resources}/org/sbml/squeezer/resources/img/Screenshot_2.png"/>
+      <globmapper from="*" to="${uuid}/snapshot/*"/>
+    </mappedresources>
+    <mappedresources>
+      <fileset file="${resources}/org/sbml/squeezer/resources/img/Screenshot_3.png"/>
+      <globmapper from="*" to="${uuid}/snapshot/*"/>
+    </mappedresources>
+    </zip>
+  	
+  	<echo message="Reverting changes in Garuda gadget configuration file..."/>
+  	<replace
+  	  file="${gadget.config}"
+  	  token="${uuid}"
+  	  value="[GADGET_UUID]"
+  	/>
+  	<replace
+  	  file="${gadget.config}"
+  	  token="${jar.name}_incl-libs.jar"
+  	  value="[JAR_NAME]"
+  	/>
+
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Creates the files for distribution and packs everything together  -->
+  <!-- =================================================================== -->
+  <target 
+    name="zip"
+    depends="javadoc,garuda"
+  	description="Creates a ZIP file containing all sources, tests, resources, libs, licenses, text files, JAR file, and api documentation."
+  >
+  	<zip
+    compress="true"
+    comment="Full distribution of ${Name}"
+    destfile="${dist.dir}/${jar.name}_v${version}.zip"
+    encoding="utf-8"
+    level="9"
+    update="true"
+  	>
+      <zipfileset dir="${src}"              prefix="src"       excludes="*svn*" includes="**/*.java,**/*.html"/>
+      <zipfileset dir="${test}"             prefix="test"      excludes="*svn*" includes="**/*.java"/>
+      <zipfileset dir="${resources}"        prefix="resources" excludes="*svn*" includes="**/*.java,**/*.png"/>
+      <zipfileset dir="${lib}"              prefix="lib"       excludes="*svn*" includes="**/*.jar"/>
+      <zipfileset dir="${basedir}/licenses" prefix="licenses"  excludes="*svn*"/>
+      <zipfileset dir="${basedir}"                             excludes="*svn*,${basedir}/files" includes="*.xml, *.txt"/>
+      <zipfileset dir="${doc}/version_${version}" prefix="doc/api/" excludes="*svn*,${doc}/publications,${doc}/posters"/>
+      <zipfileset dir="${dist.dir}" prefix="dist/" includes="${appJar}"/>
+      <mappedresources>
+        <fileset file="${garuda.gadget}"/>
+        <globmapper from="*" to="dist/*"/>
+      </mappedresources>
+    </zip>
+  </target>
+	
+  <!-- =================================================================== -->
+  <!-- Creates an UML graph for this project                               -->
+  <!-- =================================================================== -->
+  <target
+  	name="umlgraph"
+  	description="Creates an UML graph for this project"
+  >
+  	<input
+      message="Please enter path to UmlGraph.jar:"
+      addproperty="jar.path"
+      defaultvalue="${user.home}/UMLGraph-5.4/lib/UmlGraph.jar"
+  	/>
+  	<input
+      message="Please enter path to save the graph.dot:"
+      addproperty="output.path"
+      defaultvalue="${basedir}/doc/UMLGraph"
+  	/>  	
+    <javadoc access="private" additionalparam="-d ${output.path}" classpath="../SysBio/lib/junit-4.3.1.jar:../JSBML0.8/lib/xstream-1.3.1.jar:../JSBML0.8/lib/biojava-1.7-ontology.jar:../JSBML0.8/lib/jigsaw-dateParser.jar:../SysBio/lib/commons-cli-1.1.jar:../SysBio/lib/commons-discovery.jar:lib/jsbmlbridge.jar:../SysBio/lib/jaxrpc.jar:../JSBML0.8/bin:lib/HotEqn.jar:../JSBML0.8/lib/log4j-1.2.8.jar:../SBML2LaTeX/bin:../SysBio/lib/axis.jar:../SysBio/lib/Java5/saaj.jar:/afs/cs.uni-tuebingen.de/home/jpfeuffer/Downloads/eclipse/plugins/org.junit_4.8.2.v4_8_2_v20110321-1705/junit.jar:../JSBML0.8/lib/staxmate-2.0.0.jar:../SysBio/lib/WSDbfetch.jar:../JSBML0.8/lib/stax-api-1.0.1.jar:../JSBML0.8/lib/junit-4.8.jar:../SBML2LaTeX/lib/html2latex.jar:../SysBio/lib/commons-logging.jar:/afs/cs.uni-tuebingen.de/home/jpfeuffer/Downloads/eclipse/plugins/org.hamcrest.core_1.1.0.v20090501071000.jar:lib/jsbmlio.jar:../SysBio/lib/keggapi.jar:../SysBio/lib/wsdl4j.jar:../SysBio/bin:../JSBML0.8/lib/stax2-api-3.0.3.jar:../JSBML0.8/lib/woodstox-core-lgpl-4.0.9.jar" sourcefiles="src/de/zbit/gui/prefs/SettingsPanelDefaultMechanisms.java" sourcepath="src:resources:test">
+      <doclet name="org.umlgraph.doclet.UmlGraph" path="${jar.path}"/>
+    </javadoc>
+  </target>
+	
 </project>
