@@ -339,16 +339,13 @@
       </fileset>
       
       <!-- These libraries are required by most classes -->
-      <zipfileset excludes="META-INF/**, COPYING.txt, licenses/COPYING.txt, overview.html" src="${lib}/SBML2LaTeX_v1.0alpha.jar"/>
-      <zipfileset excludes="META-INF/**, COPYING.txt, licenses/COPYING.txt, overview.html" src="${lib}/jlatexmath-1.0.0.jar"/>
-      <zipfileset excludes="META-INF/**, COPYING.txt, licenses/COPYING.txt, overview.html" src="${lib}/jsbml-1.0-a1-with-dependencies.jar"/>
-      <zipfileset excludes="META-INF/**, COPYING.txt, licenses/COPYING.txt, overview.html" src="${lib}/SysBio.jar"/>
-      <zipfileset excludes="META-INF/**, COPYING.txt, licenses/COPYING.txt, overview.html" src="${lib}/quaqua.jar"/>
-      <zipfileset excludes="META-INF/**, COPYING.txt, licenses/COPYING.txt, overview.html" src="${lib}/garuda/garuda-csr.jar"/>
-      <zipfileset excludes="META-INF/**, COPYING.txt, licenses/COPYING.txt, overview.html" src="${lib}/garuda/jsonic-1.2.10.jar"/>
-      <!--
-      <zipfileset excludes="META-INF/**, COPYING.txt" src="${lib}/jsbml-libSBMLio-0.8.15.jar"/>
-      -->
+      <zipfileset excludes="META-INF/**, COPYING.txt, licenses/COPYING.txt, overview.html, AUTHORS.txt" src="${lib}/SBML2LaTeX_v1.0alpha.jar"/>
+      <zipfileset excludes="META-INF/**, COPYING.txt, licenses/COPYING.txt, overview.html, AUTHORS.txt" src="${lib}/jlatexmath-1.0.0.jar"/>
+      <zipfileset excludes="META-INF/**, COPYING.txt, licenses/COPYING.txt, overview.html, AUTHORS.txt" src="${lib}/jsbml-1.0-a1-with-dependencies.jar"/>
+      <zipfileset excludes="META-INF/**, COPYING.txt, licenses/COPYING.txt, overview.html, AUTHORS.txt" src="${lib}/SysBio.jar"/>
+      <zipfileset excludes="META-INF/**, COPYING.txt, licenses/COPYING.txt, overview.html, AUTHORS.txt" src="${lib}/quaqua.jar"/>
+      <zipfileset excludes="META-INF/**, COPYING.txt, licenses/COPYING.txt, overview.html, AUTHORS.txt" src="${lib}/garuda/garuda-csr.jar"/>
+      <zipfileset excludes="META-INF/**, COPYING.txt, licenses/COPYING.txt, overview.html, AUTHORS.txt" src="${lib}/garuda/jsonic-1.2.10.jar"/>
     </jar>
     
   </target>
@@ -860,15 +857,15 @@
         <globmapper from="*" to="${uuid}/icons/*"/>
       </mappedresources>
       <mappedresources>
-        <fileset file="${resources}/org/sbml/squeezer/resources/img/Screenshot_1.png"/>
+        <fileset file="${dist}/Screenshot_1.png"/>
         <globmapper from="*" to="${uuid}/snapshot/*"/>
       </mappedresources>
       <mappedresources>
-        <fileset file="${resources}/org/sbml/squeezer/resources/img/Screenshot_2.png"/>
+        <fileset file="${dist}/Screenshot_2.png"/>
         <globmapper from="*" to="${uuid}/snapshot/*"/>
       </mappedresources>
       <mappedresources>
-        <fileset file="${resources}/org/sbml/squeezer/resources/img/Screenshot_3.png"/>
+        <fileset file="${dist}/Screenshot_3.png"/>
         <globmapper from="*" to="${uuid}/snapshot/*"/>
       </mappedresources>
     </zip>
@@ -888,7 +885,7 @@
   </target>
 
   <!-- =================================================================== -->
-  <!-- Creates the files for distribution and packs everything together  -->
+  <!-- Creates the files for distribution and packs everything together    -->
   <!-- =================================================================== -->
   <target 
     name="zip"
