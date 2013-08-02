@@ -30,7 +30,11 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Arrays;
+import java.util.List;
 import java.util.ResourceBundle;
+import java.util.prefs.PreferenceChangeEvent;
+import java.util.prefs.PreferenceChangeListener;
 
 import javax.swing.Icon;
 import javax.swing.JButton;
@@ -39,6 +43,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.UIManager;
 
+import org.sbml.squeezer.KineticLawGenerator;
 import org.sbml.squeezer.SBMLsqueezer;
 import org.sbml.squeezer.util.Bundles;
 
@@ -55,7 +60,7 @@ import de.zbit.util.ResourceManager;
  * @since 1.4
  * @version $Rev: 830 $
  */
-public class KineticLawSelectionOptionPanel extends JPanel implements ActionListener{
+public class KineticLawSelectionOptionPanel extends JPanel implements ActionListener {
 	
 	/**
 	 * Generated serial version identifier. 
@@ -75,10 +80,16 @@ public class KineticLawSelectionOptionPanel extends JPanel implements ActionList
 	public static final transient ResourceBundle BASE = ResourceManager.getBundle(Bundles.BASE);
 	
 	/**
+	 * Needed to propagate changes in the user's configuration.
+	 */
+	private KineticLawGenerator klg;
+	
+	/**
 	 * 
 	 */
-	public KineticLawSelectionOptionPanel() {
+	public KineticLawSelectionOptionPanel(KineticLawGenerator klg) {
 		super(new BorderLayout());
+		this.klg = klg;
 		init();
 	}
 	
@@ -132,6 +143,32 @@ public class KineticLawSelectionOptionPanel extends JPanel implements ActionList
 		GUITools.setAllBackground(scroll, Color.WHITE);
 		add(scroll, BorderLayout.NORTH);
 	}
+
+	/**
+	 * Monitors changes in the settings by the user.
+	 * 
+	 * @author Andreas Dr&auml;ger
+	 */
+	private class SimplePrefChangeListener implements PreferenceChangeListener {
+		
+		boolean change = false;
+		
+		/* (non-Javadoc)
+		 * @see java.util.prefs.PreferenceChangeListener#preferenceChange(java.util.prefs.PreferenceChangeEvent)
+		 */
+		@Override
+		public void preferenceChange(PreferenceChangeEvent evt) {
+			change = true;
+		}
+		
+		/**
+		 * 
+		 * @return
+		 */
+		public boolean isChanged() {
+			return change;
+		}
+	}
 	
 	/* (non-Javadoc)
 	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
@@ -141,7 +178,17 @@ public class KineticLawSelectionOptionPanel extends JPanel implements ActionList
 			JButton button = (JButton) e.getSource();
 			String text = button.getText();
 			if (text.equals(MESSAGES.getString("SHOW_OPTIONS"))) {
-				PreferencesDialog.showPreferencesDialog(SBMLsqueezer.getInteractiveConfigOptionsArray());
+				SimplePrefChangeListener changeListener = new SimplePrefChangeListener();
+				PreferencesDialog.showPreferencesDialog(
+					(List<PreferenceChangeListener>) Arrays.asList(new PreferenceChangeListener[] {changeListener}),
+					  SBMLsqueezer.getInteractiveConfigOptionsArray());
+				if (changeListener.isChanged()) {
+					try {
+						klg.configure();
+					} catch (ClassNotFoundException exc) {
+						GUITools.showErrorMessage(this, exc);
+					}
+				}
 			}
 		}
 	}

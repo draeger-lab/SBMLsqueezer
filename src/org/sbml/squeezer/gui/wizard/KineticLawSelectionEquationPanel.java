@@ -368,7 +368,10 @@ public class KineticLawSelectionEquationPanel extends JPanel implements ActionLi
 			// .toString(), 40), "Fast Reactions",
 			// JOptionPane.WARNING_MESSAGE);
 		}
-		
+
+		if (reactionsPanel != null) {
+			remove(reactionsPanel);
+		}
 		reactionsPanel = new JPanel(new BorderLayout());
 		JProgressBar progressbar = new JProgressBar(0, klg.getCreatedKineticsCount());
 		progressBarSwing = new ProgressBarSwing(progressbar);
@@ -401,42 +404,49 @@ public class KineticLawSelectionEquationPanel extends JPanel implements ActionLi
 	 */
 	public void propertyChange(PropertyChangeEvent evt) {
 		try {
-			numOfWarnings = ((KineticLawTableModel) tableOfKinetics.getModel())
-					.getWarningCount();
-			tableOfKinetics.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+			reactionsPanel.removeAll();
+			reactionsPanel.validate();
 			
-			JScrollPane scroll;
+			remove(reactionsPanel);
+			reactionsPanel = new JPanel(new BorderLayout());
 			
-			if (tableOfKinetics.getRowCount() == 0) {
+			JScrollPane scroll = null;
+			
+			if (klg.getCreatedKineticsCount() == 0) {
 				JEditorPane pane = new JEditorPane(
 					sbmlIO.getSelectedModel().getReactionCount() > 0 ? 
-							getClass().getResource("../../resources/html/NoNewKineticsCreated.html") : 
-							getClass().getResource("../../resources/html/ModelDoesNotContainAnyReactions.html"));
+						getClass().getResource("../../resources/html/NoNewKineticsCreated.html") : 
+						getClass().getResource("../../resources/html/ModelDoesNotContainAnyReactions.html"));
 				pane.addHyperlinkListener(new SystemBrowser());
 				pane.setBackground(Color.WHITE);
 				pane.setEditable(false);
 				scroll = new JScrollPane(pane);
 			} else {
+				numOfWarnings = ((KineticLawTableModel) tableOfKinetics.getModel())
+						.getWarningCount();
+				tableOfKinetics.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+				JLabel numberOfWarnings = new JLabel(
+						"<html><table align=left width=500 cellspacing=10><tr><td>"
+								+ "<b>" + MESSAGES.getString("KINETIC_EQUATIONS") + "</b></td><td>"
+								+ "<td>" + MESSAGES.getString("NUMBER_OF_WARNINGS")
+								+ " " + "("+MESSAGES.getString("COLOR_RED")+"): " + numOfWarnings
+								+ "</td></tr></table></htlm>");
+				numberOfWarnings.setToolTipText(StringUtil.toHTML(
+						MESSAGES.getString("NUMBER_OF_WARNING_TOOLTIP"),
+						40));
+				reactionsPanel.add(numberOfWarnings, BorderLayout.NORTH);
+				
 				scroll = new JScrollPane(tableOfKinetics);
 			}
-			scroll.setBorder(BorderFactory
-				.createBevelBorder(BevelBorder.LOWERED));
+			scroll.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
 			scroll.setBackground(Color.WHITE);
-			reactionsPanel.removeAll();
+			
 			reactionsPanel.add(scroll, BorderLayout.CENTER);
 			
-			JLabel numberOfWarnings = new JLabel(
-				"<html><table align=left width=500 cellspacing=10><tr><td>"
-						+ "<b>" + MESSAGES.getString("KINETIC_EQUATIONS") + "</b></td><td>"
-						+ "<td>" + MESSAGES.getString("NUMBER_OF_WARNINGS")
-						+ " " + "("+MESSAGES.getString("COLOR_RED")+"): " + numOfWarnings
-						+ "</td></tr></table></htlm>");
-			numberOfWarnings
-			.setToolTipText(StringUtil.toHTML(
-				MESSAGES.getString("NUMBER_OF_WARNING_TOOLTIP"),
-				40));
-			reactionsPanel.add(numberOfWarnings, BorderLayout.NORTH);
+			add(reactionsPanel, BorderLayout.CENTER);
 			validate();
+			validateTree();
+			
 		} catch (Throwable exc) {
 			GUITools.showErrorMessage(this, exc);
 		}

@@ -94,10 +94,6 @@ public class KineticLawSelectionWizard extends Wizard {
 	 * init all descriptor (panels)
 	 */
 	private void initDescriptors() {
-		// option panel
-		WizardPanelDescriptor descriptor1 = new KineticLawSelectionOptionPanelDescriptor();
-		registerWizardPanel(KineticLawSelectionOptionPanelDescriptor.IDENTIFIER, descriptor1);
-		
 		// try to init KineticLawGenerator with the selected model
 		KineticLawGenerator klg = null;
 		try {
@@ -105,6 +101,11 @@ public class KineticLawSelectionWizard extends Wizard {
 		} catch (ClassNotFoundException e) {
 			GUITools.showErrorMessage(this.getDialog(), e);
 		}
+
+		// option panel
+		WizardPanelDescriptor descriptor1 = new KineticLawSelectionOptionPanelDescriptor(klg);
+		registerWizardPanel(KineticLawSelectionOptionPanelDescriptor.IDENTIFIER, descriptor1);
+		
 		
 		// progress panel
 		WizardPanelDescriptor descriptor2 = new KineticLawSelectionEquationProgressPanelDescriptor(klg);

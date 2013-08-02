@@ -543,6 +543,7 @@
         </outputfilterchain>
       </redirector>
     </exec>
+  	<!--<property name="jsbml.revision" value="1496"/>-->
 
     <echo message="Compiling the entire JSBML project"/>
     <delete dir="${jsbml.dir}/bin"/>
@@ -707,6 +708,7 @@
         </outputfilterchain>
       </redirector>
     </exec>
+  	<!--<property name="sysbio.revision" value="1282"/>-->
 
     <echo message="Deleting all previous versions of SysBio JAR files"/>
     <delete verbose="true">

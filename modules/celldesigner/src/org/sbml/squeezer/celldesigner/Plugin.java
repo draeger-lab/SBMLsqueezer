@@ -24,7 +24,6 @@
 package org.sbml.squeezer.celldesigner;
 
 import java.awt.Dialog;
-import java.io.PrintStream;
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.ResourceBundle;

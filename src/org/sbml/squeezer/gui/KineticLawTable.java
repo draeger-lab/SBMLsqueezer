@@ -170,6 +170,9 @@ public class KineticLawTable extends JTable implements MouseInputListener {
 		editing = false;
 	}
 
+	/**
+	 * 
+	 */
 	private void setRowHeightAppropriately() {
 		setRowHeight(getFont().getSize() * 2);
 	}
