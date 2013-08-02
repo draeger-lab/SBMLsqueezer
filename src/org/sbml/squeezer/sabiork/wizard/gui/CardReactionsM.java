@@ -101,8 +101,7 @@ public class CardReactionsM extends Card implements ListSelectionListener,
 		add(tableReactionsScrollPane, BorderLayout.CENTER);
 	}
 
-	/*
-	 * (non-Javadoc)
+	/* (non-Javadoc)
 	 * @see org.sbml.squeezer.sabiork.wizard.gui.Card#performBeforeShowing()
 	 */
 	public void performBeforeShowing() {
@@ -115,16 +114,14 @@ public class CardReactionsM extends Card implements ListSelectionListener,
 		setSelectedReaction();
 	}
 
-	/*
-	 * (non-Javadoc)
+	/* (non-Javadoc)
 	 * @see org.sbml.squeezer.sabiork.wizard.gui.Card#getPreviousCardID()
 	 */
 	public CardID getPreviousCardID() {
 		return CardID.METHOD;
 	}
 
-	/*
-	 * (non-Javadoc)
+	/* (non-Javadoc)
 	 * @see org.sbml.squeezer.sabiork.wizard.gui.Card#getNextCardID()
 	 */
 	public CardID getNextCardID() {
@@ -178,8 +175,7 @@ public class CardReactionsM extends Card implements ListSelectionListener,
 		return reactions;
 	}
 
-	/*
-	 * (non-Javadoc)
+	/* (non-Javadoc)
 	 * @see javax.swing.event.ListSelectionListener#valueChanged(javax.swing.event.ListSelectionEvent)
 	 */
 	public void valueChanged(ListSelectionEvent e) {
@@ -190,8 +186,7 @@ public class CardReactionsM extends Card implements ListSelectionListener,
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
+	/* (non-Javadoc)
 	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 	 */
 	public void actionPerformed(ActionEvent e) {
@@ -205,8 +200,7 @@ public class CardReactionsM extends Card implements ListSelectionListener,
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
+	/* (non-Javadoc)
 	 * @see java.beans.PropertyChangeListener#propertyChange(java.beans.PropertyChangeEvent)
 	 */
 	public void propertyChange(PropertyChangeEvent e) {

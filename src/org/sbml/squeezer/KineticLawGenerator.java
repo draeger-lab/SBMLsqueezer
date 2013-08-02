@@ -241,10 +241,11 @@ public class KineticLawGenerator {
 	}
 
 	/**
+	 * (Re-) configure the settings for the creation of kinetic equations.
 	 * 
 	 * @throws ClassNotFoundException
 	 */
-	private void configure() throws ClassNotFoundException {
+	public void configure() throws ClassNotFoundException {
 		
 		SBPreferences prefs = SBPreferences.getPreferencesFor(OptionsGeneral.class);
 		
@@ -312,6 +313,10 @@ public class KineticLawGenerator {
 		kineticsIrreversibleBiBiType = prefs.getClass(OptionsRateLaws.KINETICS_IRREVERSIBLE_BI_BI_TYPE);
 		
 		reversibility = prefs.getBoolean(OptionsRateLaws.TREAT_ALL_REACTIONS_REVERSIBLE);
+		
+		if (submodelController != null) {
+			submodelController = new SubmodelController(submodelController.getSBMLDocument().getModel());
+		}
 	}
 
 	/**

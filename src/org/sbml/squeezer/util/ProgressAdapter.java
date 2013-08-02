@@ -135,7 +135,7 @@ public class ProgressAdapter {
 	 * @param removeUnnecessaryParametersAndUnits
 	 */
 	public void setNumberOfTags(Model modelOrig, Model miniModel, boolean removeUnnecessaryParametersAndUnits) {
-		switch(progressType) {
+		switch (progressType) {
 		case storeKineticLaw:
 			numberOfTotalCalls = 0;
 			// storeUnits loops
@@ -175,21 +175,23 @@ public class ProgressAdapter {
 			boolean create = false;
 			
 			numberOfTotalCalls = 0;
-			for (Reaction reac : modelOrig.getListOfReactions()) {
-				if (reac.isSetKineticLaw()) {
-					String formula = reac.getKineticLaw().getMath().toFormula();
-					if ((formula == null) || formula.isEmpty() || formula.equals(" ")) {
-						create = true;
-					}
-				}
-				if (!reac.isSetKineticLaw() || create) {
-					numberOfTotalCalls += reac.getReactantCount();
-					numberOfTotalCalls += reac.getProductCount();
-					numberOfTotalCalls += reac.getModifierCount();
+			if (modelOrig.isSetListOfReactions()) {
+				for (Reaction reac : modelOrig.getListOfReactions()) {
 					if (reac.isSetKineticLaw()) {
-						numberOfTotalCalls += modelOrig.getParameterCount();
+						String formula = reac.getKineticLaw().getMath().toFormula();
+						if ((formula == null) || formula.isEmpty() || formula.equals(" ")) {
+							create = true;
+						}
 					}
-					numberOfTotalCalls += reac.getReactantCount();
+					if (!reac.isSetKineticLaw() || create) {
+						numberOfTotalCalls += reac.getReactantCount();
+						numberOfTotalCalls += reac.getProductCount();
+						numberOfTotalCalls += reac.getModifierCount();
+						if (reac.isSetKineticLaw()) {
+							numberOfTotalCalls += modelOrig.getParameterCount();
+						}
+						numberOfTotalCalls += reac.getReactantCount();
+					}
 				}
 			}
 			break;

@@ -455,6 +455,8 @@ public class SABIORK {
 					getResourceResponse(Resource.SUGGESTIONS_PUBMED_IDS
 							.getURL(partialString)), "PubmedID", ""));
 			break;
+		default:
+			break;
 		}
 		return suggestions;
 	}

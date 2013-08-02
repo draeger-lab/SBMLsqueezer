@@ -162,6 +162,8 @@ public class AutomaticSearch {
 			}
 			line = reader.readLine();
 		}
+		reader.close();
+		
 		SBFileFilter sbmlFilter = SBFileFilter.createSBMLFileFilter();
 		
 		for (File dir : directoryList) {
@@ -201,14 +203,14 @@ public class AutomaticSearch {
 						}
 					}
 					/*
-					 * Constraints (Falls du bestimmte zus�tzliche Bedingungen an die
+					 * Constraints (Falls du bestimmte zusätzliche Bedingungen an die
 					 * Suche stellen willst)
 					 * 
 					 * Der Constraint: " AND " + SABIORK.QueryField.HAS_KINETIC_DATA +
 					 * ":true"
 					 * 
 					 * sollte aber immer verwendet werden, da SABIO-RK dann nur
-					 * KineticLaws, die eine kinetische Gleichung besitzen, ausw�hlt.
+					 * KineticLaws, die eine kinetische Gleichung besitzen, auswählt.
 					 */
 					StringBuilder constraints = new StringBuilder();
 					if (organism != null) {

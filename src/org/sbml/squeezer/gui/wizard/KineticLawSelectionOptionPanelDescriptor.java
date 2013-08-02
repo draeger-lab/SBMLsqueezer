@@ -27,6 +27,7 @@ package org.sbml.squeezer.gui.wizard;
 import java.awt.Component;
 import java.util.ResourceBundle;
 
+import org.sbml.squeezer.KineticLawGenerator;
 import org.sbml.squeezer.SBMLsqueezer;
 import org.sbml.squeezer.util.Bundles;
 
@@ -61,8 +62,8 @@ public class KineticLawSelectionOptionPanelDescriptor extends WizardPanelDescrip
 	/**
 	 * 
 	 */
-	public KineticLawSelectionOptionPanelDescriptor() {
-		super(IDENTIFIER, new KineticLawSelectionOptionPanel());
+	public KineticLawSelectionOptionPanelDescriptor(KineticLawGenerator klg) {
+		super(IDENTIFIER, new KineticLawSelectionOptionPanel(klg));
 	}
 	
 	/* (non-Javadoc)
@@ -88,8 +89,7 @@ public class KineticLawSelectionOptionPanelDescriptor extends WizardPanelDescrip
 		return null;
 	}
 	
-	/*
-	 * (non-Javadoc)
+	/* (non-Javadoc)
 	 * @see de.zbit.gui.wizard.WizardPanelDescriptor#getHelpAction()
 	 */
 	@Override
