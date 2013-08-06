@@ -66,26 +66,26 @@ public interface OptionsGeneral extends KeyProvider {
 	public static final Range<Boolean> RANGE_FALSE = new Range<Boolean>(Boolean.class, Boolean.FALSE);
 	
 	/**
-	 * If {@code true} all parameters are stored globally for the whole model (default)
-	 * else parameters are stored locally for the respective kinetic equation
-	 * they belong to.
+	 * If {@code true} all parameters are stored globally for the whole model
+	 * else parameters are stored locally (default) for the respective kinetic
+	 * equation they belong to.
 	 */
 	public static final Option<Boolean> NEW_PARAMETERS_GLOBAL = new Option<Boolean>(
 			"NEW_PARAMETERS_GLOBAL",
 			Boolean.class,			
 			OPTIONS_BUNDLE,
-			Boolean.valueOf(true));
+			Boolean.valueOf(false));
 
 	/**
-	 * If true, all reactions within the network are considered enzyme
-	 * reactions. If false, an explicit enzymatic catalyst must be assigned to a
+	 * If {@code true}, all reactions within the network are considered enzyme
+	 * reactions. If {@code false}, an explicit enzymatic catalyst must be assigned to a
 	 * reaction to obtain this status.
 	 */
 	public static final Option<Boolean> ALL_REACTIONS_AS_ENZYME_CATALYZED = new Option<Boolean>(
 			"ALL_REACTIONS_AS_ENZYME_CATALYZED",
 			Boolean.class,
 			OPTIONS_BUNDLE,
-			Boolean.valueOf(false));
+			Boolean.valueOf(true));
 	
 	/**
 	 * If no spatial dimensions are defined for a {@link Compartment}, the value defined by this
@@ -172,7 +172,7 @@ public interface OptionsGeneral extends KeyProvider {
 			Boolean.valueOf(true));
 	
 	/**
-	 * Decide whether or not to set the boundary condition for genes to true.
+	 * Decide whether or not to set the boundary condition for genes to {@code true}.
 	 */
 	public static final Option<Boolean> SET_BOUNDARY_CONDITION_FOR_GENES = new Option<Boolean>(
 			"SET_BOUNDARY_CONDITION_FOR_GENES", 
@@ -181,7 +181,7 @@ public interface OptionsGeneral extends KeyProvider {
 			Boolean.valueOf(true));
 
 	/**
-	 * If true, warnings will be displayed for too many reactants.
+	 * If {@code true}, warnings will be displayed for too many reactants.
 	 */
 	public static final Option<Boolean> WARNINGS_FOR_TOO_MANY_REACTANTS = new Option<Boolean>(
 			"WARNINGS_FOR_TOO_MANY_REACTANTS", 
@@ -285,7 +285,7 @@ public interface OptionsGeneral extends KeyProvider {
 			Boolean.valueOf(false));
 
 	/**
-	 * Can be true or false, depending on if the user wants to see SBML
+	 * Can be {@code true} or {@code false}, depending on if the user wants to see SBML
 	 * warnings.
 	 */
 	public static final Option<Boolean> SHOW_SBML_WARNINGS = new Option<Boolean>(
@@ -373,6 +373,5 @@ public interface OptionsGeneral extends KeyProvider {
 		"GROUP_UNIT_CONSISTENCY",
 		OPTIONS_BUNDLE,
 		TYPE_UNIT_CONSISTENCY);
-
 
 }

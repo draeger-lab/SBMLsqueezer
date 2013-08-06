@@ -58,7 +58,7 @@ public interface OptionsRateLaws extends KeyProvider {
 			"TREAT_ALL_REACTIONS_REVERSIBLE",
 			Boolean.class,
 			OPTIONS_BUNDLE,
-			Boolean.valueOf(true));
+			Boolean.valueOf(false));
 	
 	/**
 	 * If true the information about reversiblity will be left unchanged.
@@ -67,7 +67,7 @@ public interface OptionsRateLaws extends KeyProvider {
 			"TREAT_REACTIONS_REVERSIBLE_AS_GIVEN",
 			Boolean.class,
 			OPTIONS_BUNDLE,
-			Boolean.valueOf(false));
+			Boolean.valueOf(true));
 
 	/**
 	 * One of the following values: cat, hal or weg (important for
