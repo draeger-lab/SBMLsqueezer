@@ -554,9 +554,9 @@ public class KineticLawGenerator {
 				progressAdapter.progressOn();
 			}
 			
-			if ((reactionsToExclude != null) && !reactionsToExclude.contains(reaction)) {
+			if ((reactionsToExclude == null) || !reactionsToExclude.contains(reaction)) {
 				createKineticLaw(reaction, kineticsClass, isReversibility(),
-				typeStandardVersion, typeUnitConsistency, defaultParamVal);
+				  typeStandardVersion, typeUnitConsistency, defaultParamVal);
 			}
 			
 			if (progressAdapter != null) {
