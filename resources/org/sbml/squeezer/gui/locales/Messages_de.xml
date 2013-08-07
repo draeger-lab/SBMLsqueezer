@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<!-- 
+ * $Id: Messages.xml 1067 2013-04-25 13:46:48Z draeger $
+ * $URL: https://rarepos.cs.uni-tuebingen.de/svn-path/SBMLsqueezer/trunk/resources/org/sbml/squeezer/gui/locales/Messages.xml $
+ *********************************************************************** 
+ * This file is part of SBMLsqueezer, a Java program that creates rate 
+ * equations for reactions in SBML files (http://sbml.org).
+ *
+ * Copyright (C) 2006-2013 by the University of Tuebingen, Germany.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see http://www.gnu.org/licenses/.
+ ***********************************************************************
+ *
+ * Version: $Rev: 1067 $
+-->
+<properties>
+  <comment>
+	This configuration describes the labels of buttons and menu items or 
+	some important user messages in SBMLsqueezer-related graphical user interfaces.
+	Although the preferred way would be to have separate key-value pairs for
+	actual labels and their corresponding tooltips, you may want to use just 
+	one key-value pair, in which the tooltip is located after the separator 
+	";". Otherwise, please use the suffix "_TOOLTIP" to indicate a tooltip 
+	for some label.
+	
+	Please see the JavaDoc for MessageFormatter and Formatter. 
+  </comment>
+  
+  <!-- KineticLawSelectionDialog -->
+  
+  <entry key="KINETIC_EQUATIONS">Kinetische Gleichungen</entry>
+  <entry key="EXPORT_CHANGES">Änderungen exportieren</entry>
+  <entry key="EXPORT_CHANGES_TOOLTIP">Diese Funktion ermöglicht das Abspeichern des erzeugten Differentialgleichungssystems in Form von *.txt- oder *.tex-Dateien. Bitte beachten, dass diese Exportfunktion lediglich solche Reaktionen gemeinsam mit referenzierten Spezies, Kompartimenten, Kompartment- und Spezies-Arten, Einheiten, und Parametern enthält, für welche kinetische Gleichungen erzeugt wurden. Falls Sie an einem vollständigne Modellbericht interessiert sind, wählen Sie bitte die "Speichern unter"-Funktion im Menü des Programms.</entry>
+  <entry key="GENERATE">Erstellen</entry>
+  <entry key="GENERATE_TOOLTIP">Leitet die Erstellung eines gewöhnlichen Differentialgleichungssystems ein.</entry>
+  <entry key="RESTORE">Wiederherstellen</entry>
+  <entry key="THE_MODEL_CONTAINS">Das Modell {1} enthält {0}</entry>
+  <entry key="FAST_REACTIONS">schnelle Reaktionen</entry>
+  <entry key="THE_FAST_REACTION">die schnelle Reaktion</entry>
+  <entry key="NOT_SUPPORTED">Dies ist derzeit nicht durch SBMLsqueezer unterstützt.</entry>
+  <entry key="ATTRIBUTE_BEEING_IGNORED">Ratengleichungen können dennoch korrekt erstellt werden, doch das Attribut "schnell" in Bezug auf Reaktionen wird ignoriert.</entry>
+  <entry key="ATTRIBUTE_OF_REACTIONS_BEEING_IGNORED">Ratengleichungen können richtig hergeleitet und erstellt werden, aber das Attribut "schnell" wird für folgende Reaktionen ignoriert:</entry>
+  <entry key="NUMBER_OF_WARNINGS">Anzahl von Warnungen</entry>
+  <entry key="NUMBER_OF_WARNING_TOOLTIP">Die Anzahl von Reaktionen mit einer unwahrscheinlich hohen Menge von Eduktmolekülen. Diese werden in der folgenden Tabelle auch rot hervorgehoben.</entry>
+  <entry key="COLOR_RED">rot</entry>
+  <entry key="EXIT_WITHOUT_SAVING">SBMLsqueezer ohne Speichern der Änderungen beenden.</entry>
+  <entry key="WRITE_KINETICS_TO_SBML_FILE">Schreibe die erzeugten kinetischen Gleichungen und Parameter in eine SBML-Datei.</entry>
+  <entry key="VERSION">Version</entry>
+  
+  <!-- KineticLawSelectionPanel -->
+  
+  <entry key="EXISTING_RATE_LAW">Vorhandene Ratengleichung</entry>
+  <entry key="SPECIES_UNLIKELY_COLLIDE_SPONTAINOUSLY">Ein spontaner Zusammenstoß von {0} Spezies ist unwahrscheinlich.</entry>
+  <entry key="REACTION_PROCEEDS_ON_FAST_TIME_SCALE">Reaktion {0} verläuft auf einer schnellen Zeitskala.</entry>
+  <entry key="ATTRIBUTE_IGNORED">Bitte beachten, dass dieses Attribut derzeit ignoriert wird.</entry>
+  <entry key="REACTION_OPTIONS">Reaktionseinstellungen</entry>
+  <entry key="REVERSIBLE">Reversibel</entry>
+  <entry key="REVERSIBLE_TOOLTIP">Wenn ausgewählt, wird SBMLsqueezer die Effekte von Produkten einbeziehen, wenn Ratengleichungen erstellt werden.</entry>
+  <entry key="IRREVERSIBLE">Irreversibel</entry>
+  <entry key="IRREVERSIBLE_TOOLTIP">Wenn diese Option ausgewählt ist, so bezieht SBMLsqueezer die Effekte von Produkten nicht in die erstellten Ratengleichungen ein.</entry>
+  <entry key="ENZYME_CATALYSED">Betrachte diese Reaktion als enzymkatalysiert</entry>
+  <entry key="ENZYME_CATALYSED_TOOLTIP">Diese Option ermöglicht Ihnen, zu entscheiden, ob diese Reaktion als eine enzymkatalysierte Reaktion behandelt werden soll. Falls ein enzymatischer Katalysator vorhanden ist, so kann diese Option nicht ausgeschaltet werden.</entry>
+  <entry key="GLOBAL_PARAMETERS">Globale Parameter</entry>
+  <entry key="GLOBAL_PARAMETERS_TOOLTIP">Wird diese Option ausgewählt, so werden alle neu erstellten Parameter dem Modell als globale Parameter hinzugefügt.</entry>
+  <entry key="LOCAL_PARAMETERS">Lokale Parameter</entry>
+  <entry key="LOCAL_PARAMETERS_TOOLTIP">Ist diese Option aktiv, werden neu erstellte Parameter als lokale Paramter in dieser Reaktion gespeichert.</entry>
+  <entry key="EQUATION_PREVIEW">Gleichugnsvorschau</entry>
+  <entry key="RATE_LAW_ASSIGNED_TO_REACTION">Diese Ratengleichung wird dieser Reaktion hinzugefügt, wenn Sie auf "OK" drücken.</entry>
+  <entry key="CHOOSE_KINETIC_LAW">Bitte wählen Sie eine kinetische Gleichung</entry>
+  
+  <!-- KineticLawTable -->
+  
+  <entry key="KINTEIC_LAW_TABLE_HEADER_TOOLTIP">Doppelklicken Sie auf die kinetische Gleichung, um eine andere Ratengleichung auswählen zu können. Einzelklicks auf eine andere Spalte öffnen eine Vorschau.</entry>
+  <entry key="RATE_LAW_OF_REACTION">Ratengleichung für Reaktion {0}</entry>
+  <entry key="CHOOSE_ALTERNATIVE_KINETIC_LAW">Wählen Sie eine alternative Ratengleichung für Reaktion</entry>
+  
+   <!-- KineticLawTableModel -->
+   
+  <entry key="COL_REACTION">Reaktion</entry>
+  <entry key="COL_KINETIC_LAW">Kinetische Gleichung</entry>
+  <entry key="COL_UNIT">Hergeleitete Einheit</entry>
+  <entry key="COL_SBO">SBO</entry>
+  <entry key="COL_NUM_REACTANTS">Anzahl der Edukte</entry>
+  <entry key="COL_NUM_PRODUCTS">Anzahl der Produkte</entry>
+  <entry key="COL_REACTANTS">Edukte</entry>
+  <entry key="COL_PRODUCTS">Produkte</entry>
+  <entry key="COL_PARAMETERS">Parameteranzahl</entry>
+  <entry key="COL_FORMULA">Formel</entry>
+  
+  <!-- LaTeXRenderer -->
+  
+  <entry key="ZOOM_IN_TOOLTIP">Vergrößern</entry>
+  <entry key="ZOOM_OUT_TOOLTIP">Verkleinern</entry>
+  
+  <!-- ProgressAdapter -->
+  
+  <entry key="STORE_KINETIC_EQUATION">Speichere kinetische Gleichung...</entry>
+  <entry key="STORE_KINETIC_EQUATIONS">Speichere kinetische Gleichungen...</entry>
+  <entry key="GENERATE_KINETIC_EQUATION">Erzeuge kinetische Gleichung...</entry>
+  <entry key="CREATE_MINI_MODEL">Erstelle Teilnmodell...</entry>
+  
+  <!-- ReactionType -->
+  
+  <entry key="IS_ENZYMATIC_CATALYST">{0} ist ein enzymatischer Katalysator</entry>
+  <entry key="IS_NON_ENZYMATIC_CATALYST">{0} ist ein nicht-enzymatischer Katalysator</entry>
+  <entry key="IS_TRANSCRIPTIONAL_OR_TRANSLATIONAL_INHIBITOR">{0} ist ein transkriptioneller oder translationaler Inhibitor</entry>
+  <entry key="IS_INHIBITOR">{0} ist ein Inhibitor</entry>
+  <entry key="IS_TRANSCRIPTIONAL_OR_TRANSLATIONAL_ACTIVATOR">{0} ist ein transkriptionaler oder translationaler Aktivator</entry>
+  <entry key="IS_ACTIVATOR">{0} ist ein Aktivator</entry>
+  
+  <!-- SBMLsqueezer -->
+  
+  <entry key="CREATING_KINETIC_LAWS">Erzeuge kinetisce Gleichungen.</entry>
+  <entry key="DONE">erledigt.</entry>
+  <entry key="DONE_IN_MS">erledigt in {0} ms.</entry>
+  <entry key="EMPTY_INPUT_FILE_LIST">Leere Liste von Eingabedateien. Nichts zu tun.</entry>
+  <entry key="KEYWORDS">[Analytik;Kinetische Modellierung]</entry>
+  <entry key="LOADING_JSBML">Lade Bibliothek JSBML</entry>
+  <entry key="LOADING_LIBSBML">Lade Bibliothek libSBML</entry>
+  <entry key="LOADING_USER_SETTINGS">Lade Nutzereinstellungen...</entry>
+  <entry key="PROGRAM_DESCRIPTION">SBMLsqueezer erzeugt kinetische Gleichungen für biochemische Netzwerke anhand des Kontextes einer jeden Reaktion. Wird es als Plugin im CellDesigner benutzt, so verwendet dieses Programm die Information von der SBGN-Representation aller Netzwerkkomponenten. Im eigenständigen Modus wertet SBMLsqueezer die Annotationen der Systembiologie-Ontologie (SBO) aus, um diese Information zu erhalten. Eine Online-Version von SBMLsqueezer ist verfügbar, die ohne die Installation jeglicher Software auf dem lokalen Rechner läuft. Die Ratengleichungen, die durch SBMLsqueezer erstellt werden können, sind vielfältig und schließen zahlreiche Arten generalisierter Massenwirkung; detailierte und generalisierte Enzymkinetik, zahlreiche Arten von Hill-Gleichungen, S- und H-Systeme, sowie additive Modelle für Genregulation ein. Nutzereinstellungen ermöglichen auszuwählen, welche Gleichungen für einen jeden Typ von Reaktion verwendet werden sollen und wie Einheitenkonsistenz des Modells gewährleistet werden kann. Gleichungen können über Kontextmenüs erstellt werden. Alle neu erzeugten Parameter werden mit einer hergeleiteten Einheit ausgestattet und mit passenden SBO-Ausdrücken annotiert, falls möglich, sowie aussagekräftigen Namen. MathML wird direkt in die SBML-Datei eingefügt. LaTeX- oder Textexport der erzeugten Differentialgleichungssysteme wird angeboten.</entry>
+  <entry key="READING_SBML_FILE">lese SBML-Datei...</entry>
+  <entry key="SAVE_BEFORE_CLOSING">Würden Sie Ihre Änderungen am SBML-Document in der Datei {0} speichern?</entry>
+  <entry key="SAVE_BEFORE_CLOSING_TITLE">Speichern vorm Schließen</entry>
+  <entry key="SAVING_TO_FILE">Speichere Änderungen und schreibe SBML-Datei...</entry>
+  <entry key="SCANNING_INPUT_FILES">Lese Eingabedateien</entry>
+  <entry key="SQUEEZING_FILE">Quetsche Datei {0} in {1}</entry>
+  <entry key="TIME_NEEDED_FOR_SQUEEZING">{0,number} s wurden benötigt, um Datei {1} auszuquetschen.</entry>
+  <entry key="WRITING_LATEX_OUTPUT">Schreibe LaTeX-Ausgabe...</entry>
+  
+  <!-- SBMLsqueezerUI -->
+  
+  <entry key="SABIO_RK">SABIO-RK</entry>
+  <entry key="SABIO_RK_TOOLTIP">Extrahiert Ratengleichungen, Parameter und Einheiten von der Reaktionskinetikdatenban SABIO-RK.</entry>
+  <entry key="SQUEEZE">Ausquetschen</entry>
+  <entry key="SQUEEZE_TOOLTIP">Erzeugt fehlende kinetische Gleichungen einschließlich Parameter und Einheiten.</entry>
+  <entry key="TO_LATEX">Zu LaTeX</entry>
+  <entry key="TO_LATEX_TOOLTIP">Erstellt einen Bericht, der das aktuelle Modell beschreibt.</entry>
+  <entry key="URL_ABOUT_MESSAGE">resources/html/about.html</entry>
+  <entry key="URL_LICENSE_FILE">resources/html/License.html</entry>
+  <entry key="URL_ONLINE_HELP">resources/html/help.html</entry>
+  
+  <!-- SettingsPanelDefaultMechanisms -->
+  
+  <entry key="TITLE_DEFAULT_MECHANISMS">Reaktionsmechanismen</entry>
+  <entry key="DEFAULT_REACTION_TOOLTIP">Reaktionen, die {0}, können durch {1} beschrieben werden.</entry>
+  <entry key="REVERSIBILITY">Reversibilität</entry>
+  <entry key="CHOOSE_TYPE_STANDARD_VERSION">Wählen Sie die Version der modularen Ratengleichungen:</entry>
+  <entry key="DEFAULT_RATE_LAW_SELECT">Wählen Sie die Standard-Ratengleichung für jeden Mechanismus</entry>
+  
+  <!-- SettingsPanelKinetics -->
+  
+  <entry key="TITLE_KINETICS">Kinetik-Einstellungen</entry>
+    
+</properties>
