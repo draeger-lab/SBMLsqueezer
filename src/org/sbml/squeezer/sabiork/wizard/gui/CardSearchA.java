@@ -29,37 +29,22 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.CancellationException;
-import java.util.concurrent.ExecutionException;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
-import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.SwingWorker;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
-import javax.xml.stream.XMLStreamException;
-import org.sbml.jsbml.KineticLaw;
-import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.util.ValuePair;
 import org.sbml.squeezer.sabiork.wizard.gui.JDialogWizard.ButtonState;
 import org.sbml.squeezer.sabiork.wizard.gui.JDialogWizard.CardID;
-import org.sbml.squeezer.sabiork.wizard.gui.TableModelSearchAResults.SearchAResult;
 
 import org.sbml.squeezer.sabiork.SABIORK;
-import org.sbml.squeezer.sabiork.util.WebServiceConnectException;
-import org.sbml.squeezer.sabiork.util.WebServiceResponseException;
-import org.sbml.squeezer.sabiork.wizard.model.KineticLawImporter;
 import org.sbml.squeezer.sabiork.wizard.model.WizardModel;
 import org.sbml.squeezer.sabiork.wizard.model.WizardProperties;
 
@@ -70,16 +55,12 @@ import org.sbml.squeezer.sabiork.wizard.model.WizardProperties;
  * @version $Rev$
  */
 public class CardSearchA extends Card implements ActionListener,
-		PropertyChangeListener, TableModelListener, ChangeListener {
+		TableModelListener, ChangeListener {
 
 	/**
 	 * Generated serial version identifier.
 	 */
 	private static final long serialVersionUID = 3025182595373189918L;
-
-	public enum SearchState {
-		START, RESET
-	}
 
 	private ComboBoxModelConstraints comboBoxConstraintsModel;
 	private JButton buttonAdd;
@@ -87,16 +68,8 @@ public class CardSearchA extends Card implements ActionListener,
 	private JComboBoxSearchField comboBoxSearchField;
 	private JPanel panelSearch;
 	private JPanel panelSearchInput;
-	private JPanel panelResults;
-	private JPanelFilterOptions panelFilterOptions;
-	private JProgressBar progressBar;
 	private JScrollPane tableSearchTermsScrollPane;
-	private JScrollPane tableResultsScrollPane;
 	private JTable tableSearchTerms;
-	private JTable tableResults;
-	private Search search;
-	private TableModelSearchAResults tableResultsModel;
-	private TableModelSearchTerms tableSearchTermsModel;
 
 	/**
 	 * 
@@ -106,7 +79,6 @@ public class CardSearchA extends Card implements ActionListener,
 	 */
 	public CardSearchA(JDialogWizard dialog, WizardModel model) throws IOException {
 		super(dialog, model);
-		model.addPropertyChangeListener(this);
 		initialize();
 	}
 
@@ -131,9 +103,9 @@ public class CardSearchA extends Card implements ActionListener,
 		panelFilterOptions = new JPanelFilterOptions();
 		panelFilterOptions.addChangeListener(this);
 
-		tableSearchTermsModel = new TableModelSearchTerms();
-		tableSearchTermsModel.addTableModelListener(this);
-		tableSearchTerms = new JTable(tableSearchTermsModel);
+		tableSearchTermsModelA = new TableModelSearchTerms();
+		tableSearchTermsModelA.addTableModelListener(this);
+		tableSearchTerms = new JTable(tableSearchTermsModelA);
 		tableSearchTerms.setPreferredScrollableViewportSize(panelFilterOptions
 				.getSize());
 		tableSearchTermsScrollPane = new JScrollPane(tableSearchTerms);
@@ -143,29 +115,7 @@ public class CardSearchA extends Card implements ActionListener,
 		tableSearchTerms.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		tableSearchTermsScrollPane.setBackground(getBackground());
 
-		progressBar = new JProgressBar(0, 100);
-		progressBar.setStringPainted(true);
-
-		tableResultsModel = new TableModelSearchAResults();
-		tableResults = new JTable(tableResultsModel);
-		tableResults.setRowSelectionAllowed(false);
-		tableResults.setColumnSelectionAllowed(false);
-		tableResults.setFocusable(false);
-		tableResults.getColumnModel().getColumn(0)
-				.setCellRenderer(new TableCellRendererSearchAResults());
-		tableResults.getColumnModel().getColumn(1)
-				.setCellRenderer(new TableCellRendererSearchAResults());
-		tableResults.getColumnModel().getColumn(2)
-				.setCellRenderer(new TableCellRendererSearchAResults());
-		tableResults.getColumnModel().getColumn(3)
-				.setCellRenderer(new TableCellRendererSearchAResults());
-		tableResults.getColumnModel().getColumn(4)
-				.setCellRenderer(new TableCellRendererSearchAResults());
-		tableResults.getColumnModel().getColumn(5)
-				.setCellRenderer(new TableCellRendererSearchAResults());
-		tableResults.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-		tableResultsScrollPane = new JScrollPane(tableResults);
-
+		
 		panelSearchInput = new JPanel(new BorderLayout());
 		panelSearchInput.add(comboBoxConstraints, BorderLayout.WEST);
 		panelSearchInput.add(comboBoxSearchField, BorderLayout.CENTER);
@@ -184,21 +134,9 @@ public class CardSearchA extends Card implements ActionListener,
 		panelSearch.add(panelFilterOptions, new GridBagConstraints(1, 1, 1, 1,
 				0.0, 0.0, GridBagConstraints.PAGE_START,
 				GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
-		panelSearch.add(progressBar, new GridBagConstraints(0, 2, 2, 1, 1.0,
-				0.0, GridBagConstraints.PAGE_START,
-				GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
-
-		panelResults = new JPanel(new BorderLayout());
-		panelResults.setBorder(BorderFactory.createTitledBorder(
-				BorderFactory.createEtchedBorder(),
-				WizardProperties.getText("CARD_SEARCH_A_TEXT_RESULTS")));
-		panelResults.add(tableResultsScrollPane, BorderLayout.CENTER);
 
 		setLayout(new BorderLayout());
-		add(panelSearch, BorderLayout.NORTH);
-		add(panelResults, BorderLayout.CENTER);
-
-		search = null;
+		add(panelSearch, BorderLayout.CENTER);
 	
 	}
 
@@ -207,13 +145,11 @@ public class CardSearchA extends Card implements ActionListener,
 	 * @see org.sbml.squeezer.sabiork.wizard.gui.Card#performBeforeShowing()
 	 */
 	public void performBeforeShowing() {
-		dialog.setButtonState(ButtonState.NEXT_DISABLED);
+		dialog.setButtonState(ButtonState.NEXT_BACK_ENABLED);
 		comboBoxConstraints.setSelectedItem(SABIORK.QueryField.PATHWAY);
 		comboBoxSearchField.setText("");
-		setSearchState(SearchState.RESET);
-		tableSearchTermsModel.loadSettings();
-		startSearch();
-	};
+		tableSearchTermsModelA.loadSettings();
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -228,50 +164,9 @@ public class CardSearchA extends Card implements ActionListener,
 	 * @see org.sbml.squeezer.sabiork.wizard.gui.Card#getNextCardID()
 	 */
 	public CardID getNextCardID() {
-		return CardID.SUMMARY_A;
+		return CardID.SEARCHRESULTS_A;
 	}
 
-	/**
-	 * Adds all selected {@link KineticLawImporter} to the model if they are
-	 * importable.
-	 */
-	private void setSelectedKineticLawImporters() {
-		List<KineticLawImporter> selectedKineticLawImporters = new ArrayList<KineticLawImporter>();
-		for (SearchAResult searchAResult : tableResultsModel
-				.getSearchAResults()) {
-			KineticLawImporter selectedKineticLawImporter = searchAResult
-					.getSelectedKineticLawImporter();
-			if (selectedKineticLawImporter != null) {
-				selectedKineticLawImporters.add(selectedKineticLawImporter);
-			}
-		}
-		model.setSelectedKineticLawImporters(selectedKineticLawImporters);
-	}
-
-	/**
-	 * Sets different properties of the interface according to the current state
-	 * of the search.
-	 * 
-	 * @param searchState
-	 */
-	private void setSearchState(SearchState searchState) {
-		switch (searchState) {
-		case START:
-			dialog.setButtonState(ButtonState.NEXT_DISABLED);
-			progressBar.setValue(0);
-			progressBar.setIndeterminate(true);
-			progressBar.setStringPainted(false);
-			tableResultsModel.clear();
-			break;
-		case RESET:
-			progressBar.setValue(0);
-			progressBar.setIndeterminate(false);
-			progressBar.setStringPainted(false);
-			tableResultsModel.clear();
-			tableSearchTermsModel.clear();
-			break;
-		}
-	}
 
 	/**
 	 * Adds the current search term to the table if it is not empty.
@@ -280,25 +175,10 @@ public class CardSearchA extends Card implements ActionListener,
 		String currentTextTrimmed = comboBoxSearchField.getText().trim();
 		if (!currentTextTrimmed.isEmpty()
 				&& comboBoxConstraintsModel.isQueryFieldSelected()) {
-			tableSearchTermsModel.add(new ValuePair<SABIORK.QueryField, String>(
+			tableSearchTermsModelA.add(new ValuePair<SABIORK.QueryField, String>(
 					comboBoxConstraintsModel.getSelectedQueryField(),
 					currentTextTrimmed));
 		}
-	}
-
-	/**
-	 * Starts a new search.
-	 */
-	private void startSearch() {
-		if (search != null && search.isStarted()) {
-			search.cancel();
-		}
-		String searchTermsQuery = tableSearchTermsModel.getSearchTermsQuery();
-		String filterOptionsQuery = panelFilterOptions.getFilterOptionsQuery();
-		setSearchState(SearchState.START);
-		search = new Search(searchTermsQuery, filterOptionsQuery);
-		search.addPropertyChangeListener(this);
-		search.start();
 	}
 
 	/*
@@ -309,7 +189,7 @@ public class CardSearchA extends Card implements ActionListener,
 		if (e.getSource().equals(buttonAdd)) {
 			if (!comboBoxSearchField.getText().trim().isEmpty()) {
 				addCurrentSearchTerm();
-				startSearch();
+				dialog.setButtonState(ButtonState.NEXT_BACK_ENABLED);
 			}
 		}
 		if (e.getSource().equals(comboBoxConstraints)) {
@@ -323,35 +203,16 @@ public class CardSearchA extends Card implements ActionListener,
 
 	/*
 	 * (non-Javadoc)
-	 * @see java.beans.PropertyChangeListener#propertyChange(java.beans.PropertyChangeEvent)
-	 */
-	public void propertyChange(PropertyChangeEvent e) {
-		if (e.getSource().equals(search)
-				&& e.getPropertyName().equals("progress")) {
-			progressBar.setValue((Integer) e.getNewValue());
-		}
-		if (e.getSource().equals(model)
-				&& e.getPropertyName().equals("selectedKineticLawImporters")) {
-			if (model.hasSelectedKineticLawImporters()) {
-				dialog.setButtonState(ButtonState.NEXT_ENABLED);
-			} else {
-				dialog.setButtonState(ButtonState.NEXT_DISABLED);
-			}
-		}
-	}
-
-	/*
-	 * (non-Javadoc)
 	 * @see javax.swing.event.TableModelListener#tableChanged(javax.swing.event.TableModelEvent)
 	 */
 	public void tableChanged(TableModelEvent e) {
-		if (e.getSource().equals(tableSearchTermsModel)) {
+		if (e.getSource().equals(tableSearchTermsModelA)) {
 			if (e.getType() == TableModelEvent.UPDATE) {
 				int row = e.getFirstRow();
 				int column = e.getColumn();
 				if (column == 2) {
-					tableSearchTermsModel.remove(row);
-					startSearch();
+					tableSearchTermsModelA.remove(row);
+					dialog.setButtonState(ButtonState.NEXT_BACK_ENABLED);
 				}
 			}
 		}
@@ -363,8 +224,7 @@ public class CardSearchA extends Card implements ActionListener,
 	 */
 	public void performAfterPressingBack() {
 		panelFilterOptions.saveSettings();
-		tableSearchTermsModel.saveSettings();
-		search.cancel();
+		tableSearchTermsModelA.saveSettings();
 	}
 	
 	/*
@@ -373,8 +233,7 @@ public class CardSearchA extends Card implements ActionListener,
 	 */
 	public void performAfterCancel() {
 		panelFilterOptions.saveSettings();
-		tableSearchTermsModel.saveSettings();
-		search.cancel();
+		tableSearchTermsModelA.saveSettings();
 	}
 	
 	/*
@@ -383,144 +242,7 @@ public class CardSearchA extends Card implements ActionListener,
 	 */
 	public void performAfterNext() {
 		panelFilterOptions.saveSettings();
-		tableSearchTermsModel.saveSettings();
-	}
-
-	/**
-	 * A class to perform the search.
-	 * 
-	 * @author Matthias Rall
-	 * 
-	 */
-	private class Search extends SwingWorker<Void, SearchAResult> {
-
-		private String searchTermsQuery;
-		private String filterOptionsQuery;
-
-		public Search(String searchTermsQuery, String filterOptionsQuery) {
-			this.searchTermsQuery = searchTermsQuery;
-			this.filterOptionsQuery = filterOptionsQuery;
-		}
-
-		/**
-		 * Checks if this search is already in progress.
-		 * 
-		 * @return {@code true} if this search is already in progress,
-		 *         {@code false} otherwise
-		 */
-		public boolean isStarted() {
-			return (getState() == StateValue.STARTED);
-		}
-
-		/**
-		 * Starts this search.
-		 */
-		public void start() {
-			execute();
-		}
-
-		/**
-		 * Cancels this search.
-		 */
-		public void cancel() {
-			cancel(true);
-		}
-
-		/**
-		 * Performs the automatic search process.
-		 */
-		protected Void doInBackground() {
-			List<Reaction> selectedReactions = model.getSelectedReactions();
-			int selectedReactionCount = selectedReactions.size();
-			for (int i = 0; i < selectedReactionCount; i++) {
-				Reaction selectedReaction = selectedReactions.get(i);
-				List<KineticLawImporter> possibleKineticLawImporters = new ArrayList<KineticLawImporter>();
-				List<KineticLawImporter> impossibleKineticLawImporters = new ArrayList<KineticLawImporter>();
-				List<KineticLawImporter> totalKineticLawImporters = new ArrayList<KineticLawImporter>();
-				String keggReactionID = model
-						.getKeggReactionID(selectedReaction);
-				if (!keggReactionID.isEmpty()) {
-					StringBuilder query = new StringBuilder(
-							SABIORK.QueryField.KEGG_REACTION_ID + ":"
-									+ keggReactionID);
-					if (!searchTermsQuery.isEmpty()) {
-						query.append(" AND " + searchTermsQuery);
-					}
-					query.append(filterOptionsQuery);
-					List<KineticLaw> kineticLaws = new ArrayList<KineticLaw>();
-					try {
-						kineticLaws = SABIORK.getKineticLaws(query.toString());
-					} catch (WebServiceConnectException e) {
-						JDialogWizard.showErrorDialog(e);
-						e.printStackTrace();
-					} catch (WebServiceResponseException e) {
-						JDialogWizard.showErrorDialog(e);
-						e.printStackTrace();
-					} catch (IOException e) {
-						e.printStackTrace();
-					} catch (XMLStreamException e) {
-						e.printStackTrace();
-					}
-					for (KineticLaw kineticLaw : kineticLaws) {
-						if (kineticLaw != null) {
-							KineticLawImporter kineticLawImporter = new KineticLawImporter(
-									kineticLaw, selectedReaction);
-							totalKineticLawImporters.add(kineticLawImporter);
-							if (kineticLawImporter.isImportableKineticLaw()) {
-								possibleKineticLawImporters
-										.add(kineticLawImporter);
-							} else {
-								impossibleKineticLawImporters
-										.add(kineticLawImporter);
-							}
-						}
-					}
-				}
-				if (!isCancelled()) {
-					publish(tableResultsModel.createSearchAResult(
-							selectedReaction, possibleKineticLawImporters,
-							impossibleKineticLawImporters,
-							totalKineticLawImporters));
-					setProgress(Math.round(Float.valueOf(i + 1)
-							/ selectedReactionCount * 100));
-				} else {
-					break;
-				}
-			}
-			return null;
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * @see javax.swing.SwingWorker#process(java.util.List)
-		 */
-		protected void process(List<SearchAResult> chunks) {
-			progressBar.setIndeterminate(false);
-			progressBar.setStringPainted(true);
-			if (!isCancelled()) {
-				for (SearchAResult searchAResult : chunks) {
-					tableResultsModel.add(searchAResult);
-				}
-			}
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * @see javax.swing.SwingWorker#done()
-		 */
-		protected void done() {
-			try {
-				progressBar.setIndeterminate(false);
-				setSelectedKineticLawImporters();
-				get();
-			} catch (CancellationException e) {
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			} catch (ExecutionException e) {
-				e.printStackTrace();
-			}
-		}
-
+		tableSearchTermsModelA.saveSettings();
 	}
 
 	/* (non-Javadoc)
@@ -528,9 +250,8 @@ public class CardSearchA extends Card implements ActionListener,
 	 */
 	public void stateChanged(ChangeEvent e) {
 		if ((!panelFilterOptions.isUserConfiguration())) {
-			startSearch();
 			panelFilterOptions.saveSettings();
-			tableSearchTermsModel.saveSettings();
+			tableSearchTermsModelA.saveSettings();
 		}	
 	}
 
