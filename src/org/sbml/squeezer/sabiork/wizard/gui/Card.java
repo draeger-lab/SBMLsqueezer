@@ -29,6 +29,7 @@ import org.sbml.squeezer.sabiork.wizard.gui.JDialogWizard.CardID;
 
 import org.sbml.squeezer.sabiork.wizard.model.WizardModel;
 
+
 /**
  * The abstract base class for all panels to be displayed in the SABIO-RK
  * wizard.
@@ -45,6 +46,12 @@ public abstract class Card extends JPanel {
 
 	protected JDialogWizard dialog;
 	protected WizardModel model;
+	protected static TableModelSearchTerms tableSearchTermsModelM;
+	protected static TableModelSearchTerms tableSearchTermsModelA;
+	protected static JPanelFilterOptions panelFilterOptions;
+	protected static ComboBoxModelSearchItems comboBoxSearchItemsModel;
+	protected JComboBoxSearchField comboBoxSearchField;
+	
 
 	/**
 	 * 
@@ -93,5 +100,5 @@ public abstract class Card extends JPanel {
 	 */
 	public void performAfterNext() {
 	}
-
+	
 }

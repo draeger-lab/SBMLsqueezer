@@ -87,7 +87,7 @@ public class JDialogWizard extends JDialog implements ActionListener, WindowList
 	 * @version $Rev$
 	 */
 	public enum ButtonState {
-		START, NEXT_ENABLED, NEXT_DISABLED, FINISH;
+		START, NEXT_ENABLED, NEXT_DISABLED, FINISH, NEXT_BACK_ENABLED;
 	}
 
 	/**
@@ -96,7 +96,7 @@ public class JDialogWizard extends JDialog implements ActionListener, WindowList
 	 * @version $Rev$
 	 */
 	public enum CardID {
-		NOT_AVAILABLE, CONFIRM_DIALOG, MATCHING, METHOD, REACTIONS_A, REACTIONS_M, SEARCH_A, SEARCH_M, SUMMARY_A, SUMMARY_M;
+		NOT_AVAILABLE, CONFIRM_DIALOG, MATCHING, METHOD, REACTIONS_A, REACTIONS_M, SEARCH_A, SEARCH_M, SUMMARY_A, SUMMARY_M, SEARCHRESULTS_A, SEARCHRESULTS_M;
 	}
 	
 	/**
@@ -227,6 +227,8 @@ public class JDialogWizard extends JDialog implements ActionListener, WindowList
 		try {
 			cards.put(CardID.SEARCH_A, new CardSearchA(this, model));
 			cards.put(CardID.SEARCH_M, new CardSearchM(this, model));
+			cards.put(CardID.SEARCHRESULTS_A, new CardSearchResultsA(this, model));
+			cards.put(CardID.SEARCHRESULTS_M, new CardSearchResultsM(this, model));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -377,9 +379,15 @@ public class JDialogWizard extends JDialog implements ActionListener, WindowList
 			buttonNextFinish.setEnabled(false);
 			break;
 		case NEXT_ENABLED:
-			//buttonBack.setVisible(true);
+			buttonBack.setVisible(false);
 			buttonNextFinish.setText(WizardProperties
 					.getText("JDIALOG_WIZARD_TEXT_BUTTON_NEXT"));
+			buttonNextFinish.setEnabled(true);
+			break;
+		case NEXT_BACK_ENABLED:
+			buttonBack.setVisible(true);
+			buttonNextFinish.setText(WizardProperties
+			.getText("JDIALOG_WIZARD_TEXT_BUTTON_NEXT"));
 			buttonNextFinish.setEnabled(true);
 			break;
 		case NEXT_DISABLED:
@@ -447,7 +455,7 @@ public class JDialogWizard extends JDialog implements ActionListener, WindowList
 				default:
 					break;
 			}
-		} catch (Throwable t) {}
+		} catch (Throwable t) {System.out.println(t.getMessage());}
 	}
 
 	/* (non-Javadoc)
