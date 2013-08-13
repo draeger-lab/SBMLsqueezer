@@ -48,8 +48,6 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
 import javax.xml.stream.XMLStreamException;
 
 import org.sbml.jsbml.KineticLaw;
@@ -395,15 +393,6 @@ public class CardSearchResultsM extends Card implements ActionListener,
 		public void cancel() {
 			finalSearchState = SearchState.CANCEL;
 			cancel(true);
-		}
-		
-		/**
-		 * Cancels this search and resets different properties of the interface.
-		 */
-		public void reset() {
-			finalSearchState = SearchState.RESET;
-			cancel(true);
-			setProgress(0);
 		}
 		
 		/*
