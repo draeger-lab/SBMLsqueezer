@@ -16,6 +16,7 @@
 
 \usepackage{UT}
 
+\usepackage{xspace}
 % booktabs is for toprule, bottomrule, etc. in tables.
 \usepackage{booktabs}
 \usepackage{multirow}
@@ -27,6 +28,9 @@
 %\usepackage[font=small,totoc]{idxlayout}
 
 \usepackage[printonlyused]{acronym}
+\usepackage{makeidx}
+\input{tex/macros.tex}
+\input{tex/hyphenation.tex}
 
 \hypersetup{
 %  bookmarks={true},
@@ -64,7 +68,7 @@
 
 \titlehead{\centering\includegraphics[width=0.75\textwidth]{img/UT_WBMW_mathnat_4C}}
 \subject{User's Guide}
-\title{\includegraphics[width=.75\textwidth]{img/SBMLsqueezer_Banner.pdf}}
+\title{\includegraphics[width=.75\textwidth]{img/LOGO}}
 %SBMLsqueezer~2}
 \subtitle{A context-based generator of kinetic equations}
 
@@ -78,15 +82,13 @@ Andreas Zell}
 \date{\today}
 \publishers{Center for Bioinformatics Tuebingen (ZBIT)}
 
-\usepackage{makeidx}
+
 \makeindex
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Beginn des Dokumentes         %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\input{tex/macros.tex}
-\input{tex/hyphenation.tex}
 \begin{document}
 
 % 
@@ -109,6 +111,7 @@ Andreas Zell}
 \cleardoublepage		% Erzeugt neue Leerseite. Muss ggf. auskommentiert werden.
 \pagenumbering{arabic}		% Ab hier mit arabischen Zahlen numerieren
 \include{tex/01_docuBody}
+
 % 
 % 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -119,7 +122,7 @@ Andreas Zell}
 % \include{tex/01_docuBody}
 
 
-
+% 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Das Literaturverzeichnis      %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
