@@ -2,7 +2,7 @@
  * $Id$
  * $URL$
  * ---------------------------------------------------------------------
- * This file is part of SBMLsqueezer, a Java program that creates rate 
+ * This file is part of SBMLsqueezer, a Java program that creates rate
  * equations for reactions in SBML files (http://sbml.org).
  *
  * Copyright (C) 2006-2013 by the University of Tuebingen, Germany.
@@ -88,12 +88,12 @@ public class RandomOrderMechanism extends GeneralizedMassAction implements
 		SpeciesReference specRefP1 = reaction.getProduct(0), specRefP2 = null;
 
 		if (reaction.getReactantCount() == 2) {
-			specRefR2 = (SpeciesReference) reaction.getReactant(1);
+			specRefR2 = reaction.getReactant(1);
 		} else if (specRefR1.getStoichiometry() == 2d) {
 			specRefR2 = specRefR1;
 		} else {
 			throw new RateLawNotApplicableException(MessageFormat.format(
-				WARNINGS.getString("RANDOM_ORDER_NUM_OF_REACTANTS_MUST_EQUAL"), 
+				WARNINGS.getString("RANDOM_ORDER_NUM_OF_REACTANTS_MUST_EQUAL"),
 				reaction.getId()));
 		}
 
@@ -134,17 +134,18 @@ public class RandomOrderMechanism extends GeneralizedMassAction implements
 			}
 			break;
 		case 2:
-			specRefP2 = (SpeciesReference) reaction.getProduct(1);
+			specRefP2 = reaction.getProduct(1);
 			break;
 		default:
 			exception = true;
 			break;
 		}
-		if (exception && reaction.getReversible())
-			throw new RateLawNotApplicableException(
+		if (exception && reaction.getReversible()) {
+      throw new RateLawNotApplicableException(
 					MessageFormat.format(
-							WARNINGS.getString("RANDOM_ORDER_NUM_OF_PRODUCTS_MUST_EQUAL"), 
+							WARNINGS.getString("RANDOM_ORDER_NUM_OF_PRODUCTS_MUST_EQUAL"),
 							reaction.getId()));
+    }
 		
 		/*
 		 * If modE is empty there was no enzyme sined to the reaction. Thus we
@@ -308,7 +309,7 @@ public class RandomOrderMechanism extends GeneralizedMassAction implements
     ASTNode one = new ASTNode(1, this);
     SBMLtools.setUnits(one, Unit.Kind.DIMENSIONLESS);
 		ASTNode denominator = ASTNode.sum(
-			one, 
+			one,
 			ASTNode.frac(speciesTerm(speciesR1), new ASTNode(p_kIr1, this)),
 			ASTNode.frac(speciesTerm(speciesR2), new ASTNode(p_kIr2, this)),
 			ASTNode.frac(speciesTerm(speciesP1), new ASTNode(p_kIp1, this)),

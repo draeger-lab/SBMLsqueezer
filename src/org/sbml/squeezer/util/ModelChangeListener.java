@@ -55,7 +55,7 @@ public class ModelChangeListener implements TreeNodeChangeListener {
 	/* (non-Javadoc)
 	 * @see org.sbml.jsbml.util.TreeNodeChangeListener#nodeAdded(javax.swing.tree.TreeNode)
 	 */
-	//@Override
+	@Override
 	public void nodeAdded(TreeNode node) {
 		logger.log(Level.FINE, "[ADD] " + node.toString());
 	}
@@ -63,7 +63,7 @@ public class ModelChangeListener implements TreeNodeChangeListener {
 	/* (non-Javadoc)
 	 * @see java.beans.PropertyChangeListener#propertyChange(java.beans.PropertyChangeEvent)
 	 */
-	//@Override
+	@Override
 	public void propertyChange(PropertyChangeEvent event) {
 		logger.log(Level.FINE, "[CHG] " + event.toString());    
 	}
@@ -71,7 +71,7 @@ public class ModelChangeListener implements TreeNodeChangeListener {
 	/* (non-Javadoc)
 	 * @see org.sbml.jsbml.util.TreeNodeChangeListener#nodeRemoved(org.sbml.jsbml.util.TreeNodeRemovedEvent)
 	 */
-	//@Override
+	@Override
 	public void nodeRemoved(TreeNodeRemovedEvent evt) {
 		TreeNode node = evt.getSource();
 

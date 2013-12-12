@@ -2,7 +2,7 @@
  * $Id$
  * $URL$
  * ---------------------------------------------------------------------
- * This file is part of SBMLsqueezer, a Java program that creates rate 
+ * This file is part of SBMLsqueezer, a Java program that creates rate
  * equations for reactions in SBML files (http://sbml.org).
  *
  * Copyright (C) 2006-2013 by the University of Tuebingen, Germany.
@@ -82,18 +82,22 @@ public class IrrevNonModulatedNonInteractingEnzymes extends BasicKineticLaw
 	/* (non-Javadoc)
 	 * @see org.sbml.squeezer.kinetics.BasicKineticLaw#createKineticEquation(java.util.List, java.util.List, java.util.List, java.util.List)
 	 */
-	ASTNode createKineticEquation(List<String> modE, List<String> modActi,
+	@Override
+  ASTNode createKineticEquation(List<String> modE, List<String> modActi,
 			List<String> modInhib, List<String> modCat)
 			throws RateLawNotApplicableException {
-		if ((modActi.size() > 0) || (modInhib.size() > 0))
-			throw new RateLawNotApplicableException(
+		if ((modActi.size() > 0) || (modInhib.size() > 0)) {
+      throw new RateLawNotApplicableException(
 					WARNINGS.getString("RATE_LAW_CAN_ONLY_APPLIED_TO_NON_MODULATED_REACTIONS"));
-		if ((modCat.size() > 0))
-			throw new RateLawNotApplicableException(
+    }
+		if ((modCat.size() > 0)) {
+      throw new RateLawNotApplicableException(
 					WARNINGS.getString("RATE_LAW_CAN_ONLY_APPLIED_TO_ENZYME_CATALYZED_REACTIONS"));
-		if (getParentSBMLObject().getReversible())
-			throw new RateLawNotApplicableException(
+    }
+		if (getParentSBMLObject().getReversible()) {
+      throw new RateLawNotApplicableException(
 					WARNINGS.getString("RATE_LAW_CAN_ONLY_APPLIED_TO_IRREVERSIBLE_REACTIONS"));
+    }
 		numOfEnzymes = modE.size();
 		Reaction reaction = getParentSBMLObject();
 		ASTNode enzymes[] = new ASTNode[Math.max(1, modE.size())];
@@ -117,7 +121,7 @@ public class IrrevNonModulatedNonInteractingEnzymes extends BasicKineticLaw
 				numerator = ASTNode.times(numerator, ASTNode.pow(ASTNode.frac(
 						speciesTerm(si), new ASTNode(p_kM, this)), stoichiometryTerm(si)));
 
-				// one must have the same unit as frac: speciesTerm (SubstancePerSizeOrSubstance) 
+				// one must have the same unit as frac: speciesTerm (SubstancePerSizeOrSubstance)
 				// divided by p_kM (SubstancePerSizeOrSubstance) = dimensionless
 				ASTNode one = new ASTNode(1, this);
 				SBMLtools.setUnits(one, Unit.Kind.DIMENSIONLESS);
@@ -151,7 +155,8 @@ public class IrrevNonModulatedNonInteractingEnzymes extends BasicKineticLaw
 	/* (non-Javadoc)
 	 * @see org.sbml.squeezer.kinetics.BasicKineticLaw#getSimpleName()
 	 */
-	public String getSimpleName() {
+	@Override
+  public String getSimpleName() {
 		return MESSAGES.getString("IRREV_NON_MODULATED_NON_INTERACTING_ENZYMES_SIMPLE_NAME");
 	}
 

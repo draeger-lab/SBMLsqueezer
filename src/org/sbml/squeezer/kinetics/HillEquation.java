@@ -2,7 +2,7 @@
  * $Id$
  * $URL$
  * ---------------------------------------------------------------------
- * This file is part of SBMLsqueezer, a Java program that creates rate 
+ * This file is part of SBMLsqueezer, a Java program that creates rate
  * equations for reactions in SBML files (http://sbml.org).
  *
  * Copyright (C) 2006-2013 by the University of Tuebingen, Germany.
@@ -31,6 +31,7 @@ import org.sbml.jsbml.LocalParameter;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBO;
 import org.sbml.jsbml.Species;
+import org.sbml.jsbml.SpeciesReference;
 import org.sbml.jsbml.Unit;
 import org.sbml.squeezer.RateLawNotApplicableException;
 import org.sbml.squeezer.util.Bundles;
@@ -73,7 +74,8 @@ public class HillEquation extends BasicKineticLaw implements
 	/* (non-Javadoc)
 	 * @see org.sbml.squeezer.kinetics.BasicKineticLaw#createKineticEquation(java.util.List, java.util.List, java.util.List, java.util.List)
 	 */
-	ASTNode createKineticEquation(List<String> enzymes,
+	@Override
+  ASTNode createKineticEquation(List<String> enzymes,
 			List<String> activators, List<String> inhibitors,
 			List<String> nonEnzymeCatalysts)
 			throws RateLawNotApplicableException {
@@ -88,27 +90,29 @@ public class HillEquation extends BasicKineticLaw implements
 		for (int enzymeNum = 0; enzymeNum < rates.length; enzymeNum++) {
 			String enzyme = enzymes.size() == 0 ? null : enzymes.get(enzymeNum);
 			// TODO: Consider that the reactant might be null or that its SBO term represents an empty set!
-			Species reactant = r.getReactant(0).getSpeciesInstance();
+			SpeciesReference substrate = r.getReactant(0);
+			Species reactant = substrate != null ? substrate.getSpeciesInstance() : null;
 			LocalParameter kSreactant = parameterFactory.parameterKS(reactant, enzyme);
 			LocalParameter hillCoeff = parameterFactory.parameterHillCoefficient(enzyme);
-
+			
 			rates[enzymeNum] = new ASTNode(parameterFactory.parameterKcatOrVmax(enzyme, true), this);
 			if (enzyme != null) {
-				rates[enzymeNum].multiplyWith(speciesTerm(enzyme));
+			  rates[enzymeNum].multiplyWith(speciesTerm(enzyme));
 			}
 
-			ASTNode specTerm = speciesTerm(reactant);
+			ASTNode specTerm = reactant != null ? speciesTerm(reactant) : new ASTNode(getParent());
 			ASTNode denominator = null;
 
 			if (r.getReversible()) {
+			  // TODO: Product might be null or empty set
 				Species product = r.getProduct(0).getSpeciesInstance();
 				ASTNode prodTerm = new ASTNode(1, this);
 				SBMLtools.setUnits(prodTerm, Unit.Kind.DIMENSIONLESS);
 				prodTerm.minus(
 					ASTNode.frac(
-						speciesTerm(product), 
+						speciesTerm(product),
 					  ASTNode.times(
-					  	  new ASTNode(parameterFactory.parameterEquilibriumConstant(), this),
+					  	  new ASTNode(parameterFactory.parameterEquilibriumConstant(r), this),
 								specTerm.clone())
 						)
 				);
@@ -132,8 +136,10 @@ public class HillEquation extends BasicKineticLaw implements
 			} else {
 				denominator = ASTNode.pow(new ASTNode(kSreactant, this),
 						new ASTNode(hillCoeff, this));
-				rates[enzymeNum].multiplyWith(ASTNode.pow(
-						speciesTerm(reactant), new ASTNode(hillCoeff, this)));
+				if (reactant != null) {
+				  rates[enzymeNum].multiplyWith(ASTNode.pow(
+				    speciesTerm(reactant), new ASTNode(hillCoeff, this)));
+				}
 			}
 
 			if (activators.size() + inhibitors.size() == 1) {
@@ -172,8 +178,9 @@ public class HillEquation extends BasicKineticLaw implements
 	/* (non-Javadoc)
 	 * @see org.sbml.squeezer.kinetics.BasicKineticLaw#getSimpleName()
 	 */
-	public String getSimpleName() {
-		if (!isSetSBOTerm()){
+	@Override
+  public String getSimpleName() {
+		if (!isSetSBOTerm()) {
 			return MESSAGES.getString("GENERALIZED_HILL_EQUATION_SIMPLE_NAME");
 		}
 		return SBO.getTerm(getSBOTerm()).getName().replace("\\,", ",");

@@ -2,7 +2,7 @@
  * $Id$
  * $URL$
  * ---------------------------------------------------------------------
- * This file is part of SBMLsqueezer, a Java program that creates rate 
+ * This file is part of SBMLsqueezer, a Java program that creates rate
  * equations for reactions in SBML files (http://sbml.org).
  *
  * Copyright (C) 2006-2013 by the University of Tuebingen, Germany.
@@ -48,7 +48,7 @@ public class ZerothOrderForwardGMAK extends GeneralizedMassAction implements
 		InterfaceZeroProducts, InterfaceModulatedKinetics {
 	
 	public static final transient ResourceBundle MESSAGES = ResourceManager.getBundle(Bundles.MESSAGES);
-
+ 
 	/**
 	 * Generated serial version identifier.
 	 */
@@ -85,7 +85,8 @@ public class ZerothOrderForwardGMAK extends GeneralizedMassAction implements
 	/* (non-Javadoc)
 	 * @see org.sbml.squeezer.kinetics.GeneralizedMassAction#getSimpleName()
 	 */
-	public String getSimpleName() {
+	@Override
+  public String getSimpleName() {
 		return MESSAGES.getString("ZEROTH_ORDER_FORWARD_GMAK_SIMPLE_NAME");
 	}
 

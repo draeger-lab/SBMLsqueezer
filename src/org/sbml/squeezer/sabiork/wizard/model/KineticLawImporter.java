@@ -542,7 +542,7 @@ public class KineticLawImporter {
 		CallableSBase oldReference, CallableSBase newReference) {
 		if (node.isString()) {
 			CallableSBase variable = node.getVariable();
-			if(variable != null) {
+			if (variable != null) {
 				if (variable.equals(oldReference)) {
 					node.setName(newReference.getName());
 					node.setVariable(newReference);

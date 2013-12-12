@@ -35,7 +35,7 @@
   
   <!-- SBMLsqueezer -->
   
-  <entry key="CANT_READ_MODEL">A problem occurred while trying to read the model {0}</entry>
+  <entry key="CANT_READ_MODEL">A problem occurred while trying to read the model {0}.</entry>
   <entry key="SQUEEZE_ERROR">input: {0}, output: {1}</entry>
   <entry key="OUTPUT_ERROR">Could not write output to SBML.</entry>
   <entry key="FILE_CONTAINS_NO_MODEL">File contains no model. Nothing to do.</entry>

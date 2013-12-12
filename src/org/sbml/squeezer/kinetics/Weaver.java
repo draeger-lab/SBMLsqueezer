@@ -2,7 +2,7 @@
  * $Id$
  * $URL$
  * ---------------------------------------------------------------------
- * This file is part of SBMLsqueezer, a Java program that creates rate 
+ * This file is part of SBMLsqueezer, a Java program that creates rate
  * equations for reactions in SBML files (http://sbml.org).
  *
  * Copyright (C) 2006-2013 by the University of Tuebingen, Germany.
@@ -45,89 +45,93 @@ import de.zbit.util.ResourceManager;
  * @version $Rev$
  */
 public class Weaver extends AdditiveModelNonLinear implements
-		InterfaceGeneRegulatoryKinetics, InterfaceModulatedKinetics,
-		InterfaceIrreversibleKinetics, InterfaceReversibleKinetics {
-	
-	public static final transient ResourceBundle MESSAGES = ResourceManager.getBundle(Bundles.MESSAGES);
-
-	/**
-	 * Generated serial version identifier.
-	 */
-	private static final long serialVersionUID = 8438865854245165600L;
-
-	/**
-	 * @param parentReaction
-	 * @param typeParameters
-	 * @throws RateLawNotApplicableException
-	 */
-	public Weaver(Reaction parentReaction, Object... typeParameters)
-			throws RateLawNotApplicableException {
-		super(parentReaction, typeParameters);
-	}
-
-	@Override
-	ASTNode activation(ASTNode g) {
-		String rId = getParentSBMLObject().getId();
-		
-		ASTNode one1 = new ASTNode(1,this);
-		SBMLtools.setUnits(one1, Unit.Kind.DIMENSIONLESS);
-		
-		ASTNode one2 = new ASTNode(1,this);
-		SBMLtools.setUnits(one2, Unit.Kind.DIMENSIONLESS);
-		
-		if (g != null) {
-			
-			return ASTNode.frac(one1,
-				ASTNode.sum(
-					one2, 
-					ASTNode.exp(
-						ASTNode.sum(
-							ASTNode.times(
-								ASTNode.uMinus(this, parameterFactory.parameterSSystemAlpha(rId)),
-							  g
-							),
-							new ASTNode(parameterFactory.parameterSSystemBeta(rId), this)
-						)
-					)
-				)
-			);
-		}
-
-		return ASTNode.frac(one1,
-			ASTNode.sum(
-				one2,
-				ASTNode.exp(
-					ASTNode.sum(
-						ASTNode.uMinus(this, parameterFactory.parameterSSystemAlpha(rId)),
-						new ASTNode(parameterFactory.parameterSSystemBeta(rId), this)
-					)
-				)
-			)
-		);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.sbml.squeezer.kinetics.AdditiveModelLinear#b_i()
-	 */
-	@Override
-	ASTNode b_i() {
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.sbml.squeezer.kinetics.AdditiveModelNonLinear#getSimpleName()
-	 */
-	@Override
-	public String getSimpleName() {
-		return MESSAGES.getString("WEAVER_SIMPLE_NAME");
-	}
-
-	/* (non-Javadoc)
-	 * @see org.sbml.squeezer.kinetics.AdditiveModelLinear#v()
-	 */
-	@Override
-	ASTNode v() {
-		return null;
-	}
-
+InterfaceGeneRegulatoryKinetics, InterfaceModulatedKinetics,
+InterfaceIrreversibleKinetics, InterfaceReversibleKinetics,
+InterfaceZeroReactants, InterfaceZeroProducts {
+  
+  public static final transient ResourceBundle MESSAGES = ResourceManager.getBundle(Bundles.MESSAGES);
+  
+  /**
+   * Generated serial version identifier.
+   */
+  private static final long serialVersionUID = 8438865854245165600L;
+  
+  /**
+   * @param parentReaction
+   * @param typeParameters
+   * @throws RateLawNotApplicableException
+   */
+  public Weaver(Reaction parentReaction, Object... typeParameters)
+      throws RateLawNotApplicableException {
+    super(parentReaction, typeParameters);
+  }
+  
+  /* (non-Javadoc)
+   * @see org.sbml.squeezer.kinetics.AdditiveModelNonLinear#activation(org.sbml.jsbml.ASTNode)
+   */
+  @Override
+  ASTNode activation(ASTNode g) {
+    String rId = getParentSBMLObject().getId();
+    
+    ASTNode one1 = new ASTNode(1,this);
+    SBMLtools.setUnits(one1, Unit.Kind.DIMENSIONLESS);
+    
+    ASTNode one2 = new ASTNode(1,this);
+    SBMLtools.setUnits(one2, Unit.Kind.DIMENSIONLESS);
+    
+    if (g != null) {
+      
+      return ASTNode.frac(one1,
+        ASTNode.sum(
+          one2,
+          ASTNode.exp(
+            ASTNode.sum(
+              ASTNode.times(
+                ASTNode.uMinus(this, parameterFactory.parameterAlpha(rId)),
+                g
+                  ),
+                  new ASTNode(parameterFactory.parameterBeta(rId), this)
+                )
+              )
+            )
+          );
+    }
+    
+    return ASTNode.frac(one1,
+      ASTNode.sum(
+        one2,
+        ASTNode.exp(
+          ASTNode.sum(
+            ASTNode.uMinus(this, parameterFactory.parameterAlpha(rId)),
+            new ASTNode(parameterFactory.parameterBeta(rId), this)
+              )
+            )
+          )
+        );
+  }
+  
+  /* (non-Javadoc)
+   * @see org.sbml.squeezer.kinetics.AdditiveModelLinear#b_i()
+   */
+  @Override
+  ASTNode b_i() {
+    return null;
+  }
+  
+  /* (non-Javadoc)
+   * @see org.sbml.squeezer.kinetics.AdditiveModelNonLinear#getSimpleName()
+   */
+  @Override
+  public String getSimpleName() {
+    return MESSAGES.getString("WEAVER_SIMPLE_NAME");
+  }
+  
+  /* (non-Javadoc)
+   * @see org.sbml.squeezer.kinetics.AdditiveModelLinear#v()
+   */
+  @Override
+  ASTNode v() {
+    return null;
+  }
+  
 }

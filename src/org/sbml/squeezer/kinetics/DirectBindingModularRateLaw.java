@@ -2,7 +2,7 @@
  * $Id$
  * $URL$
  * ---------------------------------------------------------------------
- * This file is part of SBMLsqueezer, a Java program that creates rate 
+ * This file is part of SBMLsqueezer, a Java program that creates rate
  * equations for reactions in SBML files (http://sbml.org).
  *
  * Copyright (C) 2006-2013 by the University of Tuebingen, Germany.
@@ -78,10 +78,12 @@ public class DirectBindingModularRateLaw extends PowerLawModularRateLaw
 		ASTNode denominator = super.denominator(enzyme);
 		ASTNode forward = denominator(enzyme, true);
 		ASTNode backward = denominator(enzyme, false);
-		if (!forward.isUnknown())
-			denominator.plus(forward);
-		if (!backward.isUnknown())
-			denominator.plus(backward);
+		if (!forward.isUnknown()) {
+      denominator.plus(forward);
+    }
+		if (!backward.isUnknown()) {
+      denominator.plus(backward);
+    }
 		return denominator;
 	}
 

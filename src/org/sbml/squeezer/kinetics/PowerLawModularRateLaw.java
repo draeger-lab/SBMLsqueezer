@@ -2,7 +2,7 @@
  * $Id$
  * $URL$
  * ---------------------------------------------------------------------
- * This file is part of SBMLsqueezer, a Java program that creates rate 
+ * This file is part of SBMLsqueezer, a Java program that creates rate
  * equations for reactions in SBML files (http://sbml.org).
  *
  * Copyright (C) 2006-2013 by the University of Tuebingen, Germany.
@@ -81,7 +81,8 @@ public class PowerLawModularRateLaw extends BasicKineticLaw implements
 	/* (non-Javadoc)
 	 * @see org.sbml.squeezer.kinetics.BasicKineticLaw#createKineticEquation(java.util.List, java.util.List, java.util.List, java.util.List)
 	 */
-	ASTNode createKineticEquation(List<String> modE, List<String> modActi,
+	@Override
+  ASTNode createKineticEquation(List<String> modE, List<String> modActi,
 			List<String> modInhib, List<String> modCat)
 			throws RateLawNotApplicableException {
 		int i;
@@ -121,10 +122,11 @@ public class PowerLawModularRateLaw extends BasicKineticLaw implements
 						)
 					);
 				}
-				if (activation == null)
-					activation = curr;
-				else if (curr != null)
-					activation.multiplyWith(curr);
+				if (activation == null) {
+          activation = curr;
+        } else if (curr != null) {
+          activation.multiplyWith(curr);
+        }
 			} else if (SBO.isInhibitor(msr.getSBOTerm())) {
 				ASTNode curr = null;
 				if (SBO.isCompleteInhibitor(msr.getSBOTerm())) {
@@ -147,14 +149,15 @@ public class PowerLawModularRateLaw extends BasicKineticLaw implements
 						ASTNode.sum(
 							new ASTNode(rhoI, this),
 							ASTNode.diff(one, new ASTNode(rhoI, this))
-						), 
+						),
 						curr
 					);
 				}
-				if (inhibition == null)
-					inhibition = curr;
-				else if (curr != null)
-					inhibition.multiplyWith(curr);
+				if (inhibition == null) {
+          inhibition = curr;
+        } else if (curr != null) {
+          inhibition.multiplyWith(curr);
+        }
 			}
 		}
 		ASTNode numerator[] = new ASTNode[Math.max(1, modE.size())];
@@ -264,13 +267,12 @@ public class PowerLawModularRateLaw extends BasicKineticLaw implements
 			} else {
 				forward.multiplyWith(curr);
 			}
-			mu = parameterFactory.parameterStandardChemicalPotential(specRef
-					.getSpecies());
+			mu = parameterFactory.parameterStandardChemicalPotential(specRef.getSpecies());
 			ASTNode product = ASTNode.times(stoichiometryTerm(specRef), new ASTNode(mu, this));
 			if (exponent == null) {
 				exponent = product;
 			} else {
-				exponent.multiplyWith(product);
+				exponent.plus(product);
 			}
 		}
 		for (SpeciesReference specRef : r.getListOfProducts()) {
@@ -288,36 +290,40 @@ public class PowerLawModularRateLaw extends BasicKineticLaw implements
 			if (exponent == null) {
 				exponent = product;
 			} else {
-				exponent.multiplyWith(product);
+				exponent.plus(product);
 			}
 		}
 		if (exponent == null) {
 			exponent = new ASTNode(hr, this);
 		} else {
-			exponent.multiplyWith(new ASTNode(hr, this));
+			exponent = (new ASTNode(hr, this)).multiplyWith(exponent);
 		}
 		ASTNode two = new ASTNode(2, this);
 		SBMLtools.setUnits(two, Unit.Kind.DIMENSIONLESS);
 		exponent.divideBy(ASTNode.times(two, new ASTNode(R, this), new ASTNode(T, this)));
 		exponent = ASTNode.exp(exponent);
 		if (forward == null) {
-			UnitFactory unitFactory = new UnitFactory(this.getModel(), this.isBringToConcentration());
+			UnitFactory unitFactory = new UnitFactory(getModel(), isBringToConcentration());
 			
 			// TODO: correct?
 			// forward must have the same unit as backward:
 			// SubstancePerSizeOrSubstance^r.getListOfProducts().size()
 			forward = new ASTNode(1, this);
-			SBMLtools.setUnits(forward, unitFactory.unitSubstancePerSizeOrSubstance(
-					getModel().getSpecies(enzyme)).raiseByThePowerOf(r.getListOfProducts().size()));
+      SBMLtools.setUnits(
+        forward,
+        unitFactory.unitSubstancePerSizeOrSubstance(
+          getModel().getSpecies(enzyme), r.getListOfProducts().size()));
 		}
-		forward.divideBy(exponent);
-		forward.multiplyWith(numerator.clone()).divideBy(denominator.clone());
+		ASTNode swap = new ASTNode(ASTNode.Type.TIMES, this);
+		swap.addChild(parameterFactory.parameterCStandard(this));
+		swap.addChild(exponent);
+		forward.divideBy(swap);
 		if (r.getReversible()) {
-			backward.multiplyWith(exponent.clone());
-			backward.multiplyWith(numerator.clone()).divideBy(denominator.clone());
-			// TODO: Check units!
+			backward.multiplyWith(swap.clone());
 			forward.minus(backward);
 		}
+		forward.divideBy(denominator.clone());
+		forward = numerator.multiplyWith(forward);
 		return forward;
 	}
 
@@ -331,30 +337,31 @@ public class PowerLawModularRateLaw extends BasicKineticLaw implements
 	 * @return
 	 */
 	private ASTNode hal(String enzyme) {
+	  Reaction r = getParentSBMLObject();
 		LocalParameter hr = parameterFactory.parameterReactionCooperativity(enzyme);
-		LocalParameter keq = parameterFactory.parameterEquilibriumConstant();
+		LocalParameter keq = parameterFactory.parameterEquilibriumConstant(r);
 		LocalParameter kvr = parameterFactory.parameterVelocityConstant(enzyme);
 		ASTNode denominator = createRoot(enzyme);
 		ASTNode forward = ASTNode.times(
 				new ASTNode(kvr, this),
 				ASTNode.sqrt(ASTNode.pow(new ASTNode(keq, this), new ASTNode(hr, this))));
-		Reaction r = getParentSBMLObject();
 		for (SpeciesReference specRef : r.getListOfReactants()) {
-			forward.multiplyWith(ASTNode.pow(speciesTerm(specRef), 
-				ASTNode.times(stoichiometryTerm(specRef), new ASTNode(hr, this))));
+			forward.multiplyWith(
+			  ASTNode.pow(
+			    speciesTerm(specRef),
+			    ASTNode.times(stoichiometryTerm(specRef), new ASTNode(hr, this)
+			  ))
+			);
 		}
 		forward.divideBy(denominator);
 		if (r.getReversible()) {
-			ASTNode one = new ASTNode(1,this);
-			SBMLtools.setUnits(one, Unit.Kind.DIMENSIONLESS);
-			
-			ASTNode backward = ASTNode.times(
+			ASTNode backward = ASTNode.frac(
 					new ASTNode(kvr, this),
-					ASTNode.frac(one, ASTNode.sqrt(ASTNode.pow(this, keq, hr))));
+					ASTNode.sqrt(ASTNode.pow(this, keq, hr)));
 			for (SpeciesReference specRef : r.getListOfProducts()) {
 				backward.multiplyWith(
 					ASTNode.pow(
-						speciesTerm(specRef), 
+						speciesTerm(specRef),
 						ASTNode.times(stoichiometryTerm(specRef), new ASTNode(hr, this))
 				  )
 				);
@@ -440,7 +447,8 @@ public class PowerLawModularRateLaw extends BasicKineticLaw implements
 	/* (non-Javadoc)
 	 * @see org.sbml.squeezer.kinetics.BasicKineticLaw#getSimpleName()
 	 */
-	public String getSimpleName() {
+	@Override
+  public String getSimpleName() {
 		return MESSAGES.getString("POWER_MODULAR_RATE_LAW_SIMPLE_NAME");
 	}
 

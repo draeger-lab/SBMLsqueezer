@@ -204,27 +204,27 @@ public class TableModelSearchTerms extends AbstractTableModel {
 		SBPreferences prefs = SBPreferences
 				.getPreferencesFor(SABIORKOptions.class);
 		
-		if(prefs.containsKey(SABIORKOptions.CELLULAR_LOCATION)) {
+		if (prefs.containsKey(SABIORKOptions.CELLULAR_LOCATION)) {
 			String value = prefs.get(SABIORKOptions.CELLULAR_LOCATION);
-			if((value != null) && !(value.equals(""))) {
+			if ((value != null) && !(value.equals(""))) {
 				searchTerms.add(new ValuePair<SABIORK.QueryField, String>(SABIORK.QueryField.CELLULAR_LOCATION, value));
 			}
 		}
-		if(prefs.containsKey(SABIORKOptions.ORGANISM)) {
+		if (prefs.containsKey(SABIORKOptions.ORGANISM)) {
 			String value = prefs.get(SABIORKOptions.ORGANISM);
-			if((value != null) && !(value.equals(""))) {
+			if ((value != null) && !(value.equals(""))) {
 					searchTerms.add(new ValuePair<SABIORK.QueryField, String>(SABIORK.QueryField.ORGANISM, value));
 			}
 		}
-		if(prefs.containsKey(SABIORKOptions.PATHWAY)) {
+		if (prefs.containsKey(SABIORKOptions.PATHWAY)) {
 			String value = prefs.get(SABIORKOptions.PATHWAY);
-			if((value != null) && !(value.equals(""))) {
+			if ((value != null) && !(value.equals(""))) {
 					searchTerms.add(new ValuePair<SABIORK.QueryField, String>(SABIORK.QueryField.PATHWAY, value));
 			}
 		}
-		if(prefs.containsKey(SABIORKOptions.TISSUE)) {
+		if (prefs.containsKey(SABIORKOptions.TISSUE)) {
 			String value = prefs.get(SABIORKOptions.TISSUE);
-			if((value != null) && !(value.equals(""))) {
+			if ((value != null) && !(value.equals(""))) {
 					searchTerms.add(new ValuePair<SABIORK.QueryField, String>(SABIORK.QueryField.TISSUE, value));
 			}
 		}
@@ -243,34 +243,34 @@ public class TableModelSearchTerms extends AbstractTableModel {
 		boolean tissueSet = false;
 		
 		for(ValuePair<SABIORK.QueryField, String> vp: searchTerms) {
-			if(vp.getL().equals(SABIORK.QueryField.CELLULAR_LOCATION)) {
+			if (vp.getL().equals(SABIORK.QueryField.CELLULAR_LOCATION)) {
 				prefs.put(SABIORKOptions.CELLULAR_LOCATION, vp.getV());
 				cellularLocationSet = true;
 			}
-			if(vp.getL().equals(SABIORK.QueryField.ORGANISM)) {
+			if (vp.getL().equals(SABIORK.QueryField.ORGANISM)) {
 				prefs.put(SABIORKOptions.ORGANISM, vp.getV());
 				organismSet = true;
 			}
-			if(vp.getL().equals(SABIORK.QueryField.PATHWAY)) {
+			if (vp.getL().equals(SABIORK.QueryField.PATHWAY)) {
 				prefs.put(SABIORKOptions.PATHWAY, vp.getV());
 				pathwaySet = true;
 			}
-			if(vp.getL().equals(SABIORK.QueryField.TISSUE)) {
+			if (vp.getL().equals(SABIORK.QueryField.TISSUE)) {
 				prefs.put(SABIORKOptions.TISSUE, vp.getV());
 				tissueSet = true;
 			}
 		}
 		
-		if(!cellularLocationSet) {
+		if (!cellularLocationSet) {
 			prefs.put(SABIORKOptions.CELLULAR_LOCATION, "");
 		} 
-		if(!organismSet) {
+		if (!organismSet) {
 			prefs.put(SABIORKOptions.ORGANISM, "");
 		}
-		if(!pathwaySet) {
+		if (!pathwaySet) {
 			prefs.put(SABIORKOptions.PATHWAY, "");
 		}
-		if(!tissueSet) {
+		if (!tissueSet) {
 			prefs.put(SABIORKOptions.TISSUE, "");
 		}
 		

@@ -1,5 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<!-- 
+ * $Id$
+ * $URL$
+ *********************************************************************** 
+ * This file is part of SBMLsqueezer, a Java program that creates rate 
+ * equations for reactions in SBML files (http://sbml.org).
+ *
+ * Copyright (C) 2006-2013 by the University of Tuebingen, Germany.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see http://www.gnu.org/licenses/.
+ ***********************************************************************
+ *
+ * Version: $Rev$
+-->
 <properties>
   <comment>
 	This configuration describes the labels of options in SBMLsqueezer-related 
@@ -45,27 +70,27 @@
   <entry key="IGNORE_THESE_SPECIES_WHEN_CREATING_LAWS_TOOLTIP">Allows the user to ignore species that are annotated with the given compound identifiers when creating rate laws for reactions that involve these species. For instance, water or single protons can often be ignored when creating rate equations, hence simplifying the resulting rate equations. Preselected are the KEGG compound identifiers for water and protons.</entry>
 
   <entry key="MAX_NUMBER_OF_REACTANTS">Maximum number of reactants</entry>
-  <entry key="MAX_NUMBER_OF_REACTANTS_TOOLTIP">A simultaneous collition of a high number of reactants just by chance is very unlikely. Usually, these reactions proceed in a sequence of separate steps, each involving only very few molecules. Here you can specifiy the maximal number of reactants so that the reaction is still considered plausible. By default this value is set to 3. Note that this option is only available if you decide that this kind of warning should be displayed.</entry>
+  <entry key="MAX_NUMBER_OF_REACTANTS_TOOLTIP">A simultaneous collision of a high number of reactants just by chance is very unlikely. Usually, these reactions proceed in a sequence of separate steps, each involving only very few molecules. Here you can specifiy the maximal number of reactants so that the reaction is still considered plausible. By default this value is set to 3. Note that this option is only available if you decide that this kind of warning should be displayed.</entry>
   <entry key="NEW_PARAMETERS_GLOBAL">Add all new parameters globally</entry>
-  <entry key="NEW_PARAMETERS_GLOBAL_TOOLTIP">"If true (default), all parameters are stored globally for the whole model. Otherwise the majoirty of parameters are stored locally for the respective kinetic equation they belong to. Note that some parameters represent global properties of the entire model and should therefore be always stored in the global list of prameters. In this way, these parameters are valid within the entire model.</entry>
+  <entry key="NEW_PARAMETERS_GLOBAL_TOOLTIP">If true (default), all parameters are stored globally for the whole model. Otherwise the majoirty of parameters are stored locally for the respective kinetic equation they belong to. Note that some parameters represent global properties of the entire model and should therefore be always stored in the global list of prameters. In this way, these parameters are valid within the entire model.</entry>
   <entry key="POSSIBLE_ENZYME_ANTISENSE_RNA">asRNA</entry>
-  <entry key="POSSIBLE_ENZYME_ANTISENSE_RNA_TOOLTIP">If true, antisense RNA molecules are treated as enzymes when catalyzing a reaction. If false (default) antisense RNA molecule catalized reactions are not considered to be enzyme-catalyzed reactions.</entry>
+  <entry key="POSSIBLE_ENZYME_ANTISENSE_RNA_TOOLTIP">If true, antisense RNA molecules are treated as enzymes when catalyzing a reaction. If false (default) antisense RNA molecule catalyzed reactions are not considered to be enzyme-catalyzed reactions.</entry>
   <entry key="POSSIBLE_ENZYME_COMPLEX">Complex</entry>
-  <entry key="POSSIBLE_ENZYME_COMPLEX_TOOLTIP">If checked (default), complex molecules are treated as enzymes when catalyzing a reaction. Otherwise, complex catalized reactions are not considered to be enzyme reactions.</entry>
+  <entry key="POSSIBLE_ENZYME_COMPLEX_TOOLTIP">If checked (default), complex molecules are treated as enzymes when catalyzing a reaction. Otherwise, complex catalyzed reactions are not considered to be enzyme reactions.</entry>
   <entry key="POSSIBLE_ENZYME_GENERIC">Generic protein</entry>
   <entry key="POSSIBLE_ENZYME_GENERIC_TOOLTIP">If true (default), generic proteins are treated as enzymes when catalyzing a reaction. Otherwise, generic protein-catalyzed reactions are not considered to be enzyme reactions.</entry>
   <entry key="POSSIBLE_ENZYME_MACROMOLECULE">Macromolecule</entry>
   <entry key="POSSIBLE_ENZYME_MACROMOLECULE_TOOLTIP">If this options is selected, species that are annotated as macromolecules are treated as enzymes when catalyzing a reaction. Otherwise, macormolecule-catalyzed reactions are not considered enzyme reactions. If a modifier of a reaction that is annotated as an enzymatic catalyst refers to a macromolecule but this option is not active, SBMLsqueezer will reduce the modifier to a simple catalyst.</entry>
   <entry key="POSSIBLE_ENZYME_RECEPTOR">Receptor</entry>
-  <entry key="POSSIBLE_ENZYME_RECEPTOR_TOOLTIP">If true, receptors are treated as enzymes when catalyzing a reaction. If false (default), receptor catalized reactions are not considered to be enzyme reactions.</entry>
+  <entry key="POSSIBLE_ENZYME_RECEPTOR_TOOLTIP">If true, receptors are treated as enzymes when catalyzing a reaction. If false (default), receptor catalyzed reactions are not considered to be enzyme reactions.</entry>
   <entry key="POSSIBLE_ENZYME_RNA">RNA</entry>
   <entry key="POSSIBLE_ENZYME_RNA_TOOLTIP">If true (default), RNA is treated as an enzyme when catalyzing a reaction. Otherwise RNA-catalyzed reactions are not considered to be enzyme-catalyzed reactions.</entry>
   <entry key="POSSIBLE_ENZYME_SIMPLE_MOLECULE">Simple molecule</entry>
-  <entry key="POSSIBLE_ENZYME_SIMPLE_MOLECULE_TOOLTIP">If true, simple molecules are treated as enzymes when catalyzing a reaction. If false (default), simple molecule catalized reactions are not considered to be enzyme reactions.</entry>
+  <entry key="POSSIBLE_ENZYME_SIMPLE_MOLECULE_TOOLTIP">If true, simple molecules are treated as enzymes when catalyzing a reaction. If false (default), simple molecule catalyzed reactions are not considered to be enzyme reactions.</entry>
   <entry key="POSSIBLE_ENZYME_TRUNCATED">Truncated protein</entry>
-  <entry key="POSSIBLE_ENZYME_TRUNCATED_TOOLTIP">If true (default), truncated proteins are treated as enzymes when catalyzing a reaction. Otherwise, truncated protein catalized reactions are not considered to be enzyme reactions.</entry>
+  <entry key="POSSIBLE_ENZYME_TRUNCATED_TOOLTIP">If true (default), truncated proteins are treated as enzymes when catalyzing a reaction. Otherwise, truncated protein catalyzed reactions are not considered to be enzyme reactions.</entry>
   <entry key="POSSIBLE_ENZYME_UNKNOWN">Unknown</entry>
-  <entry key="POSSIBLE_ENZYME_UNKNOWN_TOOLTIP">If true, unknown molecules are treated as enzymes when catalyzing a reaction. If false (default), unknown molecule catalized reactions are not considered to be enzyme reactions.</entry>
+  <entry key="POSSIBLE_ENZYME_UNKNOWN_TOOLTIP">If true, unknown molecules are treated as enzymes when catalyzing a reaction. If false (default), unknown molecule catalyzed reactions are not considered to be enzyme reactions.</entry>
   <entry key="REMOVE_UNNECESSARY_PARAMETERS_AND_UNITS">Remove uneccessary parameters and units</entry>
   <entry key="REMOVE_UNNECESSARY_PARAMETERS_AND_UNITS_TOOLTIP">If true (default), parameters and units that are never referenced by any element of the model are automatically deleted after creating kinetic equations.</entry>
   <entry key="SET_BOUNDARY_CONDITION_FOR_GENES">Set boundary condition for gene coding species</entry>
@@ -73,14 +98,13 @@
   <entry key="SHOW_SBML_WARNINGS">Show SBML warnings</entry>
   <entry key="SHOW_SBML_WARNINGS_TOOLTIP">If true (default), SBML warnings are displayed.</entry>
   <entry key="TYPE_UNIT_CONSISTENCY">Bring species to substance units</entry>
-  <entry key="TYPE_UNIT_CONSISTENCY_TOOLTIP">This option ensures unit consistency and can attain two different values: Choose amount bring each occurance of a participating species to a substance unit. Depending on whether the species has only substance units or not it might be necessary to multiply the species with the size of its surrounding compartment. Choose concentration to bring each participating species to concentration units. In this case the species will be divided by the surrounding compartment size in a kinetic equations if it is defined to have only substance units. The units of parameters are set accordingly.</entry>
+  <entry key="TYPE_UNIT_CONSISTENCY_TOOLTIP">This option ensures unit consistency and can attain two different values: Choose amount to bring each occurrence of a participating species to a substance unit. Depending on whether the species has only substance units or not it might be necessary to multiply the species with the size of its surrounding compartment. Choose concentration to bring each participating species to concentration units. In this case the species will be divided by the surrounding compartment size in a kinetic equations if it is defined to have only substance units. The units of parameters are set accordingly.</entry>
   <entry key="TYPE_UNITS_COMPARTMENT">Bring species to concentration units</entry>
   <entry key="TYPE_UNITS_COMPARTMENT_TOOLTIP">If this option is selected, species are interpreted in terms of concentration and are therefore divided by their surrounding compartment size when these occur in kinetic equations and their hasOnlySubstanceUnits attribute is false. The units of parameters are set accordingly.</entry>
   <entry key="WARNINGS_FOR_TOO_MANY_REACTANTS">Warnings for too many reactants</entry>
   <entry key="WARNINGS_FOR_TOO_MANY_REACTANTS_TOOLTIP">If true (default), warnings will be displayed for reactions with an unrealistic number of reactants. The maximal number of reactants that are believed to be still realistic can be defined if this option is selected.</entry>
-  <entry key="WARNINGS_FOR_TOO_MANY_REACTANTS_TOOLTIP_TO_BE_MERGED">If checked, warnings will be shown for reactions with more reactants than specified here.</entry>
   <entry key="READ_FROM_SABIO_RK">Read kinetics from SABIO-RK</entry>
-  <entry key="READ_FROM_SABIO_RK_TOOLTIP">This options lets the user choose whether to search for kinetics in SABIO-RK.</entry>
+  <entry key="READ_FROM_SABIO_RK_TOOLTIP">This option lets the user choose whether to search for kinetics in SABIO-RK.</entry>
   
   <entry key="GROUP_GENERAL">General Options</entry>
   <entry key="GROUP_GENERAL_TOOLTIP">Basic configuration of SBMLsqueezer</entry>
@@ -96,7 +120,7 @@
   <entry key="OptionsRateLaws">Rate law selection</entry>
   
   <entry key="TREAT_ALL_REACTIONS_REVERSIBLE">Model all reactions in a reversible manner</entry>
-  <entry key="TREAT_ALL_REACTIONS_REVERSIBLE_TOOLTIP">If true (default), all reactions are set to reversible before creating new kinetic equations. Otherwise the information given by the SBML file will be left unchanged.</entry>
+  <entry key="TREAT_ALL_REACTIONS_REVERSIBLE_TOOLTIP">If true, all reactions are set to reversible before creating new kinetic equations. Otherwise the information given by the SBML file will be left unchanged.</entry>
   <entry key="TREAT_REACTIONS_REVERSIBLE_AS_GIVEN">Use information from SBML</entry>
   <entry key="TREAT_REACTIONS_REVERSIBLE_AS_GIVEN_TOOLTIP">If checked, the information about reversiblity will be left unchanged.</entry>
   <entry key="TYPE_STANDARD_VERSION">Choose version of modular rate laws</entry>

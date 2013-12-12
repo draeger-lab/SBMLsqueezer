@@ -2,7 +2,7 @@
  * $Id:  BiUniKinetics.java 3:20:45 PM jpfeuffer$
  * $URL$
  * ---------------------------------------------------------------------
- * This file is part of SBMLsqueezer, a Java program that creates rate 
+ * This file is part of SBMLsqueezer, a Java program that creates rate
  * equations for reactions in SBML files (http://sbml.org).
  *
  * Copyright (C) 2006-2013 by the University of Tuebingen, Germany.
@@ -41,13 +41,13 @@ import org.sbml.squeezer.kinetics.TypeStandardVersion;
 
 /**
  * Class that tests the generated equations and derived units for reactions of the form
- * A + B (<)-> C and 2A (<)-> C.  
+ * A + B (<)-> C and 2A (<)-> C.
  * @author Julianus Pfeuffer
  * @version $Rev$
  * @since 1.4
  */
 public class BiUniKineticsTest extends KineticsTest {
-		
+	
 	/**
 	 * 
 	 */
@@ -57,12 +57,13 @@ public class BiUniKineticsTest extends KineticsTest {
 	 * Initialization of a model and basic reactions for this test class.
 	 * @throws Throwable
 	 */
-	protected Model initModel() {
+	@Override
+  protected Model initModel() {
 		
 		/**
 		 * Initialization
 		 */
-		SBMLDocument doc = new SBMLDocument(2, 4);
+		SBMLDocument doc = new SBMLDocument(3, 1);
 		model = doc.createModel("biuni_model");
 		Compartment c = model.createCompartment("c1");
 		Species s1 = model.createSpecies("s1", c);
@@ -78,13 +79,13 @@ public class BiUniKineticsTest extends KineticsTest {
 		 */
 		r1 = model.createReaction("r1");
 		r1.setReversible(false);
-		r1.createReactant(s1);
-		r1.createReactant(s2);
-		r1.createProduct(p1);
+		r1.createReactant(s1).setStoichiometry(1d);
+		r1.createReactant(s2).setStoichiometry(1d);
+		r1.createProduct(p1).setStoichiometry(1d);
 		
 		r2 = model.createReaction("r2");
 		r2.createReactant(s1).setStoichiometry(2d);
-		r2.createProduct(p1);
+		r2.createProduct(p1).setStoichiometry(1d);
 		r2.setReversible(false);
 		
 		return model;
@@ -103,7 +104,7 @@ public class BiUniKineticsTest extends KineticsTest {
 	 *=========================================================*/
 	
 	/**
-	 * Test for the {@link OrderedMechanism} for A + B -> C 
+	 * Test for the {@link OrderedMechanism} for A + B -> C
 	 * @throws Throwable
 	 */
 	@Test
@@ -118,7 +119,7 @@ public class BiUniKineticsTest extends KineticsTest {
 	 *=========================================================*/
 	
 	/**
-	 * Test for the {@link CommonModularRateLaw} for A + B <=> C 
+	 * Test for the {@link CommonModularRateLaw} for A + B <=> C
 	 * @throws Throwable
 	 */
 	@Test
@@ -126,29 +127,29 @@ public class BiUniKineticsTest extends KineticsTest {
 		KineticLaw kl = klg.createKineticLaw(r1, CommonModularRateLaw.class, true, TypeStandardVersion.cat, UnitConsistencyType.amount, 1d);
 		test(r1, kl, "(vmaf_r1*(s1*c1/kmc_r1_s1)^hco_r1*(s2*c1/kmc_r1_s2)^hco_r1-vmar_r1*(p1*c1/kmc_r1_p1)^hco_r1)/((1+s1*c1/kmc_r1_s1)^hco_r1*(1+s2*c1/kmc_r1_s2)^hco_r1+(1+p1*c1/kmc_r1_p1)^hco_r1-1)");
 	}
-	
+
 	/**
-	 * Test for the {@link CommonModularRateLaw} for A + B <=> C 
+	 * Test for the {@link CommonModularRateLaw} for A + B <=> C
 	 * @throws Throwable
 	 */
 	@Test
 	public void testCommonModularRateLawHalRev() throws Throwable {
 		KineticLaw kl = klg.createKineticLaw(r1, CommonModularRateLaw.class, true, TypeStandardVersion.hal, UnitConsistencyType.amount, 1d);
-		test(r1, kl, "(vmaf_r1*(s1*c1/kmc_r1_s1)^hco_r1*(s2*c1/kmc_r1_s2)^hco_r1-vmar_r1*(p1*c1/kmc_r1_p1)^hco_r1)/((1+s1*c1/kmc_r1_s1)^hco_r1*(1+s2*c1/kmc_r1_s2)^hco_r1+(1+p1*c1/kmc_r1_p1)^hco_r1-1)");
+		test(r1, kl, "(vmag_r1*(keq_r1^hco_r1)^(0.5)*(s1*c1)^hco_r1*(s2*c1)^hco_r1/(kmc_r1_s1^hco_r1*kmc_r1_s2^hco_r1*kmc_r1_p1^hco_r1)^(0.5)-vmag_r1/(keq_r1^hco_r1)^(0.5)*(p1*c1)^hco_r1/(kmc_r1_s1^hco_r1*kmc_r1_s2^hco_r1*kmc_r1_p1^hco_r1)^(0.5))/((1+s1*c1/kmc_r1_s1)^hco_r1*(1+s2*c1/kmc_r1_s2)^hco_r1+(1+p1*c1/kmc_r1_p1)^hco_r1-1)");
 	}
-	
+
 	/**
-	 * Test for the {@link CommonModularRateLaw} for A + B <=> C 
+	 * Test for the {@link CommonModularRateLaw} for A + B <=> C
 	 * @throws Throwable
 	 */
 	@Test
 	public void testCommonModularRateLawWegRev() throws Throwable {
 		KineticLaw kl = klg.createKineticLaw(r1, CommonModularRateLaw.class, true, TypeStandardVersion.weg, UnitConsistencyType.amount, 1d);
-		test(r1, kl, "(vmaf_r1*(s1*c1/kmc_r1_s1)^hco_r1*(s2*c1/kmc_r1_s2)^hco_r1-vmar_r1*(p1*c1/kmc_r1_p1)^hco_r1)/((1+s1*c1/kmc_r1_s1)^hco_r1*(1+s2*c1/kmc_r1_s2)^hco_r1+(1+p1*c1/kmc_r1_p1)^hco_r1-1)");
+		test(r1, kl, "vmag_r1*((s1*c1)^hco_r1*(s2*c1)^hco_r1/(1*e^(hco_r1*(scp_s1+scp_s2+scp_p1)/(2*T*R)))-(p1*c1)^hco_r1*1*e^(hco_r1*(scp_s1+scp_s2+scp_p1)/(2*T*R)))/(kmc_r1_s1^hco_r1*kmc_r1_s2^hco_r1*kmc_r1_p1^hco_r1)^(0.5)/((1+s1*c1/kmc_r1_s1)^hco_r1*(1+s2*c1/kmc_r1_s2)^hco_r1+(1+p1*c1/kmc_r1_p1)^hco_r1-1)");
 	}
 	
 	/**
-	 * Test for the {@link DirectBindingModularRateLaw} for A + B <=> C 
+	 * Test for the {@link DirectBindingModularRateLaw} for A + B <=> C
 	 * @throws Throwable
 	 */
 	@Test
@@ -158,7 +159,7 @@ public class BiUniKineticsTest extends KineticsTest {
 	}
 	
 	/**
-	 * Test for the {@link SimultaneousBindingModularRateLaw} for A + B <=> C 
+	 * Test for the {@link SimultaneousBindingModularRateLaw} for A + B <=> C
 	 * @throws Throwable
 	 */
 	@Test
@@ -168,7 +169,7 @@ public class BiUniKineticsTest extends KineticsTest {
 	}
 	
 	/**
-	 * Test for the {@link ForeDependentModularRateLaw} for A + B <=> C 
+	 * Test for the {@link ForeDependentModularRateLaw} for A + B <=> C
 	 * @throws Throwable
 	 */
 	@Test
@@ -178,7 +179,7 @@ public class BiUniKineticsTest extends KineticsTest {
 	}
 	
 	/**
-	 * Test for the {@link PowerLawModularRateLaw} for A + B <=> C 
+	 * Test for the {@link PowerLawModularRateLaw} for A + B <=> C
 	 * @throws Throwable
 	 */
 	@Test
@@ -186,31 +187,29 @@ public class BiUniKineticsTest extends KineticsTest {
 		KineticLaw kl = klg.createKineticLaw(r1, PowerLawModularRateLaw.class, true, TypeStandardVersion.cat, UnitConsistencyType.amount, 1d);
 		test(r1, kl, "vmaf_r1*(s1*c1/kmc_r1_s1)^hco_r1*(s2*c1/kmc_r1_s2)^hco_r1-vmar_r1*(p1*c1/kmc_r1_p1)^hco_r1");
 	}
-	
+
 	/**
-	 * Test for the {@link PowerLawModularRateLaw} for A + B <=> C 
+	 * Test for the {@link PowerLawModularRateLaw} for A + B <=> C
 	 * @throws Throwable
 	 */
 	@Test
 	public void testPowerLawModularRateLawHalRev() throws Throwable {
 		KineticLaw kl = klg.createKineticLaw(r1, PowerLawModularRateLaw.class, true, TypeStandardVersion.hal, UnitConsistencyType.amount, 1d);
-		// TODO: Formula
-		test(r1, kl, "");
+		test(r1, kl, "vmag_r1*(keq_r1^hco_r1)^(0.5)*(s1*c1)^hco_r1*(s2*c1)^hco_r1/(kmc_r1_s1^hco_r1*kmc_r1_s2^hco_r1*kmc_r1_p1^hco_r1)^(0.5)-vmag_r1/(keq_r1^hco_r1)^(0.5)*(p1*c1)^hco_r1/(kmc_r1_s1^hco_r1*kmc_r1_s2^hco_r1*kmc_r1_p1^hco_r1)^(0.5)");
 	}
-	
+
 	/**
-	 * Test for the {@link PowerLawModularRateLaw} for A + B <=> C 
+	 * Test for the {@link PowerLawModularRateLaw} for A + B <=> C
 	 * @throws Throwable
 	 */
 	@Test
 	public void testPowerLawModularRateLawWegRev() throws Throwable {
 		KineticLaw kl = klg.createKineticLaw(r1, PowerLawModularRateLaw.class, true, TypeStandardVersion.weg, UnitConsistencyType.amount, 1d);
-		// TODO: Error!
-		test(r1, kl, "(s1*c1)^hco_r1*(s2*c1)^hco_r1/e^(scp_s1*scp_s2*scp_p1*hco_r1/(2*T*R))*vmag_r1/(kmc_r1_s1^hco_r1*kmc_r1_s2^hco_r1*kmc_r1_p1^hco_r1)^(0.5)-(p1*c1)^hco_r1*e^(scp_s1*scp_s2*scp_p1*hco_r1/(2*T*R))*vmag_r1/(kmc_r1_s1^hco_r1*kmc_r1_s2^hco_r1*kmc_r1_p1^hco_r1)^(0.5)");
+		test(r1, kl, "vmag_r1*((s1*c1)^hco_r1*(s2*c1)^hco_r1/(1*e^(hco_r1*(scp_s1+scp_s2+scp_p1)/(2*T*R)))-(p1*c1)^hco_r1*1*e^(hco_r1*(scp_s1+scp_s2+scp_p1)/(2*T*R)))/(kmc_r1_s1^hco_r1*kmc_r1_s2^hco_r1*kmc_r1_p1^hco_r1)^(0.5)");
 	}
 	
 	/**
-	 * Test for the {@link OrderedMechanism} for A + B <=> C 
+	 * Test for the {@link OrderedMechanism} for A + B <=> C
 	 * @throws Throwable
 	 */
 	@Test
@@ -229,7 +228,7 @@ public class BiUniKineticsTest extends KineticsTest {
 	 *=========================================================*/
 	
 	/**
-	 * Test for the {@link OrderedMechanism} for A + B <=> C 
+	 * Test for the {@link OrderedMechanism} for A + B <=> C
 	 * @throws Throwable
 	 */
 	@Test
@@ -244,7 +243,7 @@ public class BiUniKineticsTest extends KineticsTest {
 	 *=========================================================*/
 	
 	/**
-	 * Test for the {@link OrderedMechanism} for A + B <=> C 
+	 * Test for the {@link OrderedMechanism} for A + B <=> C
 	 * @throws Throwable
 	 */
 	@Test

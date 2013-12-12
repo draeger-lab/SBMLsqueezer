@@ -2,7 +2,7 @@
  * $Id$
  * $URL$
  * ---------------------------------------------------------------------
- * This file is part of SBMLsqueezer, a Java program that creates rate 
+ * This file is part of SBMLsqueezer, a Java program that creates rate
  * equations for reactions in SBML files (http://sbml.org).
  *
  * Copyright (C) 2006-2013 by the University of Tuebingen, Germany.
@@ -140,11 +140,12 @@ public class OrderedMechanism extends GeneralizedMassAction implements
 			exception = true;
 			break;
 		}
-		if (exception && reaction.getReversible())
-			throw new RateLawNotApplicableException(
+		if (exception && reaction.getReversible()) {
+      throw new RateLawNotApplicableException(
 					MessageFormat.format(
 							WARNINGS.getString("ORDERED_NUM_OF_PRODUCTS_MUST_EQUAL"),
 							reaction.getId()));
+    }
 
 		int enzymeNum = 0;
 		do {
@@ -230,11 +231,11 @@ public class OrderedMechanism extends GeneralizedMassAction implements
 				denominator = ASTNode.sum(
 					ASTNode.frac(speciesTerm(specRefE1), new ASTNode(p_kIr1, this)),
 					ASTNode.frac(
-						ASTNode.times(new ASTNode(p_kMr1, this), speciesTerm(specRefE2)), 
+						ASTNode.times(new ASTNode(p_kMr1, this), speciesTerm(specRefE2)),
 						ASTNode.times(this, p_kIr1, p_kMr2)
 					),
 					ASTNode.frac(
-						ASTNode.times(new ASTNode(p_kMp2, this), speciesTerm(specRefP1)), 
+						ASTNode.times(new ASTNode(p_kMp2, this), speciesTerm(specRefP1)),
 						ASTNode.times(this, p_kIp2, p_kMp1)
 					),
 					ASTNode.frac(speciesTerm(specRefP2), new ASTNode(p_kIp2, this))
@@ -354,7 +355,7 @@ public class OrderedMechanism extends GeneralizedMassAction implements
 					one,
 					ASTNode.frac(speciesTerm(specRefE1), new ASTNode(p_kIr1, this)),
 					ASTNode.frac(
-						ASTNode.times(new ASTNode(p_kMr1, this), speciesTerm(specRefE2)), 
+						ASTNode.times(new ASTNode(p_kMr1, this), speciesTerm(specRefE2)),
 						ASTNode.times(this, p_kIr1, p_kMr2)
 					)
 				);

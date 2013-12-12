@@ -45,75 +45,75 @@ import de.zbit.util.progressbar.gui.ProgressBarSwing;
  * @since 1.4
  */
 public class KineticLawSelectionEquationProgressPanelDescriptor extends WizardPanelDescriptor implements PropertyChangeListener {
-	
-	/**
-	 * 
-	 */
-	public static final String IDENTIFIER = "KINETIC_LAW_EQUATION_PROGRESS_PANEL";
-
-	private KineticLawGenerator klg;
-	
-	/**
-	 * 
-	 * @param klg
-	 */
-	public KineticLawSelectionEquationProgressPanelDescriptor(KineticLawGenerator klg) {
-		super(IDENTIFIER, new JPanel(new BorderLayout()));
-		this.klg = klg;
-	}
-	
-	/* (non-Javadoc)
-	 * @see de.zbit.gui.wizard.WizardPanelDescriptor#displayingPanel()
-	 */
-	@Override
-	public void displayingPanel() {
-		// disable the buttons while progress is running
-		Wizard wizard = getWizard();
-		wizard.setNextFinishButtonEnabled(false);
-		wizard.setBackButtonEnabled(false);
-		// set progress bar
-		JProgressBar progressBar = new JProgressBar();
-		JPanel p = (JPanel) getPanelComponent();
-		p.add(progressBar, BorderLayout.CENTER);
-		klg.setProgressBar(new ProgressBarSwing(progressBar));
-		// generate kinetic laws
-		KineticLawGeneratorWorker worker = new KineticLawGeneratorWorker(klg);
-		worker.addPropertyChangeListener(this);
-		worker.execute();
-	}
-	
-	/* (non-Javadoc)
-	 * @see de.zbit.gui.wizard.WizardPanelDescriptor#aboutToHidePanel()
-	 */
-	@Override
-	public void aboutToHidePanel() {
-	}    
-	
-	/* (non-Javadoc)
-	 * @see de.zbit.gui.wizard.WizardPanelDescriptor#getNextPanelDescriptor()
-	 */
-	@Override
-	public Object getNextPanelDescriptor() {
-		return KineticLawSelectionEquationPanelDescriptor.IDENTIFIER;
-	}
-	
-	/* (non-Javadoc)
-	 * @see de.zbit.gui.wizard.WizardPanelDescriptor#getBackPanelDescriptor()
-	 */
-	@Override
-	public Object getBackPanelDescriptor() {
-		return KineticLawSelectionOptionPanelDescriptor.IDENTIFIER;
-	}
-	
-	/* (non-Javadoc)
-	 * @see java.beans.PropertyChangeListener#propertyChange(java.beans.PropertyChangeEvent)
-	 */
-	//@Override
-	public void propertyChange(PropertyChangeEvent evt) {
-		if (evt.getPropertyName().equals("generateKineticLawDone")){
-			// when progress is done, go to next panel automatically
-			this.getWizard().goToNextPanel();
-		}
-	}
-
+  
+  /**
+   * 
+   */
+  public static final String IDENTIFIER = "KINETIC_LAW_EQUATION_PROGRESS_PANEL";
+  
+  private KineticLawGenerator klg;
+  
+  /**
+   * 
+   * @param klg
+   */
+  public KineticLawSelectionEquationProgressPanelDescriptor(KineticLawGenerator klg) {
+    super(IDENTIFIER, new JPanel(new BorderLayout()));
+    this.klg = klg;
+  }
+  
+  /* (non-Javadoc)
+   * @see de.zbit.gui.wizard.WizardPanelDescriptor#displayingPanel()
+   */
+  @Override
+  public void displayingPanel() {
+    // disable the buttons while progress is running
+    Wizard wizard = getWizard();
+    wizard.setNextFinishButtonEnabled(false);
+    wizard.setBackButtonEnabled(false);
+    // set progress bar
+    JProgressBar progressBar = new JProgressBar();
+    JPanel p = (JPanel) getPanelComponent();
+    p.add(progressBar, BorderLayout.CENTER);
+    klg.setProgressBar(new ProgressBarSwing(progressBar));
+    // generate kinetic laws
+    KineticLawGeneratorWorker worker = new KineticLawGeneratorWorker(klg);
+    worker.addPropertyChangeListener(this);
+    worker.execute();
+  }
+  
+  /* (non-Javadoc)
+   * @see de.zbit.gui.wizard.WizardPanelDescriptor#aboutToHidePanel()
+   */
+  @Override
+  public void aboutToHidePanel() {
+  }    
+  
+  /* (non-Javadoc)
+   * @see de.zbit.gui.wizard.WizardPanelDescriptor#getNextPanelDescriptor()
+   */
+  @Override
+  public Object getNextPanelDescriptor() {
+    return KineticLawSelectionEquationPanelDescriptor.IDENTIFIER;
+  }
+  
+  /* (non-Javadoc)
+   * @see de.zbit.gui.wizard.WizardPanelDescriptor#getBackPanelDescriptor()
+   */
+  @Override
+  public Object getBackPanelDescriptor() {
+    return KineticLawSelectionOptionPanelDescriptor.IDENTIFIER;
+  }
+  
+  /* (non-Javadoc)
+   * @see java.beans.PropertyChangeListener#propertyChange(java.beans.PropertyChangeEvent)
+   */
+  @Override
+  public void propertyChange(PropertyChangeEvent evt) {
+    if (evt.getPropertyName().equals("generateKineticLawDone")) {
+      // when progress is done, go to next panel automatically
+      this.getWizard().goToNextPanel();
+    }
+  }
+  
 }

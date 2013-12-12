@@ -2,7 +2,7 @@
  * $Id$
  * $URL$
  * ---------------------------------------------------------------------
- * This file is part of SBMLsqueezer, a Java program that creates rate 
+ * This file is part of SBMLsqueezer, a Java program that creates rate
  * equations for reactions in SBML files (http://sbml.org).
  *
  * Copyright (C) 2006-2013 by the University of Tuebingen, Germany.
@@ -105,7 +105,7 @@ public class PingPongMechanism extends GeneralizedMassAction implements
 			specRefE2 = specRefE1;
 		} else {
 			throw new RateLawNotApplicableException(MessageFormat.format(
-				WARNINGS.getString("PING_PONG_NUM_OF_REACTANTS_MUST_EQUAL"), 
+				WARNINGS.getString("PING_PONG_NUM_OF_REACTANTS_MUST_EQUAL"),
 				reaction.getId()));
 		}
 
@@ -127,7 +127,7 @@ public class PingPongMechanism extends GeneralizedMassAction implements
 		}
 		if (exception) {
 			throw new RateLawNotApplicableException(MessageFormat.format(
-				WARNINGS.getString("PING_PONG_NUM_OF_PRODUCTS_MUST_EQUAL"), 
+				WARNINGS.getString("PING_PONG_NUM_OF_PRODUCTS_MUST_EQUAL"),
 				reaction.getId()));
 		}
 
