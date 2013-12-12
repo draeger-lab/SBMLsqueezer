@@ -128,7 +128,7 @@ public class ConsoleWizard {
 	 */
 	private List<Reaction> getSelectedReactions() {
 		List<Reaction> reactions = new ArrayList<Reaction>();
-		if(overwriteExistingRateLaws) {
+		if (overwriteExistingRateLaws) {
 			reactions = model.getReactions();
 		}
 		else {

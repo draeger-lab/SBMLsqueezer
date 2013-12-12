@@ -2,7 +2,7 @@
  * $Id$
  * $URL$
  * ---------------------------------------------------------------------
- * This file is part of SBMLsqueezer, a Java program that creates rate 
+ * This file is part of SBMLsqueezer, a Java program that creates rate
  * equations for reactions in SBML files (http://sbml.org).
  *
  * Copyright (C) 2006-2013 by the University of Tuebingen, Germany.
@@ -48,62 +48,59 @@ import de.zbit.util.ResourceManager;
  * @since 1.3
  * @version $Rev$
  */
-// TODO: Check!
 public class NetGeneratorNonLinear extends AdditiveModelNonLinear implements
-		InterfaceGeneRegulatoryKinetics, InterfaceModulatedKinetics,
-		InterfaceIrreversibleKinetics, InterfaceReversibleKinetics {
-	
-	public static final transient ResourceBundle MESSAGES = ResourceManager.getBundle(Bundles.MESSAGES);
-
-	/**
-	 * Generated serial version identifier.
-	 */
-	private static final long serialVersionUID = 641441833130051384L;
-
-	/**
-	 * @param parentReaction
-	 * @param typeParameters
-	 * @throws RateLawNotApplicableException
-	 */
-	public NetGeneratorNonLinear(Reaction parentReaction,
-			Object... typeParameters) throws RateLawNotApplicableException {
-		super(parentReaction, typeParameters);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.sbml.squeezer.kinetics.AdditiveModelLinear#createKineticEquation(java.util.List, java.util.List, java.util.List, java.util.List)
-	 */
-	@Override
-	ASTNode createKineticEquation(List<String> modE, List<String> modActi,
-			List<String> modInhib, List<String> modCat)
-			throws RateLawNotApplicableException {
-		ASTNode m = super.createKineticEquation(modE, modActi, modInhib, modCat);
-		Reaction r = getParentSBMLObject();
-		UnitFactory unitFactory = new UnitFactory(this.getModel(), this.isBringToConcentration());
-		ASTNode one = new ASTNode(1, this);
-		SBMLtools.setUnits(one, unitFactory.unitSubstancePerTime(
-                this.getModel().getSubstanceUnitsInstance(),
-                this.getModel().getTimeUnitsInstance()));
-		if (!ReactionType.representsEmptySet(r.getListOfProducts())) {
-			Species s = r.getProduct(0).getSpeciesInstance();
-			return ASTNode.sum(
-						m,
-						ASTNode.times(
-							one,
-							new ASTNode(parameterFactory.parameterW(s.getId(), r.getId()), this), 
-							speciesTerm(s)
-						)
-			);
-		}
-		return m.multiplyWith(parameterFactory.valueSubstancePerTime());
-	}
-
-	/* (non-Javadoc)
-	 * @see org.sbml.squeezer.kinetics.AdditiveModelNonLinear#getSimpleName()
-	 */
-	@Override
-	public String getSimpleName() {
-		return MESSAGES.getString("NET_GENERATOR_NON_LINEAR_SIMPLE_NAME");
-	}
-
+InterfaceGeneRegulatoryKinetics, InterfaceModulatedKinetics,
+InterfaceIrreversibleKinetics, InterfaceReversibleKinetics,
+InterfaceZeroReactants, InterfaceZeroProducts {
+  
+  public static final transient ResourceBundle MESSAGES = ResourceManager.getBundle(Bundles.MESSAGES);
+  
+  /**
+   * Generated serial version identifier.
+   */
+  private static final long serialVersionUID = 641441833130051384L;
+  
+  /**
+   * @param parentReaction
+   * @param typeParameters
+   * @throws RateLawNotApplicableException
+   */
+  public NetGeneratorNonLinear(Reaction parentReaction,
+    Object... typeParameters) throws RateLawNotApplicableException {
+    super(parentReaction, typeParameters);
+  }
+  
+  /* (non-Javadoc)
+   * @see org.sbml.squeezer.kinetics.AdditiveModelLinear#createKineticEquation(java.util.List, java.util.List, java.util.List, java.util.List)
+   */
+  @Override
+  ASTNode createKineticEquation(List<String> modE, List<String> modActi,
+    List<String> modInhib, List<String> modCat)
+        throws RateLawNotApplicableException {
+    ASTNode m = super.createKineticEquation(modE, modActi, modInhib, modCat);
+    Reaction r = getParentSBMLObject();
+    UnitFactory unitFactory = new UnitFactory(getModel(), isBringToConcentration());
+    ASTNode one = new ASTNode(1, this);
+    SBMLtools.setUnits(one, unitFactory.unitSubstancePerTime(
+      getModel().getSubstanceUnitsInstance(),
+      getModel().getTimeUnitsInstance()));
+    if (!ReactionType.representsEmptySet(r.getListOfProducts())) {
+      Species s = r.getProduct(0).getSpeciesInstance();
+      ASTNode swap = new ASTNode(ASTNode.Type.TIMES, this);
+      swap.addChild(one);
+      swap.addChild(new ASTNode(parameterFactory.parameterW(s.getId(), r.getId()), this));
+      swap.addChild(speciesTerm(s));
+      return ASTNode.sum(m, swap);
+    }
+    return m.multiplyWith(parameterFactory.valueSubstancePerTime());
+  }
+  
+  /* (non-Javadoc)
+   * @see org.sbml.squeezer.kinetics.AdditiveModelNonLinear#getSimpleName()
+   */
+  @Override
+  public String getSimpleName() {
+    return MESSAGES.getString("NET_GENERATOR_NON_LINEAR_SIMPLE_NAME");
+  }
+  
 }

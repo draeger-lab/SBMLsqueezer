@@ -2,7 +2,7 @@
  * $Id$
  * $URL$
  * ---------------------------------------------------------------------
- * This file is part of SBMLsqueezer, a Java program that creates rate 
+ * This file is part of SBMLsqueezer, a Java program that creates rate
  * equations for reactions in SBML files (http://sbml.org).
  *
  * Copyright (C) 2006-2013 by the University of Tuebingen, Germany.
@@ -51,7 +51,8 @@ import de.zbit.util.ResourceManager;
  */
 public class HillRaddeEquation extends BasicKineticLaw implements
 		InterfaceGeneRegulatoryKinetics, InterfaceModulatedKinetics,
-		InterfaceIrreversibleKinetics, InterfaceReversibleKinetics {
+		InterfaceIrreversibleKinetics, InterfaceReversibleKinetics,
+    InterfaceZeroReactants, InterfaceZeroProducts {
 
 	public static final transient ResourceBundle MESSAGES = ResourceManager.getBundle(Bundles.MESSAGES);
 	
@@ -73,7 +74,8 @@ public class HillRaddeEquation extends BasicKineticLaw implements
 	/* (non-Javadoc)
 	 * @see org.sbml.squeezer.kinetics.BasicKineticLaw#createKineticEquation(java.util.List, java.util.List, java.util.List, java.util.List)
 	 */
-	ASTNode createKineticEquation(List<String> enzymes,
+	@Override
+  ASTNode createKineticEquation(List<String> enzymes,
 			List<String> activators, List<String> inhibitors,
 			List<String> nonEnzymeCatalysts)
 			throws RateLawNotApplicableException {
@@ -86,7 +88,8 @@ public class HillRaddeEquation extends BasicKineticLaw implements
 	/* (non-Javadoc)
 	 * @see org.sbml.squeezer.kinetics.BasicKineticLaw#getSimpleName()
 	 */
-	public String getSimpleName() {
+	@Override
+  public String getSimpleName() {
 		return MESSAGES.getString("HILL_RADDE_EQUATION");
 	}
 

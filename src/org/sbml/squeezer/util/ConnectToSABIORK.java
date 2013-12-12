@@ -66,7 +66,7 @@ public class ConnectToSABIORK {
 	public List<Reaction> searchKineticLaw(String keggId, String organism) {
 	
 		try {
-			if(host == null) {
+			if (host == null) {
 				host = new URL("http://sabio.h-its.org/sabioRestWebServices/searchKineticLaws/");
 			}
 			String q = "sbml?searchTerms=RKEGG=" + keggId +";ORGANISM=" +
@@ -76,7 +76,7 @@ public class ConnectToSABIORK {
 			URLConnection conn = fullAddress.openConnection();
 			
 			InputStream stream = conn.getInputStream();
-			if((stream == null)) {
+			if ((stream == null)) {
 				return null;
 			}
 			SBMLDocument doc = SBMLReader.read(stream);
@@ -108,25 +108,25 @@ public class ConnectToSABIORK {
 		CVTermFilter filterIsEncodedBy = new CVTermFilter(Qualifier.BQB_IS_ENCODED_BY);
 		
 		for(CallableSBase sBase: getAllSBasesToAdd(kl.getMath(), new HashSet<CallableSBase>())) {
-			if(sBase instanceof FunctionDefinition) {
+			if (sBase instanceof FunctionDefinition) {
 				FunctionDefinition copy = ((FunctionDefinition)sBase).clone();
 				copy.setLevel(m.getLevel());
 				copy.setVersion(m.getVersion());
 				boolean add = true;
-				if(copy.getMath().getRightChild().isNaN()) {
+				if (copy.getMath().getRightChild().isNaN()) {
 					return null;
 				}
 				for(FunctionDefinition f: m.getListOfFunctionDefinitions()) {
-					if(f.equals(copy)) {
+					if (f.equals(copy)) {
 						add = false;
 						break;
 					}
 				}
-				if(add) {
+				if (add) {
 					m.addFunctionDefinition(copy);
 				}
 			}
-			else if(sBase instanceof Parameter) {
+			else if (sBase instanceof Parameter) {
 				Parameter copy = ((Parameter)sBase).clone();
 				copy.setLevel(m.getLevel());
 				copy.setVersion(m.getVersion());
@@ -140,20 +140,20 @@ public class ConnectToSABIORK {
 			Species s = (Species) speciesNode.getVariable();
 			List<CVTerm> terms = new LinkedList<CVTerm>();
 			for(CVTerm ct: s.getCVTerms()) {
-				if((filterIs.accepts(ct)) || (filterHasVersion.accepts(ct)) || (filterIsEncodedBy.accepts(ct))) {
+				if ((filterIs.accepts(ct)) || (filterHasVersion.accepts(ct)) || (filterIsEncodedBy.accepts(ct))) {
 					terms.add(ct);
 				}
 			}
-			if(terms.size() != 0) {
+			if (terms.size() != 0) {
 				List<CVTermFilter> filterTerms = new LinkedList<CVTermFilter>();
 				
 				for(CVTerm term: terms) {
 					for(String resource: term.getResources()) {
 						filterTerms.add(new CVTermFilter(term.getBiologicalQualifierType(), resource));
-						if(term.getBiologicalQualifierType().equals(Qualifier.BQB_IS)) {
+						if (term.getBiologicalQualifierType().equals(Qualifier.BQB_IS)) {
 							filterTerms.add(new CVTermFilter(Qualifier.BQB_HAS_VERSION, resource));
 						}
-						else if(term.getBiologicalQualifierType().equals(Qualifier.BQB_HAS_VERSION))
+						else if (term.getBiologicalQualifierType().equals(Qualifier.BQB_HAS_VERSION))
 							filterTerms.add(new CVTermFilter(Qualifier.BQB_IS, resource));
 						}
 				}
@@ -161,13 +161,13 @@ public class ConnectToSABIORK {
 				Species foundSpecies = null;
 				for(Species sp: m.getListOfSpecies()) {
 					for(CVTermFilter currentFilter: filterTerms) {
-						if(currentFilter.accepts(sp)) {
+						if (currentFilter.accepts(sp)) {
 							foundSpecies = sp;
 							break;
 						}
 					}
 				}
-				if(foundSpecies != null) {
+				if (foundSpecies != null) {
 					speciesNode.setName(foundSpecies.getName());
 					speciesNode.setVariable(foundSpecies);
 				}
@@ -194,9 +194,9 @@ public class ConnectToSABIORK {
 	 * @return
 	 */
 	public Set<ASTNode> getAllSpeciesNodes(ASTNode node, Set<ASTNode> current) {
-		if(node.isName()) {
+		if (node.isName()) {
 			CallableSBase sb = node.getVariable();
-			if(sb instanceof Species) {
+			if (sb instanceof Species) {
 				current.add(node);
 			}
 		}
@@ -213,18 +213,18 @@ public class ConnectToSABIORK {
 	 * @return
 	 */
 	public Set<CallableSBase> getAllSBasesToAdd(ASTNode node, Set<CallableSBase> current) {
-		if(node.isFunction()) {
+		if (node.isFunction()) {
 			CallableSBase sb = node.getVariable();
-			if((sb instanceof FunctionDefinition)) {
+			if ((sb instanceof FunctionDefinition)) {
 				current.add(sb);
 			}
 			for(ASTNode child: node.getChildren()) {
 				getAllSBasesToAdd(child, current);
 			}
 		}
-		else if(node.isName()) {
+		else if (node.isName()) {
 			CallableSBase sb = node.getVariable();
-			if((sb instanceof Parameter)) {
+			if ((sb instanceof Parameter)) {
 				current.add(sb);
 			}
 		}
@@ -251,7 +251,7 @@ public class ConnectToSABIORK {
 		String query = null;
 		List<Reaction> annotatedReactions = new LinkedList<Reaction>();
 		for(Reaction r: model.getListOfReactions()) {
-			if(filterKEGG.accepts(r)) {
+			if (filterKEGG.accepts(r)) {
 				annotatedReactions.add(r);
 			}
 		}
@@ -259,7 +259,7 @@ public class ConnectToSABIORK {
 		//CVTermFilter filterHuman = new CVTermFilter(Qualifier.BQB_OCCURS_IN, "urn:miriam:taxonomy:9606");
 		CVTermFilter filterYeast = new CVTermFilter(Qualifier.BQB_OCCURS_IN, "urn:miriam:taxonomy:559292");
 		String organism = "Homo+sapiens";
-		if(filterYeast.accepts(model)) {
+		if (filterYeast.accepts(model)) {
 			organism = "Saccharomyces+cerevisiae";
 		}
 		

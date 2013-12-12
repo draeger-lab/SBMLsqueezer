@@ -2,7 +2,7 @@
  * $Id$
  * $URL$
  * ---------------------------------------------------------------------
- * This file is part of SBMLsqueezer, a Java program that creates rate 
+ * This file is part of SBMLsqueezer, a Java program that creates rate
  * equations for reactions in SBML files (http://sbml.org).
  *
  * Copyright (C) 2006-2013 by the University of Tuebingen, Germany.
@@ -48,7 +48,8 @@ import de.zbit.util.ResourceManager;
  */
 public class NetGeneratorLinear extends AdditiveModelLinear implements
 		InterfaceGeneRegulatoryKinetics, InterfaceModulatedKinetics,
-		InterfaceIrreversibleKinetics, InterfaceReversibleKinetics {
+		InterfaceIrreversibleKinetics, InterfaceReversibleKinetics,
+    InterfaceZeroReactants, InterfaceZeroProducts {
 	
 	public static final transient ResourceBundle MESSAGES = ResourceManager.getBundle(Bundles.MESSAGES);
 
@@ -92,8 +93,8 @@ public class NetGeneratorLinear extends AdditiveModelLinear implements
 		UnitFactory unitFactory = new UnitFactory(getModel(), isBringToConcentration());
 		if (!node.isSetUnits()) {
 			SBMLtools.setUnits(node, unitFactory.unitSubstancePerTime(
-                    this.getModel().getSubstanceUnitsInstance(),
-                    this.getModel().getTimeUnitsInstance()));
+                    getModel().getSubstanceUnitsInstance(),
+                    getModel().getTimeUnitsInstance()));
 		}
 		
 		return node;

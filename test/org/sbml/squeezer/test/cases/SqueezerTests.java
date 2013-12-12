@@ -1,4 +1,4 @@
-package org.sbml.squeezer.test;
+package org.sbml.squeezer.test.cases;
 
 
 import java.io.File;
@@ -25,6 +25,7 @@ import org.sbml.squeezer.OptionsGeneral;
 import org.sbml.squeezer.UnitFactory;
 import org.sbml.squeezer.io.SqSBMLReader;
 import org.sbml.squeezer.io.SqSBMLWriter;
+import org.sbml.squeezer.test.SqueezertestFunctions;
 
 import de.zbit.io.filefilter.SBFileFilter;
 import de.zbit.util.prefs.SBPreferences;
@@ -108,11 +109,11 @@ public class SqueezerTests extends TestCase {
 			// Extra check to be sure we have access to libSBML:
 			Class.forName("org.sbml.libsbml.libsbml");
 			libSBMLAvailable = true;
-		} catch (Error e) {
-		} catch (Throwable e) {
+		} catch (Error exc) {
+		} catch (Throwable exc) {
 		} 
-		SBMLInputConverter reader = null;
-		SBMLOutputConverter writer = null;
+		SBMLInputConverter<?> reader = null;
+		SBMLOutputConverter<?> writer = null;
 		if (!libSBMLAvailable) {
 			reader = new SqSBMLReader();
 			writer = new SqSBMLWriter();
@@ -131,7 +132,7 @@ public class SqueezerTests extends TestCase {
 
 		logger.info("Generate SBMLsqueezer.");
 	
-		SBMLsqueezer squeezer = new SBMLsqueezer(reader, writer);
+		SBMLsqueezer<?> squeezer = new SBMLsqueezer(reader, writer);
 
 		logger.info("Test files.");
 
@@ -147,7 +148,7 @@ public class SqueezerTests extends TestCase {
 
 		KineticLawGenerator klg = null;		// KineticLawGenerator for the current model
 		
-		for(int i=0; i<listOfFiles.size(); i++){
+		for(int i=0; i<listOfFiles.size(); i++) {
 			failed = false;
 			// try to extract models from files
 			f = listOfFiles.get(i);
@@ -169,12 +170,12 @@ public class SqueezerTests extends TestCase {
 				failed = true;
 				c_failed++;
 				arrayOfTestStatus[i] = "failed to convert Model";
-				if(!continueAfterError){
+				if (!continueAfterError) {
 					fail();
 				}
 			}
 			
-			if(!failed){
+			if (!failed) {
 				// try to generate kinetic laws for a model
 				try {
 					logger.info("\n----------------------------------------------\n"+
@@ -187,36 +188,35 @@ public class SqueezerTests extends TestCase {
 					failed = true;
 					c_failed++;
 					arrayOfTestStatus[i] = "failed to generate kinetic equations";
-					if(!continueAfterError){
+					if (!continueAfterError) {
 						fail();
 					}
 				}
 			}
 			
-			if(!failed){
+			if (!failed) {
 				logger.info("\n----------------------------------------------\n"+
 						"           store kinetic laws (model)"+
 				"\n----------------------------------------------");
 				try {
 					klg.storeKineticLaws();
-					squeezer.getSBMLIO().saveChanges(squeezer);
 				} catch (Exception e) {
 					logger.log(Level.WARNING, "failed to store kinetic laws: ", e);
 					failed = true;
 					c_failed++;
 					arrayOfTestStatus[i] = "failed to store kinetic laws";
-					if(!continueAfterError){
+					if (!continueAfterError) {
 						fail();
 					}
 				}
 			}
 			
-			if(!failed){
+			if (!failed) {
 				// try to generate kinetic laws for the reactions
 				logger.info("\n----------------------------------------------\n"+
 						"           KineticLawGenerator for reactions"+
 				"\n----------------------------------------------");
-				for(Reaction reac : squeezer.getSBMLIO().getSelectedModel().getListOfReactions()){
+				for(Reaction reac : squeezer.getSBMLIO().getSelectedModel().getListOfReactions()) {
 					try {
 						logger.info("\n                Reaction: "+reac.getId()+
 						"\n----------------------------------------------");
@@ -227,32 +227,31 @@ public class SqueezerTests extends TestCase {
 						failed = true;
 						c_failed++;
 						arrayOfTestStatus[i] = "failed to generate kinetic equation for reaction";
-						if(!continueAfterError){
+						if (!continueAfterError) {
 							fail();
 						}
 					}
 				}	
 			}
 			
-			if(!failed){
+			if (!failed) {
 				logger.info("\n----------------------------------------------\n"+
 						"           store kinetic laws (reactions)"+
 				"\n----------------------------------------------");
 				try {
 					klg.storeKineticLaws();
-					squeezer.getSBMLIO().saveChanges(squeezer);
 				} catch (Exception e) {
 					logger.log(Level.WARNING, "failed to store kinetic laws: ", e);
 					failed = true;
 					c_failed++;
 					arrayOfTestStatus[i] = "failed to store kinetic laws";
-					if(!continueAfterError){
+					if (!continueAfterError) {
 						fail();
 					}
 				}
 			}
 			
-			if(!failed){
+			if (!failed) {
 				// try to get the miniModel
 				try {
 					logger.info("\n----------------------------------------------\n"+
@@ -264,21 +263,21 @@ public class SqueezerTests extends TestCase {
 					failed = true;
 					c_failed++;
 					arrayOfTestStatus[i] = "failed to generate the MiniModel";
-					if(!continueAfterError){
+					if (!continueAfterError) {
 						fail();
 					}
 				}
 			}
 			
-			if(!failed){
+			if (!failed) {
 				// try to safe the model in the folder given by testPath
 				logger.info("\n----------------------------------------------\n"+
 						"           write model to file"+
 				"\n----------------------------------------------");
 				File testFile = new File(safePath);
-				if(testFile.isDirectory()){
+				if (testFile.isDirectory()) {
 					safePath += "/test.xml";
-				}else if(testFile.isFile()){
+				}else if (testFile.isFile()) {
 					safePath = testFile.getParent() + "/test.xml";
 				}
 				try {
@@ -288,13 +287,13 @@ public class SqueezerTests extends TestCase {
 					failed = true;
 					c_failed++;
 					arrayOfTestStatus[i] = "failed to write model to file";
-					if(!continueAfterError){
+					if (!continueAfterError) {
 						fail();
 					}
 				}
 			}
 			
-			if(!failed){
+			if (!failed) {
 				// try to compare the new model (after saving) and the old model (before saving)
 				logger.info("\n----------------------------------------------\n"+
 						"           compare models"+
@@ -307,7 +306,7 @@ public class SqueezerTests extends TestCase {
 					
 					// reset units
 					newModel.setListOfUnitDefinitions(newModel.getListOfUnitDefinitions());
-					for(UnitDefinition ud : currentModel.getListOfUnitDefinitions()){
+					for(UnitDefinition ud : currentModel.getListOfUnitDefinitions()) {
 						UnitFactory.checkUnitDefinitions(ud, newModel);
 					}			
 					
@@ -317,7 +316,7 @@ public class SqueezerTests extends TestCase {
 					//areEqual = miniModel.equals(newMiniModel);
 					
 					areEqual = SqueezertestFunctions.compareModels(currentModel, newModel);
-					if(areEqual){
+					if (areEqual) {
 						logger.info("    models are equal"+
 						"\n----------------------------------------------");
 						fnew.deleteOnExit();
@@ -327,7 +326,7 @@ public class SqueezerTests extends TestCase {
 						failed = true;
 						c_failed++;
 						arrayOfTestStatus[i] = "models are unequal";
-						if(!continueAfterError){
+						if (!continueAfterError) {
 							fail();
 						}else{
 							fnew.deleteOnExit();
@@ -341,7 +340,7 @@ public class SqueezerTests extends TestCase {
 					c_failed++; 
 					fnew.deleteOnExit();
 					arrayOfTestStatus[i] = "failed to compare models";
-					if(!continueAfterError){
+					if (!continueAfterError) {
 						fail();
 					}
 				}
@@ -351,14 +350,14 @@ public class SqueezerTests extends TestCase {
 		}
 		logger.info("    done in " + (System.currentTimeMillis() - time) + " ms.");
 		
-		if(c_failed > 0){
+		if (c_failed > 0) {
 			System.out.println("\n----------------------------------------------\n"+
 					"           Results"+
 			"\n----------------------------------------------");
 			System.out.println(c_failed + " failed test(s)");
 
-			for(int i=0; i<listOfFiles.size(); i++){
-				if(arrayOfTestStatus[i] != "passed"){
+			for(int i=0; i<listOfFiles.size(); i++) {
+				if (arrayOfTestStatus[i] != "passed") {
 				System.out.println(listOfFiles.get(i).getName());
 				System.out.println("   ->    " + arrayOfTestStatus[i]);
 				}
@@ -422,7 +421,7 @@ public class SqueezerTests extends TestCase {
 
 	}
 	
-	public void testProgramLineSqueezing(){
+	public void testProgramLineSqueezing() {
 		
 		long time = System.currentTimeMillis();
 		logger.info("Generate SBMLreader and SBMLwriter.");
@@ -436,8 +435,8 @@ public class SqueezerTests extends TestCase {
 		} catch (Error e) {
 		} catch (Throwable e) {
 		} 
-		SBMLInputConverter reader = null;
-		SBMLOutputConverter writer = null;
+		SBMLInputConverter<?> reader = null;
+		SBMLOutputConverter<?> writer = null;
 		if (!libSBMLAvailable) {
 			reader = new SqSBMLReader();
 			writer = new SqSBMLWriter();
@@ -453,7 +452,7 @@ public class SqueezerTests extends TestCase {
 
 		logger.info("Generate SBMLsqueezer.");
 	
-		SBMLsqueezer squeezer = new SBMLsqueezer(reader, writer);		
+		SBMLsqueezer<?> squeezer = new SBMLsqueezer(reader, writer);		
 		
 		logger.info("test squeezer.");
 		for(File file : listOfFiles) {

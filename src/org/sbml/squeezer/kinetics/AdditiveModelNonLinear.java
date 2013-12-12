@@ -2,7 +2,7 @@
  * $Id$
  * $URL$
  * ---------------------------------------------------------------------
- * This file is part of SBMLsqueezer, a Java program that creates rate 
+ * This file is part of SBMLsqueezer, a Java program that creates rate
  * equations for reactions in SBML files (http://sbml.org).
  *
  * Copyright (C) 2006-2013 by the University of Tuebingen, Germany.
@@ -44,7 +44,8 @@ import de.zbit.util.ResourceManager;
  */
 public class AdditiveModelNonLinear extends AdditiveModelLinear implements
 		InterfaceGeneRegulatoryKinetics, InterfaceModulatedKinetics,
-		InterfaceIrreversibleKinetics, InterfaceReversibleKinetics {
+		InterfaceIrreversibleKinetics, InterfaceReversibleKinetics,
+    InterfaceZeroReactants, InterfaceZeroProducts  {
 	
 	public static final transient ResourceBundle MESSAGES = ResourceManager.getBundle(Bundles.MESSAGES);
 
@@ -63,12 +64,8 @@ public class AdditiveModelNonLinear extends AdditiveModelLinear implements
 		super(parentReaction, typeParameters);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.sbml.squeezer.kinetics.AdditiveModelLinear#activation(org.sbml.jsbml
-	 * .ASTNode)
+	/* (non-Javadoc)
+	 * @see org.sbml.squeezer.kinetics.AdditiveModelLinear#activation(org.sbml.jsbml.ASTNode)
 	 */
 	@Override
 	ASTNode activation(ASTNode g) {
@@ -82,21 +79,19 @@ public class AdditiveModelNonLinear extends AdditiveModelLinear implements
 			node3 = g;
 		}
 
-		if (this.getLevel() > 2) {
+		if (getLevel() > 2) {
 			SBMLtools.setUnits(node1, Unit.Kind.DIMENSIONLESS);
 			SBMLtools.setUnits(node2, Unit.Kind.DIMENSIONLESS);
-			if (!node3.isSetUnits()) {
+			if (node3.isNumber() && !node3.isSetUnits()) {
 				SBMLtools.setUnits(node3, Unit.Kind.DIMENSIONLESS);
 			}
 		}
 			
-		return ASTNode.frac(node1, ASTNode.sum(node2, 
+		return ASTNode.frac(node1, ASTNode.sum(node2,
 				ASTNode.exp(ASTNode.uMinus(node3))));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.sbml.squeezer.kinetics.AdditiveModelLinear#getSimpleName()
 	 */
 	@Override

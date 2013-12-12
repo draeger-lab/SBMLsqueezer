@@ -281,17 +281,13 @@
    name="svnrevision"
    description="Determines the current SVN revions number of SBMLsqueezer and stores it in a variable."
   >
-    <exec executable="svnversion" outputproperty="repository.revision">
-      <arg line="-c ${basedir}"/>
-      <redirector>
-        <outputfilterchain>
-          <tokenfilter>
-            <replaceregex pattern="[0-9]+\:" replace="" />
-            <replaceregex pattern="[PM]+" replace="" />
-          </tokenfilter>
-        </outputfilterchain>
-      </redirector>
-    </exec>
+  	<exec executable="svn" outputproperty="svninfo.xml">
+  	  <arg line="info --xml"/>
+  	</exec>
+  	<xmlproperty collapseAttributes="true">
+  	  <propertyresource name="svninfo.xml"/>
+  	</xmlproperty>
+  	<property name="repository.revision" value="${info.entry.revision}"/>
   	<echo message="Current revision is ${repository.revision}" />
   </target>
 
@@ -528,22 +524,18 @@
   	
   	<path id="jsbml.classpath">
   	  <fileset dir="${jsbml.dir}/core/lib" includes="**.jar, **/*.jar, **.zip"/>
+	  <fileset dir="${jsbml.dir}/modules/libSBMLio/lib" includes="**.jar, **/*.jar, **.zip"/>
   	  <fileset dir="${jsbml.dir}/modules/celldesigner/lib" includes="**.jar, **/*.jar, **.zip"/>
   	</path>
   	
     <echo message="Determining the revision number of JSBML"/>
-    <exec executable="svnversion" outputproperty="jsbml.revision">
-      <arg line="-c ${jsbml.dir}"/>
-      <redirector>
-        <outputfilterchain>
-          <tokenfilter>
-            <replaceregex pattern="[0-9]+\:" replace=""/>
-            <replaceregex pattern="[PM]+" replace=""/>
-          </tokenfilter>
-        </outputfilterchain>
-      </redirector>
+    <exec executable="svn" outputproperty="svninfo.xml">
+      <arg line="info --xml"/>
     </exec>
-  	<!--<property name="jsbml.revision" value="1496"/>-->
+    <xmlproperty collapseAttributes="true">
+      <propertyresource name="svninfo.xml"/>
+    </xmlproperty>
+	<property name="jsbml.revision" value="${info.entry.revision}"/>
 
     <echo message="Compiling the entire JSBML project"/>
     <delete dir="${jsbml.dir}/bin"/>
@@ -558,8 +550,8 @@
   	  memoryMaximumSize="512M"
   	  nowarn="no"
   	  optimize="${optimize}"
-  	  source="1.5"
-  	  target="1.5"
+  	  source="1.6"
+  	  target="1.6"
   	  verbose="${verbose}"
   	>
   	  <!-- Source -->
@@ -573,7 +565,7 @@
   	  <src path="${jsbml.dir}/extensions/render/src"/>
   	  <!-- <src path="${jsbml.dir}/extensions/spatial/src"/> -->
   	  <src path="${jsbml.dir}/modules/celldesigner/src"/>
-  	  <!--<src path="${jsbml.dir}/modules/libSBMLio/src"/>-->
+  	  <src path="${jsbml.dir}/modules/libSBMLio/src"/>
   	  <!-- Resources -->
       <src path="${jsbml.dir}/core/resources"/>
       <src path="${jsbml.dir}/extensions/comp/resources"/>
@@ -585,31 +577,6 @@
       <src path="${jsbml.dir}/extensions/render/resources"/>
       <!-- <src path="${jsbml.dir}/extensions/spatial/resources"/> -->
       <src path="${jsbml.dir}/modules/celldesigner/resources"/>
-      <src path="${jsbml.dir}/modules/libSBMLio/resources"/>
-  	</javac>
-  	
-  	<path id="jsbml.classpath">
-  	  <fileset dir="${jsbml.dir}/core/lib" includes="**.jar, **/*.jar, **.zip"/>
-  	  <fileset dir="${jsbml.dir}/modules/libSBMLio/lib" includes="**.jar, **/*.jar, **.zip"/>
-  	</path>
-  	<javac
-  	  classpathref="jsbml.classpath"
-  	  compiler="${build.compiler}"
-  	  debug="${debug}"
-  	  deprecation="${deprecation}"
-  	  destdir="${jsbml.dir}/bin"
-  	  listfiles="yes"
-  	  memoryMaximumSize="512M"
-  	  nowarn="no"
-  	  optimize="${optimize}"
-  	  source="1.5"
-  	  target="1.5"
-  	  verbose="${verbose}"
-  	>
-  	  <!-- Source -->
-  	  <src path="${jsbml.dir}/core/src"/>
-  	  <src path="${jsbml.dir}/modules/libSBMLio/src"/>
-  	  <!-- Resources -->
       <src path="${jsbml.dir}/modules/libSBMLio/resources"/>
   	</javac>
   	
@@ -697,18 +664,13 @@
     </path>
     
   	<echo message="Determining the revision number of SysBio"/>
-    <exec executable="svnversion" outputproperty="sysbio.revision">
-      <arg line="-c ${sysbio.dir}"/>
-      <redirector>
-        <outputfilterchain>
-          <tokenfilter>
-            <replaceregex pattern="[0-9]+\:" replace=""/>
-            <replaceregex pattern="[PM]+" replace=""/>
-          </tokenfilter>
-        </outputfilterchain>
-      </redirector>
+    <exec executable="svn" outputproperty="svninfo.xml">
+      <arg line="info --xml"/>
     </exec>
-  	<!--<property name="sysbio.revision" value="1282"/>-->
+    <xmlproperty collapseAttributes="true">
+      <propertyresource name="svninfo.xml"/>
+    </xmlproperty>
+	<property name="sysbio.revision" value="${info.entry.revision}"/>
 
     <echo message="Deleting all previous versions of SysBio JAR files"/>
     <delete verbose="true">
@@ -731,8 +693,8 @@
       nowarn="no"
       optimize="${optimize}"
       source="1.6"
-      sourcepathref="sysbio.sourcepath"
       srcdir="${sysbio.dir}/src"
+      sourcepathref="sysbio.sourcepath"
       target="1.6"
       verbose="${verbose}"
     />

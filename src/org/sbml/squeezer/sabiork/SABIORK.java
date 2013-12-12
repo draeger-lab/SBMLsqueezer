@@ -2,7 +2,7 @@
  * $Id: SABIORK.java 973 2012-08-17 13:40:55Z keller$
  * $URL: https://rarepos.cs.uni-tuebingen.de/svn-path/SBMLsqueezer/trunk/src/org/sbml/squeezer/sabiork/SABIORK.java$
  * ---------------------------------------------------------------------
- * This file is part of SBMLsqueezer, a Java program that creates rate 
+ * This file is part of SBMLsqueezer, a Java program that creates rate
  * equations for reactions in SBML files (http://sbml.org).
  *
  * Copyright (C) 2006-2013 by the University of Tuebingen, Germany.
@@ -91,7 +91,8 @@ public class SABIORK {
 		 * (non-Javadoc)
 		 * @see java.lang.Enum#toString()
 		 */
-		public String toString() {
+		@Override
+    public String toString() {
 			return name;
 		}
 
@@ -177,7 +178,7 @@ public class SABIORK {
 				}
 				return resourceResponse.toString();
 			}
-			else if(resourceConnection.getResponseCode() == 404) {
+			else if (resourceConnection.getResponseCode() == 404) {
 				return "No results found for query";
 			}
 			else {
@@ -250,8 +251,7 @@ public class SABIORK {
 			KineticLaw kineticLaw, String annotationElementQNameLocalPart)
 			throws UnsupportedEncodingException, XMLStreamException {
 		String annotationElementTextContent = "";
-		String nonRDFannotation = kineticLaw.getAnnotation()
-				.getNonRDFannotation();
+		String nonRDFannotation = kineticLaw.getAnnotation().getNonRDFannotation().toXMLString();
 		if (nonRDFannotation != null && !nonRDFannotation.trim().isEmpty()) {
 			annotationElementTextContent = XMLParser.getXMLElementTextContent(
 					nonRDFannotation, annotationElementQNameLocalPart,

@@ -2,7 +2,7 @@
  * $Id$
  * $URL$
  * ---------------------------------------------------------------------
- * This file is part of SBMLsqueezer, a Java program that creates rate 
+ * This file is part of SBMLsqueezer, a Java program that creates rate
  * equations for reactions in SBML files (http://sbml.org).
  *
  * Copyright (C) 2006-2013 by the University of Tuebingen, Germany.
@@ -70,7 +70,7 @@ public class TestCasesAnalyst {
 			e.printStackTrace();
 			System.exit(1);
 		}
-		SBMLio sbmlIo = new SBMLio(new LibSBMLReader(), new LibSBMLWriter());
+		SBMLio<org.sbml.libsbml.Model> sbmlIo = new SBMLio<org.sbml.libsbml.Model>(new LibSBMLReader(), new LibSBMLWriter());
 
 		File f = new File(args[0]);
 
@@ -90,11 +90,11 @@ public class TestCasesAnalyst {
 		Set<String> withLocalParameters = new HashSet<String>();
 
 		for (File dir : f.listFiles()) {
-			if (dir.isDirectory())
-				try {
-					Model model = sbmlIo.convertModel(f.getAbsolutePath()
+			if (dir.isDirectory()) {
+        try {
+					Model model = sbmlIo.convertSBMLDocument(f.getAbsolutePath()
 							+ "/" + dir.getName() + "/" + dir.getName()
-							+ "-sbml-l2v4.xml");
+							+ "-sbml-l2v4.xml").getModel();
 					if (model.getEventCount() > 0) {
 						withEvents.add(dir.getName());
 						for (Event e : model.getListOfEvents()) {
@@ -163,6 +163,7 @@ public class TestCasesAnalyst {
 					e.printStackTrace();
 					System.exit(1);
 				}
+      }
 		}
 
 		FileOutputStream fos = new FileOutputStream(f.getAbsolutePath()

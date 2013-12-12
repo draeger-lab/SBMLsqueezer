@@ -2,7 +2,7 @@
  * $Id: SqueezerOptionsRateLaws.java 14.09.2012 10:14:12 draeger$
  * $URL$
  * ---------------------------------------------------------------------
- * This file is part of SBMLsqueezer, a Java program that creates rate 
+ * This file is part of SBMLsqueezer, a Java program that creates rate
  * equations for reactions in SBML files (http://sbml.org).
  *
  * Copyright (C) 2006-2013 by the University of Tuebingen, Germany.
@@ -78,7 +78,7 @@ public interface OptionsRateLaws extends KeyProvider {
 			TypeStandardVersion.class,
 			OPTIONS_BUNDLE,
 			new Range<TypeStandardVersion>(
-					TypeStandardVersion.class, 
+					TypeStandardVersion.class,
 					Range.toRangeString(TypeStandardVersion.class)),
 					TypeStandardVersion.cat);
 	

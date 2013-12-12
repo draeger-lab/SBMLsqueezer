@@ -104,20 +104,27 @@ public class CommonModularRateLaw extends PowerLawModularRateLaw implements
 		ASTNode denominator = new ASTNode(this), curr;
 		LocalParameter hr = parameterFactory.parameterReactionCooperativity(enzyme);
 		Reaction r = getParentSBMLObject();
-		ListOf<SpeciesReference> listOf = forward ? r.getListOfReactants() : r.getListOfProducts();
 		ASTNode one = new ASTNode(1, this);
 		if (getLevel() > 2) {
 			one.setUnits(Unit.Kind.DIMENSIONLESS);
 		}
-		for (SpeciesReference specRef : listOf) {
-			LocalParameter kM = parameterFactory.parameterMichaelis(specRef.getSpecies(), enzyme, forward);
-			curr = ASTNode.sum(one.clone(), ASTNode.frac(speciesTerm(specRef), new ASTNode(kM, this)));
-			curr.raiseByThePowerOf(ASTNode.times(stoichiometryTerm(specRef), new ASTNode(hr, this)));
-			if (denominator.isUnknown()) {
-				denominator = curr;
-			} else {
-				denominator.multiplyWith(curr);
-			}
+		ListOf<SpeciesReference> listOf = null;
+		if (forward && r.isSetListOfReactants()) {
+		  listOf = r.getListOfReactants();
+		} else if (!forward && r.isSetListOfProducts()) {
+		  listOf = r.getListOfProducts();
+		}
+		if (listOf != null) {
+		  for (SpeciesReference specRef : listOf) {
+		    LocalParameter kM = parameterFactory.parameterMichaelis(specRef.getSpecies(), enzyme, forward);
+		    curr = ASTNode.sum(one.clone(), ASTNode.frac(speciesTerm(specRef), new ASTNode(kM, this)));
+		    curr.raiseByThePowerOf(ASTNode.times(stoichiometryTerm(specRef), new ASTNode(hr, this)));
+		    if (denominator.isUnknown()) {
+		      denominator = curr;
+		    } else {
+		      denominator.multiplyWith(curr);
+		    }
+		  }
 		}
 		return denominator;
 	}

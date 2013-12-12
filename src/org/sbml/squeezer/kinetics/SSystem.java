@@ -2,7 +2,7 @@
  * $Id$
  * $URL$
  * ---------------------------------------------------------------------
- * This file is part of SBMLsqueezer, a Java program that creates rate 
+ * This file is part of SBMLsqueezer, a Java program that creates rate
  * equations for reactions in SBML files (http://sbml.org).
  *
  * Copyright (C) 2006-2013 by the University of Tuebingen, Germany.
@@ -65,133 +65,129 @@ import de.zbit.util.ResourceManager;
  * @version $Rev$
  */
 public class SSystem extends BasicKineticLaw implements
-		InterfaceGeneRegulatoryKinetics, InterfaceModulatedKinetics,
-		InterfaceIrreversibleKinetics, InterfaceReversibleKinetics {
-	
-	public static final transient ResourceBundle MESSAGES = ResourceManager.getBundle(Bundles.MESSAGES);
-
-	/**
-	 * Generated serial version identifier.
-	 */
-	private static final long serialVersionUID = -1324851161924978070L;
-
-	/**
-	 * @param parentReaction
-	 * @param typeParameters
-	 * @throws RateLawNotApplicableException
-	 */
-	public SSystem(Reaction parentReaction, Object... typeParameters)
-			throws RateLawNotApplicableException {
-		super(parentReaction, typeParameters);
-	}
-
-	/*
-	 * (Kein Javadoc)
-	 * 
-	 * @see
-	 * org.sbml.squeezer.kinetics.BasicKineticLaw#createKineticEquation(java
-	 * .util.List, java.util.List, java.util.List, java.util.List,
-	 * java.util.List, java.util.List)
-	 */
-	ASTNode createKineticEquation(List<String> modE, List<String> modActi,
-			List<String> modInhib, List<String> modCat)
-			throws RateLawNotApplicableException {
-		Reaction r = getParentSBMLObject();
-		ASTNode node = prod(r.getListOfReactants(), true);
-		UnitFactory unitFactory = new UnitFactory(this.getModel(), this.isBringToConcentration());
-		if (r.getReversible()) {
-			if (node.isUnknown())
-				node = ASTNode.uMinus(prod(r.getListOfProducts(), false));
-			else
-				node.minus(prod(r.getListOfProducts(), false));
-		}
-		for (ModifierSpeciesReference modifier : r.getListOfModifiers()) {
-			Species modifierspec = modifier.getSpeciesInstance();
-			if (SBO.isProtein(modifierspec.getSBOTerm())
-					|| SBO.isGeneric(modifierspec.getSBOTerm())
-					|| SBO.isRNAOrMessengerRNA(modifierspec.getSBOTerm())
-					|| SBO.isGeneOrGeneCodingRegion(modifierspec.getSBOTerm())) {
-				if (!modifier.isSetSBOTerm()) {
-					SBMLtools.setSBOTerm(modifier,19);
-				}
-				if (SBO.isModifier(modifier.getSBOTerm())) {
-					LocalParameter exp = parameterFactory
-							.parameterSSystemExponent(modifierspec.getId());
-					String name = exp.getName();
-					if (SBO.isStimulator(modifier.getSBOTerm())) {
-						name.concat("_sti");
-						exp.setName(name);
-					}
-					if (SBO.isInhibitor(modifier.getSBOTerm())) {
-						name.concat("_inh");
-						exp.setName(name);
-					}
-					ASTNode expnode = new ASTNode(exp, this);
-					if (node.isUnknown()){
-						node = ASTNode.pow(speciesTerm(modifier), expnode);
-					}
-					else {
-						ASTNode one = new ASTNode(1, this);
-						if (unitFactory.getBringToConcentration()) {
-							SBMLtools.setUnits(one,unitFactory.unitSubstancePerSize(
-									this.getModel().getSubstanceUnitsInstance(),
-									this.getModel().getVolumeUnitsInstance(), -1d));
-						} else {
-							SBMLtools.setUnits(one,unitFactory.unitPerSubstance(this.getModel().getSubstanceUnitsInstance()));
-						}
-						node.multiplyWith(
-								one,
-								ASTNode.pow(speciesTerm(modifier),
-								expnode));
-					}
-				}
-			}
-		}
-		return node.isUnknown() ? null : node;
-	}
-
-	/*
-	 * (Kein Javadoc)
-	 * 
-	 * @see org.sbml.squeezer.kinetics.BasicKineticLaw#getSimpleName()
-	 */
-	public String getSimpleName() {
-		return MESSAGES.getString("SSYSTEM_SIMPLE_NAME");
-	}
-
-	/**
-	 * The product term in S-Systems.
-	 * 
-	 * @param listOf
-	 * @param forward
-	 * @return
-	 */
-	private ASTNode prod(ListOf<SpeciesReference> listOf, boolean forward) {
-		String rID = getParentSBMLObject().getId();
-		ASTNode prod = new ASTNode(forward ? parameterFactory.parameterSSystemAlpha(rID)
-				: parameterFactory.parameterSSystemBeta(rID), this);
-		UnitFactory unitFactory = new UnitFactory(this.getModel(), this.isBringToConcentration());
-		for (SpeciesReference specRef : listOf) {
-			if (!SBO.isEmptySet(specRef.getSpeciesInstance().getSBOTerm())) {
-				LocalParameter exponent = parameterFactory
-						.parameterSSystemExponent(specRef.getSpecies());
-				ASTNode pow = ASTNode.pow(speciesTerm(specRef), new ASTNode(
-						exponent, this));
-				if (prod.isUnknown()) {
-					prod = pow;
-				} else {
-					ASTNode one = new ASTNode(1, this);
-					if (unitFactory.getBringToConcentration()) {
-						SBMLtools.setUnits(one,unitFactory.unitSubstancePerSize(
-								this.getModel().getSubstanceUnitsInstance(),
-								this.getModel().getVolumeUnitsInstance(), -1d));
-					} else {
-						SBMLtools.setUnits(one,unitFactory.unitPerSubstance(this.getModel().getSubstanceUnitsInstance()));
-					}
-					prod.multiplyWith(pow,one);
-				}
-			}
-		}
-		return prod;
-	}
+InterfaceGeneRegulatoryKinetics, InterfaceModulatedKinetics,
+InterfaceIrreversibleKinetics, InterfaceReversibleKinetics,
+InterfaceZeroReactants, InterfaceZeroProducts {
+  
+  public static final transient ResourceBundle MESSAGES = ResourceManager.getBundle(Bundles.MESSAGES);
+  
+  /**
+   * Generated serial version identifier.
+   */
+  private static final long serialVersionUID = -1324851161924978070L;
+  
+  /**
+   * @param parentReaction
+   * @param typeParameters
+   * @throws RateLawNotApplicableException
+   */
+  public SSystem(Reaction parentReaction, Object... typeParameters)
+      throws RateLawNotApplicableException {
+    super(parentReaction, typeParameters);
+  }
+  
+  /* (non-Javadoc)
+   * @see org.sbml.squeezer.kinetics.BasicKineticLaw#createKineticEquation(java.util.List, java.util.List, java.util.List, java.util.List)
+   */
+  @Override
+  ASTNode createKineticEquation(List<String> modE, List<String> modActi,
+    List<String> modInhib, List<String> modCat)
+        throws RateLawNotApplicableException {
+    Reaction r = getParentSBMLObject();
+    ASTNode node = prod(r.getListOfReactants(), true);
+    UnitFactory unitFactory = new UnitFactory(getModel(), isBringToConcentration());
+    if (r.getReversible()) {
+      if (node.isUnknown()) {
+        node = ASTNode.uMinus(prod(r.getListOfProducts(), false));
+      } else {
+        node.minus(prod(r.getListOfProducts(), false));
+      }
+    }
+    for (ModifierSpeciesReference modifier : r.getListOfModifiers()) {
+      Species modifierspec = modifier.getSpeciesInstance();
+      if (SBO.isProtein(modifierspec.getSBOTerm())
+          || SBO.isGeneric(modifierspec.getSBOTerm())
+          || SBO.isRNAOrMessengerRNA(modifierspec.getSBOTerm())
+          || SBO.isGeneOrGeneCodingRegion(modifierspec.getSBOTerm())) {
+        if (!modifier.isSetSBOTerm()) {
+          SBMLtools.setSBOTerm(modifier,19);
+        }
+        if (SBO.isModifier(modifier.getSBOTerm())) {
+          LocalParameter exp = parameterFactory
+              .parameterSSystemExponent(modifierspec.getId());
+          String name = exp.getName();
+          if (SBO.isStimulator(modifier.getSBOTerm())) {
+            name.concat("_sti");
+            exp.setName(name);
+          }
+          if (SBO.isInhibitor(modifier.getSBOTerm())) {
+            name.concat("_inh");
+            exp.setName(name);
+          }
+          ASTNode expnode = new ASTNode(exp, this);
+          if (node.isUnknown()) {
+            node = ASTNode.pow(speciesTerm(modifier), expnode);
+          }
+          else {
+            ASTNode one = new ASTNode(1, this);
+            if (unitFactory.getBringToConcentration()) {
+              SBMLtools.setUnits(one,unitFactory.unitSubstancePerSize(
+                getModel().getSubstanceUnitsInstance(),
+                getModel().getVolumeUnitsInstance(), -1d));
+            } else {
+              SBMLtools.setUnits(one,unitFactory.unitPerSubstance(getModel().getSubstanceUnitsInstance()));
+            }
+            node.multiplyWith(
+              one,
+              ASTNode.pow(speciesTerm(modifier),
+                expnode));
+          }
+        }
+      }
+    }
+    return node.isUnknown() ? null : node;
+  }
+  
+  /* (non-Javadoc)
+   * @see org.sbml.squeezer.kinetics.BasicKineticLaw#getSimpleName()
+   */
+  @Override
+  public String getSimpleName() {
+    return MESSAGES.getString("SSYSTEM_SIMPLE_NAME");
+  }
+  
+  /**
+   * The product term in S-Systems.
+   * 
+   * @param listOf
+   * @param forward
+   * @return
+   */
+  private ASTNode prod(ListOf<SpeciesReference> listOf, boolean forward) {
+    String rID = getParentSBMLObject().getId();
+    ASTNode prod = new ASTNode(forward ? parameterFactory.parameterSSystemAlpha(rID)
+        : parameterFactory.parameterSSystemBeta(rID), this);
+    UnitFactory unitFactory = new UnitFactory(getModel(), isBringToConcentration());
+    for (SpeciesReference specRef : listOf) {
+      if (!SBO.isEmptySet(specRef.getSpeciesInstance().getSBOTerm())) {
+        LocalParameter exponent = parameterFactory.parameterSSystemExponent(specRef.getSpecies());
+        ASTNode pow = ASTNode.pow(speciesTerm(specRef), new ASTNode(exponent, this));
+        if (prod.isUnknown()) {
+          prod = pow;
+        } else {
+          ASTNode one = new ASTNode(1, this);
+          if (unitFactory.getBringToConcentration()) {
+            SBMLtools.setUnits(one,unitFactory.unitSubstancePerSize(
+              getModel().getSubstanceUnitsInstance(),
+              getModel().getVolumeUnitsInstance(), -1d));
+          } else {
+            SBMLtools.setUnits(one,unitFactory.unitPerSubstance(getModel().getSubstanceUnitsInstance()));
+          }
+          prod.multiplyWith(pow,one);
+        }
+      }
+    }
+    return prod;
+  }
+  
 }

@@ -108,7 +108,7 @@ public class CardReactionsM extends Card implements ListSelectionListener,
 		dialog.setButtonState(ButtonState.START);
 		tableReactionsModel
 				.setReactions(model.getReactions());
-		if(tableReactionsModel.getReactions().size() > 0) {
+		if (tableReactionsModel.getReactions().size() > 0) {
 			tableReactions.getSelectionModel().setSelectionInterval(0, 0);
 		}
 		setSelectedReaction();
@@ -193,7 +193,7 @@ public class CardReactionsM extends Card implements ListSelectionListener,
 		if (e.getSource().equals(comboBoxReactionFilters)) {
 			tableReactionsModel
 					.setReactions(model.getReactions());
-			if(tableReactionsModel.getReactions().size() > 0) {
+			if (tableReactionsModel.getReactions().size() > 0) {
 				tableReactions.getSelectionModel().setSelectionInterval(0, 0);
 			}
 			setSelectedReaction();

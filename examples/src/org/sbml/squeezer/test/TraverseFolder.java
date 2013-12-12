@@ -40,7 +40,7 @@ public class TraverseFolder {
      * Returns all files, that have been seen while traversing.
      * @return
      */
-    public ArrayList<File> getFiles(){
+    public ArrayList<File> getFiles() {
     	return files;
     }
 

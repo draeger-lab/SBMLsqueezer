@@ -2,7 +2,7 @@
  * $Id$
  * $URL$
  * ---------------------------------------------------------------------
- * This file is part of SBMLsqueezer, a Java program that creates rate 
+ * This file is part of SBMLsqueezer, a Java program that creates rate
  * equations for reactions in SBML files (http://sbml.org).
  *
  * Copyright (C) 2006-2013 by the University of Tuebingen, Germany.
@@ -23,12 +23,11 @@
  */
 
 /**
- * <p>
  * This package contains one class for each supported kinetic law. There are
  * also specialized exceptions for cases, in which a kinetic law cannot be
  * applied to a certain reaction. This package also contains the {@see
  * KineticLawGenerator}, which assigns kinetic laws to reactions within a model.
- * </p>
+ * 
  * @version $Rev$
  */
 package org.sbml.squeezer.kinetics;

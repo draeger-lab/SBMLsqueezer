@@ -24,21 +24,17 @@
 package org.sbml.squeezer.io;
 
 import java.io.IOException;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ResourceBundle;
-import java.util.Set;
 
 import javax.xml.stream.XMLStreamException;
 
 import org.sbml.jsbml.Model;
-import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.SBMLException;
 import org.sbml.jsbml.SBMLOutputConverter;
 import org.sbml.jsbml.SBMLWriter;
-import org.sbml.jsbml.util.IOProgressListener;
 import org.sbml.squeezer.util.Bundles;
 
 import de.zbit.util.ResourceManager;
@@ -51,17 +47,12 @@ import de.zbit.util.ResourceManager;
  * @since 1.4
  * @version $Rev$
  */
-public class SqSBMLWriter implements SBMLOutputConverter{
+public class SqSBMLWriter implements SBMLOutputConverter<Model> {
+  
+  /**
+   * 
+   */
 	public static final transient ResourceBundle WARNINGS = ResourceManager.getBundle(Bundles.WARNINGS);
-
-	private Set<IOProgressListener> setOfIOListeners = new HashSet<IOProgressListener>();
-	
-	/* (non-Javadoc)
-	 * @see org.sbml.jsbml.SBMLOutputConverter#addIOProgressListener(org.sbml.jsbml.util.IOProgressListener)
-	 */
-	public void addIOProgressListener(IOProgressListener listener) {
-		setOfIOListeners.add(listener);
-	}
 
 	/* (non-Javadoc)
 	 * @see org.sbml.jsbml.SBMLOutputConverter#getErrorCount(java.lang.Object)
@@ -71,60 +62,18 @@ public class SqSBMLWriter implements SBMLOutputConverter{
 	}
 
 	/* (non-Javadoc)
-	 * @see org.sbml.jsbml.SBMLOutputConverter#getNumErrors(java.lang.Object)
-	 */
-	@Deprecated
-	public int getNumErrors(Object sbase) {
-		return getErrorCount(sbase);
-	}
-
-	/* (non-Javadoc)
 	 * @see org.sbml.jsbml.SBMLOutputConverter#getWriteWarnings(java.lang.Object)
 	 */
-	public List<SBMLException> getWriteWarnings(Object sbase) {
+	@Override
+	public List<SBMLException> getWriteWarnings(Model sbase) {
 		List<SBMLException> excl = new LinkedList<SBMLException>();
 		return excl;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.sbml.jsbml.SBMLOutputConverter#removeUnneccessaryElements(org.sbml.jsbml.Model, java.lang.Object)
-	 */
-	public void removeUnneccessaryElements(Model model, Object orig) {
-	}
-
-	/* (non-Javadoc)
-	 * @see org.sbml.jsbml.SBMLOutputConverter#saveChanges(org.sbml.jsbml.Model, java.lang.Object)
-	 */
-	public boolean saveChanges(Model model, Object object) throws SBMLException {
-		if (!(object instanceof Model))
-			throw new IllegalArgumentException(WARNINGS.getString("NO_JSBML_MODEL"));
-		return true;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.sbml.jsbml.SBMLOutputConverter#saveChanges(org.sbml.jsbml.Reaction, java.lang.Object)
-	 */
-	public boolean saveChanges(Reaction reaction, Object model)
-			throws SBMLException {
-		if (!(model instanceof Model)) {
-			throw new IllegalArgumentException(WARNINGS.getString("NO_JSBML_MODEL"));
-		}
-		return true;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.sbml.jsbml.SBMLOutputConverter#writeModel(org.sbml.jsbml.Model)
-	 */
-	public Object writeModel(Model model) throws SBMLException {
-		// TODO Auto-generated method stub
-		Model m = new Model(model);
-		return m;
-	}
-
-	/* (non-Javadoc)
 	 * @see org.sbml.jsbml.SBMLOutputConverter#writeSBML(java.lang.Object, java.lang.String)
 	 */
-	public boolean writeSBML(Object sbmlDocument, String filename)
+	public boolean writeSBML(Model sbmlDocument, String filename)
 			throws SBMLException, IOException {
 		return writeSBML(sbmlDocument, filename, null, null);
 	}
@@ -132,20 +81,12 @@ public class SqSBMLWriter implements SBMLOutputConverter{
 	/* (non-Javadoc)
 	 * @see org.sbml.jsbml.SBMLOutputConverter#writeSBML(java.lang.Object, java.lang.String, java.lang.String, java.lang.String)
 	 */
-	public boolean writeSBML(Object object, String filename,
+	public boolean writeSBML(Model object, String filename,
 			String programName, String versionNumber) throws SBMLException,
 			IOException {
-		// check arguments
-		if (!(object instanceof SBMLDocument) && !(object instanceof Model)) {
-			throw new IllegalArgumentException(WARNINGS.getString("NO_JSBML_MODEL_OR_SBMLDOCUMENT"));
-		}
+
 		// convert to SBML
-		SBMLDocument sbmlDocument;
-		if (object instanceof SBMLDocument) {
-			sbmlDocument = (SBMLDocument) object;
-		} else {
-			sbmlDocument = ((Model) object).getSBMLDocument();
-		}
+		SBMLDocument sbmlDocument = object.getSBMLDocument();
 		// write SBML to file
 		boolean success = true; 
 		try {

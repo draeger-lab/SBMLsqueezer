@@ -2,7 +2,7 @@
  * $Id$
  * $URL$
  * ---------------------------------------------------------------------
- * This file is part of SBMLsqueezer, a Java program that creates rate 
+ * This file is part of SBMLsqueezer, a Java program that creates rate
  * equations for reactions in SBML files (http://sbml.org).
  *
  * Copyright (C) 2006-2013 by the University of Tuebingen, Germany.
@@ -155,11 +155,11 @@ public abstract class BasicKineticLaw extends KineticLaw {
 			throws RateLawNotApplicableException {
 		super(parentReaction);
 		this.typeParameters = typeParameters;
-		this.fullRank = true;
-		this.bringToConcentration = false;
-		this.defaultParamValue = 1d;
+		fullRank = true;
+		bringToConcentration = false;
+		defaultParamValue = 1d;
 		if (typeParameters.length > 0) {
-			//if(getTypeParameters()[0].toString() == ""){
+			//if (getTypeParameters()[0].toString() == "") {
 				//type = SqueezerOptions.TYPE_STANDARD_VERSION.getDefaultValue();
 			//}else{
 				type = TypeStandardVersion.valueOf(getTypeParameters()[0].toString());
@@ -186,7 +186,7 @@ public abstract class BasicKineticLaw extends KineticLaw {
 		orderProducts = getOrderProducts();
 		ReactionType.identifyModifers(parentReaction, enzymes, activators,
 				inhibitors, nonEnzymeCatalysts);
-		this.parameterFactory = new ParameterFactory(this, defaultParamValue,
+		parameterFactory = new ParameterFactory(this, defaultParamValue,
 				orderReactants, orderProducts, bringToConcentration);
 		setMath(createKineticEquation(enzymes, activators, inhibitors,
 				nonEnzymeCatalysts));
@@ -264,7 +264,8 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	/* (non-Javadoc)
 	 * @see org.sbml.jsbml.MathContainer#setMath(org.sbml.jsbml.ASTNode)
 	 */
-	public void setMath(ASTNode ast) {
+	@Override
+  public void setMath(ASTNode ast) {
 		if (!isSetMath()) {
 			super.setMath(ast);
 		}
@@ -286,7 +287,7 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	 */
 	ASTNode speciesTerm(Species species) {
 		ASTNode specTerm = new ASTNode(species, this);
-		if (species.getHasOnlySubstanceUnits()) {
+		if (species.hasOnlySubstanceUnits()) {
 			if (bringToConcentration) {
 				specTerm.divideBy(species.getCompartmentInstance());
 			}

@@ -2,7 +2,7 @@
  * $Id:  ZeroReactantsTest.java 3:58:03 PM jpfeuffer$
  * $URL$
  * ---------------------------------------------------------------------
- * This file is part of SBMLsqueezer, a Java program that creates rate 
+ * This file is part of SBMLsqueezer, a Java program that creates rate
  * equations for reactions in SBML files (http://sbml.org).
  *
  * Copyright (C) 2006-2013 by the University of Tuebingen, Germany.
@@ -43,82 +43,83 @@ import org.sbml.squeezer.kinetics.ZerothOrderReverseGMAK;
  * @since 1.4
  */
 public class ZeroReactantsTest extends KineticsTest {
-	
-	/**
-	 * Initializes species and reactions
-	 */
-	private Reaction r1;
-	
-	/* (non-Javadoc)
-	 * @see org.sbml.squeezer.test.cases.KineticsTest#initModel()
-	 */
-	protected Model initModel() {
-		SBMLDocument doc = new SBMLDocument(2, 4);
-	  Model model = doc.createModel("uniuni_model");
-		Compartment c = model.createCompartment("c1");
-		Species p1 = model.createSpecies("p1", c);
-
-		for (Species s : model.getListOfSpecies()) {
-			s.setHasOnlySubstanceUnits(false);
-		}
-		
-		r1 = model.createReaction("r1");
-		r1.createProduct(p1);
-		r1.setReversible(false);
-
-		return model;
-	}
-
-
-	/*=========================================================*
-	 *      I R R E V E R S I B L E   R E A C T I O N S        *
-	 *=========================================================*/
-
-
-	/**
-	 * Tests {@link GeneralizedMassAction} Kinetics for the reaction _ -> B with 0th order forward reaction
-	 * @throws Throwable
-	 */
-	@Test
-	public void testGMAK() throws Throwable {
-		KineticLaw kl = klg.createKineticLaw(r1, ZerothOrderForwardGMAK.class, false, TypeStandardVersion.cat, UnitConsistencyType.amount, 1d);
-		test(r1, kl, "zkass_r1");
-	}
-	
-	/**
-	 * Tests {@link GeneralizedMassAction} Kinetics for the reaction _ -> B with 0th order reverse reaction
-	 * @throws Throwable
-	 */
-	@Test
-	public void testRevGMAK() throws Throwable {
-		KineticLaw kl = klg.createKineticLaw(r1, ZerothOrderReverseGMAK.class, false, TypeStandardVersion.cat, UnitConsistencyType.amount, 1d);
-		test(r1, kl, "zkass_r1");
-	}
-
-
-	/*=========================================================*
-	 *      R E V E R S I B L E   R E A C T I O N S        *
-	 *=========================================================*/
-
-
-	/**
-	 * Tests {@link GeneralizedMassAction} Kinetics for the reaction _ <=> B with 0th order forward reaction
-	 * @throws Throwable
-	 */
-	@Test
-	public void testGMAKRev() throws Throwable {
-		KineticLaw kl = klg.createKineticLaw(r1, ZerothOrderForwardGMAK.class, true, TypeStandardVersion.cat, UnitConsistencyType.amount, 1d);
-		test(r1, kl, "zkass_r1-kdiss_r1*p1*c1");
-	}
-	
-	/**
-	 * Tests {@link GeneralizedMassAction} Kinetics for the reaction _ <=> B with 0th order reverse reaction
-	 * @throws Throwable
-	 */
-	@Test
-	public void testRevGMAKRev() throws Throwable {
-		KineticLaw kl = klg.createKineticLaw(r1, ZerothOrderReverseGMAK.class, true, TypeStandardVersion.cat, UnitConsistencyType.amount, 1d);
-		test(r1, kl, "zkass_r1-zkdiss_r1");
-	}
-
+  
+  /**
+   * Initializes species and reactions
+   */
+  private Reaction r1;
+  
+  /* (non-Javadoc)
+   * @see org.sbml.squeezer.test.cases.KineticsTest#initModel()
+   */
+  @Override
+  protected Model initModel() {
+    SBMLDocument doc = new SBMLDocument(2, 4);
+    Model model = doc.createModel("uniuni_model");
+    Compartment c = model.createCompartment("c1");
+    Species p1 = model.createSpecies("p1", c);
+    
+    for (Species s : model.getListOfSpecies()) {
+      s.setHasOnlySubstanceUnits(false);
+    }
+    
+    r1 = model.createReaction("r1");
+    r1.createProduct(p1);
+    r1.setReversible(false);
+    
+    return model;
+  }
+  
+  
+  /*=========================================================*
+   *      I R R E V E R S I B L E   R E A C T I O N S        *
+   *=========================================================*/
+  
+  
+  /**
+   * Tests {@link GeneralizedMassAction} Kinetics for the reaction _ -> B with 0th order forward reaction
+   * @throws Throwable
+   */
+  @Test
+  public void testGMAK() throws Throwable {
+    KineticLaw kl = klg.createKineticLaw(r1, ZerothOrderForwardGMAK.class, false, TypeStandardVersion.cat, UnitConsistencyType.amount, 1d);
+    test(r1, kl, "zkass_r1");
+  }
+  
+  /**
+   * Tests {@link GeneralizedMassAction} Kinetics for the reaction _ -> B with 0th order reverse reaction
+   * @throws Throwable
+   */
+  @Test
+  public void testRevGMAK() throws Throwable {
+    KineticLaw kl = klg.createKineticLaw(r1, ZerothOrderReverseGMAK.class, false, TypeStandardVersion.cat, UnitConsistencyType.amount, 1d);
+    test(r1, kl, "zkass_r1");
+  }
+  
+  
+  /*=========================================================*
+   *      R E V E R S I B L E   R E A C T I O N S        *
+   *=========================================================*/
+  
+  
+  /**
+   * Tests {@link GeneralizedMassAction} Kinetics for the reaction _ <=> B with 0th order forward reaction
+   * @throws Throwable
+   */
+  @Test
+  public void testGMAKRev() throws Throwable {
+    KineticLaw kl = klg.createKineticLaw(r1, ZerothOrderForwardGMAK.class, true, TypeStandardVersion.cat, UnitConsistencyType.amount, 1d);
+    test(r1, kl, "zkass_r1-kdiss_r1*p1*c1");
+  }
+  
+  /**
+   * Tests {@link GeneralizedMassAction} Kinetics for the reaction _ <=> B with 0th order reverse reaction
+   * @throws Throwable
+   */
+  @Test
+  public void testRevGMAKRev() throws Throwable {
+    KineticLaw kl = klg.createKineticLaw(r1, ZerothOrderReverseGMAK.class, true, TypeStandardVersion.cat, UnitConsistencyType.amount, 1d);
+    test(r1, kl, "zkass_r1-zkdiss_r1");
+  }
+  
 }

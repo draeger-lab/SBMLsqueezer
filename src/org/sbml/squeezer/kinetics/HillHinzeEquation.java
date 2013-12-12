@@ -2,7 +2,7 @@
  * $Id$
  * $URL$
  * ---------------------------------------------------------------------
- * This file is part of SBMLsqueezer, a Java program that creates rate 
+ * This file is part of SBMLsqueezer, a Java program that creates rate
  * equations for reactions in SBML files (http://sbml.org).
  *
  * Copyright (C) 2006-2013 by the University of Tuebingen, Germany.
@@ -56,7 +56,8 @@ import de.zbit.util.ResourceManager;
  */
 public class HillHinzeEquation extends BasicKineticLaw implements
 		InterfaceGeneRegulatoryKinetics, InterfaceModulatedKinetics,
-		InterfaceIrreversibleKinetics, InterfaceReversibleKinetics {
+		InterfaceIrreversibleKinetics, InterfaceReversibleKinetics,
+    InterfaceZeroReactants, InterfaceZeroProducts {
 
 	public static final transient ResourceBundle MESSAGES = ResourceManager.getBundle(Bundles.MESSAGES);
 	
@@ -79,7 +80,8 @@ public class HillHinzeEquation extends BasicKineticLaw implements
 	/* (non-Javadoc)
 	 * @see org.sbml.squeezer.kinetics.BasicKineticLaw#createKineticEquation(java.util.List, java.util.List, java.util.List, java.util.List)
 	 */
-	ASTNode createKineticEquation(List<String> modE, List<String> modActi,
+	@Override
+  ASTNode createKineticEquation(List<String> modE, List<String> modActi,
 			List<String> modInhib, List<String> modCat)
 			throws RateLawNotApplicableException {
 		// necessary due to the changes in CellDesigner from version 4.0 alpha
@@ -203,7 +205,8 @@ public class HillHinzeEquation extends BasicKineticLaw implements
 	/* (non-Javadoc)
 	 * @see org.sbml.squeezer.kinetics.BasicKineticLaw#getSimpleName()
 	 */
-	public String getSimpleName() {
+	@Override
+  public String getSimpleName() {
 		if (isSetSBOTerm() && SBO.isHillEquation(getSBOTerm())) {
 			return MESSAGES.getString("HILL_EQUATION_SIMPLE_NAME");
 		}

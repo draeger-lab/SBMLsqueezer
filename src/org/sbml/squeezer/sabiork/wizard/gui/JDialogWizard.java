@@ -502,14 +502,14 @@ public class JDialogWizard extends JDialog implements ActionListener, WindowList
 	/* (non-Javadoc)
 	 * @see java.awt.event.WindowListener#windowOpened(java.awt.event.WindowEvent)
 	 */
-	//@Override
+	@Override
 	public void windowOpened(WindowEvent e) {
 	}
 
 	/* (non-Javadoc)
 	 * @see java.awt.event.WindowListener#windowClosing(java.awt.event.WindowEvent)
 	 */
-	//@Override
+	@Override
 	public void windowClosing(WindowEvent e) {
 		model.deleteResult();
 		dispose();
@@ -518,35 +518,35 @@ public class JDialogWizard extends JDialog implements ActionListener, WindowList
 	/* (non-Javadoc)
 	 * @see java.awt.event.WindowListener#windowClosed(java.awt.event.WindowEvent)
 	 */
-	//@Override
+	@Override
 	public void windowClosed(WindowEvent e) {
 	}
 
 	/* (non-Javadoc)
 	 * @see java.awt.event.WindowListener#windowIconified(java.awt.event.WindowEvent)
 	 */
-	//@Override
+	@Override
 	public void windowIconified(WindowEvent e) {
 	}
 
 	/* (non-Javadoc)
 	 * @see java.awt.event.WindowListener#windowDeiconified(java.awt.event.WindowEvent)
 	 */
-	//@Override
+	@Override
 	public void windowDeiconified(WindowEvent e) {
 	}
 
 	/* (non-Javadoc)
 	 * @see java.awt.event.WindowListener#windowActivated(java.awt.event.WindowEvent)
 	 */
-	//@Override
+	@Override
 	public void windowActivated(WindowEvent e) {
 	}
 
 	/* (non-Javadoc)
 	 * @see java.awt.event.WindowListener#windowDeactivated(java.awt.event.WindowEvent)
 	 */
-	//@Override
+	@Override
 	public void windowDeactivated(WindowEvent e) {
 	}
 

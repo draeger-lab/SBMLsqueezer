@@ -2,7 +2,7 @@
  * $Id$
  * $URL$
  * ---------------------------------------------------------------------
- * This file is part of SBMLsqueezer, a Java program that creates rate 
+ * This file is part of SBMLsqueezer, a Java program that creates rate
  * equations for reactions in SBML files (http://sbml.org).
  *
  * Copyright (C) 2006-2013 by the University of Tuebingen, Germany.
@@ -43,7 +43,7 @@ import de.zbit.util.ResourceManager;
  */
 public class RestrictedSpaceKinetics extends GeneralizedMassAction implements
 		InterfaceIrreversibleKinetics, InterfaceBiUniKinetics {
-	
+	 
 	public static final transient ResourceBundle MESSAGES = ResourceManager.getBundle(Bundles.MESSAGES);
 
 	/**
@@ -64,7 +64,8 @@ public class RestrictedSpaceKinetics extends GeneralizedMassAction implements
 	/* (non-Javadoc)
 	 * @see org.sbml.squeezer.kinetics.GeneralizedMassAction#association(java.util.List, int)
 	 */
-	ASTNode association(List<String> catalysts, int catNum) {
+	@Override
+  ASTNode association(List<String> catalysts, int catNum) {
 		Reaction r = getParentSBMLObject();
 		LocalParameter p_h = parameterFactory.parameterTimeOrder();
 		// p_h.setValue(0d); // This leads to a crash of libSBML!

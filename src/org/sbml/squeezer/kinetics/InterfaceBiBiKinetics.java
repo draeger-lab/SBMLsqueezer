@@ -2,7 +2,7 @@
  * $Id$
  * $URL$
  * ---------------------------------------------------------------------
- * This file is part of SBMLsqueezer, a Java program that creates rate 
+ * This file is part of SBMLsqueezer, a Java program that creates rate
  * equations for reactions in SBML files (http://sbml.org).
  *
  * Copyright (C) 2006-2013 by the University of Tuebingen, Germany.
@@ -36,5 +36,5 @@ package org.sbml.squeezer.kinetics;
  * @version $Rev$
  */
 public interface InterfaceBiBiKinetics extends InterfaceKinteticsType {
-
+  
 }

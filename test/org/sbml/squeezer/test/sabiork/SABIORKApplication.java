@@ -50,7 +50,7 @@ public class SABIORKApplication {
 	 * @param f the file
 	 * @return doc the SBMLDocument
 	 */
-	public static SBMLDocument readSBMLDocument(File f){
+	public static SBMLDocument readSBMLDocument(File f) {
 		SBMLDocument sbmlDocument = null;
 		try {
 			sbmlDocument = SBMLReader.read(f);
@@ -67,7 +67,7 @@ public class SABIORKApplication {
 	 * @param sbmlDocument
 	 * @param f the file
 	 */
-	public static void writeSBMLDocument(SBMLDocument sbmlDocument, File f){
+	public static void writeSBMLDocument(SBMLDocument sbmlDocument, File f) {
 		try {
 			SBMLWriter.write(sbmlDocument, f, ' ', (short) 4);
 		} catch (SBMLException e) {
@@ -84,7 +84,7 @@ public class SABIORKApplication {
 	 * @param input the input file
 	 * @param output the output file
 	 */
-	public static void runGUI(final File input, final File output){
+	public static void runGUI(final File input, final File output) {
 		final JFrame frame = new JFrame("SBMLsqueezer");
 		frame.setLayout(new BorderLayout());
 		frame.setMinimumSize(new Dimension(300, 300));
@@ -106,7 +106,7 @@ public class SABIORKApplication {
 	 * @param input the input file
 	 * @param output the output file
 	 */
-	public static void runConsole(File input, File output){
+	public static void runConsole(File input, File output) {
 		String pathway = null;
 		String tissue = null;
 		String organism = null;

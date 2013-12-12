@@ -2,7 +2,7 @@
  * $Id: GeneralizedMassActionTest.java 14.03.2012 10:40:14 draeger$
  * $URL$
  * ---------------------------------------------------------------------
- * This file is part of SBMLsqueezer, a Java program that creates rate 
+ * This file is part of SBMLsqueezer, a Java program that creates rate
  * equations for reactions in SBML files (http://sbml.org).
  *
  * Copyright (C) 2006-2013 by the University of Tuebingen, Germany.
@@ -39,6 +39,7 @@ import org.sbml.jsbml.SBMLWriter;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.UnitDefinition;
 import org.sbml.squeezer.OptionsGeneral;
+import org.sbml.squeezer.ReactionType;
 import org.sbml.squeezer.UnitConsistencyType;
 import org.sbml.squeezer.kinetics.CommonModularRateLaw;
 import org.sbml.squeezer.kinetics.GeneralizedMassAction;
@@ -67,7 +68,8 @@ public class GeneralizedMassActionTest extends KineticsTest {
 	/* (non-Javadoc)
 	 * @see org.sbml.squeezer.test.cases.KineticsTest#initModel()
 	 */
-	public Model initModel() {
+	@Override
+  public Model initModel() {
 		SBMLDocument doc = new SBMLDocument(3, 1);
 		Model model = doc.createModel("m1");
 		
@@ -214,6 +216,7 @@ public class GeneralizedMassActionTest extends KineticsTest {
 	@Test
 	public void testGMAKconcentration() throws Throwable {
 		Reaction r1 = model.getReaction("r1");
+		ReactionType.removeSpeciesAccordingToIgnoreList(r1, klg.getSpeciesIgnoreList());
 		KineticLaw kl = klg.createKineticLaw(r1, GeneralizedMassAction.class, true, TypeStandardVersion.cat, UnitConsistencyType.concentration, 1d);
 		test(r1, kl, "kass_r1*s01/cell*s02/cell*s03/cell*s04/cell*s05/cell-kdiss_r1*s06/cell*s07/cell*s08/cell*s09/cell*s11/cell");
 		assertTrue(r1.isReversible());
@@ -226,6 +229,7 @@ public class GeneralizedMassActionTest extends KineticsTest {
 	@Test
 	public void testGMAKamount() throws Throwable {
 		Reaction r1 = model.getReaction("r1");
+		ReactionType.removeSpeciesAccordingToIgnoreList(r1, klg.getSpeciesIgnoreList());
 		KineticLaw kl = klg.createKineticLaw(r1, GeneralizedMassAction.class, true, TypeStandardVersion.cat, UnitConsistencyType.amount, 1d);
 		test(r1, kl, "kass_r1*s01*s02*s03*s04*s05-kdiss_r1*s06*s07*s08*s09*s11");
 		assertTrue(r1.isReversible());
@@ -253,6 +257,7 @@ public class GeneralizedMassActionTest extends KineticsTest {
 	@Test
 	public void testFourReactantsThreeProducts() throws Throwable {
 		Reaction r = model.getReaction("R00344");
+		ReactionType.removeSpeciesAccordingToIgnoreList(r, klg.getSpeciesIgnoreList());
 		KineticLaw kl = klg.createKineticLaw(r, GeneralizedMassAction.class, true, TypeStandardVersion.cat, UnitConsistencyType.amount, 1d);
 		// note that h+ is ignored
 		test(r, kl, "kass_R00344*s13*s14*s15-kdiss_R00344*s16*s04*s17");

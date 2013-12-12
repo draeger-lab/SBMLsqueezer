@@ -63,168 +63,168 @@ public class SqueezertestFunctions {
 	 * @param model
 	 * @return
 	 */
-	public static boolean compareModels(Model modelOrig, Model model){
+	public static boolean compareModels(Model modelOrig, Model model) {
 		boolean areEqual = true;
 		Logger logger = Logger.getLogger(KineticLawGenerator.class.getName());
 		// test if and where the models differ
-		if(model == null){
+		if (model == null) {
 			logger.warning("-> model is empty");
 			areEqual = false;
-		}else if(modelOrig == null){
+		}else if (modelOrig == null) {
 			logger.warning("-> original model is empty");
 			areEqual = false;
 		}else{
-			if(!modelOrig.getClass().equals(model.getClass())) {
+			if (!modelOrig.getClass().equals(model.getClass())) {
 				logger.warning("-> classes are unequal");
 				areEqual = false;
 			}
 			if (model instanceof TreeNode) {
 				int childCount = modelOrig.getChildCount();
-				if(model.getChildCount() != childCount){
+				if (model.getChildCount() != childCount) {
 					logger.warning("-> unequal child count");
 					areEqual = false;
 				}
-				if(!modelOrig.getListOfCompartments().equals(model.getListOfCompartments())){
+				if (!modelOrig.getListOfCompartments().equals(model.getListOfCompartments())) {
 					logger.warning("-> unequal List of compartments");
 					areEqual = false; 
-				}if(!modelOrig.getListOfCompartmentTypes().equals(model.getListOfCompartmentTypes())){
+				}if (!modelOrig.getListOfCompartmentTypes().equals(model.getListOfCompartmentTypes())) {
 					logger.warning("-> unequal List of compartment types");
 					areEqual = false;
-				}if(!modelOrig.getListOfConstraints().equals(model.getListOfConstraints())){
+				}if (!modelOrig.getListOfConstraints().equals(model.getListOfConstraints())) {
 					logger.warning("-> unequal List of constraints");
 					areEqual = false; 
-				}if(!modelOrig.getListOfEvents().equals(model.getListOfEvents())){
+				}if (!modelOrig.getListOfEvents().equals(model.getListOfEvents())) {
 					logger.warning("-> unequal List of events");
 					areEqual = false;
-				}if(!modelOrig.getListOfFunctionDefinitions().equals(model.getListOfFunctionDefinitions())){
+				}if (!modelOrig.getListOfFunctionDefinitions().equals(model.getListOfFunctionDefinitions())) {
 					logger.warning("-> unequal List of function definitions");
 					areEqual = false;
-				}if(!modelOrig.getListOfInitialAssignments().equals(model.getListOfInitialAssignments())){
+				}if (!modelOrig.getListOfInitialAssignments().equals(model.getListOfInitialAssignments())) {
 					logger.warning("-> unequal List of initial assignments");
 					areEqual = false;
-				}if(!modelOrig.getListOfParameters().equals(model.getListOfParameters())){
+				}if (!modelOrig.getListOfParameters().equals(model.getListOfParameters())) {
 					logger.warning("-> unequal List of parameters");
 					areEqual = false;
-				}if(!modelOrig.getListOfPredefinedUnitDefinitions().equals(model.getListOfPredefinedUnitDefinitions())){
+				}if (!modelOrig.getListOfPredefinedUnitDefinitions().equals(model.getListOfPredefinedUnitDefinitions())) {
 					logger.warning("-> unequal List of predefined unit definitions");
 					areEqual = false; 
-				}if(!modelOrig.getListOfReactions().equals(model.getListOfReactions())){
+				}if (!modelOrig.getListOfReactions().equals(model.getListOfReactions())) {
 					logger.warning("-> unequal List of reactions");
 					areEqual = false; 
-				}if(!modelOrig.getListOfRules().equals(model.getListOfRules())){
+				}if (!modelOrig.getListOfRules().equals(model.getListOfRules())) {
 					logger.warning("-> unequal List of rules");
 					areEqual = false;
-				}if(!modelOrig.getListOfSpecies().equals(model.getListOfSpecies())){
+				}if (!modelOrig.getListOfSpecies().equals(model.getListOfSpecies())) {
 					logger.warning("-> unequal List of species");
 					areEqual = false;
-				}if(!modelOrig.getListOfSpeciesTypes().equals(model.getListOfSpeciesTypes())){
+				}if (!modelOrig.getListOfSpeciesTypes().equals(model.getListOfSpeciesTypes())) {
 					logger.warning("-> unequal List of species types");
 					areEqual = false;
-				}if(!modelOrig.getListOfUnitDefinitions().equals(model.getListOfUnitDefinitions())){
+				}if (!modelOrig.getListOfUnitDefinitions().equals(model.getListOfUnitDefinitions())) {
 					logger.warning("-> unequal List of unit definitions");
 					areEqual = false;
 				}
 
 			}
-			if(model.isSetMetaId() != modelOrig.isSetMetaId()){
+			if (model.isSetMetaId() != modelOrig.isSetMetaId()) {
 				logger.warning("-> one of the MetaIds is not set");
 				areEqual = false;
 			}else if (model.isSetMetaId()) {
-				if(!model.getMetaId().equals(modelOrig.getMetaId())){
+				if (!model.getMetaId().equals(modelOrig.getMetaId())) {
 					logger.warning("-> models have different MetaId");
 					areEqual = false;
 				}
 			}
-			if(model.isSetSBOTerm() != modelOrig.isSetSBOTerm()){
+			if (model.isSetSBOTerm() != modelOrig.isSetSBOTerm()) {
 				logger.warning("-> one of the SBOTerms is not set");
 				areEqual = false;
-			}else if(model.isSetSBOTerm()){
-				if(model.getSBOTerm() != modelOrig.getSBOTerm()){
+			}else if (model.isSetSBOTerm()) {
+				if (model.getSBOTerm() != modelOrig.getSBOTerm()) {
 					logger.warning("-> models have different SBOTerm");
 					areEqual = false;
 				}
 			}
-			if(!model.getLevelAndVersion().equals(modelOrig.getLevelAndVersion())){
+			if (!model.getLevelAndVersion().equals(modelOrig.getLevelAndVersion())) {
 				logger.warning("models differ in version and / or level");
 				areEqual = false;
 			}
-			if(model.isSetId() != modelOrig.isSetId()){
+			if (model.isSetId() != modelOrig.isSetId()) {
 				logger.warning("-> one of the ids is not set");
 				areEqual = false;
 			}else if (model.isSetId()) {
-				if(!model.getId().equals(modelOrig.getId())){
+				if (!model.getId().equals(modelOrig.getId())) {
 					logger.warning("models have different Ids");
 					areEqual = false;
 				}
 			}
-			if(model.isSetName() != modelOrig.isSetName()){
+			if (model.isSetName() != modelOrig.isSetName()) {
 				logger.warning("-> one of the names is not set");
 				areEqual = false;
-			}else if(model.isSetName()){
-				if(!model.getName().equals(modelOrig.getName())){
+			}else if (model.isSetName()) {
+				if (!model.getName().equals(modelOrig.getName())) {
 					logger.warning("models have different names");
 					areEqual = false;
 				}
 			}
-			if(model.isSetTimeUnits() != modelOrig.isSetTimeUnits()){
+			if (model.isSetTimeUnits() != modelOrig.isSetTimeUnits()) {
 				logger.warning("-> one of the time units is not set");
 				areEqual = false;
 			}else if (modelOrig.isSetTimeUnits()) {
-				if(!modelOrig.getTimeUnits().equals(model.getTimeUnits())){
+				if (!modelOrig.getTimeUnits().equals(model.getTimeUnits())) {
 					logger.warning("models have different time units");
 					areEqual = false;
 				}
 			}
-			if(model.isSetAreaUnits() != modelOrig.isSetAreaUnits()){
+			if (model.isSetAreaUnits() != modelOrig.isSetAreaUnits()) {
 				logger.warning("-> one of the area units is not set");
 				areEqual = false;
-			}else if(modelOrig.isSetAreaUnits()){
-				if(!modelOrig.getAreaUnits().equals(model.getAreaUnits())){
+			}else if (modelOrig.isSetAreaUnits()) {
+				if (!modelOrig.getAreaUnits().equals(model.getAreaUnits())) {
 					logger.warning("models have different area units");
 					areEqual = false;
 				}
 			}
-			if(model.isSetConversionFactor() != modelOrig.isSetConversionFactor()){
+			if (model.isSetConversionFactor() != modelOrig.isSetConversionFactor()) {
 				logger.warning("-> one of the conversion factors is not set");
 				areEqual = false;
-			}else if(modelOrig.isSetConversionFactor()){
-				if(!modelOrig.getConversionFactor().equals(model.getConversionFactor())){
+			}else if (modelOrig.isSetConversionFactor()) {
+				if (!modelOrig.getConversionFactor().equals(model.getConversionFactor())) {
 					logger.warning("models have different conversion factors");
 					areEqual = false;
 				}
 			}
-			if(model.isSetExtentUnits() != modelOrig.isSetExtentUnits()){
+			if (model.isSetExtentUnits() != modelOrig.isSetExtentUnits()) {
 				logger.warning("-> one of the extent units is not set");
 				areEqual = false;
-			}else if(modelOrig.isSetExtentUnits()){
-				if(!modelOrig.getExtentUnits().equals(model.getExtentUnits())){
+			}else if (modelOrig.isSetExtentUnits()) {
+				if (!modelOrig.getExtentUnits().equals(model.getExtentUnits())) {
 					logger.warning("models have different extent units");
 					areEqual = false;
 				}
 			}
-			if(modelOrig.isSetLengthUnits() != modelOrig.isSetLengthUnits()){
+			if (modelOrig.isSetLengthUnits() != modelOrig.isSetLengthUnits()) {
 				logger.warning("-> one of the length units is not set");
 				areEqual = false;
-			}else if(modelOrig.isSetLengthUnits()){
-				if(!modelOrig.getLengthUnits().equals(model.getLengthUnits())){
+			}else if (modelOrig.isSetLengthUnits()) {
+				if (!modelOrig.getLengthUnits().equals(model.getLengthUnits())) {
 					logger.warning("models have different length units");
 					areEqual = false;
 				}
 			}
-			if(model.isSetSubstanceUnits() != modelOrig.isSetSubstanceUnits()){
+			if (model.isSetSubstanceUnits() != modelOrig.isSetSubstanceUnits()) {
 				logger.warning("-> one of the substance units is not set");
 				areEqual = false;
-			}else if(model.isSetSubstanceUnits()){
-				if(!modelOrig.getSubstanceUnits().equals(model.getSubstanceUnits())){
+			}else if (model.isSetSubstanceUnits()) {
+				if (!modelOrig.getSubstanceUnits().equals(model.getSubstanceUnits())) {
 					logger.warning("models have different substance units");
 					areEqual = false;
 				}
 			}
-			if(model.isSetVolumeUnits() != modelOrig.isSetVolumeUnits()){
+			if (model.isSetVolumeUnits() != modelOrig.isSetVolumeUnits()) {
 				logger.warning("-> one of the volume units is not set");
 				areEqual = false;
-			}else if(modelOrig.isSetVolumeUnits()){
-				if(!modelOrig.getVolumeUnits().equals(model.getVolumeUnits())){
+			}else if (modelOrig.isSetVolumeUnits()) {
+				if (!modelOrig.getVolumeUnits().equals(model.getVolumeUnits())) {
 					logger.warning("models have different volume units");
 					areEqual = false;
 				}
@@ -243,7 +243,7 @@ public class SqueezertestFunctions {
 			if (fd1 == null) {
 				// new function definition
 				originalModel.addFunctionDefinition(fd2);
-			} else if(!fd1.equals(fd2)){
+			} else if (!fd1.equals(fd2)) {
 				// changed function definition
 				originalModel.removeFunctionDefinition(fd2.getId());
 				originalModel.addFunctionDefinition(fd2);
@@ -252,12 +252,12 @@ public class SqueezertestFunctions {
 
 		// Unit definitions
 		UnitDefinition ud1;
-		for (UnitDefinition ud2 : model.getListOfUnitDefinitions()){
+		for (UnitDefinition ud2 : model.getListOfUnitDefinitions()) {
 			ud1 = originalModel.getUnitDefinition(ud2.getId());
-			if(ud1 == null){
+			if (ud1 == null) {
 				// new unit definition
 				originalModel.addUnitDefinition(ud2);
-			} else if(!UnitDefinition.areIdentical(ud1, ud2)){
+			} else if (!UnitDefinition.areIdentical(ud1, ud2)) {
 				// changed unit definition
 				originalModel.removeUnitDefinition(ud1);
 				originalModel.addUnitDefinition(ud2);
@@ -268,9 +268,9 @@ public class SqueezertestFunctions {
 		CompartmentType ct1;
 		for (CompartmentType ct2 : model.getListOfCompartmentTypes()) {
 			ct1 = originalModel.getCompartmentType(ct2.getId());
-			if (ct1 == null){
+			if (ct1 == null) {
 				originalModel.addCompartmentType(ct2);
-			}else if(!ct1.equals(ct2)){
+			}else if (!ct1.equals(ct2)) {
 				originalModel.removeCompartmentType(ct1.getId());
 				originalModel.addCompartmentType(ct2);
 			}
@@ -282,7 +282,7 @@ public class SqueezertestFunctions {
 			st1 = originalModel.getSpeciesType(st2.getId());
 			if (st1 == null) {
 				originalModel.addSpeciesType(st2);
-			} else if(!st1.equals(st2)){
+			} else if (!st1.equals(st2)) {
 				originalModel.removeSpeciesType(st1.getId());
 				originalModel.addSpeciesType(st2);
 			}
@@ -294,7 +294,7 @@ public class SqueezertestFunctions {
 			cm1 = originalModel.getCompartment(cm2.getId());
 			if (cm1 == null) {
 				originalModel.addCompartment(cm2);
-			} else if(!cm1.equals(cm2)){
+			} else if (!cm1.equals(cm2)) {
 				originalModel.removeCompartment(cm1.getId());
 				originalModel.addCompartment(cm2);
 			}
@@ -306,7 +306,7 @@ public class SqueezertestFunctions {
 			sp1 = originalModel.getSpecies(sp2.getId());
 			if (sp1 == null) {
 				originalModel.addSpecies(sp2);
-			} else if(!sp1.equals(sp2)){
+			} else if (!sp1.equals(sp2)) {
 				originalModel.removeSpecies(sp1);
 				originalModel.addSpecies(sp2);
 			}
@@ -318,7 +318,7 @@ public class SqueezertestFunctions {
 			pa1 = originalModel.getParameter(pa2.getId());
 			if (pa1 == null) {
 				originalModel.addParameter(pa2);
-			} else if(!pa1.equals(pa2)){
+			} else if (!pa1.equals(pa2)) {
 				originalModel.removeParameter(pa1);
 				originalModel.addParameter(pa2);
 			}
@@ -331,13 +331,13 @@ public class SqueezertestFunctions {
 			contains = -1;			
 			for (int i = 0; i < originalModel.getInitialAssignmentCount() && contains < 0; i++) {
 				ia1 = originalModel.getInitialAssignment(i);
-				if (ia1.equals(ia2)){
+				if (ia1.equals(ia2)) {
 					contains = i;
 				}
 			}
 			if (contains < 0) {
 				originalModel.addInitialAssignment(ia2);
-			} else if(!originalModel.getInitialAssignment(contains).equals(ia2)){
+			} else if (!originalModel.getInitialAssignment(contains).equals(ia2)) {
 				originalModel.removeInitialAssignment(contains);
 				originalModel.addInitialAssignment(ia2);
 			}		
@@ -378,7 +378,7 @@ public class SqueezertestFunctions {
 			}
 			if (contains < 0) {
 				originalModel.addRule(ru2);
-			} else if(!originalModel.getRule(contains).equals(ru2)){
+			} else if (!originalModel.getRule(contains).equals(ru2)) {
 				originalModel.removeRule(contains);
 				originalModel.addRule(ru2);
 			}
@@ -407,7 +407,7 @@ public class SqueezertestFunctions {
 			re1 = originalModel.getReaction(re2.getId());
 			if (re1 == null) {
 				originalModel.addReaction(re2);
-			} else if(!re1.equals(re2)){
+			} else if (!re1.equals(re2)) {
 				originalModel.removeReaction(re1.getId());
 				originalModel.addReaction(re2);
 			}
@@ -419,7 +419,7 @@ public class SqueezertestFunctions {
 			ev1 = originalModel.getEvent(ev2.getId());
 			if (ev1 == null) {
 				originalModel.addEvent(ev2);
-			} else if(!ev1.equals(ev2)){
+			} else if (!ev1.equals(ev2)) {
 				originalModel.removeEvent(ev1.getId());
 				originalModel.addEvent(ev2);
 			}

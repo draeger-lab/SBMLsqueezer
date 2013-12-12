@@ -2,7 +2,7 @@
  * $Id$
  * $URL$
  * ---------------------------------------------------------------------
- * This file is part of SBMLsqueezer, a Java program that creates rate 
+ * This file is part of SBMLsqueezer, a Java program that creates rate
  * equations for reactions in SBML files (http://sbml.org).
  *
  * Copyright (C) 2006-2013 by the University of Tuebingen, Germany.
@@ -47,33 +47,44 @@ import de.zbit.util.ResourceManager;
  * @version $Rev$
  */
 public class Vohradsky extends AdditiveModelNonLinear implements
-		InterfaceGeneRegulatoryKinetics, InterfaceModulatedKinetics,
-		InterfaceIrreversibleKinetics, InterfaceReversibleKinetics {
-	
-	public static final transient ResourceBundle MESSAGES = ResourceManager.getBundle(Bundles.MESSAGES);
-
-	/**
-	 * Generated serial version identifier.
-	 */
-	private static final long serialVersionUID = -5955724687761012848L;
-
-	/**
-	 * @param parentReaction
-	 * @param typeParameters
-	 * @throws RateLawNotApplicableException
-	 */
-	public Vohradsky(Reaction parentReaction, Object... typeParameters)
-			throws RateLawNotApplicableException {
-		super(parentReaction, typeParameters);
-	}
-
-	@Override
-	public String getSimpleName() {
-		return MESSAGES.getString("VOHRADSKY_SIMPLE_NAME");
-	}
-
-	@Override
-	ASTNode v() {
-		return null;
-	}
+InterfaceGeneRegulatoryKinetics, InterfaceModulatedKinetics,
+InterfaceIrreversibleKinetics, InterfaceReversibleKinetics,
+InterfaceZeroReactants, InterfaceZeroProducts {
+  
+  /**
+   * Localization support
+   */
+  private static final transient ResourceBundle MESSAGES = ResourceManager.getBundle(Bundles.MESSAGES);
+  
+  /**
+   * Generated serial version identifier.
+   */
+  private static final long serialVersionUID = -5955724687761012848L;
+  
+  /**
+   * @param parentReaction
+   * @param typeParameters
+   * @throws RateLawNotApplicableException
+   */
+  public Vohradsky(Reaction parentReaction, Object... typeParameters)
+      throws RateLawNotApplicableException {
+    super(parentReaction, typeParameters);
+  }
+  
+  /* (non-Javadoc)
+   * @see org.sbml.squeezer.kinetics.AdditiveModelNonLinear#getSimpleName()
+   */
+  @Override
+  public String getSimpleName() {
+    return MESSAGES.getString("VOHRADSKY_SIMPLE_NAME");
+  }
+  
+  /* (non-Javadoc)
+   * @see org.sbml.squeezer.kinetics.AdditiveModelLinear#v()
+   */
+  @Override
+  ASTNode v() {
+    return null;
+  }
+  
 }

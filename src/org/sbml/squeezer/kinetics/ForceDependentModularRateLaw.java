@@ -2,7 +2,7 @@
  * $Id$
  * $URL$
  * ---------------------------------------------------------------------
- * This file is part of SBMLsqueezer, a Java program that creates rate 
+ * This file is part of SBMLsqueezer, a Java program that creates rate
  * equations for reactions in SBML files (http://sbml.org).
  *
  * Copyright (C) 2006-2013 by the University of Tuebingen, Germany.
@@ -76,17 +76,20 @@ public class ForceDependentModularRateLaw extends PowerLawModularRateLaw
 	 * org.sbml.squeezer.kinetics.ReversiblePowerLaw#denominator(org.sbml.jsbml
 	 * .Reaction)
 	 */
-	ASTNode denominator(String enzyme) {
+	@Override
+  ASTNode denominator(String enzyme) {
 		ASTNode denominator = new ASTNode(this);
 		ASTNode forward = denominator(enzyme, true);
 		ASTNode backward = denominator(enzyme, false);
-		if (!forward.isUnknown())
-			denominator = forward;
+		if (!forward.isUnknown()) {
+      denominator = forward;
+    }
 		if (!backward.isUnknown()) {
-			if (!denominator.isUnknown())
-				denominator.multiplyWith(backward);
-			else
-				denominator = backward;
+			if (!denominator.isUnknown()) {
+        denominator.multiplyWith(backward);
+      } else {
+        denominator = backward;
+      }
 		}
 		denominator.sqrt();
 		ASTNode competInhib = specificModificationSummand(enzyme);

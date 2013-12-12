@@ -140,7 +140,7 @@ public class CardSearchM extends Card implements ActionListener,
 	 * @see org.sbml.squeezer.sabiork.wizard.gui.Card#performBeforeShowing()
 	 */
 	public void performBeforeShowing() {
-		if((tableSearchTermsModelM.getSearchTerms() != null) && (tableSearchTermsModelM.getSearchTerms().size() > 0)) {
+		if ((tableSearchTermsModelM.getSearchTerms() != null) && (tableSearchTermsModelM.getSearchTerms().size() > 0)) {
 			dialog.setButtonState(ButtonState.NEXT_BACK_ENABLED);
 		}
 		else {
@@ -229,7 +229,7 @@ public class CardSearchM extends Card implements ActionListener,
 				int column = e.getColumn();
 				if (column == 2) {
 					tableSearchTermsModelM.remove(row);
-					if(tableSearchTermsModelM.getSearchTerms().size() == 0) {
+					if (tableSearchTermsModelM.getSearchTerms().size() == 0) {
 						dialog.setButtonState(ButtonState.NEXT_DISABLED);
 					}
 				}

@@ -2,7 +2,7 @@
  * $Id$
  * $URL$
  * ---------------------------------------------------------------------
- * This file is part of SBMLsqueezer, a Java program that creates rate 
+ * This file is part of SBMLsqueezer, a Java program that creates rate
  * equations for reactions in SBML files (http://sbml.org).
  *
  * Copyright (C) 2006-2013 by the University of Tuebingen, Germany.
@@ -52,7 +52,8 @@ import de.zbit.util.ResourceManager;
  */
 public class AdditiveModelLinear extends BasicKineticLaw implements
 		InterfaceGeneRegulatoryKinetics, InterfaceModulatedKinetics,
-		InterfaceIrreversibleKinetics, InterfaceReversibleKinetics {
+		InterfaceIrreversibleKinetics, InterfaceReversibleKinetics,
+		InterfaceZeroReactants, InterfaceZeroProducts {
 	
 	/**
 	 * 
@@ -94,7 +95,8 @@ public class AdditiveModelLinear extends BasicKineticLaw implements
 	/* (non-Javadoc)
 	 * @see org.sbml.squeezer.kinetics.BasicKineticLaw#createKineticEquation(java.util.List, java.util.List, java.util.List, java.util.List)
 	 */
-	ASTNode createKineticEquation(List<String> modE, List<String> modActi,
+	@Override
+  ASTNode createKineticEquation(List<String> modE, List<String> modActi,
 			List<String> modInhib, List<String> modCat)
 			throws RateLawNotApplicableException {
 		ASTNode m = m();
@@ -102,7 +104,10 @@ public class AdditiveModelLinear extends BasicKineticLaw implements
 		if (m.isOne() && a.isOne()) {
 			return m;
 		}
-		return ASTNode.times(m(), a);
+		ASTNode swap = new ASTNode(ASTNode.Type.TIMES, this);
+		swap.addChild(m());
+		swap.addChild(a);
+		return swap;
 	}
 
 	/**
@@ -118,7 +123,8 @@ public class AdditiveModelLinear extends BasicKineticLaw implements
 	/* (non-Javadoc)
 	 * @see org.sbml.squeezer.kinetics.BasicKineticLaw#getSimpleName()
 	 */
-	public String getSimpleName() {
+	@Override
+  public String getSimpleName() {
 		return MESSAGES.getString("ADDITIVE_MODEL_LINEAR_SIMPLE_NAME");
 	}
 
@@ -126,8 +132,7 @@ public class AdditiveModelLinear extends BasicKineticLaw implements
 	 * @return ASTNode
 	 */
 	ASTNode m() {
-		return new ASTNode(parameterFactory.parameterM(getParentSBMLObject()
-				.getId()), this);
+		return new ASTNode(parameterFactory.parameterM(getParentSBMLObject().getId()), this);
 	}
 
 	/**
@@ -145,7 +150,7 @@ public class AdditiveModelLinear extends BasicKineticLaw implements
 					|| SBO.isRNAOrMessengerRNA(modifierSpec.getSBOTerm()) || SBO
 					.isGeneOrGeneCodingRegion(modifierSpec.getSBOTerm()))) {
 				if (!modifier.isSetSBOTerm()) {
-					SBMLtools.setSBOTerm(modifier,19);
+					SBMLtools.setSBOTerm(modifier, 19);
 				}
 				if (SBO.isModifier(modifier.getSBOTerm())) {
 					ASTNode modnode = speciesTerm(modifier);
@@ -170,7 +175,7 @@ public class AdditiveModelLinear extends BasicKineticLaw implements
 	ASTNode w() {
 		Reaction r = getParentSBMLObject();
 		ASTNode node = new ASTNode(this);
-		if (!ReactionType.representsEmptySet(r.getListOfProducts())) {
+		if (r.isSetListOfProducts() && !ReactionType.representsEmptySet(r.getListOfProducts())) {
 			for (SpeciesReference product : r.getListOfProducts()) {
 				LocalParameter w = parameterFactory.parameterW(product.getSpecies(), r.getId());
 				if (node.isUnknown()) {

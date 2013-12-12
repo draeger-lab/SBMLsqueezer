@@ -2,7 +2,7 @@
  * $Id$
  * $URL$
  * ---------------------------------------------------------------------
- * This file is part of SBMLsqueezer, a Java program that creates rate 
+ * This file is part of SBMLsqueezer, a Java program that creates rate
  * equations for reactions in SBML files (http://sbml.org).
  *
  * Copyright (C) 2006-2013 by the University of Tuebingen, Germany.
@@ -94,11 +94,11 @@ public class MichaelisMenten extends GeneralizedMassAction implements
 		ASTNode denominator;
 
 		if ((reaction.getReactantCount() > 1)
-				|| (reaction.getReactant(0).getStoichiometry() != 1d)) { 
+				|| (reaction.getReactant(0).getStoichiometry() != 1d)) {
 			throw new RateLawNotApplicableException(
 				MessageFormat.format(WARNINGS
 					.getString("INCORRECT_STOICHIOMETRY_OF_REACTANT_SPECIES"),
-					getSimpleName(), reaction.getId())); 
+					getSimpleName(), reaction.getId()));
 		}
 		if (((reaction.getProductCount() != 1) || (reaction.getProduct(0)
 				.getStoichiometry() != 1d)) && reaction.getReversible()) {
@@ -193,7 +193,7 @@ public class MichaelisMenten extends GeneralizedMassAction implements
 			if (reaction.getReversible()) {
 				// one must have the same unit as denominator resp. p_kMr.
 				// p_kMr has the unit SubstancePerSizeOrSubstance
-				UnitFactory unitFactory = new UnitFactory(this.getModel(), this.isBringToConcentration());
+				UnitFactory unitFactory = new UnitFactory(getModel(), isBringToConcentration());
 				ASTNode one = new ASTNode(1, this);
 				SBMLtools.setUnits(one, unitFactory.unitSubstancePerSizeOrSubstance(speciesR));
 				denominator = ASTNode.sum(one, denominator);
@@ -252,7 +252,7 @@ public class MichaelisMenten extends GeneralizedMassAction implements
 					ASTNode.frac(
 						speciesTerm(modInhib.get(0)),
 						new ASTNode(p_kIa, this)
-					), 
+					),
 					ASTNode.times(
 						denominator,
 						ASTNode.sum(
