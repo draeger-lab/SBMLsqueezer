@@ -26,6 +26,8 @@ package org.sbml.squeezer.kinetics;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import javax.xml.stream.XMLStreamException;
+
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.LocalParameter;
 import org.sbml.jsbml.Reaction;
@@ -42,72 +44,73 @@ import de.zbit.util.ResourceManager;
  * @version $Rev$
  */
 public class RestrictedSpaceKinetics extends GeneralizedMassAction implements
-		InterfaceIrreversibleKinetics, InterfaceBiUniKinetics {
-	 
-	public static final transient ResourceBundle MESSAGES = ResourceManager.getBundle(Bundles.MESSAGES);
-
-	/**
-	 * Generated serial version identifier.
-	 */
-	private static final long serialVersionUID = -3578530408534473577L;
-
-	/**
-	 * @param parentReaction
-	 * @param types
-	 * @throws RateLawNotApplicableException
-	 */
-	public RestrictedSpaceKinetics(Reaction parentReaction, Object... types)
-			throws RateLawNotApplicableException {
-		super(parentReaction, types);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.sbml.squeezer.kinetics.GeneralizedMassAction#association(java.util.List, int)
-	 */
-	@Override
+InterfaceIrreversibleKinetics, InterfaceBiUniKinetics {
+  
+  public static final transient ResourceBundle MESSAGES = ResourceManager.getBundle(Bundles.MESSAGES);
+  
+  /**
+   * Generated serial version identifier.
+   */
+  private static final long serialVersionUID = -3578530408534473577L;
+  
+  /**
+   * @param parentReaction
+   * @param types
+   * @throws RateLawNotApplicableException
+   * @throws XMLStreamException
+   */
+  public RestrictedSpaceKinetics(Reaction parentReaction, Object... types)
+      throws RateLawNotApplicableException, XMLStreamException {
+    super(parentReaction, types);
+  }
+  
+  /* (non-Javadoc)
+   * @see org.sbml.squeezer.kinetics.GeneralizedMassAction#association(java.util.List, int)
+   */
+  @Override
   ASTNode association(List<String> catalysts, int catNum) {
-		Reaction r = getParentSBMLObject();
-		LocalParameter p_h = parameterFactory.parameterTimeOrder();
-		// p_h.setValue(0d); // This leads to a crash of libSBML!
-		LocalParameter p_kass = parameterFactory
-				.parameterSpaceRestrictedAssociationConst(p_h.getValue());
-		ASTNode ass = new ASTNode(p_kass, this);
-		ass.multiplyWith(ASTNode.pow(new ASTNode(ASTNode.Type.NAME_TIME, this),
-				ASTNode.uMinus(new ASTNode(p_h, this))));
-		int i = 0;
-		for (SpeciesReference specRef : r.getListOfReactants()) {
-			if (!SBO.isEmptySet(specRef.getSpeciesInstance().getSBOTerm())) {
-				ASTNode basis = speciesTerm(specRef);
-				basis.raiseByThePowerOf(parameterFactory
-						.parameterKineticOrder(i == 0 ? "x" : "y"));
-				ass.multiplyWith(basis);
-			}
-			i++;
-		}
-		return ass;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.sbml.squeezer.kinetics.GeneralizedMassAction#inhibitionFactor(java.util.List)
-	 */
-	@Override
-	ASTNode inhibitionFactor(List<String> modifiers) {
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.sbml.squeezer.kinetics.GeneralizedMassAction#activationFactor(java.util.List)
-	 */
-	@Override
-	ASTNode activationFactor(List<String> activators) {
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.sbml.squeezer.kinetics.GeneralizedMassAction#getSimpleName()
-	 */
-	@Override
-	public String getSimpleName() {
-		return MESSAGES.getString("RESTRICTED_SPACE_KINETICS_SIMPLE_NAME");
-	}
+    Reaction r = getParentSBMLObject();
+    LocalParameter p_h = parameterFactory.parameterTimeOrder();
+    // p_h.setValue(0d); // This leads to a crash of libSBML!
+    LocalParameter p_kass = parameterFactory
+        .parameterSpaceRestrictedAssociationConst(p_h.getValue());
+    ASTNode ass = new ASTNode(p_kass, this);
+    ass.multiplyWith(ASTNode.pow(new ASTNode(ASTNode.Type.NAME_TIME, this),
+      ASTNode.uMinus(new ASTNode(p_h, this))));
+    int i = 0;
+    for (SpeciesReference specRef : r.getListOfReactants()) {
+      if (!SBO.isEmptySet(specRef.getSpeciesInstance().getSBOTerm())) {
+        ASTNode basis = speciesTerm(specRef);
+        basis.raiseByThePowerOf(parameterFactory
+          .parameterKineticOrder(i == 0 ? "x" : "y"));
+        ass.multiplyWith(basis);
+      }
+      i++;
+    }
+    return ass;
+  }
+  
+  /* (non-Javadoc)
+   * @see org.sbml.squeezer.kinetics.GeneralizedMassAction#inhibitionFactor(java.util.List)
+   */
+  @Override
+  ASTNode inhibitionFactor(List<String> modifiers) {
+    return null;
+  }
+  
+  /* (non-Javadoc)
+   * @see org.sbml.squeezer.kinetics.GeneralizedMassAction#activationFactor(java.util.List)
+   */
+  @Override
+  ASTNode activationFactor(List<String> activators) {
+    return null;
+  }
+  
+  /* (non-Javadoc)
+   * @see org.sbml.squeezer.kinetics.GeneralizedMassAction#getSimpleName()
+   */
+  @Override
+  public String getSimpleName() {
+    return MESSAGES.getString("RESTRICTED_SPACE_KINETICS_SIMPLE_NAME");
+  }
 }

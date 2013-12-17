@@ -26,6 +26,8 @@ package org.sbml.squeezer.kinetics;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import javax.xml.stream.XMLStreamException;
+
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.LocalParameter;
 import org.sbml.jsbml.ModifierSpeciesReference;
@@ -71,9 +73,10 @@ InterfaceZeroReactants, InterfaceZeroProducts {
    * @param parentReaction
    * @param typeParameters
    * @throws RateLawNotApplicableException
+   * @throws XMLStreamException
    */
   public HSystem(Reaction parentReaction, Object... typeParameters)
-      throws RateLawNotApplicableException {
+      throws RateLawNotApplicableException, XMLStreamException {
     super(parentReaction, typeParameters);
   }
   

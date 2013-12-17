@@ -25,7 +25,6 @@ package org.sbml.squeezer;
 
 import java.io.File;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -482,7 +481,8 @@ public class KineticLawGenerator {
     try {
       Object typeParameters[] = new Object[] {
           version,
-          Boolean.valueOf(hasFullColumnRank(submodel)),
+          // The rank must be computed on the full model. Otherwise it is senseless!
+          Boolean.valueOf(hasFullColumnRank(submodelController.getSBMLDocument().getModel())),
           consistency,
           Double.valueOf(defaultNewParamVal)
       };

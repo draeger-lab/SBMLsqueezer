@@ -26,6 +26,8 @@ package org.sbml.squeezer.kinetics;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import javax.xml.stream.XMLStreamException;
+
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.LocalParameter;
 import org.sbml.jsbml.ModifierSpeciesReference;
@@ -50,117 +52,118 @@ import de.zbit.util.ResourceManager;
  * @version $Rev$
  */
 public class HillRaddeEquation extends BasicKineticLaw implements
-		InterfaceGeneRegulatoryKinetics, InterfaceModulatedKinetics,
-		InterfaceIrreversibleKinetics, InterfaceReversibleKinetics,
-    InterfaceZeroReactants, InterfaceZeroProducts {
-
-	public static final transient ResourceBundle MESSAGES = ResourceManager.getBundle(Bundles.MESSAGES);
-	
-	/**
-	 * Generated serial version identifier.
-	 */
-	private static final long serialVersionUID = -2127004439071244185L;
-
-	/**
-	 * @param parentReaction
-	 * @param typeParameters
-	 * @throws RateLawNotApplicableException
-	 */
-	public HillRaddeEquation(Reaction parentReaction, Object... typeParameters)
-			throws RateLawNotApplicableException {
-		super(parentReaction, typeParameters);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.sbml.squeezer.kinetics.BasicKineticLaw#createKineticEquation(java.util.List, java.util.List, java.util.List, java.util.List)
-	 */
-	@Override
+InterfaceGeneRegulatoryKinetics, InterfaceModulatedKinetics,
+InterfaceIrreversibleKinetics, InterfaceReversibleKinetics,
+InterfaceZeroReactants, InterfaceZeroProducts {
+  
+  public static final transient ResourceBundle MESSAGES = ResourceManager.getBundle(Bundles.MESSAGES);
+  
+  /**
+   * Generated serial version identifier.
+   */
+  private static final long serialVersionUID = -2127004439071244185L;
+  
+  /**
+   * @param parentReaction
+   * @param typeParameters
+   * @throws RateLawNotApplicableException
+   * @throws XMLStreamException
+   */
+  public HillRaddeEquation(Reaction parentReaction, Object... typeParameters)
+      throws RateLawNotApplicableException, XMLStreamException {
+    super(parentReaction, typeParameters);
+  }
+  
+  /* (non-Javadoc)
+   * @see org.sbml.squeezer.kinetics.BasicKineticLaw#createKineticEquation(java.util.List, java.util.List, java.util.List, java.util.List)
+   */
+  @Override
   ASTNode createKineticEquation(List<String> enzymes,
-			List<String> activators, List<String> inhibitors,
-			List<String> nonEnzymeCatalysts)
-			throws RateLawNotApplicableException {
-
-		ASTNode kineticLaw = new ASTNode(this);
-		kineticLaw = ASTNode.sum(synrate(), regulation());
-		return kineticLaw;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.sbml.squeezer.kinetics.BasicKineticLaw#getSimpleName()
-	 */
-	@Override
+    List<String> activators, List<String> inhibitors,
+    List<String> nonEnzymeCatalysts)
+        throws RateLawNotApplicableException {
+    
+    ASTNode kineticLaw = new ASTNode(this);
+    kineticLaw = ASTNode.sum(synrate(), regulation());
+    return kineticLaw;
+  }
+  
+  /* (non-Javadoc)
+   * @see org.sbml.squeezer.kinetics.BasicKineticLaw#getSimpleName()
+   */
+  @Override
   public String getSimpleName() {
-		return MESSAGES.getString("HILL_RADDE_EQUATION");
-	}
-
-	/**
-	 * @return ASTNode
-	 */
-	ASTNode regulation() {
-
-		Reaction r = getParentSBMLObject();
-		String rId = getParentSBMLObject().getId();
-		ASTNode node = new ASTNode(this);
-
-		for (int modifierNum = 0; modifierNum < r.getModifierCount(); modifierNum++) {
-
-			ModifierSpeciesReference modifier = r.getModifier(modifierNum);
-
-			if (!modifier.isSetSBOTerm()) {
-				SBMLtools.setSBOTerm(modifier,19);
-			}
-			if (SBO.isModifier(modifier.getSBOTerm())) {
-				LocalParameter p = parameterFactory.parameterWH(modifier
-						.getSpecies(), rId);
-				ASTNode pnode = new ASTNode(p, this);
-				LocalParameter theta = parameterFactory.parameterTheta(rId, modifier.getSpecies());
-				ASTNode thetanode = new ASTNode(theta, this);
-				LocalParameter coeff = parameterFactory.parameterHillCoefficient(modifier.getSpecies());
-				ASTNode coeffnode = new ASTNode(coeff, this);
-
-				if (node.isUnknown()) {
-					node = ASTNode.frac(
-						ASTNode.times(
-							pnode,
-							ASTNode.pow(speciesTerm(modifier), coeffnode)
-						),
-						ASTNode.sum(
-							ASTNode.pow(speciesTerm(modifier), coeffnode)
-							,ASTNode.pow(thetanode, coeffnode)
-						)
-					);
-				} else {
-					node = ASTNode.sum(
-						node,
-						ASTNode.frac(
-							ASTNode.times(
-								pnode,
-							  ASTNode.pow(speciesTerm(modifier), coeffnode)
-							),
-							ASTNode.sum(
-								ASTNode.pow(speciesTerm(modifier), coeffnode),
-								ASTNode.pow(thetanode, coeffnode)
-							)
-						)
-					);
-				}
-						
-			}
-		}
-		return node.isUnknown() ? null : node;
-	}
-
-	/**
-	 * synthesis rate
-	 * 
-	 * @return ASTNode
-	 */
-	ASTNode synrate() {
-		String rId = getParentSBMLObject().getId();
-		LocalParameter b_i = parameterFactory.parameterBH(rId);
-		
-		ASTNode b_i_node = new ASTNode(b_i, this);
-		return b_i_node;
-	}
-
+    return MESSAGES.getString("HILL_RADDE_EQUATION");
+  }
+  
+  /**
+   * @return ASTNode
+   */
+  ASTNode regulation() {
+    
+    Reaction r = getParentSBMLObject();
+    String rId = getParentSBMLObject().getId();
+    ASTNode node = new ASTNode(this);
+    
+    for (int modifierNum = 0; modifierNum < r.getModifierCount(); modifierNum++) {
+      
+      ModifierSpeciesReference modifier = r.getModifier(modifierNum);
+      
+      if (!modifier.isSetSBOTerm()) {
+        SBMLtools.setSBOTerm(modifier,19);
+      }
+      if (SBO.isModifier(modifier.getSBOTerm())) {
+        LocalParameter p = parameterFactory.parameterWH(modifier
+          .getSpecies(), rId);
+        ASTNode pnode = new ASTNode(p, this);
+        LocalParameter theta = parameterFactory.parameterTheta(rId, modifier.getSpecies());
+        ASTNode thetanode = new ASTNode(theta, this);
+        LocalParameter coeff = parameterFactory.parameterHillCoefficient(modifier.getSpecies());
+        ASTNode coeffnode = new ASTNode(coeff, this);
+        
+        if (node.isUnknown()) {
+          node = ASTNode.frac(
+            ASTNode.times(
+              pnode,
+              ASTNode.pow(speciesTerm(modifier), coeffnode)
+                ),
+                ASTNode.sum(
+                  ASTNode.pow(speciesTerm(modifier), coeffnode)
+                  ,ASTNode.pow(thetanode, coeffnode)
+                    )
+              );
+        } else {
+          node = ASTNode.sum(
+            node,
+            ASTNode.frac(
+              ASTNode.times(
+                pnode,
+                ASTNode.pow(speciesTerm(modifier), coeffnode)
+                  ),
+                  ASTNode.sum(
+                    ASTNode.pow(speciesTerm(modifier), coeffnode),
+                    ASTNode.pow(thetanode, coeffnode)
+                      )
+                )
+              );
+        }
+        
+      }
+    }
+    return node.isUnknown() ? null : node;
+  }
+  
+  /**
+   * synthesis rate
+   * 
+   * @return ASTNode
+   */
+  ASTNode synrate() {
+    String rId = getParentSBMLObject().getId();
+    LocalParameter b_i = parameterFactory.parameterBH(rId);
+    
+    ASTNode b_i_node = new ASTNode(b_i, this);
+    return b_i_node;
+  }
+  
 }

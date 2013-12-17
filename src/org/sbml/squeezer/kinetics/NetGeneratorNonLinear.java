@@ -26,6 +26,8 @@ package org.sbml.squeezer.kinetics;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import javax.xml.stream.XMLStreamException;
+
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.Species;
@@ -64,9 +66,10 @@ InterfaceZeroReactants, InterfaceZeroProducts {
    * @param parentReaction
    * @param typeParameters
    * @throws RateLawNotApplicableException
+   * @throws XMLStreamException
    */
   public NetGeneratorNonLinear(Reaction parentReaction,
-    Object... typeParameters) throws RateLawNotApplicableException {
+    Object... typeParameters) throws RateLawNotApplicableException, XMLStreamException {
     super(parentReaction, typeParameters);
   }
   

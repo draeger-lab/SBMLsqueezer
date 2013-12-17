@@ -2,7 +2,7 @@
  * $Id$
  * $URL$
  * ---------------------------------------------------------------------
- * This file is part of SBMLsqueezer, a Java program that creates rate 
+ * This file is part of SBMLsqueezer, a Java program that creates rate
  * equations for reactions in SBML files (http://sbml.org).
  *
  * Copyright (C) 2006-2013 by the University of Tuebingen, Germany.
@@ -141,7 +141,7 @@ public class SubmodelController {
    * @return
    */
   public Model getSubmodel() {
-    return this.submodel;
+    return submodel;
   }
   
   /**
@@ -165,7 +165,7 @@ public class SubmodelController {
    * @param model
    */
   public SubmodelController(Model model) {
-    this.modelOrig = model;
+    modelOrig = model;
   }
   
   /**
@@ -186,10 +186,10 @@ public class SubmodelController {
     boolean create = generateLawsForAllReactions;
     int level = modelOrig.getLevel(), version = modelOrig.getVersion();
     SBMLDocument miniDoc = new SBMLDocument(level, version);
-    submodel = miniDoc.createModel("submodel_" + modelOrig.getId());	  
+    submodel = miniDoc.createModel("submodel_" + modelOrig.getId());
     //miniModel.addChangeListener(new ModelChangeListener());
     
-    /* 
+    /*
      * Set default unit definitions if it is not already set
      */
     if (modelOrig.isSetAreaUnitsInstance()) {
@@ -290,7 +290,7 @@ public class SubmodelController {
     }
     
     
-    //		/* 
+    //		/*
     //		 * Optionally, re-scale substance and volume:
     //		 */
     //		// TODO: Check user option whether re-scaling of units should be performed or not.
@@ -831,32 +831,32 @@ public class SubmodelController {
     if (level > 2) {
       int version = model.getVersion();
       if (model.isSetAreaUnits()
-          && !Unit.Kind.isValidUnitKindString(model.getAreaUnits(), level, version) 
+          && !Unit.Kind.isValidUnitKindString(model.getAreaUnits(), level, version)
           && (model.getUnitDefinition(model.getAreaUnits()) == null)) {
         model.unsetAreaUnits();
       }
       if (model.isSetExtentUnits()
-          && !Unit.Kind.isValidUnitKindString(model.getExtentUnits(), level, version) 
+          && !Unit.Kind.isValidUnitKindString(model.getExtentUnits(), level, version)
           && (model.getUnitDefinition(model.getExtentUnits()) == null)) {
         model.unsetExtentUnits();
       }
       if (model.isSetLengthUnits()
-          && !Unit.Kind.isValidUnitKindString(model.getLengthUnits(), level, version) 
+          && !Unit.Kind.isValidUnitKindString(model.getLengthUnits(), level, version)
           && (model.getUnitDefinition(model.getLengthUnits()) == null)) {
         model.unsetLengthUnits();
       }
       if (model.isSetSubstanceUnits()
-          && !Unit.Kind.isValidUnitKindString(model.getSubstanceUnits(), level, version) 
+          && !Unit.Kind.isValidUnitKindString(model.getSubstanceUnits(), level, version)
           && (model.getUnitDefinition(model.getSubstanceUnits()) == null)) {
         model.unsetSubstanceUnits();
       }
       if (model.isSetTimeUnits()
-          && !Unit.Kind.isValidUnitKindString(model.getTimeUnits(), level, version) 
+          && !Unit.Kind.isValidUnitKindString(model.getTimeUnits(), level, version)
           && (model.getUnitDefinition(model.getTimeUnits()) == null)) {
         model.unsetTimeUnits();
       }
       if (model.isSetVolumeUnits()
-          && !Unit.Kind.isValidUnitKindString(model.getVolumeUnits(), level, version) 
+          && !Unit.Kind.isValidUnitKindString(model.getVolumeUnits(), level, version)
           && (model.getUnitDefinition(model.getVolumeUnits()) == null)) {
         model.unsetVolumeUnits();
       }
@@ -1046,7 +1046,7 @@ public class SubmodelController {
     boolean setBoundary) {
     for (int i = 0; setBoundary && (i < listOf.size()); i++) {
       Species species = listOf.get(i).getSpeciesInstance();
-      if (SBO.isGeneOrGeneCodingRegion(species.getSBOTerm()) || 
+      if (SBO.isGeneOrGeneCodingRegion(species.getSBOTerm()) ||
           SBO.isEmptySet(species.getSBOTerm())) {
         setBoundaryCondition(species, true);
       }
@@ -1128,11 +1128,11 @@ public class SubmodelController {
   private void checkUnits(Compartment compartment, Model modelToWrite) {
     Model model = compartment.getModel();
     /*
-     *  for level 2 and 3 the compartment size does not have to be set when 
-     *  the spatialDimensions field is 0.  
+     *  for level 2 and 3 the compartment size does not have to be set when
+     *  the spatialDimensions field is 0.
      */
     double spatialD = compartment.getSpatialDimensions();
-    if (!compartment.isSetSize() && 
+    if (!compartment.isSetSize() &&
         (spatialD != 0d) || (modelToWrite.getLevel() < 2)) {
       //TODO: Option for setting the initial compartment size
       compartment.setValue(1d);
@@ -1216,7 +1216,7 @@ public class SubmodelController {
    * @return
    */
   public boolean isRemoveUnnecessaryParameters() {
-    return this.removeUnnecessaryParameters;
+    return removeUnnecessaryParameters;
   }
   
   /**
@@ -1244,7 +1244,8 @@ public class SubmodelController {
   }
   
   /**
-   * @return
+   * @return The original {@link SBMLDocument}, i.e., the one that encapsulates
+   *         the full model.
    */
   public SBMLDocument getSBMLDocument() {
     return modelOrig.getSBMLDocument();
@@ -1297,7 +1298,7 @@ public class SubmodelController {
    */
   public void setRemoveUnnecessaryParameters(
     boolean removeUnnecessaryParameters) {
-    this.removeUnnecessaryParameters = removeUnnecessaryParameters;		
+    this.removeUnnecessaryParameters = removeUnnecessaryParameters;
   }
   
   /**

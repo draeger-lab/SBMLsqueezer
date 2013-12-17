@@ -26,6 +26,8 @@ package org.sbml.squeezer.kinetics;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import javax.xml.stream.XMLStreamException;
+
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.KineticLaw;
 import org.sbml.jsbml.LocalParameter;
@@ -49,119 +51,120 @@ import de.zbit.util.ResourceManager;
  * @version $Rev$
  */
 public class IrrevCompetNonCooperativeEnzymes extends GeneralizedMassAction
-		implements InterfaceIrreversibleKinetics, InterfaceModulatedKinetics,
-		InterfaceUniUniKinetics {
-	
-	public static final transient ResourceBundle MESSAGES = ResourceManager.getBundle(Bundles.MESSAGES);
-	public static final transient ResourceBundle WARNINGS = ResourceManager.getBundle(Bundles.WARNINGS);
-
-	/**
-	 * Generated serial version identifier.
-	 */
-	private static final long serialVersionUID = -7128200927307678571L;
-
-	/**
-	 * 
-	 * @param parentReaction
-	 * @param typeParameters
-	 * @throws RateLawNotApplicableException
-	 */
-	public IrrevCompetNonCooperativeEnzymes(Reaction parentReaction,
-			Object... typeParameters) throws RateLawNotApplicableException {
-		super(parentReaction, typeParameters);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.sbml.squeezer.kinetics.BasicKineticLaw#createKineticEquation(java.util.List, java.util.List, java.util.List, java.util.List)
-	 */
-	@Override
+implements InterfaceIrreversibleKinetics, InterfaceModulatedKinetics,
+InterfaceUniUniKinetics {
+  
+  public static final transient ResourceBundle MESSAGES = ResourceManager.getBundle(Bundles.MESSAGES);
+  public static final transient ResourceBundle WARNINGS = ResourceManager.getBundle(Bundles.WARNINGS);
+  
+  /**
+   * Generated serial version identifier.
+   */
+  private static final long serialVersionUID = -7128200927307678571L;
+  
+  /**
+   * 
+   * @param parentReaction
+   * @param typeParameters
+   * @throws RateLawNotApplicableException
+   * @throws XMLStreamException
+   */
+  public IrrevCompetNonCooperativeEnzymes(Reaction parentReaction,
+    Object... typeParameters) throws RateLawNotApplicableException, XMLStreamException {
+    super(parentReaction, typeParameters);
+  }
+  
+  /* (non-Javadoc)
+   * @see org.sbml.squeezer.kinetics.BasicKineticLaw#createKineticEquation(java.util.List, java.util.List, java.util.List, java.util.List)
+   */
+  @Override
   ASTNode createKineticEquation(List<String> modE, List<String> modActi,
-			List<String> modInhib, List<String> modCat)
-			throws RateLawNotApplicableException {
-		if (modCat.size() > 0) {
+    List<String> modInhib, List<String> modCat)
+        throws RateLawNotApplicableException {
+    if (modCat.size() > 0) {
       throw new RateLawNotApplicableException(WARNINGS.getString("RATE_LAW_CAN_ONLY_APPLIED_TO_ENZYME_CATALYZED_REACTIONS"));
     }
-		Reaction reaction = getParentSBMLObject();
-		if ((reaction.getReactantCount() > 1)
-				|| (reaction.getReactant(0).getStoichiometry() != 1d)) {
+    Reaction reaction = getParentSBMLObject();
+    if ((reaction.getReactantCount() > 1)
+        || (reaction.getReactant(0).getStoichiometry() != 1d)) {
       throw new RateLawNotApplicableException(WARNINGS.getString("RATE_LAW_CAN_ONLY_APPLIED_TO_REACTIONS_WITH_EXACTLY_ONE_SUBSTRATE_SPECIES"));
     }
-		if (reaction.getReversible()) {
-			reaction.setReversible(false);
-		}
-
-		switch (modInhib.size()) {
-		case 0:
-			SBMLtools.setSBOTerm(this, modE.size() == 0 ? 199 : 29);
-		case 1:
-			SBMLtools.setSBOTerm(this, 267);
-		default:
-			SBMLtools.setSBOTerm(this, 273);
-		}
-
-		ASTNode[] formula = new ASTNode[Math.max(1, modE.size())];
-
-		int enzymeNum = 0;
-		do {
-			ASTNode currEnzyme;
-			ASTNode numerator;
-
-			String enzyme = modE.isEmpty() ? null : modE.get(enzymeNum);
-			numerator = new ASTNode(parameterFactory.parameterKcatOrVmax(
-					enzyme, true), this);
-			if (!modE.isEmpty()) {
-				numerator.multiplyWith(speciesTerm(enzyme));
-			}
-			numerator = ASTNode.times(numerator, speciesTerm(reaction
-					.getReactant(0)));
-
-			ASTNode denominator;
-			LocalParameter p_kM = parameterFactory.parameterMichaelis(reaction
-					.getReactant(0).getSpecies(), enzyme, true);
-
-			if (modInhib.size() == 0) {
-				denominator = new ASTNode(p_kM, this);
-			} else {
-				ASTNode factor = new ASTNode(p_kM, this);
-				for (int i = 0; i < modInhib.size(); i++) {
-					LocalParameter p_kIi = parameterFactory.parameterKi(modInhib.get(i), enzyme);
-					LocalParameter p_exp = parameterFactory.parameterNumBindingSites(enzyme, modInhib.get(i));
-
-					// one must have the same unit as frac: speciesTerm (SubstancePerSizeOrSubstance)
-					// divided by p_kIi (SubstancePerSizeOrSubstance) = dimensionless
-					ASTNode one = new ASTNode(1, this);
-					SBMLtools.setUnits(one, Unit.Kind.DIMENSIONLESS);
-					
-					ASTNode frac = ASTNode.frac(
-							speciesTerm(modInhib.get(i)),
-							new ASTNode(p_kIi, this));
-					
-					factor.multiplyWith(
-						ASTNode.pow(
-							ASTNode.sum(
-								one,
-								frac
-							),
-							new ASTNode(p_exp, this)
-						)
-					);
-				}
-				denominator = factor;
-			}
-			denominator.plus(speciesTerm(reaction.getReactant(0)));
-			currEnzyme = ASTNode.frac(numerator, denominator);
-			formula[enzymeNum++] = currEnzyme;
-		} while (enzymeNum < modE.size());
-		return ASTNode.times(activationFactor(modActi), ASTNode.sum(formula));
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.squeezer.kinetics.GeneralizedMassAction#getSimpleName()
-	 */
-	@Override
+    if (reaction.getReversible()) {
+      reaction.setReversible(false);
+    }
+    
+    switch (modInhib.size()) {
+      case 0:
+        SBMLtools.setSBOTerm(this, modE.size() == 0 ? 199 : 29);
+      case 1:
+        SBMLtools.setSBOTerm(this, 267);
+      default:
+        SBMLtools.setSBOTerm(this, 273);
+    }
+    
+    ASTNode[] formula = new ASTNode[Math.max(1, modE.size())];
+    
+    int enzymeNum = 0;
+    do {
+      ASTNode currEnzyme;
+      ASTNode numerator;
+      
+      String enzyme = modE.isEmpty() ? null : modE.get(enzymeNum);
+      numerator = new ASTNode(parameterFactory.parameterKcatOrVmax(
+        enzyme, true), this);
+      if (!modE.isEmpty()) {
+        numerator.multiplyWith(speciesTerm(enzyme));
+      }
+      numerator = ASTNode.times(numerator, speciesTerm(reaction
+        .getReactant(0)));
+      
+      ASTNode denominator;
+      LocalParameter p_kM = parameterFactory.parameterMichaelis(reaction
+        .getReactant(0).getSpecies(), enzyme, true);
+      
+      if (modInhib.size() == 0) {
+        denominator = new ASTNode(p_kM, this);
+      } else {
+        ASTNode factor = new ASTNode(p_kM, this);
+        for (int i = 0; i < modInhib.size(); i++) {
+          LocalParameter p_kIi = parameterFactory.parameterKi(modInhib.get(i), enzyme);
+          LocalParameter p_exp = parameterFactory.parameterNumBindingSites(enzyme, modInhib.get(i));
+          
+          // one must have the same unit as frac: speciesTerm (SubstancePerSizeOrSubstance)
+          // divided by p_kIi (SubstancePerSizeOrSubstance) = dimensionless
+          ASTNode one = new ASTNode(1, this);
+          SBMLtools.setUnits(one, Unit.Kind.DIMENSIONLESS);
+          
+          ASTNode frac = ASTNode.frac(
+            speciesTerm(modInhib.get(i)),
+            new ASTNode(p_kIi, this));
+          
+          factor.multiplyWith(
+            ASTNode.pow(
+              ASTNode.sum(
+                one,
+                frac
+                  ),
+                  new ASTNode(p_exp, this)
+                )
+              );
+        }
+        denominator = factor;
+      }
+      denominator.plus(speciesTerm(reaction.getReactant(0)));
+      currEnzyme = ASTNode.frac(numerator, denominator);
+      formula[enzymeNum++] = currEnzyme;
+    } while (enzymeNum < modE.size());
+    return ASTNode.times(activationFactor(modActi), ASTNode.sum(formula));
+  }
+  
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.sbml.squeezer.kinetics.GeneralizedMassAction#getSimpleName()
+   */
+  @Override
   public String getSimpleName() {
-		return MESSAGES.getString("IRREV_COMPET_NON_COOP_ENZYMES_SIMPLE_NAME");
-	}
+    return MESSAGES.getString("IRREV_COMPET_NON_COOP_ENZYMES_SIMPLE_NAME");
+  }
 }

@@ -27,6 +27,8 @@ import java.text.MessageFormat;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import javax.xml.stream.XMLStreamException;
+
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.LocalParameter;
 import org.sbml.jsbml.Reaction;
@@ -60,284 +62,285 @@ import de.zbit.util.ResourceManager;
  * @version $Rev$
  */
 public class MichaelisMenten extends GeneralizedMassAction implements
-		InterfaceUniUniKinetics, InterfaceReversibleKinetics,
-		InterfaceIrreversibleKinetics, InterfaceModulatedKinetics {
-	
-	public static final transient ResourceBundle MESSAGES = ResourceManager.getBundle(Bundles.MESSAGES);
-	public static final transient ResourceBundle WARNINGS = ResourceManager.getBundle(Bundles.WARNINGS);
-
-	/**
-	 * Generated serial version identifier.
-	 */
-	private static final long serialVersionUID = 1773589374066138555L;
-
-	/**
-	 * 
-	 * @param parentReaction
-	 * @param typeParameters
-	 * @throws RateLawNotApplicableException
-	 */
-	public MichaelisMenten(Reaction parentReaction, Object... typeParameters)
-			throws RateLawNotApplicableException {
-		super(parentReaction, typeParameters);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.sbml.squeezer.kinetics.BasicKineticLaw#createKineticEquation(java.util.List, java.util.List, java.util.List, java.util.List)
-	 */
-	@Override
-	ASTNode createKineticEquation(List<String> modE, List<String> modActi,
-			List<String> modInhib, List<String> modCat)
-			throws RateLawNotApplicableException {
-		Reaction reaction = getParentSBMLObject();
-		ASTNode numerator;
-		ASTNode denominator;
-
-		if ((reaction.getReactantCount() > 1)
-				|| (reaction.getReactant(0).getStoichiometry() != 1d)) {
-			throw new RateLawNotApplicableException(
-				MessageFormat.format(WARNINGS
-					.getString("INCORRECT_STOICHIOMETRY_OF_REACTANT_SPECIES"),
-					getSimpleName(), reaction.getId()));
-		}
-		if (((reaction.getProductCount() != 1) || (reaction.getProduct(0)
-				.getStoichiometry() != 1d)) && reaction.getReversible()) {
-			throw new RateLawNotApplicableException(
-				MessageFormat.format(WARNINGS
-					.getString("INCORRECT_STOICHIOMETRY_OF_PRODUCT_SPECIES"),
-					getSimpleName(), reaction.getId()));
-		}
-		SBMLtools.setSBOTerm(this,269); // enzymatic rate law for unireactant enzymes
-		switch (modE.size()) {
-			case 0: // no enzyme, irreversible
-				if (!getParentSBMLObject().getReversible() && (modActi.size() == 0)
-						&& (modInhib.size() == 0)) {
-					SBMLtools.setSBOTerm(this, 199); // normalised enzymatic rate law for
-					// unireactant enzymes
-				} else if ((modActi.size() == 0) && (modInhib.size() == 0)) {
-					SBMLtools.setSBOTerm(this, 326); // enzymatic rate law for non-modulated
-				}
-				// unireactant enzymes
-				break;
-			case 1: // one enzmye
-				if (getParentSBMLObject().getReversible()) {
-					if ((modActi.size() == 0) && (modInhib.size() == 0)) {
-						SBMLtools.setSBOTerm(this, 326); // enzymatic rate law for non-modulated
-						// unireactant enzymes
-					}
-				} else if ((modActi.size() == 0) && (modInhib.size() == 0)) {
-					// irreversible equivalents: Briggs-Haldane equation (31) or
-					// Van Slyke-Cullen equation (30)
-					// 29 = Henri-Michaelis-Menten
-					SBMLtools.setSBOTerm(this, 28); // enzymatic rate law for irreversible
-					// non-modulated non-interacting unireactant
-					// enzymes
-				}
-				break;
-		}
-		if (!getParentSBMLObject().getReversible()) {
-			switch (modInhib.size()) {
-			case 1:
-				SBMLtools.setSBOTerm(this, 265); // enzymatic rate law for simple mixed-type
-				// inhibition of irreversible unireactant
-				// enzymes
-				break;
-			case 2:
-				SBMLtools.setSBOTerm(this, 276); // enzymatic rate law for mixed-type inhibition
-				// of irreversible unireactant enzymes by
-				// two inhibitors
-				break;
-			default:
-				SBMLtools.setSBOTerm(this, 275); // enzymatic rate law for mixed-type inhibition
-				// of irreversible enzymes by mutually
-				// exclusive inhibitors
-				break;
-			}
-		}
-		Species speciesR = reaction.getReactant(0).getSpeciesInstance();
-
-		ASTNode formula[] = new ASTNode[Math.max(1, modE.size())];
-		int enzymeNum = 0;
-		do {
-			String enzyme = modE.size() == 0 ? null : modE.get(enzymeNum);
-			LocalParameter p_kcatp = parameterFactory.parameterKcatOrVmax(enzyme, true);
-			LocalParameter p_kMr = parameterFactory.parameterMichaelis(speciesR.getId(), enzyme, true);
-
-			ASTNode currEnzymeKin;
-			if (!reaction.getReversible() || (reaction.getProductCount() == 0)) {
-				/*
-				 * Irreversible Reaction
-				 */
-				numerator = ASTNode.times(new ASTNode(p_kcatp, this), speciesTerm(speciesR));
-				denominator = speciesTerm(speciesR);
-			} else {
-				/*
-				 * Reversible Reaction
-				 */
-				Species speciesP = reaction.getProduct(0).getSpeciesInstance();
-
-				numerator = ASTNode.times(ASTNode.frac(this, p_kcatp, p_kMr),
-						speciesTerm(speciesR));
-				denominator = ASTNode.frac(speciesTerm(speciesR), new ASTNode(p_kMr, this));
-				LocalParameter p_kcatn = parameterFactory.parameterKcatOrVmax(enzyme, false);
-				LocalParameter p_kMp = parameterFactory.parameterMichaelis(speciesP.getId(), enzyme, false);
-
-				numerator.minus(ASTNode.times(ASTNode
-						.frac(this, p_kcatn, p_kMp), speciesTerm(speciesP)));
-				denominator.plus(ASTNode.frac(speciesTerm(speciesP),
-						new ASTNode(p_kMp, this)));
-			}
-			denominator = createInihibitionTerms(modInhib, reaction, denominator,
-				p_kMr, modE.size() > 1 ? modE.get(enzymeNum) : null);
-
-			if (reaction.getReversible()) {
-				// one must have the same unit as denominator resp. p_kMr.
-				// p_kMr has the unit SubstancePerSizeOrSubstance
-				UnitFactory unitFactory = new UnitFactory(getModel(), isBringToConcentration());
-				ASTNode one = new ASTNode(1, this);
-				SBMLtools.setUnits(one, unitFactory.unitSubstancePerSizeOrSubstance(speciesR));
-				denominator = ASTNode.sum(one, denominator);
-			} else if (modInhib.size() < 1) {
-				denominator = ASTNode.sum(new ASTNode(p_kMr, this), denominator);
-			}
-
-			// construct formula
-			currEnzymeKin = ASTNode.frac(numerator, denominator);
-			if (modE.size() > 0) {
-				currEnzymeKin = ASTNode.times(speciesTerm(modE.get(enzymeNum)),
-					currEnzymeKin);
-			}
-			formula[enzymeNum++] = currEnzymeKin;
-		} while (enzymeNum < modE.size());
-		ASTNode sum = ASTNode.sum(formula);
-
-		// the formalism from the convenience kinetics as a default.
-		if ((modInhib.size() > 1) && (reaction.getReversible())) {
-			sum = ASTNode.times(inhibitionFactor(modInhib), sum);
-		}
-		// Activation
-		if (modActi.size() > 0) {
-			sum = ASTNode.times(activationFactor(modActi), sum);
-		}
-		return sum;
-	}
-
-	/**
-	 * * Inhibition
-	 * 
-	 * @param modInhib
-	 *            A list containing the ids of all inhibitors of this reaction
-	 * @param reaction
-	 *            The reaction for which a kinetic equation is to be created
-	 * @param modE
-	 *            A list containing the ids of all enzymes of this reaction
-	 * @param denominator
-	 *            The denominator of this kinetic equation created so far.
-	 * @param mr
-	 *            Michaelis constant of the substrate
-	 * @param enzymeNum
-	 *            Current index of the enzyme in the list of enzyme ids
-	 * @return
-	 */
-	private ASTNode createInihibitionTerms(List<String> modInhib,
-			Reaction reaction, ASTNode denominator, LocalParameter mr,
-			String enzyme) {
-		if (modInhib.size() == 1) {
-			LocalParameter p_kIa = parameterFactory.parameterKi(modInhib.get(0), enzyme, 1);
-			LocalParameter p_kIb = parameterFactory.parameterKi(modInhib.get(0), enzyme, 2);
-			ASTNode one = new ASTNode(1, this);
-			SBMLtools.setUnits(one, Unit.Kind.DIMENSIONLESS);
-			if (reaction.getReversible()) {
-				denominator = ASTNode.sum(
-					ASTNode.frac(
-						speciesTerm(modInhib.get(0)),
-						new ASTNode(p_kIa, this)
-					),
-					ASTNode.times(
-						denominator,
-						ASTNode.sum(
-							one,
-							ASTNode.frac(
-								speciesTerm(modInhib.get(0)),
-								new ASTNode(p_kIb, this)
-							)
-						)
-					)
-				);
-			} else {
-				denominator = ASTNode.sum(
-					ASTNode.times(
-						new ASTNode(mr, this),
-						ASTNode.sum(
-							one,
-							ASTNode.frac(
-								speciesTerm(modInhib.get(0)),
-								new ASTNode(p_kIa, this)
-							)
-						)
-					),
-					ASTNode.times(
-						denominator,
-						ASTNode.sum(
-							one.clone(),
-							ASTNode.frac(
-								speciesTerm(modInhib.get(0)),
-								new ASTNode(p_kIb, this)
-							)
-						)
-					)
-				);
-			}
-
-		} else if ((modInhib.size() > 1)
-				&& !getParentSBMLObject().getReversible()) {
-			/*
-			 * mixed-type inihibition of irreversible enzymes by mutually
-			 * exclusive inhibitors.
-			 */
-			ASTNode sumIa = new ASTNode(1, this);
-			ASTNode sumIb = new ASTNode(1, this);
-			SBMLtools.setUnits(sumIa, Unit.Kind.DIMENSIONLESS);
-			SBMLtools.setUnits(sumIb, Unit.Kind.DIMENSIONLESS);
-			for (int i = 0; i < modInhib.size(); i++) {
-				String inhibitor = modInhib.get(i);
-				LocalParameter p_kIai = parameterFactory.parameterKi(inhibitor, enzyme, 1);
-				LocalParameter p_kIbi = parameterFactory.parameterKi(inhibitor, enzyme, 2);
-				LocalParameter p_a = parameterFactory.parameterCooperativeInhibitorSubstrateCoefficient(
-					'a', inhibitor, enzyme);
-				LocalParameter p_b = parameterFactory.parameterCooperativeInhibitorSubstrateCoefficient(
-					'b', inhibitor, enzyme);
-				ASTNode specRefI = speciesTerm(inhibitor);
-				sumIa = ASTNode.sum(
-					sumIa,
-					ASTNode.frac(
-						specRefI,
-						ASTNode.times(this, p_a, p_kIai)
-					)
-				);
-				sumIb = ASTNode.sum(
-					sumIb,
-					ASTNode.frac(
-						specRefI,
-						ASTNode.times(this, p_b, p_kIbi)
-					)
-				);
-			}
-			denominator = ASTNode.sum(
-				ASTNode.times(denominator, sumIa),
-				ASTNode.times(new ASTNode(mr, this),
-				sumIb)
-			);
-		}
-		return denominator;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.sbml.squeezer.kinetics.GeneralizedMassAction#getSimpleName()
-	 */
-	@Override
-	public String getSimpleName() {
-		return MESSAGES.getString("MICHAELIS_MENTEN_SIMPLE_NAME");
-	}
-
+InterfaceUniUniKinetics, InterfaceReversibleKinetics,
+InterfaceIrreversibleKinetics, InterfaceModulatedKinetics {
+  
+  public static final transient ResourceBundle MESSAGES = ResourceManager.getBundle(Bundles.MESSAGES);
+  public static final transient ResourceBundle WARNINGS = ResourceManager.getBundle(Bundles.WARNINGS);
+  
+  /**
+   * Generated serial version identifier.
+   */
+  private static final long serialVersionUID = 1773589374066138555L;
+  
+  /**
+   * 
+   * @param parentReaction
+   * @param typeParameters
+   * @throws RateLawNotApplicableException
+   * @throws XMLStreamException
+   */
+  public MichaelisMenten(Reaction parentReaction, Object... typeParameters)
+      throws RateLawNotApplicableException, XMLStreamException {
+    super(parentReaction, typeParameters);
+  }
+  
+  /* (non-Javadoc)
+   * @see org.sbml.squeezer.kinetics.BasicKineticLaw#createKineticEquation(java.util.List, java.util.List, java.util.List, java.util.List)
+   */
+  @Override
+  ASTNode createKineticEquation(List<String> modE, List<String> modActi,
+    List<String> modInhib, List<String> modCat)
+        throws RateLawNotApplicableException {
+    Reaction reaction = getParentSBMLObject();
+    ASTNode numerator;
+    ASTNode denominator;
+    
+    if ((reaction.getReactantCount() > 1)
+        || (reaction.getReactant(0).getStoichiometry() != 1d)) {
+      throw new RateLawNotApplicableException(
+        MessageFormat.format(WARNINGS
+          .getString("INCORRECT_STOICHIOMETRY_OF_REACTANT_SPECIES"),
+          getSimpleName(), reaction.getId()));
+    }
+    if (((reaction.getProductCount() != 1) || (reaction.getProduct(0)
+        .getStoichiometry() != 1d)) && reaction.getReversible()) {
+      throw new RateLawNotApplicableException(
+        MessageFormat.format(WARNINGS
+          .getString("INCORRECT_STOICHIOMETRY_OF_PRODUCT_SPECIES"),
+          getSimpleName(), reaction.getId()));
+    }
+    SBMLtools.setSBOTerm(this,269); // enzymatic rate law for unireactant enzymes
+    switch (modE.size()) {
+      case 0: // no enzyme, irreversible
+        if (!getParentSBMLObject().getReversible() && (modActi.size() == 0)
+            && (modInhib.size() == 0)) {
+          SBMLtools.setSBOTerm(this, 199); // normalised enzymatic rate law for
+          // unireactant enzymes
+        } else if ((modActi.size() == 0) && (modInhib.size() == 0)) {
+          SBMLtools.setSBOTerm(this, 326); // enzymatic rate law for non-modulated
+        }
+        // unireactant enzymes
+        break;
+      case 1: // one enzmye
+        if (getParentSBMLObject().getReversible()) {
+          if ((modActi.size() == 0) && (modInhib.size() == 0)) {
+            SBMLtools.setSBOTerm(this, 326); // enzymatic rate law for non-modulated
+            // unireactant enzymes
+          }
+        } else if ((modActi.size() == 0) && (modInhib.size() == 0)) {
+          // irreversible equivalents: Briggs-Haldane equation (31) or
+          // Van Slyke-Cullen equation (30)
+          // 29 = Henri-Michaelis-Menten
+          SBMLtools.setSBOTerm(this, 28); // enzymatic rate law for irreversible
+          // non-modulated non-interacting unireactant
+          // enzymes
+        }
+        break;
+    }
+    if (!getParentSBMLObject().getReversible()) {
+      switch (modInhib.size()) {
+        case 1:
+          SBMLtools.setSBOTerm(this, 265); // enzymatic rate law for simple mixed-type
+          // inhibition of irreversible unireactant
+          // enzymes
+          break;
+        case 2:
+          SBMLtools.setSBOTerm(this, 276); // enzymatic rate law for mixed-type inhibition
+          // of irreversible unireactant enzymes by
+          // two inhibitors
+          break;
+        default:
+          SBMLtools.setSBOTerm(this, 275); // enzymatic rate law for mixed-type inhibition
+          // of irreversible enzymes by mutually
+          // exclusive inhibitors
+          break;
+      }
+    }
+    Species speciesR = reaction.getReactant(0).getSpeciesInstance();
+    
+    ASTNode formula[] = new ASTNode[Math.max(1, modE.size())];
+    int enzymeNum = 0;
+    do {
+      String enzyme = modE.size() == 0 ? null : modE.get(enzymeNum);
+      LocalParameter p_kcatp = parameterFactory.parameterKcatOrVmax(enzyme, true);
+      LocalParameter p_kMr = parameterFactory.parameterMichaelis(speciesR.getId(), enzyme, true);
+      
+      ASTNode currEnzymeKin;
+      if (!reaction.getReversible() || (reaction.getProductCount() == 0)) {
+        /*
+         * Irreversible Reaction
+         */
+        numerator = ASTNode.times(new ASTNode(p_kcatp, this), speciesTerm(speciesR));
+        denominator = speciesTerm(speciesR);
+      } else {
+        /*
+         * Reversible Reaction
+         */
+        Species speciesP = reaction.getProduct(0).getSpeciesInstance();
+        
+        numerator = ASTNode.times(ASTNode.frac(this, p_kcatp, p_kMr),
+          speciesTerm(speciesR));
+        denominator = ASTNode.frac(speciesTerm(speciesR), new ASTNode(p_kMr, this));
+        LocalParameter p_kcatn = parameterFactory.parameterKcatOrVmax(enzyme, false);
+        LocalParameter p_kMp = parameterFactory.parameterMichaelis(speciesP.getId(), enzyme, false);
+        
+        numerator.minus(ASTNode.times(ASTNode
+          .frac(this, p_kcatn, p_kMp), speciesTerm(speciesP)));
+        denominator.plus(ASTNode.frac(speciesTerm(speciesP),
+          new ASTNode(p_kMp, this)));
+      }
+      denominator = createInihibitionTerms(modInhib, reaction, denominator,
+        p_kMr, modE.size() > 1 ? modE.get(enzymeNum) : null);
+      
+      if (reaction.getReversible()) {
+        // one must have the same unit as denominator resp. p_kMr.
+        // p_kMr has the unit SubstancePerSizeOrSubstance
+        UnitFactory unitFactory = new UnitFactory(getModel(), isBringToConcentration());
+        ASTNode one = new ASTNode(1, this);
+        SBMLtools.setUnits(one, unitFactory.unitSubstancePerSizeOrSubstance(speciesR));
+        denominator = ASTNode.sum(one, denominator);
+      } else if (modInhib.size() < 1) {
+        denominator = ASTNode.sum(new ASTNode(p_kMr, this), denominator);
+      }
+      
+      // construct formula
+      currEnzymeKin = ASTNode.frac(numerator, denominator);
+      if (modE.size() > 0) {
+        currEnzymeKin = ASTNode.times(speciesTerm(modE.get(enzymeNum)),
+          currEnzymeKin);
+      }
+      formula[enzymeNum++] = currEnzymeKin;
+    } while (enzymeNum < modE.size());
+    ASTNode sum = ASTNode.sum(formula);
+    
+    // the formalism from the convenience kinetics as a default.
+    if ((modInhib.size() > 1) && (reaction.getReversible())) {
+      sum = ASTNode.times(inhibitionFactor(modInhib), sum);
+    }
+    // Activation
+    if (modActi.size() > 0) {
+      sum = ASTNode.times(activationFactor(modActi), sum);
+    }
+    return sum;
+  }
+  
+  /**
+   * * Inhibition
+   * 
+   * @param modInhib
+   *            A list containing the ids of all inhibitors of this reaction
+   * @param reaction
+   *            The reaction for which a kinetic equation is to be created
+   * @param modE
+   *            A list containing the ids of all enzymes of this reaction
+   * @param denominator
+   *            The denominator of this kinetic equation created so far.
+   * @param mr
+   *            Michaelis constant of the substrate
+   * @param enzymeNum
+   *            Current index of the enzyme in the list of enzyme ids
+   * @return
+   */
+  private ASTNode createInihibitionTerms(List<String> modInhib,
+    Reaction reaction, ASTNode denominator, LocalParameter mr,
+    String enzyme) {
+    if (modInhib.size() == 1) {
+      LocalParameter p_kIa = parameterFactory.parameterKi(modInhib.get(0), enzyme, 1);
+      LocalParameter p_kIb = parameterFactory.parameterKi(modInhib.get(0), enzyme, 2);
+      ASTNode one = new ASTNode(1, this);
+      SBMLtools.setUnits(one, Unit.Kind.DIMENSIONLESS);
+      if (reaction.getReversible()) {
+        denominator = ASTNode.sum(
+          ASTNode.frac(
+            speciesTerm(modInhib.get(0)),
+            new ASTNode(p_kIa, this)
+              ),
+              ASTNode.times(
+                denominator,
+                ASTNode.sum(
+                  one,
+                  ASTNode.frac(
+                    speciesTerm(modInhib.get(0)),
+                    new ASTNode(p_kIb, this)
+                      )
+                    )
+                  )
+            );
+      } else {
+        denominator = ASTNode.sum(
+          ASTNode.times(
+            new ASTNode(mr, this),
+            ASTNode.sum(
+              one,
+              ASTNode.frac(
+                speciesTerm(modInhib.get(0)),
+                new ASTNode(p_kIa, this)
+                  )
+                )
+              ),
+              ASTNode.times(
+                denominator,
+                ASTNode.sum(
+                  one.clone(),
+                  ASTNode.frac(
+                    speciesTerm(modInhib.get(0)),
+                    new ASTNode(p_kIb, this)
+                      )
+                    )
+                  )
+            );
+      }
+      
+    } else if ((modInhib.size() > 1)
+        && !getParentSBMLObject().getReversible()) {
+      /*
+       * mixed-type inihibition of irreversible enzymes by mutually
+       * exclusive inhibitors.
+       */
+      ASTNode sumIa = new ASTNode(1, this);
+      ASTNode sumIb = new ASTNode(1, this);
+      SBMLtools.setUnits(sumIa, Unit.Kind.DIMENSIONLESS);
+      SBMLtools.setUnits(sumIb, Unit.Kind.DIMENSIONLESS);
+      for (int i = 0; i < modInhib.size(); i++) {
+        String inhibitor = modInhib.get(i);
+        LocalParameter p_kIai = parameterFactory.parameterKi(inhibitor, enzyme, 1);
+        LocalParameter p_kIbi = parameterFactory.parameterKi(inhibitor, enzyme, 2);
+        LocalParameter p_a = parameterFactory.parameterCooperativeInhibitorSubstrateCoefficient(
+          'a', inhibitor, enzyme);
+        LocalParameter p_b = parameterFactory.parameterCooperativeInhibitorSubstrateCoefficient(
+          'b', inhibitor, enzyme);
+        ASTNode specRefI = speciesTerm(inhibitor);
+        sumIa = ASTNode.sum(
+          sumIa,
+          ASTNode.frac(
+            specRefI,
+            ASTNode.times(this, p_a, p_kIai)
+              )
+            );
+        sumIb = ASTNode.sum(
+          sumIb,
+          ASTNode.frac(
+            specRefI,
+            ASTNode.times(this, p_b, p_kIbi)
+              )
+            );
+      }
+      denominator = ASTNode.sum(
+        ASTNode.times(denominator, sumIa),
+        ASTNode.times(new ASTNode(mr, this),
+          sumIb)
+          );
+    }
+    return denominator;
+  }
+  
+  /* (non-Javadoc)
+   * @see org.sbml.squeezer.kinetics.GeneralizedMassAction#getSimpleName()
+   */
+  @Override
+  public String getSimpleName() {
+    return MESSAGES.getString("MICHAELIS_MENTEN_SIMPLE_NAME");
+  }
+  
 }

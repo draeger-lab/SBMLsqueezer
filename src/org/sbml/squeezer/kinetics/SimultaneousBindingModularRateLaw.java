@@ -25,6 +25,8 @@ package org.sbml.squeezer.kinetics;
 
 import java.util.ResourceBundle;
 
+import javax.xml.stream.XMLStreamException;
+
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.ListOf;
 import org.sbml.jsbml.LocalParameter;
@@ -48,94 +50,95 @@ import de.zbit.util.ResourceManager;
  * @version $Rev$
  */
 public class SimultaneousBindingModularRateLaw extends PowerLawModularRateLaw
-		implements InterfaceUniUniKinetics, InterfaceBiUniKinetics,
-		InterfaceBiBiKinetics, InterfaceArbitraryEnzymeKinetics,
-		InterfaceReversibleKinetics, InterfaceModulatedKinetics {
-	
-	public static final transient ResourceBundle MESSAGES = ResourceManager.getBundle(Bundles.MESSAGES);
-
-	/**
-	 * Generated serial version identifier.
-	 */
-	private static final long serialVersionUID = -2477205847639987264L;
-
-	/**
-	 * 
-	 * @param parentReaction
-	 * @param types
-	 * @throws RateLawNotApplicableException
-	 */
-	public SimultaneousBindingModularRateLaw(Reaction parentReaction,
-			Object... types) throws RateLawNotApplicableException {
-		super(parentReaction, types);
-		SBMLtools.setSBOTerm(this,530); // simultaneous binding modular rate law
-	}
-
-	/* (non-Javadoc)
-	 * @see org.sbml.squeezer.kinetics.ReversiblePowerLaw#denominator(java.lang.String)
-	 */
-	@Override
-	ASTNode denominator(String enzyme) {
-		ASTNode denominator = new ASTNode(this);
-		ASTNode forward = denominator(enzyme, true);
-		ASTNode backward = denominator(enzyme, false);
-		if (!forward.isUnknown()) {
+implements InterfaceUniUniKinetics, InterfaceBiUniKinetics,
+InterfaceBiBiKinetics, InterfaceArbitraryEnzymeKinetics,
+InterfaceReversibleKinetics, InterfaceModulatedKinetics {
+  
+  public static final transient ResourceBundle MESSAGES = ResourceManager.getBundle(Bundles.MESSAGES);
+  
+  /**
+   * Generated serial version identifier.
+   */
+  private static final long serialVersionUID = -2477205847639987264L;
+  
+  /**
+   * 
+   * @param parentReaction
+   * @param types
+   * @throws RateLawNotApplicableException
+   * @throws XMLStreamException
+   */
+  public SimultaneousBindingModularRateLaw(Reaction parentReaction,
+    Object... types) throws RateLawNotApplicableException, XMLStreamException {
+    super(parentReaction, types);
+    SBMLtools.setSBOTerm(this,530); // simultaneous binding modular rate law
+  }
+  
+  /* (non-Javadoc)
+   * @see org.sbml.squeezer.kinetics.ReversiblePowerLaw#denominator(java.lang.String)
+   */
+  @Override
+  ASTNode denominator(String enzyme) {
+    ASTNode denominator = new ASTNode(this);
+    ASTNode forward = denominator(enzyme, true);
+    ASTNode backward = denominator(enzyme, false);
+    if (!forward.isUnknown()) {
       denominator = forward;
     }
-		if (!backward.isUnknown()) {
-			if (!denominator.isUnknown()) {
+    if (!backward.isUnknown()) {
+      if (!denominator.isUnknown()) {
         denominator.multiplyWith(backward);
       } else {
         denominator = backward;
       }
-		}
-		ASTNode competInhib = specificModificationSummand(enzyme);
-		return competInhib == null ? denominator : denominator
-				.plus(competInhib);
-	}
-
-	/**
-	 * This actually creates the denominator parts.
-	 * 
-	 * @param enzyme
-	 * @param forward
-	 *            true means forward, false backward.
-	 * @return
-	 */
-	private final ASTNode denominator(String enzyme, boolean forward) {
-		ASTNode term = new ASTNode(this), curr;
-		LocalParameter kM;
-		LocalParameter hr = parameterFactory.parameterReactionCooperativity(enzyme);
-		Reaction r = getParentSBMLObject();
-		ListOf<SpeciesReference> listOf = forward ? r.getListOfReactants() : r.getListOfProducts();
-		for (SpeciesReference specRef : listOf) {
-			kM = parameterFactory.parameterMichaelis(specRef.getSpecies(), enzyme, forward);
-			
-			// curr must have the same unit as node:
-			// speciesTerm (SubstancePerSizeOrSubstance) / kM (SubstancePerSizeOrSubstance) = dimensionless
-			curr = new ASTNode(1, this);
-			SBMLtools.setUnits(curr, Unit.Kind.DIMENSIONLESS);
-			
-			ASTNode node = speciesTerm(specRef).divideBy(kM);
-			
-			curr.plus(node);
-			
-			curr.raiseByThePowerOf(ASTNode.times(stoichiometryTerm(specRef), new ASTNode(hr, this)));
-			if (term.isUnknown()) {
-				term = curr;
-			} else {
-				term.multiplyWith(curr);
-			}
-		}
-		return term;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.sbml.squeezer.kinetics.ReversiblePowerLaw#getSimpleName()
-	 */
-	@Override
-	public String getSimpleName() {
-		return MESSAGES.getString("SIMULTANEOUS_BINDING_MODULAR_RATE_LAW_SIMPLE_NAME");
-	}
-
+    }
+    ASTNode competInhib = specificModificationSummand(enzyme);
+    return competInhib == null ? denominator : denominator
+        .plus(competInhib);
+  }
+  
+  /**
+   * This actually creates the denominator parts.
+   * 
+   * @param enzyme
+   * @param forward
+   *            true means forward, false backward.
+   * @return
+   */
+  private final ASTNode denominator(String enzyme, boolean forward) {
+    ASTNode term = new ASTNode(this), curr;
+    LocalParameter kM;
+    LocalParameter hr = parameterFactory.parameterReactionCooperativity(enzyme);
+    Reaction r = getParentSBMLObject();
+    ListOf<SpeciesReference> listOf = forward ? r.getListOfReactants() : r.getListOfProducts();
+    for (SpeciesReference specRef : listOf) {
+      kM = parameterFactory.parameterMichaelis(specRef.getSpecies(), enzyme, forward);
+      
+      // curr must have the same unit as node:
+      // speciesTerm (SubstancePerSizeOrSubstance) / kM (SubstancePerSizeOrSubstance) = dimensionless
+      curr = new ASTNode(1, this);
+      SBMLtools.setUnits(curr, Unit.Kind.DIMENSIONLESS);
+      
+      ASTNode node = speciesTerm(specRef).divideBy(kM);
+      
+      curr.plus(node);
+      
+      curr.raiseByThePowerOf(ASTNode.times(stoichiometryTerm(specRef), new ASTNode(hr, this)));
+      if (term.isUnknown()) {
+        term = curr;
+      } else {
+        term.multiplyWith(curr);
+      }
+    }
+    return term;
+  }
+  
+  /* (non-Javadoc)
+   * @see org.sbml.squeezer.kinetics.ReversiblePowerLaw#getSimpleName()
+   */
+  @Override
+  public String getSimpleName() {
+    return MESSAGES.getString("SIMULTANEOUS_BINDING_MODULAR_RATE_LAW_SIMPLE_NAME");
+  }
+  
 }

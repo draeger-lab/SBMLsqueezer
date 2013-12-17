@@ -25,6 +25,8 @@ package org.sbml.squeezer.kinetics;
 
 import java.util.ResourceBundle;
 
+import javax.xml.stream.XMLStreamException;
+
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.Reaction;
 import org.sbml.squeezer.RateLawNotApplicableException;
@@ -47,57 +49,58 @@ import de.zbit.util.ResourceManager;
  * @version $Rev$
  */
 public class NetGeneratorLinear extends AdditiveModelLinear implements
-		InterfaceGeneRegulatoryKinetics, InterfaceModulatedKinetics,
-		InterfaceIrreversibleKinetics, InterfaceReversibleKinetics,
-    InterfaceZeroReactants, InterfaceZeroProducts {
-	
-	public static final transient ResourceBundle MESSAGES = ResourceManager.getBundle(Bundles.MESSAGES);
-
-	/**
-	 * Generated serial version identifier.
-	 */
-	private static final long serialVersionUID = 7794507034989326338L;
-
-	/**
-	 * @param parentReaction
-	 * @param typeParameters
-	 * @throws RateLawNotApplicableException
-	 */
-	public NetGeneratorLinear(Reaction parentReaction, Object... typeParameters)
-			throws RateLawNotApplicableException {
-		super(parentReaction, typeParameters);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.sbml.squeezer.kinetics.AdditiveModelLinear#b_i()
-	 */
-	@Override
-	ASTNode b_i() {
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.sbml.squeezer.kinetics.AdditiveModelLinear#getSimpleName()
-	 */
-	@Override
-	public String getSimpleName() {
-		return MESSAGES.getString("NET_GENERATOR_LINEAR_SIMPLE_NAME");
-	}
-
-	/* (non-Javadoc)
-	 * @see org.sbml.squeezer.kinetics.AdditiveModelLinear#m()
-	 */
-	@Override
-	ASTNode m() {
-		ASTNode node = new ASTNode(1, this);
-		UnitFactory unitFactory = new UnitFactory(getModel(), isBringToConcentration());
-		if (!node.isSetUnits()) {
-			SBMLtools.setUnits(node, unitFactory.unitSubstancePerTime(
-                    getModel().getSubstanceUnitsInstance(),
-                    getModel().getTimeUnitsInstance()));
-		}
-		
-		return node;
-	}
-
+InterfaceGeneRegulatoryKinetics, InterfaceModulatedKinetics,
+InterfaceIrreversibleKinetics, InterfaceReversibleKinetics,
+InterfaceZeroReactants, InterfaceZeroProducts {
+  
+  public static final transient ResourceBundle MESSAGES = ResourceManager.getBundle(Bundles.MESSAGES);
+  
+  /**
+   * Generated serial version identifier.
+   */
+  private static final long serialVersionUID = 7794507034989326338L;
+  
+  /**
+   * @param parentReaction
+   * @param typeParameters
+   * @throws RateLawNotApplicableException
+   * @throws XMLStreamException
+   */
+  public NetGeneratorLinear(Reaction parentReaction, Object... typeParameters)
+      throws RateLawNotApplicableException, XMLStreamException {
+    super(parentReaction, typeParameters);
+  }
+  
+  /* (non-Javadoc)
+   * @see org.sbml.squeezer.kinetics.AdditiveModelLinear#b_i()
+   */
+  @Override
+  ASTNode b_i() {
+    return null;
+  }
+  
+  /* (non-Javadoc)
+   * @see org.sbml.squeezer.kinetics.AdditiveModelLinear#getSimpleName()
+   */
+  @Override
+  public String getSimpleName() {
+    return MESSAGES.getString("NET_GENERATOR_LINEAR_SIMPLE_NAME");
+  }
+  
+  /* (non-Javadoc)
+   * @see org.sbml.squeezer.kinetics.AdditiveModelLinear#m()
+   */
+  @Override
+  ASTNode m() {
+    ASTNode node = new ASTNode(1, this);
+    UnitFactory unitFactory = new UnitFactory(getModel(), isBringToConcentration());
+    if (!node.isSetUnits()) {
+      SBMLtools.setUnits(node, unitFactory.unitSubstancePerTime(
+        getModel().getSubstanceUnitsInstance(),
+        getModel().getTimeUnitsInstance()));
+    }
+    
+    return node;
+  }
+  
 }

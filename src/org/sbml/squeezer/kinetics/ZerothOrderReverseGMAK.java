@@ -26,6 +26,8 @@ package org.sbml.squeezer.kinetics;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import javax.xml.stream.XMLStreamException;
+
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.Reaction;
 import org.sbml.squeezer.RateLawNotApplicableException;
@@ -40,54 +42,55 @@ import de.zbit.util.ResourceManager;
  * @date Feb 8, 2008
  * @since 1.0
  * @version $Rev$
-*/
+ */
 public class ZerothOrderReverseGMAK extends GeneralizedMassAction implements
-		InterfaceNonEnzymeKinetics, InterfaceReversibleKinetics,
-		InterfaceIrreversibleKinetics, InterfaceZeroReactants,
-		InterfaceZeroProducts, InterfaceModulatedKinetics {
-	
-	public static final transient ResourceBundle MESSAGES = ResourceManager.getBundle(Bundles.MESSAGES);
-
-	/**
-	 * Generated serial version identifier.
-	 */
-	private static final long serialVersionUID = 327453598422460479L;
-
-	/**
-	 * 
-	 * @param parentReaction
-	 * @param typeParameters
-	 * @throws RateLawNotApplicableException
-	 */
-	public ZerothOrderReverseGMAK(Reaction parentReaction,
-			Object... typeParameters) throws RateLawNotApplicableException {
-		super(parentReaction, typeParameters);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.sbml.squeezer.kinetics.GeneralizedMassAction#dissociation(java.util.List, int)
-	 */
-	@Override
-	ASTNode dissociation(List<String> catalysts, int c) {
-		return new ASTNode(parameterFactory
-				.parameterDissociationConst(catalysts.size() == 0 ? null
-						: catalysts.get(c)), this);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.sbml.squeezer.kinetics.BasicKineticLaw#getOrderProducts()
-	 */
-	@Override
-	double getOrderProducts() {
-		return 0d;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.sbml.squeezer.kinetics.GeneralizedMassAction#getSimpleName()
-	 */
-	@Override
+InterfaceNonEnzymeKinetics, InterfaceReversibleKinetics,
+InterfaceIrreversibleKinetics, InterfaceZeroReactants,
+InterfaceZeroProducts, InterfaceModulatedKinetics {
+  
+  public static final transient ResourceBundle MESSAGES = ResourceManager.getBundle(Bundles.MESSAGES);
+  
+  /**
+   * Generated serial version identifier.
+   */
+  private static final long serialVersionUID = 327453598422460479L;
+  
+  /**
+   * 
+   * @param parentReaction
+   * @param typeParameters
+   * @throws RateLawNotApplicableException
+   * @throws XMLStreamException
+   */
+  public ZerothOrderReverseGMAK(Reaction parentReaction,
+    Object... typeParameters) throws RateLawNotApplicableException, XMLStreamException {
+    super(parentReaction, typeParameters);
+  }
+  
+  /* (non-Javadoc)
+   * @see org.sbml.squeezer.kinetics.GeneralizedMassAction#dissociation(java.util.List, int)
+   */
+  @Override
+  ASTNode dissociation(List<String> catalysts, int c) {
+    return new ASTNode(parameterFactory
+      .parameterDissociationConst(catalysts.size() == 0 ? null
+          : catalysts.get(c)), this);
+  }
+  
+  /* (non-Javadoc)
+   * @see org.sbml.squeezer.kinetics.BasicKineticLaw#getOrderProducts()
+   */
+  @Override
+  double getOrderProducts() {
+    return 0d;
+  }
+  
+  /* (non-Javadoc)
+   * @see org.sbml.squeezer.kinetics.GeneralizedMassAction#getSimpleName()
+   */
+  @Override
   public String getSimpleName() {
-		return MESSAGES.getString("ZEROTH_ORDER_REVERSE_GMAK_SIMPLE_NAME");
-	}
-
+    return MESSAGES.getString("ZEROTH_ORDER_REVERSE_GMAK_SIMPLE_NAME");
+  }
+  
 }
