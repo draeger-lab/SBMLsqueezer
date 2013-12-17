@@ -28,6 +28,8 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Logger;
 
+import javax.xml.stream.XMLStreamException;
+
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.ListOf;
 import org.sbml.jsbml.LocalParameter;
@@ -85,9 +87,10 @@ InterfaceIrreversibleKinetics, InterfaceModulatedKinetics {
    * @param parentReaction
    * @param types
    * @throws RateLawNotApplicableException
+   * @throws XMLStreamException
    */
   public ConvenienceKinetics(Reaction parentReaction, Object... types)
-      throws RateLawNotApplicableException {
+      throws RateLawNotApplicableException, XMLStreamException {
     super(parentReaction, types);
   }
   
@@ -97,7 +100,7 @@ InterfaceIrreversibleKinetics, InterfaceModulatedKinetics {
   @Override
   ASTNode createKineticEquation(List<String> modE, List<String> modActi,
     List<String> modInhib, List<String> modCat)
-        throws RateLawNotApplicableException {
+        throws RateLawNotApplicableException, XMLStreamException {
     Reaction reaction = getParentSBMLObject();
     SBMLtools.setSBOTerm(this, 429);
     setNotes(StringTools.firstLetterUpperCase((!fullRank) ?
@@ -204,10 +207,12 @@ InterfaceIrreversibleKinetics, InterfaceModulatedKinetics {
             ASTNode proot = ASTNode.times(productroot);
             if (proot == null) {
               proot = new ASTNode(1, this);
+              SBMLtools.setUnits(proot, Unit.Kind.DIMENSIONLESS.getName());
             }
             ASTNode rroot = ASTNode.times(reactantsroot);
             if (rroot == null) {
               rroot = new ASTNode(1, this);
+              SBMLtools.setUnits(proot, Unit.Kind.DIMENSIONLESS.getName());
             }
             equation = ASTNode.times(ASTNode.times(reactants), ASTNode
               .sqrt(ASTNode.frac(rroot, proot)));
@@ -215,10 +220,12 @@ InterfaceIrreversibleKinetics, InterfaceModulatedKinetics {
             ASTNode proot = ASTNode.times(productroot);
             if (proot == null) {
               proot = new ASTNode(1, this);
+              SBMLtools.setUnits(proot, Unit.Kind.DIMENSIONLESS.getName());
             }
             ASTNode rroot = ASTNode.times(reactantsroot);
             if (rroot == null) {
               rroot = new ASTNode(1, this);
+              SBMLtools.setUnits(proot, Unit.Kind.DIMENSIONLESS.getName());
             }
             equation = ASTNode.times(ASTNode.times(products), ASTNode
               .sqrt(ASTNode.frac(proot, rroot)));

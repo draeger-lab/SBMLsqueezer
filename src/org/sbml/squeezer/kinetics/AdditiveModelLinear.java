@@ -26,6 +26,8 @@ package org.sbml.squeezer.kinetics;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import javax.xml.stream.XMLStreamException;
+
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.LocalParameter;
 import org.sbml.jsbml.ModifierSpeciesReference;
@@ -51,160 +53,161 @@ import de.zbit.util.ResourceManager;
  * @version $Rev$
  */
 public class AdditiveModelLinear extends BasicKineticLaw implements
-		InterfaceGeneRegulatoryKinetics, InterfaceModulatedKinetics,
-		InterfaceIrreversibleKinetics, InterfaceReversibleKinetics,
-		InterfaceZeroReactants, InterfaceZeroProducts {
-	
-	/**
-	 * 
-	 */
-	public static final transient ResourceBundle MESSAGES = ResourceManager.getBundle(Bundles.MESSAGES);
-
-	/**
-	 * Generated serial version identifier.
-	 */
-	private static final long serialVersionUID = -2917401499718628334L;
-
-	/**
-	 * @param parentReaction
-	 * @param typeParameters
-	 * @throws RateLawNotApplicableException
-	 */
-	public AdditiveModelLinear(Reaction parentReaction,
-			Object... typeParameters) throws RateLawNotApplicableException {
-		super(parentReaction, typeParameters);
-	}
-
-	/**
-	 * @param g
-	 * @return ASTNode
-	 */
-	ASTNode activation(ASTNode g) {
-		ASTNode node = new ASTNode(1, this);
-		SBMLtools.setUnits(node, Unit.Kind.DIMENSIONLESS);
-		return g == null ? node : g;
-	}
-
-	/**
-	 * @return ASTNode
-	 */
-	ASTNode b_i() {
-		return new ASTNode(parameterFactory.parameterB(getParentSBMLObject().getId()), this);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.sbml.squeezer.kinetics.BasicKineticLaw#createKineticEquation(java.util.List, java.util.List, java.util.List, java.util.List)
-	 */
-	@Override
+InterfaceGeneRegulatoryKinetics, InterfaceModulatedKinetics,
+InterfaceIrreversibleKinetics, InterfaceReversibleKinetics,
+InterfaceZeroReactants, InterfaceZeroProducts {
+  
+  /**
+   * 
+   */
+  public static final transient ResourceBundle MESSAGES = ResourceManager.getBundle(Bundles.MESSAGES);
+  
+  /**
+   * Generated serial version identifier.
+   */
+  private static final long serialVersionUID = -2917401499718628334L;
+  
+  /**
+   * @param parentReaction
+   * @param typeParameters
+   * @throws RateLawNotApplicableException
+   * @throws XMLStreamException
+   */
+  public AdditiveModelLinear(Reaction parentReaction,
+    Object... typeParameters) throws RateLawNotApplicableException, XMLStreamException {
+    super(parentReaction, typeParameters);
+  }
+  
+  /**
+   * @param g
+   * @return ASTNode
+   */
+  ASTNode activation(ASTNode g) {
+    ASTNode node = new ASTNode(1, this);
+    SBMLtools.setUnits(node, Unit.Kind.DIMENSIONLESS);
+    return g == null ? node : g;
+  }
+  
+  /**
+   * @return ASTNode
+   */
+  ASTNode b_i() {
+    return new ASTNode(parameterFactory.parameterB(getParentSBMLObject().getId()), this);
+  }
+  
+  /* (non-Javadoc)
+   * @see org.sbml.squeezer.kinetics.BasicKineticLaw#createKineticEquation(java.util.List, java.util.List, java.util.List, java.util.List)
+   */
+  @Override
   ASTNode createKineticEquation(List<String> modE, List<String> modActi,
-			List<String> modInhib, List<String> modCat)
-			throws RateLawNotApplicableException {
-		ASTNode m = m();
-		ASTNode a = activation(g(w(), v(), b_i()));
-		if (m.isOne() && a.isOne()) {
-			return m;
-		}
-		ASTNode swap = new ASTNode(ASTNode.Type.TIMES, this);
-		swap.addChild(m());
-		swap.addChild(a);
-		return swap;
-	}
-
-	/**
-	 * @param w
-	 * @param v
-	 * @param b
-	 * @return ASTNode
-	 */
-	ASTNode g(ASTNode w, ASTNode v, ASTNode b) {
-		return ASTNode.sum(w, v, b);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.sbml.squeezer.kinetics.BasicKineticLaw#getSimpleName()
-	 */
-	@Override
+    List<String> modInhib, List<String> modCat)
+        throws RateLawNotApplicableException {
+    ASTNode m = m();
+    ASTNode a = activation(g(w(), v(), b_i()));
+    if (m.isOne() && a.isOne()) {
+      return m;
+    }
+    ASTNode swap = new ASTNode(ASTNode.Type.TIMES, this);
+    swap.addChild(m());
+    swap.addChild(a);
+    return swap;
+  }
+  
+  /**
+   * @param w
+   * @param v
+   * @param b
+   * @return ASTNode
+   */
+  ASTNode g(ASTNode w, ASTNode v, ASTNode b) {
+    return ASTNode.sum(w, v, b);
+  }
+  
+  /* (non-Javadoc)
+   * @see org.sbml.squeezer.kinetics.BasicKineticLaw#getSimpleName()
+   */
+  @Override
   public String getSimpleName() {
-		return MESSAGES.getString("ADDITIVE_MODEL_LINEAR_SIMPLE_NAME");
-	}
-
-	/**
-	 * @return ASTNode
-	 */
-	ASTNode m() {
-		return new ASTNode(parameterFactory.parameterM(getParentSBMLObject().getId()), this);
-	}
-
-	/**
-	 * weighted sum over all external factors
-	 * 
-	 * @return ASTNode
-	 */
-	ASTNode v() {
-		Reaction r = getParentSBMLObject();
-		ASTNode node = new ASTNode(this);
-		for (ModifierSpeciesReference modifier : r.getListOfModifiers()) {
-			Species modifierSpec = modifier.getSpeciesInstance();
-			if (!(SBO.isProtein(modifierSpec.getSBOTerm())
-					|| SBO.isGeneric(modifierSpec.getSBOTerm())
-					|| SBO.isRNAOrMessengerRNA(modifierSpec.getSBOTerm()) || SBO
-					.isGeneOrGeneCodingRegion(modifierSpec.getSBOTerm()))) {
-				if (!modifier.isSetSBOTerm()) {
-					SBMLtools.setSBOTerm(modifier, 19);
-				}
-				if (SBO.isModifier(modifier.getSBOTerm())) {
-					ASTNode modnode = speciesTerm(modifier);
-					LocalParameter p = parameterFactory.parameterV(modifier.getSpecies(), r.getId());
-					ASTNode pnode = new ASTNode(p, this);
-					if (node.isUnknown()) {
-						node = ASTNode.times(pnode, modnode);
-					} else {
-						node = ASTNode.sum(node, ASTNode.times(pnode, modnode));
-					}
-				}
-			}
-		}
-		return node.isUnknown() ? null : node;
-	}
-
-	/**
-	 * weighted sum over all interacting RNAs
-	 * 
-	 * @return ASTNode
-	 */
-	ASTNode w() {
-		Reaction r = getParentSBMLObject();
-		ASTNode node = new ASTNode(this);
-		if (r.isSetListOfProducts() && !ReactionType.representsEmptySet(r.getListOfProducts())) {
-			for (SpeciesReference product : r.getListOfProducts()) {
-				LocalParameter w = parameterFactory.parameterW(product.getSpecies(), r.getId());
-				if (node.isUnknown()) {
-					node = ASTNode.times(new ASTNode(w, this), speciesTerm(product));
-				} else {
-					node = ASTNode.sum(node, ASTNode.times(new ASTNode(w, this), speciesTerm(product)));
-				}
-			}
-		}
-		for (ModifierSpeciesReference modifier : r.getListOfModifiers()) {
-			Species modifierSpec = modifier.getSpeciesInstance();
-			if (SBO.isProtein(modifierSpec.getSBOTerm())
-					|| SBO.isGeneric(modifierSpec.getSBOTerm())
-					|| SBO.isRNAOrMessengerRNA(modifierSpec.getSBOTerm())
-					|| SBO.isGeneOrGeneCodingRegion(modifierSpec.getSBOTerm())) {
-				if (!modifier.isSetSBOTerm()) {
-					SBMLtools.setSBOTerm(modifier, 19);
-				}
-				if (SBO.isModifier(modifier.getSBOTerm())) {
-					LocalParameter p = parameterFactory.parameterW(modifier.getSpecies(), r.getId());
-					if (node.isUnknown()) {
-						node = ASTNode.times(new ASTNode(p, this), speciesTerm(modifier));
-					} else {
-						node = ASTNode.sum(node, ASTNode.times(new ASTNode(p, this), speciesTerm(modifier)));
-					}
-				}
-			}
-		}
-		return node.isUnknown() ? null : node;
-	}
-
+    return MESSAGES.getString("ADDITIVE_MODEL_LINEAR_SIMPLE_NAME");
+  }
+  
+  /**
+   * @return ASTNode
+   */
+  ASTNode m() {
+    return new ASTNode(parameterFactory.parameterM(getParentSBMLObject().getId()), this);
+  }
+  
+  /**
+   * weighted sum over all external factors
+   * 
+   * @return ASTNode
+   */
+  ASTNode v() {
+    Reaction r = getParentSBMLObject();
+    ASTNode node = new ASTNode(this);
+    for (ModifierSpeciesReference modifier : r.getListOfModifiers()) {
+      Species modifierSpec = modifier.getSpeciesInstance();
+      if (!(SBO.isProtein(modifierSpec.getSBOTerm())
+          || SBO.isGeneric(modifierSpec.getSBOTerm())
+          || SBO.isRNAOrMessengerRNA(modifierSpec.getSBOTerm()) || SBO
+          .isGeneOrGeneCodingRegion(modifierSpec.getSBOTerm()))) {
+        if (!modifier.isSetSBOTerm()) {
+          SBMLtools.setSBOTerm(modifier, 19);
+        }
+        if (SBO.isModifier(modifier.getSBOTerm())) {
+          ASTNode modnode = speciesTerm(modifier);
+          LocalParameter p = parameterFactory.parameterV(modifier.getSpecies(), r.getId());
+          ASTNode pnode = new ASTNode(p, this);
+          if (node.isUnknown()) {
+            node = ASTNode.times(pnode, modnode);
+          } else {
+            node = ASTNode.sum(node, ASTNode.times(pnode, modnode));
+          }
+        }
+      }
+    }
+    return node.isUnknown() ? null : node;
+  }
+  
+  /**
+   * weighted sum over all interacting RNAs
+   * 
+   * @return ASTNode
+   */
+  ASTNode w() {
+    Reaction r = getParentSBMLObject();
+    ASTNode node = new ASTNode(this);
+    if (r.isSetListOfProducts() && !ReactionType.representsEmptySet(r.getListOfProducts())) {
+      for (SpeciesReference product : r.getListOfProducts()) {
+        LocalParameter w = parameterFactory.parameterW(product.getSpecies(), r.getId());
+        if (node.isUnknown()) {
+          node = ASTNode.times(new ASTNode(w, this), speciesTerm(product));
+        } else {
+          node = ASTNode.sum(node, ASTNode.times(new ASTNode(w, this), speciesTerm(product)));
+        }
+      }
+    }
+    for (ModifierSpeciesReference modifier : r.getListOfModifiers()) {
+      Species modifierSpec = modifier.getSpeciesInstance();
+      if (SBO.isProtein(modifierSpec.getSBOTerm())
+          || SBO.isGeneric(modifierSpec.getSBOTerm())
+          || SBO.isRNAOrMessengerRNA(modifierSpec.getSBOTerm())
+          || SBO.isGeneOrGeneCodingRegion(modifierSpec.getSBOTerm())) {
+        if (!modifier.isSetSBOTerm()) {
+          SBMLtools.setSBOTerm(modifier, 19);
+        }
+        if (SBO.isModifier(modifier.getSBOTerm())) {
+          LocalParameter p = parameterFactory.parameterW(modifier.getSpecies(), r.getId());
+          if (node.isUnknown()) {
+            node = ASTNode.times(new ASTNode(p, this), speciesTerm(modifier));
+          } else {
+            node = ASTNode.sum(node, ASTNode.times(new ASTNode(p, this), speciesTerm(modifier)));
+          }
+        }
+      }
+    }
+    return node.isUnknown() ? null : node;
+  }
+  
 }

@@ -25,6 +25,8 @@ package org.sbml.squeezer.kinetics;
 
 import java.util.ResourceBundle;
 
+import javax.xml.stream.XMLStreamException;
+
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.Unit;
@@ -60,9 +62,10 @@ InterfaceZeroReactants, InterfaceZeroProducts {
    * @param parentReaction
    * @param typeParameters
    * @throws RateLawNotApplicableException
+   * @throws XMLStreamException
    */
   public Weaver(Reaction parentReaction, Object... typeParameters)
-      throws RateLawNotApplicableException {
+      throws RateLawNotApplicableException, XMLStreamException {
     super(parentReaction, typeParameters);
   }
   

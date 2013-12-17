@@ -25,6 +25,8 @@ package org.sbml.squeezer.kinetics;
 
 import java.util.ResourceBundle;
 
+import javax.xml.stream.XMLStreamException;
+
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.Unit;
@@ -43,60 +45,61 @@ import de.zbit.util.ResourceManager;
  * @version $Rev$
  */
 public class AdditiveModelNonLinear extends AdditiveModelLinear implements
-		InterfaceGeneRegulatoryKinetics, InterfaceModulatedKinetics,
-		InterfaceIrreversibleKinetics, InterfaceReversibleKinetics,
-    InterfaceZeroReactants, InterfaceZeroProducts  {
-	
-	public static final transient ResourceBundle MESSAGES = ResourceManager.getBundle(Bundles.MESSAGES);
-
-	/**
-	 * Generated serial version identifier.
-	 */
-	private static final long serialVersionUID = 7012411486160642421L;
-
-	/**
-	 * @param parentReaction
-	 * @param typeParameters
-	 * @throws RateLawNotApplicableException
-	 */
-	public AdditiveModelNonLinear(Reaction parentReaction,
-			Object... typeParameters) throws RateLawNotApplicableException {
-		super(parentReaction, typeParameters);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.sbml.squeezer.kinetics.AdditiveModelLinear#activation(org.sbml.jsbml.ASTNode)
-	 */
-	@Override
-	ASTNode activation(ASTNode g) {
-		ASTNode node1 = new ASTNode(1, this);
-		ASTNode node2 = new ASTNode(1, this);
-		ASTNode node3;
-		
-		if (g == null) {
-			node3 = new ASTNode(1, this);
-		} else {
-			node3 = g;
-		}
-
-		if (getLevel() > 2) {
-			SBMLtools.setUnits(node1, Unit.Kind.DIMENSIONLESS);
-			SBMLtools.setUnits(node2, Unit.Kind.DIMENSIONLESS);
-			if (node3.isNumber() && !node3.isSetUnits()) {
-				SBMLtools.setUnits(node3, Unit.Kind.DIMENSIONLESS);
-			}
-		}
-			
-		return ASTNode.frac(node1, ASTNode.sum(node2,
-				ASTNode.exp(ASTNode.uMinus(node3))));
-	}
-
-	/* (non-Javadoc)
-	 * @see org.sbml.squeezer.kinetics.AdditiveModelLinear#getSimpleName()
-	 */
-	@Override
-	public String getSimpleName() {
-		return MESSAGES.getString("ADDITIVE_MODEL_NON_LINEAR_SIMPLE_NAME");
-	}
-
+InterfaceGeneRegulatoryKinetics, InterfaceModulatedKinetics,
+InterfaceIrreversibleKinetics, InterfaceReversibleKinetics,
+InterfaceZeroReactants, InterfaceZeroProducts  {
+  
+  public static final transient ResourceBundle MESSAGES = ResourceManager.getBundle(Bundles.MESSAGES);
+  
+  /**
+   * Generated serial version identifier.
+   */
+  private static final long serialVersionUID = 7012411486160642421L;
+  
+  /**
+   * @param parentReaction
+   * @param typeParameters
+   * @throws RateLawNotApplicableException
+   * @throws XMLStreamException
+   */
+  public AdditiveModelNonLinear(Reaction parentReaction,
+    Object... typeParameters) throws RateLawNotApplicableException, XMLStreamException {
+    super(parentReaction, typeParameters);
+  }
+  
+  /* (non-Javadoc)
+   * @see org.sbml.squeezer.kinetics.AdditiveModelLinear#activation(org.sbml.jsbml.ASTNode)
+   */
+  @Override
+  ASTNode activation(ASTNode g) {
+    ASTNode node1 = new ASTNode(1, this);
+    ASTNode node2 = new ASTNode(1, this);
+    ASTNode node3;
+    
+    if (g == null) {
+      node3 = new ASTNode(1, this);
+    } else {
+      node3 = g;
+    }
+    
+    if (getLevel() > 2) {
+      SBMLtools.setUnits(node1, Unit.Kind.DIMENSIONLESS);
+      SBMLtools.setUnits(node2, Unit.Kind.DIMENSIONLESS);
+      if (node3.isNumber() && !node3.isSetUnits()) {
+        SBMLtools.setUnits(node3, Unit.Kind.DIMENSIONLESS);
+      }
+    }
+    
+    return ASTNode.frac(node1, ASTNode.sum(node2,
+      ASTNode.exp(ASTNode.uMinus(node3))));
+  }
+  
+  /* (non-Javadoc)
+   * @see org.sbml.squeezer.kinetics.AdditiveModelLinear#getSimpleName()
+   */
+  @Override
+  public String getSimpleName() {
+    return MESSAGES.getString("ADDITIVE_MODEL_NON_LINEAR_SIMPLE_NAME");
+  }
+  
 }

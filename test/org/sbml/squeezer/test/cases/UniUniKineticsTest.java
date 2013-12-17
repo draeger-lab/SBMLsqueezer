@@ -158,7 +158,7 @@ public class UniUniKineticsTest extends KineticsTest {
   @Test
   public void testConv() throws Throwable{
     KineticLaw kl = klg.createKineticLaw(r1, ConvenienceKinetics.class, false, TypeStandardVersion.cat, UnitConsistencyType.amount, 1d);
-    test(r1, kl, "vmax_r1*s1*c1/kmc_r1_s1/(1+s1*c1/kmc_r1_s1)");
+    test(r1, kl, "vmag_r1*s1*c1/kmc_r1_s1*(kG_s1*kmc_r1_s1/(kG_p1*kmc_r1_p1))^(0.5)/(1+s1*c1/kmc_r1_s1)");
   }
   
   //	@Test
@@ -262,7 +262,7 @@ public class UniUniKineticsTest extends KineticsTest {
   @Test
   public void testConvRev() throws Throwable{
     KineticLaw kl = klg.createKineticLaw(r1, ConvenienceKinetics.class, true, TypeStandardVersion.cat, UnitConsistencyType.amount, 1d);
-    test(r1, kl, "(vmaf_r1*s1*c1/kmc_r1_s1-vmar_r1*p1*c1/kmc_r1_p1)/(1+s1*c1/kmc_r1_s1+p1*c1/kmc_r1_p1)");
+    test(r1, kl, "vmag_r1*(s1*c1/kmc_r1_s1*(kG_s1*kmc_r1_s1/(kG_p1*kmc_r1_p1))^(0.5)-p1*c1/kmc_r1_p1*(kG_p1*kmc_r1_p1/(kG_s1*kmc_r1_s1))^(0.5))/(1+s1*c1/kmc_r1_s1+p1*c1/kmc_r1_p1)");
   }
   
   /**
@@ -301,7 +301,7 @@ public class UniUniKineticsTest extends KineticsTest {
   @Test
   public void testConvInh() throws Throwable{
     KineticLaw kl = klg.createKineticLaw(r2, ConvenienceKinetics.class, false, TypeStandardVersion.cat, UnitConsistencyType.amount, 1d);
-    test(r2, kl, "kic_r2_i1/(kic_r2_i1+i1*c1)*vmax_r2*s1*c1/kmc_r2_s1/(1+s1*c1/kmc_r2_s1)");
+    test(r2, kl, "kic_r2_i1/(kic_r2_i1+i1*c1)*vmag_r2*s1*c1/kmc_r2_s1*(kG_s1*kmc_r2_s1/(kG_p1*kmc_r2_p1))^(0.5)/(1+s1*c1/kmc_r2_s1)");
   }
   
   
@@ -330,7 +330,7 @@ public class UniUniKineticsTest extends KineticsTest {
   @Test
   public void testConvInhRev() throws Throwable{
     KineticLaw kl = klg.createKineticLaw(r2, ConvenienceKinetics.class, true, TypeStandardVersion.cat, UnitConsistencyType.amount, 1d);
-    test(r2, kl, "kic_r2_i1/(kic_r2_i1+i1*c1)*(vmaf_r2*s1*c1/kmc_r2_s1-vmar_r2*p1*c1/kmc_r2_p1)/(1+s1*c1/kmc_r2_s1+p1*c1/kmc_r2_p1)");
+    test(r2, kl, "kic_r2_i1/(kic_r2_i1+i1*c1)*vmag_r2*(s1*c1/kmc_r2_s1*(kG_s1*kmc_r2_s1/(kG_p1*kmc_r2_p1))^(0.5)-p1*c1/kmc_r2_p1*(kG_p1*kmc_r2_p1/(kG_s1*kmc_r2_s1))^(0.5))/(1+s1*c1/kmc_r2_s1+p1*c1/kmc_r2_p1)");
   }
   
   
@@ -360,7 +360,7 @@ public class UniUniKineticsTest extends KineticsTest {
   @Test
   public void testConvAct() throws Throwable{
     KineticLaw kl = klg.createKineticLaw(r2, ConvenienceKinetics.class, false, TypeStandardVersion.cat, UnitConsistencyType.amount, 1d);
-    test(r2, kl, "kic_r2_i1/(kic_r2_i1+i1*c1)*vmax_r2*s1*c1/kmc_r2_s1/(1+s1*c1/kmc_r2_s1)");
+    test(r2, kl, "kic_r2_i1/(kic_r2_i1+i1*c1)*vmag_r2*s1*c1/kmc_r2_s1*(kG_s1*kmc_r2_s1/(kG_p1*kmc_r2_p1))^(0.5)/(1+s1*c1/kmc_r2_s1)");
   }
   
   
@@ -389,7 +389,7 @@ public class UniUniKineticsTest extends KineticsTest {
   @Test
   public void testConvActRev() throws Throwable{
     KineticLaw kl = klg.createKineticLaw(r4, ConvenienceKinetics.class, true, TypeStandardVersion.cat, UnitConsistencyType.amount, 1d);
-    test(r4, kl, "a1*c1/(kac_r4_a1+a1*c1)*(vmaf_r4*s1*c1/kmc_r4_s1-vmar_r4*p1*c1/kmc_r4_p1)/(1+s1*c1/kmc_r4_s1+p1*c1/kmc_r4_p1)");
+    test(r4, kl, "a1*c1/(kac_r4_a1+a1*c1)*vmag_r4*(s1*c1/kmc_r4_s1*(kG_s1*kmc_r4_s1/(kG_p1*kmc_r4_p1))^(0.5)-p1*c1/kmc_r4_p1*(kG_p1*kmc_r4_p1/(kG_s1*kmc_r4_s1))^(0.5))/(1+s1*c1/kmc_r4_s1+p1*c1/kmc_r4_p1)");
   }
   
   
@@ -418,7 +418,7 @@ public class UniUniKineticsTest extends KineticsTest {
   @Test
   public void testConvKat() throws Throwable{
     KineticLaw kl = klg.createKineticLaw(r3, ConvenienceKinetics.class, false, TypeStandardVersion.cat, UnitConsistencyType.amount, 1d);
-    test(r3, kl, "k1*c1*kcat_r3_k1*s1*c1/kmc_r3_s1_k1/(1+s1*c1/kmc_r3_s1_k1)");
+    test(r3, kl, "k1*c1*kcrg_r3_k1*s1*c1/kmc_r3_s1_k1*(kG_s1*kmc_r3_s1_k1/(kG_p1*kmc_r3_p1_k1))^(0.5)/(1+s1*c1/kmc_r3_s1_k1)");
   }
   
   
@@ -436,7 +436,7 @@ public class UniUniKineticsTest extends KineticsTest {
   @Test
   public void testConvKatRev() throws Throwable{
     KineticLaw kl = klg.createKineticLaw(r3, ConvenienceKinetics.class, true, TypeStandardVersion.cat, UnitConsistencyType.amount, 1d);
-    test(r3, kl, "k1*c1*(kcrf_r3_k1*s1*c1/kmc_r3_s1_k1-kcrr_r3_k1*p1*c1/kmc_r3_p1_k1)/(1+s1*c1/kmc_r3_s1_k1+p1*c1/kmc_r3_p1_k1)");
+    test(r3, kl, "k1*c1*kcrg_r3_k1*(s1*c1/kmc_r3_s1_k1*(kG_s1*kmc_r3_s1_k1/(kG_p1*kmc_r3_p1_k1))^(0.5)-p1*c1/kmc_r3_p1_k1*(kG_p1*kmc_r3_p1_k1/(kG_s1*kmc_r3_s1_k1))^(0.5))/(1+s1*c1/kmc_r3_s1_k1+p1*c1/kmc_r3_p1_k1)");
   }
   
   /**
