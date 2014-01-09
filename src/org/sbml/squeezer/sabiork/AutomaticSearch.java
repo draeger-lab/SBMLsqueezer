@@ -5,7 +5,7 @@
  * This file is part of SBMLsqueezer, a Java program that creates rate 
  * equations for reactions in SBML files (http://sbml.org).
  *
- * Copyright (C) 2006-2013 by the University of Tuebingen, Germany.
+ * Copyright (C) 2006-2014 by the University of Tuebingen, Germany.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,7 +56,9 @@ import org.sbml.squeezer.sabiork.wizard.model.KineticLawImporter;
 import de.zbit.io.filefilter.SBFileFilter;
 
 /**
- * In this class the searching of kinetic equations in SABIO-RK for several models is implemented.
+ * In this class the searching of kinetic equations in SABIO-RK for several
+ * models is implemented.
+ * 
  * @author Matthias Rall
  * @author Roland Keller
  * @version $Rev$
@@ -106,34 +108,34 @@ public class AutomaticSearch {
 		org.apache.log4j.LogManager.getLogger(AbstractSBase.class).setLevel(org.apache.log4j.Level.OFF);
 		automaticSearch(args[0], args[1], args[2]);
 	}
-	
-	/**
-	 * Automatic search for kinetic equations in SABIO-RK for several models in the rootFolder.
-	 * @param rootFolder
-	 * @param taxonomyFile
-	 * @param outputResultFile
-	 * @throws XMLStreamException
-	 * @throws IOException
-	 * @throws WebServiceConnectException
-	 * @throws WebServiceResponseException
-	 * @throws ParseException
-	 */
+	 
+  /**
+   * Automatic search for kinetic equations in SABIO-RK for several models in
+   * the rootFolder.
+   * 
+   * @param rootFolder
+   * @param taxonomyFile
+   * @param outputResultFile
+   * @throws XMLStreamException
+   * @throws IOException
+   * @throws WebServiceConnectException
+   * @throws WebServiceResponseException
+   * @throws ParseException
+   */
 	public static void automaticSearch(String rootFolder, String taxonomyFile, String outputFolder)
 		throws XMLStreamException, IOException, WebServiceConnectException,
 		WebServiceResponseException, ParseException {
 		int matched = 0;
 		int noReactionID = 0;
 		int matchingNotPossible = 0;
-		int noKineticLawFound = 0;
-
-		
+		int noKineticLawFound = 0;	
 		
 		File rootFile = new File(rootFolder);
 		File parent = rootFile.getParentFile();
 		String parentFolder = parent.getAbsolutePath().replace("\\", "/");
 		String sabioRootFolder = outputFolder.replace("\\", "/");
 		(new File(sabioRootFolder)).mkdir();
-		BufferedWriter writer = new BufferedWriter(new FileWriter(outputFolder+"/result.txt",true));
+		BufferedWriter writer = new BufferedWriter(new FileWriter(outputFolder + "/result.txt", true));
 		LinkedList<File> directoryList = new LinkedList<File>();
 		
 		File[] files = rootFile.listFiles();
