@@ -5,7 +5,7 @@
  * This file is part of SBMLsqueezer, a Java program that creates rate 
  * equations for reactions in SBML files (http://sbml.org).
  *
- * Copyright (C) 2006-2013 by the University of Tuebingen, Germany.
+ * Copyright (C) 2006-2014 by the University of Tuebingen, Germany.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -759,6 +759,7 @@ public class KineticLawImporter {
 	 * @param node
 	 * @return
 	 */
+	@Deprecated
 	private CallableSBase getVariable(ASTNode node) {
 		CallableSBase variable = node.getVariable();
 		if (variable == null) {

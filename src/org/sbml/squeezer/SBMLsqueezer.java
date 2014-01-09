@@ -5,7 +5,7 @@
  * This file is part of SBMLsqueezer, a Java program that creates rate
  * equations for reactions in SBML files (http://sbml.org).
  *
- * Copyright (C) 2006-2013 by the University of Tuebingen, Germany.
+ * Copyright (C) 2006-2014 by the University of Tuebingen, Germany.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -597,8 +597,9 @@ public class SBMLsqueezer<T> extends Launcher {
    * @param latexFile
    * @throws IOException
    * @throws SBMLException
+   * @throws XMLStreamException
    */
-  public void toLaTeX(Object sbmlSource, String latexFile) throws IOException, SBMLException {
+  public void toLaTeX(Object sbmlSource, String latexFile) throws IOException, SBMLException, XMLStreamException {
     readSBMLSource(sbmlSource);
     SBPreferences prefsIO = SBPreferences.getPreferencesFor(GUIOptions.class);
     String dir = prefsIO.get(GUIOptions.OPEN_DIR).toString();
