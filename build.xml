@@ -16,7 +16,7 @@
     </tstamp>
 
     <property name="Name" value="SBMLsqueezer"/>
-    <property name="version" value="1.4"/>
+    <property name="version" value="2.0"/>
     <property name="api.version" value="2.0 alpha"/>
 
     <property name="year" value="${YEAR}"/>
@@ -50,6 +50,7 @@
   	<property name="celldesigner.src" value="${celldesigner}/src"/>
   	<property name="celldesigner.test" value="${celldesigner}/test"/>
   	<property name="celldesigner.resources" value="${celldesigner}/resources"/>
+  	<property name="UUID" value="dd624b40-7bc0-11e2-b92a-0800200c9a66"/>
   	
   	<property name="jar.name" value="${Name}_v${version}"/>
   	<property name="appJar"   value="${dist.dir}/${jar.name}_incl-libs.jar"/>
@@ -240,6 +241,11 @@
         <attribute name="Specification-Version"  value="${api.version}"/>
         <attribute name="Specification-Vendor"   value="Center for Bioinformatics Tuebingen (ZBIT)"/>
       </section>
+      <attribute name="Bundle-SymbolicName"    value="${UUID}"/>
+      <attribute name="Bundle-Vendor"          value="University of California, San Diego"/>
+      <attribute name="Bundle-RequiredExecutionEnvironment" value="JavaSE-1.6"/>
+      <attribute name="Bundle-Version"         value="${version}"/>
+      <attribute name="Provide-Package"        value="org.sbml.squeezer,org.sbml.squeezer.celldesigner,org.sbml.squeezer.gui,org.sbml.squeezer.gui.locales,org.sbml.squeezer.gui.wizard,org.sbml.squeezer.io,org.sbml.squeezer.kinetics,org.sbml.squeezer.math,org.sbml.squeezer.resources,org.sbml.squeezer.resources.html,org.sbml.squeezer.resources.img,org.sbml.squeezer.sabiork,org.sbml.squeezer.sabiork.util,org.sbml.squeezer.sabiork.wizard,org.sbml.squeezer.sabiork.wizard.console,org.sbml.squeezer.test,org.sbml.squeezer.test.cases,org.sbml.squeezer.test.data,org.sbml.squeezer.test.gui,org.sbml.squeezer.test.sabiork,org.sbml.squeezer.util"/>
     </manifest>
   
   </target>
@@ -335,13 +341,13 @@
       </fileset>
       
       <!-- These libraries are required by most classes -->
-      <zipfileset excludes="META-INF/**, COPYING.txt, licenses/COPYING.txt, overview.html, AUTHORS.txt" src="${lib}/SBML2LaTeX_v1.0alpha.jar"/>
-      <zipfileset excludes="META-INF/**, COPYING.txt, licenses/COPYING.txt, overview.html, AUTHORS.txt" src="${lib}/jlatexmath-1.0.0.jar"/>
-      <zipfileset excludes="META-INF/**, COPYING.txt, licenses/COPYING.txt, overview.html, AUTHORS.txt" src="${lib}/jsbml-1.0-a1-with-dependencies.jar"/>
-      <zipfileset excludes="META-INF/**, COPYING.txt, licenses/COPYING.txt, overview.html, AUTHORS.txt" src="${lib}/SysBio.jar"/>
-      <zipfileset excludes="META-INF/**, COPYING.txt, licenses/COPYING.txt, overview.html, AUTHORS.txt" src="${lib}/quaqua.jar"/>
-      <zipfileset excludes="META-INF/**, COPYING.txt, licenses/COPYING.txt, overview.html, AUTHORS.txt" src="${lib}/garuda/garuda-csr.jar"/>
-      <zipfileset excludes="META-INF/**, COPYING.txt, licenses/COPYING.txt, overview.html, AUTHORS.txt" src="${lib}/garuda/jsonic-1.2.10.jar"/>
+      <zipfileset excludes="META-INF/**, COPYING.txt, licenses/COPYING.txt, package.html, package-info.class, overview.html, AUTHORS.txt" src="${lib}/SBML2LaTeX_v1.0_slim.jar"/>
+      <zipfileset excludes="META-INF/**, COPYING.txt, licenses/COPYING.txt, package.html, package-info.class, overview.html, AUTHORS.txt" src="${lib}/jlatexmath-1.0.0.jar"/>
+      <zipfileset excludes="META-INF/INDEX.LIST META-INF/MANIFEST.MF, COPYING.txt, package.html, package-info.class, licenses/COPYING.txt, overview.html, AUTHORS.txt" src="${lib}/jsbml-1.0-a1-with-dependencies.jar"/>
+      <zipfileset excludes="META-INF/**, COPYING.txt, licenses/COPYING.txt, package.html, package-info.class, overview.html, AUTHORS.txt" src="${lib}/SysBio.jar"/>
+      <zipfileset excludes="META-INF/**, COPYING.txt, licenses/COPYING.txt, package.html, package-info.class, overview.html, AUTHORS.txt" src="${lib}/quaqua.jar"/>
+      <zipfileset excludes="META-INF/**, COPYING.txt, licenses/COPYING.txt, package.html, package-info.class, overview.html, AUTHORS.txt" src="${lib}/garuda/garuda-csr.jar"/>
+      <zipfileset excludes="META-INF/**, COPYING.txt, licenses/COPYING.txt, package.html, package-info.class, overview.html, AUTHORS.txt" src="${lib}/garuda/jsonic-1.2.10.jar"/>
     </jar>
     
   </target>
@@ -522,11 +528,6 @@
   	<property name="jsbml.name" value="JSBML"/>
   	<property name="jsbml.version" value="1.0-a1"/>
   	
-  	<path id="jsbml.classpath">
-  	  <fileset dir="${jsbml.dir}/core/lib" includes="**.jar, **/*.jar, **.zip"/>
-	  <fileset dir="${jsbml.dir}/modules/libSBMLio/lib" includes="**.jar, **/*.jar, **.zip"/>
-  	  <fileset dir="${jsbml.dir}/modules/celldesigner/lib" includes="**.jar, **/*.jar, **.zip"/>
-  	</path>
   	
     <echo message="Determining the revision number of JSBML"/>
     <exec executable="svn" outputproperty="svninfo.xml">
@@ -540,12 +541,19 @@
     <echo message="Compiling the entire JSBML project"/>
     <delete dir="${jsbml.dir}/bin"/>
     <mkdir dir="${jsbml.dir}/bin"/>
+  	
+  	<path id="jsbml.classpath">
+  	  <fileset dir="${jsbml.dir}/core/lib" includes="**.jar, **/*.jar, **.zip"/>
+  	</path>
+
+  	<!-- Compile JSBML including core and all extension packages -->
   	<javac
   	  classpathref="jsbml.classpath"
   	  compiler="${build.compiler}"
   	  debug="${debug}"
   	  deprecation="${deprecation}"
   	  destdir="${jsbml.dir}/bin"
+  	  includeantruntime="false"
   	  listfiles="yes"
   	  memoryMaximumSize="512M"
   	  nowarn="no"
@@ -563,9 +571,8 @@
   	  <src path="${jsbml.dir}/extensions/multi/src"/>
   	  <src path="${jsbml.dir}/extensions/qual/src"/>
   	  <src path="${jsbml.dir}/extensions/render/src"/>
-  	  <!-- <src path="${jsbml.dir}/extensions/spatial/src"/> -->
-  	  <src path="${jsbml.dir}/modules/celldesigner/src"/>
-  	  <src path="${jsbml.dir}/modules/libSBMLio/src"/>
+  	  <src path="${jsbml.dir}/extensions/req/src"/>
+  	  <src path="${jsbml.dir}/extensions/spatial/src"/>
   	  <!-- Resources -->
       <src path="${jsbml.dir}/core/resources"/>
       <src path="${jsbml.dir}/extensions/comp/resources"/>
@@ -575,9 +582,66 @@
       <src path="${jsbml.dir}/extensions/multi/resources"/>
       <src path="${jsbml.dir}/extensions/qual/resources"/>
       <src path="${jsbml.dir}/extensions/render/resources"/>
-      <!-- <src path="${jsbml.dir}/extensions/spatial/resources"/> -->
-      <src path="${jsbml.dir}/modules/celldesigner/resources"/>
-      <src path="${jsbml.dir}/modules/libSBMLio/resources"/>
+  	  <src path="${jsbml.dir}/extensions/req/resources"/>
+      <src path="${jsbml.dir}/extensions/spatial/resources"/>
+  	</javac>
+  	
+  	<!--
+  	  We have to compile the modules libSBMLio and CellDesigner separately,
+  	  because a different version of libSBML is in both modules.
+  	-->
+  	
+  	<!-- CellDesigner -->
+
+  	<path id="celldesigner.classpath">
+  	  <fileset dir="${jsbml.dir}/core/lib" includes="**.jar, **/*.jar, **.zip"/>
+  	  <fileset dir="${jsbml.dir}/modules/celldesigner/lib" includes="**.jar, **/*.jar, **.zip"/>
+  	</path>
+  	<javac
+  	  classpathref="celldesigner.classpath"
+  	  compiler="${build.compiler}"
+  	  debug="${debug}"
+  	  deprecation="${deprecation}"
+  	  destdir="${jsbml.dir}/bin"
+  	  includeantruntime="false"
+  	  listfiles="yes"
+  	  memoryMaximumSize="512M"
+  	  nowarn="no"
+  	  optimize="${optimize}"
+  	  source="1.6"
+  	  target="1.6"
+  	  verbose="${verbose}"
+  	>
+  	  <!-- Source -->
+  	  <src path="${jsbml.dir}/modules/celldesigner/src"/>
+  	  <!-- Resources -->
+  	  <src path="${jsbml.dir}/modules/celldesigner/resources"/>
+  	</javac>
+  	
+  	<!-- libSBMLio -->
+  	<path id="libSBMLio.classpath">
+  	  <fileset dir="${jsbml.dir}/core/lib" includes="**.jar, **/*.jar, **.zip"/>
+	  <fileset dir="${jsbml.dir}/modules/libSBMLio/lib" includes="**.jar, **/*.jar, **.zip"/>
+  	</path>
+  	<javac
+      classpathref="libSBMLio.classpath"
+  	  compiler="${build.compiler}"
+  	  debug="${debug}"
+  	  deprecation="${deprecation}"
+  	  destdir="${jsbml.dir}/bin"
+  	  includeantruntime="false"
+  	  listfiles="yes"
+  	  memoryMaximumSize="512M"
+  	  nowarn="no"
+  	  optimize="${optimize}"
+  	  source="1.6"
+  	  target="1.6"
+  	  verbose="${verbose}"
+  	>
+  	  <!-- Source -->
+  	  <src path="${jsbml.dir}/modules/libSBMLio/src"/>
+  	  <!-- Resources -->
+  	  <src path="${jsbml.dir}/modules/libSBMLio/resources"/>	
   	</javac>
   	
     <copy file="${jsbml.dir}/AUTHORS.txt" tofile="${jsbml.dir}/core/licenses/JSBML-AUTHORS.txt"/>
@@ -602,6 +666,11 @@
       	  <attribute name="Implementation-Version" value="Revision ${jsbml.revision} (Build ${DSTAMP}-${TSTAMP})"/>
         </section>
       </manifest>
+      <fileset
+        dir="${jsbml.dir}/bin"
+      	includes="META-INF/**"
+      />
+    	
       <!-- Licenses -->
       <fileset dir="${jsbml.dir}/core">
         <include name="licenses/COPYING.txt"/>
@@ -625,7 +694,7 @@
       <fileset dir="${jsbml.dir}/extensions/multi/resources" includes="**.txt, **/*.txt, **.xml, **/*.xml, **.properties, **/*.properties, **.cfg, **/*.cfg, **.obo, **/*.obo"/>
       <fileset dir="${jsbml.dir}/extensions/qual/resources" includes="**.txt, **/*.txt, **.xml, **/*.xml, **.properties, **/*.properties, **.cfg, **/*.cfg, **.obo, **/*.obo"/>
       <fileset dir="${jsbml.dir}/extensions/render/resources" includes="**.txt, **/*.txt, **.xml, **/*.xml, **.properties, **/*.properties, **.cfg, **/*.cfg, **.obo, **/*.obo"/>
-      <!--<fileset dir="${jsbml.dir}/extensions/spatial/resources" includes="**.txt, **/*.txt, **.xml, **/*.xml, **.properties, **/*.properties, **.cfg, **/*.cfg, **.obo, **/*.obo"/>-->
+      <fileset dir="${jsbml.dir}/extensions/spatial/resources" includes="**.txt, **/*.txt, **.xml, **/*.xml, **.properties, **/*.properties, **.cfg, **/*.cfg, **.obo, **/*.obo"/>
       <fileset dir="${jsbml.dir}/modules/celldesigner/resources" includes="**.txt, **/*.txt, **.xml, **/*.xml, **.properties, **/*.properties, **.cfg, **/*.cfg, **.obo, **/*.obo"/>
       <fileset dir="${jsbml.dir}/modules/libSBMLio/resources" includes="**.txt, **/*.txt, **.xml, **/*.xml, **.properties, **/*.properties, **.cfg, **/*.cfg, **.obo, **/*.obo"/>
       <!-- 3rd party libraries -->
@@ -637,9 +706,74 @@
       <zipfileset excludes="META-INF/**, **/package-info.class, **/package.html, **/*.java" src="${jsbml.dir}/core/lib/staxmate-2.0.0.jar"/>
       <zipfileset excludes="META-INF/**, **/package-info.class, **/package.html, **/*.java" src="${jsbml.dir}/core/lib/woodstox-core-lgpl-4.0.9.jar"/>
       <zipfileset excludes="META-INF/**, **/package-info.class, **/package.html, **/*.java" src="${jsbml.dir}/core/lib/xstream-1.3.1.jar"/>
+      <zipfileset excludes="META-INF/**, **/package-info.class, **/package.html, **/*.java" src="${jsbml.dir}/core/lib/spi-full-0.2.4.jar"/>
     </jar>
   	
+  	<!-- Remove temporary file again: -->
   	<delete file="${jsbml.dir}/core/licenses/JSBML-AUTHORS.txt"/>
+  	
+  </target>
+	
+  <!-- =================================================================== -->
+  <!-- Creates a minimal CellDesigner plugin based on JSBML                -->
+  <!-- =================================================================== -->
+  <target
+  	name="minmal_plugin"
+  	depends="minimal_jsbml"
+  	description="Creates a minimal CellDesigner plugin based on JSBML">
+  	
+  	<path id="plugin.classpath">
+  	  <fileset dir="lib" includes="**.jar, **/*.jar, **.zip"/>
+      <fileset dir="${jsbml.dir}/modules/celldesigner/lib" includes="**.jar, **/*.jar, **.zip"/>
+  	</path>
+  	
+  	<javac
+  	  classpathref="plugin.classpath"
+      compiler="${build.compiler}"
+      debug="${debug}"
+      deprecation="${deprecation}"
+      destdir="build"
+      listfiles="yes"
+      memoryMaximumSize="512M"
+      nowarn="no"
+      optimize="${optimize}"
+      source="1.6"
+      target="1.6"
+      verbose="${verbose}"
+    >
+  	  <!-- Source -->
+  	  <src path="${jsbml.dir}/core/doc/SimpleCellDesignerPlugin"/>
+  	  <src path="${jsbml.dir}/examples/test/src"/>
+  	  <include name="org/sbml/jsbml/celldesigner/"/>
+  	  <include name="org/sbml/jsbml/gui/"/>
+  	</javac>
+  	
+  	<jar
+  	  compress="true"
+  	  filesetmanifest="mergewithoutmain"
+  	  index="true"
+  	  indexMetaInf="true"
+  	  jarfile="${lib}/simple_cd_plugin.jar"
+  	  level="9"
+  	  manifestencoding="utf-8"
+  	  strict="warn"
+  	  update="true"
+    >
+  	  <manifest>
+  	    <section name="${jsbml.name}">
+  	      <attribute name="Specification-Title" value="CellDesigner test plugin"/>
+  	      <attribute name="Specification-Version" value="1.0"/>
+  	      <attribute name="Implementation-Title" value="CellDesigner test"/>
+  	      <attribute name="Implementation-Version" value="Revision ${jsbml.revision} (Build ${DSTAMP}-${TSTAMP})"/>
+  	    </section>
+  	  </manifest>
+  	  <fileset
+        dir="build"
+  		includes="org/**.class org/**/*.class"
+  		excludes="**/.svn*, **/package-info.class"
+      />
+  	</jar>
+  	
   </target>
 	
   <!-- =================================================================== -->
@@ -747,6 +881,7 @@
         <include name="de/zbit/gui/**.class"/>
         <include name="de/zbit/io/**"/>
       	<include name="de/zbit/locales/**.xml"/>
+      	<include name="de/zbit/locales/**.class"/>
         <include name="de/zbit/math/**.class"/>
         <include name="de/zbit/resources/**.class"/>
         <include name="de/zbit/sbml/**.class"/>
@@ -757,12 +892,16 @@
         <include name="de/zbit/sbml/util/*.class"/>
         <include name="de/zbit/text/**.class"/>
         <include name="de/zbit/util/*.class"/>
-        <include name="de/zbit/util/argparser/**.class"/>
+      	<include name="de/zbit/util/argparser/**.class"/>
         <include name="de/zbit/util/logging/**.class"/>
         <include name="de/zbit/util/objectwrapper/**.class"/>
         <include name="de/zbit/util/prefs/**.class"/>
         <include name="de/zbit/util/progressbar/**"/>
         <include name="de/zbit/util/**.class"/>
+      	<!-- These are already in JSBML:
+      	<exclude name="de/zbit/util/ResourceManager.class"/>
+      	<exclude name="de/zbit/util/XMLResourceBundleControl.class"/>
+      	-->
       </fileset>
       <fileset dir="${sysbio.dir}/resources" excludes="**/.svn*, package-info.*">
         <include name="de/zbit/garuda/img/**.png"/>
@@ -784,7 +923,7 @@
   	depends="sign"
     description="Creates a ZIP file for Garuda">
     
-  	<property name="uuid"           value="dd624b40-7bc0-11e2-b92a-0800200c9a66"/>
+  	<property name="uuid"           value="${UUID}"/>
   	<property name="gadget.config"  value="${dist}/gadget_config.xml"/>
 
   	<echo message="Updating Garuda gadget configuration..."/>

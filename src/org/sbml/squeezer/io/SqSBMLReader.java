@@ -3,7 +3,7 @@
  * $Id$
  * $URL$
  * ---------------------------------------------------------------------
- * This file is part of SBMLsqueezer, a Java program that creates rate 
+ * This file is part of SBMLsqueezer, a Java program that creates rate
  * equations for reactions in SBML files (http://sbml.org).
  *
  * Copyright (C) 2006-2014 by the University of Tuebingen, Germany.
@@ -36,6 +36,7 @@ import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.SBMLException;
 import org.sbml.jsbml.SBMLInputConverter;
 import org.sbml.jsbml.SBMLReader;
+import org.sbml.jsbml.util.ProgressListener;
 import org.sbml.jsbml.util.TreeNodeChangeListener;
 import org.sbml.squeezer.util.Bundles;
 
@@ -52,12 +53,16 @@ import de.zbit.util.ResourceManager;
  */
 public class SqSBMLReader implements SBMLInputConverter<Model> {
   
+  /**
+   * Localization support.
+   */
   public static final transient ResourceBundle WARNINGS = ResourceManager.getBundle(Bundles.WARNINGS);
   
   /**
    * 
    */
   private LinkedList<TreeNodeChangeListener> listOfTreeNodeChangeListeners;
+  
   /**
    * working copy of the original JSBL model
    */
@@ -94,11 +99,12 @@ public class SqSBMLReader implements SBMLInputConverter<Model> {
   /* (non-Javadoc)
    * @see org.sbml.jsbml.SBMLInputConverter#convertModel(java.lang.Object)
    */
+  @Override
   public Model convertModel(Model model) throws Exception {
     // set original model
-    this.originalModel = model;
+    originalModel = model;
     // We can directly work with the original model, no copy needed here:
-    this.model = this.originalModel;
+    this.model = originalModel;
     // add all SBaseChangeListeners to model
     if (model != null) {
       this.model.addAllChangeListeners(listOfTreeNodeChangeListeners);
@@ -123,19 +129,28 @@ public class SqSBMLReader implements SBMLInputConverter<Model> {
   public SBMLDocument convertSBMLDocument(String fileName) throws Exception {
     return convertSBMLDocument(new File(fileName));
   }
-
+  
   /* (non-Javadoc)
    * @see org.sbml.jsbml.SBMLInputConverter#getOriginalModel()
    */
+  @Override
   public Model getOriginalModel() {
     return originalModel;
   }
-
+  
   /* (non-Javadoc)
    * @see org.sbml.jsbml.SBMLInputConverter#getWarnings()
    */
+  @Override
   public List<SBMLException> getWarnings() {
     return new ArrayList<SBMLException>(0);
+  }
+  
+  /* (non-Javadoc)
+   * @see org.sbml.jsbml.SBMLInputConverter#setListener(org.sbml.jsbml.util.ProgressListener)
+   */
+  @Override
+  public void setListener(ProgressListener listener) {
   }
   
 }

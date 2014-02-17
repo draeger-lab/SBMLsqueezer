@@ -274,6 +274,7 @@
   <entry key="KEYWORDS">[Analytics;Kinetic modeling]</entry>
   <entry key="LOADING_JSBML">Loading library JSBML</entry>
   <entry key="LOADING_LIBSBML">Loading library libSBML</entry>
+  <entry key="LAUNCHING_LIBSBML">Launching library libSBML</entry>
   <entry key="LOADING_USER_SETTINGS">loading user settings...</entry>
   <entry key="PROGRAM_DESCRIPTION">SBMLsqueezer generates kinetic equations for biochemical networks according to context of each reaction. When used as a plug-in for CellDesigner it uses the information from the SBGN representation of all network components. In the stand-alone mode, SBMLsqueezer evaluates the Systems Biology Ontology (SBO) annotations to extract this information. An online version of SBMLsqueezer is available that runs without installation of any software on the local machine. The rate laws that can be produced by SBMLsqueezer include several types of generalized mass action; detailed and generalized enzyme kinetics, various types of Hill equations, S- and H-systems, and additive models for gene regulation. User defined settings specify which equation to apply for any type of reaction and how to ensure unit consistency of the model. Equations can be created using contextual menus. All newly created parameters are equipped with the derived unit and annotated with SBO terms if available and meaningful textual names. MathML is inserted directly into the SBML file. LaTeX or text export of ordinary differential equations is provided.</entry>
   <entry key="READING_SBML_FILE">reading SBML file...</entry>
@@ -287,6 +288,7 @@
   
   <!-- SBMLsqueezerUI -->
   
+  <entry key="BUILDING_DATA_STRUCTURES">Building data structures...</entry>
   <entry key="SABIO_RK">SABIO-RK</entry>
   <entry key="SABIO_RK_TOOLTIP">Extracts rate laws, parameters, and units from the reaction kinetics database SABIO-RK.</entry>
   <entry key="SQUEEZE">Squeeze</entry>
