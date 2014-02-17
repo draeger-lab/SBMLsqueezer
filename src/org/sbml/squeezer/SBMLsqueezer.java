@@ -90,6 +90,7 @@ import de.zbit.util.progressbar.ProgressBar;
  * @author Sarah R. M&uuml;ller vom Hagen
  * @since 1.0
  * @version $Rev$
+ * @param <T> the type of SBML documents that can be treated by this controller.
  */
 @SuppressWarnings("unchecked")
 public class SBMLsqueezer<T> extends Launcher {
@@ -135,16 +136,16 @@ public class SBMLsqueezer<T> extends Launcher {
     return list;
   }
   
-  
   /**
    * Returns an array of Strings that can be interpreted as enzymes. In
    * particular this array will contain those configuration keys as strings
    * for which in the current configuration the corresponding value is set to
-   * true.
+   * {@code true}.
    * 
    * @return
    */
   public static String[] getPossibleEnzymeTypes() {
+    ResourceBundle MESSAGES = ResourceManager.getBundle(Bundles.MESSAGES);
     logger.log(Level.INFO, MESSAGES.getString("LOADING_USER_SETTINGS"));
     SBPreferences preferences = new SBPreferences(OptionsGeneral.class);
     logger.log(Level.INFO, "    " + MESSAGES.getString("DONE"));
@@ -160,7 +161,6 @@ public class SBMLsqueezer<T> extends Launcher {
     return enzymeTypes.toArray(new String[] {});
   }
   
-  
   private static Boolean libSBMLAvailable = null;
   
   /**
@@ -171,24 +171,31 @@ public class SBMLsqueezer<T> extends Launcher {
    * @param writer
    */
   private void initializeReaderAndWriter(boolean tryLoadingLibSBML) {
-    libSBMLAvailable = Boolean.FALSE;
-    if (tryLoadingLibSBML && (libSBMLAvailable == null)) {
-      try {
-        // In order to initialize libSBML, check the java.library.path.
-        System.loadLibrary("sbmlj");
-        // Extra check to be sure we have access to libSBML:
-        Class.forName("org.sbml.libsbml.libsbml");
-        logger.info(MESSAGES.getString("LOADING_LIBSBML"));
-        libSBMLAvailable = Boolean.TRUE;
-      } catch (Error e) {
-      } catch (Throwable e) {
+    if (tryLoadingLibSBML) {
+      if (libSBMLAvailable == null) {
+        try {
+          // In order to initialize libSBML, check the java.library.path.
+          System.loadLibrary("sbmlj");
+          // Extra check to be sure we have access to libSBML:
+          Class.forName("org.sbml.libsbml.libsbml");
+          logger.info(MESSAGES.getString("LOADING_LIBSBML"));
+          libSBMLAvailable = Boolean.TRUE;
+        } catch (Error e) {
+          libSBMLAvailable = Boolean.FALSE;
+        } catch (Throwable e) {
+          libSBMLAvailable = Boolean.FALSE;
+        }
+      }
+      if (libSBMLAvailable.booleanValue()) {
+        logger.info(MESSAGES.getString("LAUNCHING_LIBSBML"));
+        sbmlIo = (SBMLio<T>) new SBMLio<org.sbml.libsbml.Model>(
+            new LibSBMLReader(), new LibSBMLWriter());
       }
     }
-    if (libSBMLAvailable.booleanValue()) {
-      sbmlIo = (SBMLio<T>) new SBMLio<org.sbml.libsbml.Model>(new LibSBMLReader(), new LibSBMLWriter());
-    } else {
+    if (sbmlIo == null) {
       logger.info(MESSAGES.getString("LOADING_JSBML"));
-      sbmlIo = (SBMLio<T>) new SBMLio<Model>(new SqSBMLReader(), new SqSBMLWriter());
+      sbmlIo = (SBMLio<T>) new SBMLio<Model>(new SqSBMLReader(),
+          new SqSBMLWriter());
     }
   }
   
@@ -214,7 +221,7 @@ public class SBMLsqueezer<T> extends Launcher {
    * 
    */
   public SBMLsqueezer() {
-    super();
+    this(null, null);
   }
   
   /**
@@ -226,9 +233,10 @@ public class SBMLsqueezer<T> extends Launcher {
    */
   public SBMLsqueezer(SBMLInputConverter<T> sbmlReader,
     SBMLOutputConverter<T> sbmlWriter) {
-    this();
-    sbmlIo = new SBMLio<T>(sbmlReader, sbmlWriter);
-    // sbmlIo.addIOProgressListener(this);
+    super();
+    if ((sbmlReader != null) && (sbmlWriter != null)) {
+      sbmlIo = new SBMLio<T>(sbmlReader, sbmlWriter);
+    }
   }
   
   /**
@@ -356,7 +364,7 @@ public class SBMLsqueezer<T> extends Launcher {
    */
   @Override
   public String getVersionNumber() {
-    return "1.4";
+    return "2.0";
   }
   
   /* (non-Javadoc)
@@ -364,7 +372,7 @@ public class SBMLsqueezer<T> extends Launcher {
    */
   @Override
   public short getYearOfProgramRelease() {
-    return (short) 2013;
+    return (short) 2014;
   }
   
   /* (non-Javadoc)
@@ -427,15 +435,6 @@ public class SBMLsqueezer<T> extends Launcher {
       }).start();
     }
     return gui;
-  }
-  
-  /* (non-Javadoc)
-   * @see org.sbml.jsbml.util.IOProgressListener#ioProgressOn(java.lang.Object)
-   */
-  public void ioProgressOn(Object currObject) {
-    if (currObject != null) {
-      logger.info(currObject.toString());
-    }
   }
   
   /**

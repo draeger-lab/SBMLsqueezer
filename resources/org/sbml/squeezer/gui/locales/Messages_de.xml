@@ -129,6 +129,7 @@
   <entry key="KEYWORDS">[Analytik;Kinetische Modellierung]</entry>
   <entry key="LOADING_JSBML">Lade Bibliothek JSBML</entry>
   <entry key="LOADING_LIBSBML">Lade Bibliothek libSBML</entry>
+  <entry key="LAUNCHING_LIBSBML">Starte Bibliothek libSBML</entry>
   <entry key="LOADING_USER_SETTINGS">Lade Nutzereinstellungen...</entry>
   <entry key="PROGRAM_DESCRIPTION">SBMLsqueezer erzeugt kinetische Gleichungen für biochemische Netzwerke anhand des Kontextes einer jeden Reaktion. Wird es als Plugin im CellDesigner benutzt, so verwendet dieses Programm die Information von der SBGN-Representation aller Netzwerkkomponenten. Im eigenständigen Modus wertet SBMLsqueezer die Annotationen der Systembiologie-Ontologie (SBO) aus, um diese Information zu erhalten. Eine Online-Version von SBMLsqueezer ist verfügbar, die ohne die Installation jeglicher Software auf dem lokalen Rechner läuft. Die Ratengleichungen, die durch SBMLsqueezer erstellt werden können, sind vielfältig und schließen zahlreiche Arten generalisierter Massenwirkung; detailierte und generalisierte Enzymkinetik, zahlreiche Arten von Hill-Gleichungen, S- und H-Systeme, sowie additive Modelle für Genregulation ein. Nutzereinstellungen ermöglichen auszuwählen, welche Gleichungen für einen jeden Typ von Reaktion verwendet werden sollen und wie Einheitenkonsistenz des Modells gewährleistet werden kann. Gleichungen können über Kontextmenüs erstellt werden. Alle neu erzeugten Parameter werden mit einer hergeleiteten Einheit ausgestattet und mit passenden SBO-Ausdrücken annotiert, falls möglich, sowie aussagekräftigen Namen. MathML wird direkt in die SBML-Datei eingefügt. LaTeX- oder Textexport der erzeugten Differentialgleichungssysteme wird angeboten.</entry>
   <entry key="READING_SBML_FILE">lese SBML-Datei...</entry>
@@ -142,6 +143,7 @@
   
   <!-- SBMLsqueezerUI -->
   
+  <entry key="BUILDING_DATA_STRUCTURES">Baue Datenstrukturen auf...</entry>
   <entry key="SABIO_RK">SABIO-RK</entry>
   <entry key="SABIO_RK_TOOLTIP">Extrahiert Ratengleichungen, Parameter und Einheiten von der Reaktionskinetikdatenban SABIO-RK.</entry>
   <entry key="SQUEEZE">Ausquetschen</entry>

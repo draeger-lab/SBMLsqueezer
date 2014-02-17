@@ -2,7 +2,7 @@
  * $Id$
  * $URL$
  * ---------------------------------------------------------------------
- * This file is part of SBMLsqueezer, a Java program that creates rate 
+ * This file is part of SBMLsqueezer, a Java program that creates rate
  * equations for reactions in SBML files (http://sbml.org).
  *
  * Copyright (C) 2006-2014 by the University of Tuebingen, Germany.
@@ -52,90 +52,90 @@ import de.zbit.util.progressbar.AbstractProgressBar;
  * @version $Rev$
  */
 public class KineticLawSelectionDialog extends JDialog {
-	
-	/**
-	 * 
-	 */
-	public static final transient ResourceBundle MESSAGES = ResourceManager.getBundle(Bundles.MESSAGES);
-	/**
-	 * 
-	 */
-	public static final transient ResourceBundle LABELS = ResourceManager.getBundle(Bundles.LABELS);
-
-	/**
-	 * Generated serial version id.
-	 */
-	private static final long serialVersionUID = -5980678130366530716L;
-
-	// UI ELEMENTS DEFINITION: ReactionFrame
-	private boolean kineticsAndParametersStoredInSBML = false;
-	
-	/**
-	 * 
-	 */
-	private final Logger logger = Logger.getLogger(KineticLawSelectionDialog.class.getName());
-	
-	SBPreferences prefs;
-
-	private StatusBar statusBar;
-
-
-	/**
-	 * Creates an empty dialog with the given settings and sbml io object.
-	 * 
-	 * @param owner
-	 * @param progressListener 
-	 */
-	private KineticLawSelectionDialog(Frame owner) {
-		super(owner, System.getProperty("app.name"), true);
-		// if (owner == null)
-		// setIconImage(GUITools.ICON_LEMON);
-		this.prefs = new SBPreferences(OptionsGeneral.class);
-		// setAlwaysOnTop(true);
-	}
-
-	/**
-	 * This constructor is necessary for the GUI to generate just one single
-	 * rate equation for the given reaction.
-	 * 
-	 * @param sbmlIO
-	 * @param reaction
-	 * @throws Throwable 
-	 */
-	public KineticLawSelectionDialog(Frame owner, SBMLio sbmlIO, String reactionID) throws Throwable {
-		this(owner);
-		
-		// This thing is necessary for CellDesigner!
-		KineticLawWindowAdapter adapter = new KineticLawWindowAdapter(this,
-			sbmlIO, reactionID);
-		
-		pack();
-		setMinimumSize(new Dimension(500, 450));
-		setResizable(true);
-		setLocationRelativeTo(owner);
-		setVisible(true);
-		
-		if (statusBar != null) {
-			AbstractProgressBar progressBar = statusBar.showProgress();
-			adapter.showProgress(progressBar);
-		}
-		kineticsAndParametersStoredInSBML = adapter.isKineticsAndParametersStoredInSBML();
-		dispose();
-		if (statusBar != null) {
-			statusBar.hideProgress();
-		}
-		logger.log(Level.INFO, LABELS.getString("READY"));
-	}
-
-	/**
-	 * Method that indicates whether or not changes have been introduced into
-	 * the given model.
-	 * 
-	 * @return {@code true} if kinetic equations and parameters or anything else were
-	 *         changed by SBMLsqueezer.
-	 */
-	public boolean isKineticsAndParametersStoredInSBML() {
-		return kineticsAndParametersStoredInSBML;
-	}
-
+  
+  /**
+   * 
+   */
+  public static final transient ResourceBundle MESSAGES = ResourceManager.getBundle(Bundles.MESSAGES);
+  /**
+   * 
+   */
+  public static final transient ResourceBundle LABELS = ResourceManager.getBundle(Bundles.LABELS);
+  
+  /**
+   * Generated serial version id.
+   */
+  private static final long serialVersionUID = -5980678130366530716L;
+  
+  // UI ELEMENTS DEFINITION: ReactionFrame
+  private boolean kineticsAndParametersStoredInSBML = false;
+  
+  /**
+   * 
+   */
+  private final Logger logger = Logger.getLogger(KineticLawSelectionDialog.class.getName());
+  
+  SBPreferences prefs;
+  
+  private StatusBar statusBar;
+  
+  
+  /**
+   * Creates an empty dialog with the given settings and sbml io object.
+   * 
+   * @param owner
+   * @param progressListener
+   */
+  private KineticLawSelectionDialog(Frame owner) {
+    super(owner, System.getProperty("app.name"), true);
+    // if (owner == null)
+    // setIconImage(GUITools.ICON_LEMON);
+    prefs = new SBPreferences(OptionsGeneral.class);
+    // setAlwaysOnTop(true);
+  }
+  
+  /**
+   * This constructor is necessary for the GUI to generate just one single
+   * rate equation for the given reaction.
+   * 
+   * @param sbmlIO
+   * @param reaction
+   * @throws Throwable
+   */
+  public KineticLawSelectionDialog(Frame owner, SBMLio<?> sbmlIO, String reactionID) throws Throwable {
+    this(owner);
+    
+    // This thing is necessary for CellDesigner!
+    KineticLawWindowAdapter adapter = new KineticLawWindowAdapter(this,
+      sbmlIO, reactionID);
+    
+    pack();
+    setMinimumSize(new Dimension(500, 450));
+    setResizable(true);
+    setLocationRelativeTo(owner);
+    setVisible(true);
+    
+    if (statusBar != null) {
+      AbstractProgressBar progressBar = statusBar.showProgress();
+      adapter.showProgress(progressBar);
+    }
+    kineticsAndParametersStoredInSBML = adapter.isKineticsAndParametersStoredInSBML();
+    dispose();
+    if (statusBar != null) {
+      statusBar.hideProgress();
+    }
+    logger.log(Level.INFO, LABELS.getString("READY"));
+  }
+  
+  /**
+   * Method that indicates whether or not changes have been introduced into
+   * the given model.
+   * 
+   * @return {@code true} if kinetic equations and parameters or anything else were
+   *         changed by SBMLsqueezer.
+   */
+  public boolean isKineticsAndParametersStoredInSBML() {
+    return kineticsAndParametersStoredInSBML;
+  }
+  
 }

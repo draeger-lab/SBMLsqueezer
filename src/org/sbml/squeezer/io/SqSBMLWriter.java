@@ -2,7 +2,7 @@
  * $Id$
  * $URL$
  * ---------------------------------------------------------------------
- * This file is part of SBMLsqueezer, a Java program that creates rate 
+ * This file is part of SBMLsqueezer, a Java program that creates rate
  * equations for reactions in SBML files (http://sbml.org).
  *
  * Copyright (C) 2006-2014 by the University of Tuebingen, Germany.
@@ -52,49 +52,51 @@ public class SqSBMLWriter implements SBMLOutputConverter<Model> {
   /**
    * 
    */
-	public static final transient ResourceBundle WARNINGS = ResourceManager.getBundle(Bundles.WARNINGS);
-
-	/* (non-Javadoc)
-	 * @see org.sbml.jsbml.SBMLOutputConverter#getErrorCount(java.lang.Object)
-	 */
-	public int getErrorCount(Object sbase) {
-		return 0;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.sbml.jsbml.SBMLOutputConverter#getWriteWarnings(java.lang.Object)
-	 */
-	@Override
-	public List<SBMLException> getWriteWarnings(Model sbase) {
-		List<SBMLException> excl = new LinkedList<SBMLException>();
-		return excl;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.sbml.jsbml.SBMLOutputConverter#writeSBML(java.lang.Object, java.lang.String)
-	 */
-	public boolean writeSBML(Model sbmlDocument, String filename)
-			throws SBMLException, IOException {
-		return writeSBML(sbmlDocument, filename, null, null);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.sbml.jsbml.SBMLOutputConverter#writeSBML(java.lang.Object, java.lang.String, java.lang.String, java.lang.String)
-	 */
-	public boolean writeSBML(Model object, String filename,
-			String programName, String versionNumber) throws SBMLException,
-			IOException {
-
-		// convert to SBML
-		SBMLDocument sbmlDocument = object.getSBMLDocument();
-		// write SBML to file
-		boolean success = true; 
-		try {
-			SBMLWriter.write(sbmlDocument, filename, programName, versionNumber);
-		} catch (XMLStreamException e) {
-			success = false;
-		}
-		return success;
-	}
-
+  public static final transient ResourceBundle WARNINGS = ResourceManager.getBundle(Bundles.WARNINGS);
+  
+  /* (non-Javadoc)
+   * @see org.sbml.jsbml.SBMLOutputConverter#getErrorCount(java.lang.Object)
+   */
+  public int getErrorCount(Object sbase) {
+    return 0;
+  }
+  
+  /* (non-Javadoc)
+   * @see org.sbml.jsbml.SBMLOutputConverter#getWriteWarnings(java.lang.Object)
+   */
+  @Override
+  public List<SBMLException> getWriteWarnings(Model sbase) {
+    List<SBMLException> excl = new LinkedList<SBMLException>();
+    return excl;
+  }
+  
+  /* (non-Javadoc)
+   * @see org.sbml.jsbml.SBMLOutputConverter#writeSBML(java.lang.Object, java.lang.String)
+   */
+  @Override
+  public boolean writeSBML(Model sbmlDocument, String filename)
+      throws SBMLException, IOException {
+    return writeSBML(sbmlDocument, filename, null, null);
+  }
+  
+  /* (non-Javadoc)
+   * @see org.sbml.jsbml.SBMLOutputConverter#writeSBML(java.lang.Object, java.lang.String, java.lang.String, java.lang.String)
+   */
+  @Override
+  public boolean writeSBML(Model object, String filename,
+    String programName, String versionNumber) throws SBMLException,
+    IOException {
+    
+    // convert to SBML
+    SBMLDocument sbmlDocument = object.getSBMLDocument();
+    // write SBML to file
+    boolean success = true;
+    try {
+      SBMLWriter.write(sbmlDocument, filename, programName, versionNumber);
+    } catch (XMLStreamException e) {
+      success = false;
+    }
+    return success;
+  }
+  
 }

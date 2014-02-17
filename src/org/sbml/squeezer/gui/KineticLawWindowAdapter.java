@@ -2,7 +2,7 @@
  * $Id$
  * $URL$
  * ---------------------------------------------------------------------
- * This file is part of SBMLsqueezer, a Java program that creates rate 
+ * This file is part of SBMLsqueezer, a Java program that creates rate
  * equations for reactions in SBML files (http://sbml.org).
  *
  * Copyright (C) 2006-2014 by the University of Tuebingen, Germany.
@@ -68,7 +68,7 @@ ComponentListener, PropertyChangeListener {
   private boolean kineticsAndParametersStoredInSBML;
   private JOptionPane pane;
   private JDialog dialog;
-  private SBMLio sbmlio;
+  private SBMLio<?> sbmlio;
   private KineticLawGenerator klg;
   private KineticLawSelectionPanel messagePanel;
   private Reaction reaction;
@@ -82,18 +82,18 @@ ComponentListener, PropertyChangeListener {
    * @param settings
    * @param sbmlIO
    * @param reactionID
-   * @param progressListener 
+   * @param progressListener
    * @throws Throwable
    */
-  public KineticLawWindowAdapter(JDialog dialog, SBMLio sbmlIO, String reactionID) {
+  public KineticLawWindowAdapter(JDialog dialog, SBMLio<?> sbmlIO, String reactionID) {
     super();
-    this.prefsGeneral = SBPreferences.getPreferencesFor(OptionsGeneral.class);
-    this.prefsRateLaws = SBPreferences.getPreferencesFor(OptionsRateLaws.class);
-    this.value = JOptionPane.CLOSED_OPTION;
+    prefsGeneral = SBPreferences.getPreferencesFor(OptionsGeneral.class);
+    prefsRateLaws = SBPreferences.getPreferencesFor(OptionsRateLaws.class);
+    value = JOptionPane.CLOSED_OPTION;
     this.dialog = dialog;
-    this.sbmlio = sbmlIO;
-    this.gotFocus = false;
-    this.kineticsAndParametersStoredInSBML = false;
+    sbmlio = sbmlIO;
+    gotFocus = false;
+    kineticsAndParametersStoredInSBML = false;
     
     Model model = sbmlIO.getSelectedModel();
     reaction = model.getReaction(reactionID);
@@ -131,24 +131,28 @@ ComponentListener, PropertyChangeListener {
   /* (non-Javadoc)
    * @seejava.awt.event.ComponentListener#componentHidden(java.awt.event.ComponentEvent)
    */
+  @Override
   public void componentHidden(ComponentEvent e) {
   }
   
   /* (non-Javadoc)
    * @see java.awt.event.ComponentListener#componentMoved(java.awt.event.ComponentEvent)
    */
+  @Override
   public void componentMoved(ComponentEvent e) {
   }
   
   /* (non-Javadoc)
    * @seejava.awt.event.ComponentListener#componentResized(java.awt.event.ComponentEvent)
    */
+  @Override
   public void componentResized(ComponentEvent e) {
   }
   
   /* (non-Javadoc)
    * @see java.awt.event.ComponentListener#componentShown(java.awt.event.ComponentEvent)
    */
+  @Override
   public void componentShown(ComponentEvent e) {
     // reset value to ensure closing works properly
     pane.setValue(JOptionPane.UNINITIALIZED_VALUE);
@@ -157,13 +161,12 @@ ComponentListener, PropertyChangeListener {
   /**
    * 
    * @return
-   * @throws Throwable 
+   * @throws Throwable
    */
   public boolean isKineticsAndParametersStoredInSBML() throws Throwable {
     if ((value == JOptionPane.OK_OPTION)
         && !messagePanel.getExistingRateLawSelected()) {
       Class<?> equationType = messagePanel.getSelectedKinetic();
-      reaction.addTreeNodeChangeListener(sbmlio);
       reaction.setReversible(messagePanel.getReversible());
       klg.setReversibility(messagePanel.getReversible());
       
@@ -225,6 +228,7 @@ ComponentListener, PropertyChangeListener {
   /* (non-Javadoc)
    * @seejava.beans.PropertyChangeListener#propertyChange(java.beans.PropertyChangeEvent)
    */
+  @Override
   public void propertyChange(PropertyChangeEvent event) {
     // Let the defaultCloseOperation handle the closing
     // if the user closed the window without selecting a button
@@ -236,8 +240,9 @@ ComponentListener, PropertyChangeListener {
         && (event.getNewValue() != JOptionPane.UNINITIALIZED_VALUE)) {
       Object selectedValue = pane.getValue();
       value = JOptionPane.CLOSED_OPTION;
-      if (pane.getOptions() == null && selectedValue instanceof Integer)
+      if (pane.getOptions() == null && selectedValue instanceof Integer) {
         value = ((Integer) selectedValue).intValue();
+      }
       dialog.setVisible(false);
     }
   }

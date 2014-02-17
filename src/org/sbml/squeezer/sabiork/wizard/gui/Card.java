@@ -2,7 +2,7 @@
  * $Id$
  * $URL$
  * ---------------------------------------------------------------------
- * This file is part of SBMLsqueezer, a Java program that creates rate 
+ * This file is part of SBMLsqueezer, a Java program that creates rate
  * equations for reactions in SBML files (http://sbml.org).
  *
  * Copyright (C) 2006-2014 by the University of Tuebingen, Germany.
@@ -38,67 +38,67 @@ import org.sbml.squeezer.sabiork.wizard.model.WizardModel;
  * @version $Rev$
  */
 public abstract class Card extends JPanel {
-
-	/**
-	 * Generated serial version identifier.
-	 */
-	private static final long serialVersionUID = 7548783744523732450L;
-
-	protected JDialogWizard dialog;
-	protected WizardModel model;
-	protected static TableModelSearchTerms tableSearchTermsModelM;
-	protected static TableModelSearchTerms tableSearchTermsModelA;
-	protected static JPanelFilterOptions panelFilterOptions;
-	protected static ComboBoxModelSearchItems comboBoxSearchItemsModel;
-	protected JComboBoxSearchField comboBoxSearchField;
-	
-
-	/**
-	 * 
-	 * @param dialog
-	 * @param model
-	 */
-	public Card(JDialogWizard dialog, WizardModel model) {
-		this.dialog = dialog;
-		this.model = model;
-	}
-
-	/**
-	 * Actions to take place before the actual {@link Card} is displayed.
-	 */
-	public void performBeforeShowing() {
-	};
-
-	/**
-	 * Returns the id of the preceding {@link Card}.
-	 * 
-	 * @return the id of the preceding {@link Card}
-	 */
-	public abstract CardID getPreviousCardID();
-
-	/**
-	 * Returns the id of the succeeding {@link Card}.
-	 * 
-	 * @return the id of the succeeding {@link Card}
-	 */
-	public abstract CardID getNextCardID();
-
-	/**
-	 * Actions to take place after the back button has been selected in the actual {@link Card}.
-	 */
-	public void performAfterPressingBack() {
-	}
-
-	/**
-	 * Actions to take place after the cancel button has been selected in the actual {@link Card}.
-	 */
-	public void performAfterCancel() {
-	}
-
-	/**
-	 * Actions to take place after the next button has been selected in the actual {@link Card}.
-	 */
-	public void performAfterNext() {
-	}
-	
+  
+  /**
+   * Generated serial version identifier.
+   */
+  private static final long serialVersionUID = 7548783744523732450L;
+  
+  protected JDialogWizard dialog;
+  protected WizardModel model;
+  protected static TableModelSearchTerms tableSearchTermsModelM;
+  protected static TableModelSearchTerms tableSearchTermsModelA;
+  protected static JPanelFilterOptions panelFilterOptions;
+  protected static ComboBoxModelSearchItems comboBoxSearchItemsModel;
+  protected JComboBoxSearchField comboBoxSearchField;
+  
+  
+  /**
+   * 
+   * @param dialog
+   * @param model
+   */
+  public Card(JDialogWizard dialog, WizardModel model) {
+    this.dialog = dialog;
+    this.model = model;
+  }
+  
+  /**
+   * Actions to take place before the actual {@link Card} is displayed.
+   */
+  public void performBeforeShowing() {
+  };
+  
+  /**
+   * Returns the id of the preceding {@link Card}.
+   * 
+   * @return the id of the preceding {@link Card}
+   */
+  public abstract CardID getPreviousCardID();
+  
+  /**
+   * Returns the id of the succeeding {@link Card}.
+   * 
+   * @return the id of the succeeding {@link Card}
+   */
+  public abstract CardID getNextCardID();
+  
+  /**
+   * Actions to take place after the back button has been selected in the actual {@link Card}.
+   */
+  public void performAfterPressingBack() {
+  }
+  
+  /**
+   * Actions to take place after the cancel button has been selected in the actual {@link Card}.
+   */
+  public void performAfterCancel() {
+  }
+  
+  /**
+   * Actions to take place after the next button has been selected in the actual {@link Card}.
+   */
+  public void performAfterNext() {
+  }
+  
 }

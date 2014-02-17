@@ -2,7 +2,7 @@
  * $Id$
  * $URL$
  * ---------------------------------------------------------------------
- * This file is part of SBMLsqueezer, a Java program that creates rate 
+ * This file is part of SBMLsqueezer, a Java program that creates rate
  * equations for reactions in SBML files (http://sbml.org).
  *
  * Copyright (C) 2006-2014 by the University of Tuebingen, Germany.
@@ -45,7 +45,7 @@ public class ConsistencyReportBuilder {
    * The formatter.
    */
   private FormatBuilder formatter;
-
+  
   /**
    * 
    */
@@ -66,7 +66,7 @@ public class ConsistencyReportBuilder {
     }
     return StringUtil.toHTML(warnings.toString());
   }
-
+  
   /**
    * 
    * @param formatter
