@@ -120,11 +120,14 @@ public class PluginWorker extends SwingWorker<SBMLDocument, Void> {
       }
       
       /* (non-Javadoc)
-       * @see org.sbml.jsbml.util.ProgressListener#progressUpdate(int)
+       * @see org.sbml.jsbml.util.ProgressListener#progressUpdate(int, java.lang.String)
        */
       @Override
-      public void progressUpdate(int progress) {
+      public void progressUpdate(int progress, String message) {
         setProgress(progress * 100/total);
+        if (message != null) {
+          logger.fine(message);
+        }
       }
       
       /* (non-Javadoc)
