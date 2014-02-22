@@ -41,7 +41,7 @@ import de.zbit.util.prefs.Range;
  * 
  * @author Andreas Dr&auml;ger
  * @version $Rev$
- * @since 1.4
+ * @since 2.0
  */
 public interface OptionsRateLaws extends KeyProvider {
   

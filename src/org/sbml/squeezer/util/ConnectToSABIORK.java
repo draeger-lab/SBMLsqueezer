@@ -54,8 +54,13 @@ import org.sbml.squeezer.RateLawNotApplicableException;
 /**
  * @author Roland Keller
  * @version $Rev$
+ * @since 2.0
  */
 public class ConnectToSABIORK {
+  
+  /**
+   * 
+   */
   private static URL host;
   
   /**
@@ -294,5 +299,6 @@ public class ConnectToSABIORK {
     System.out.println("Reactions with kinetic law " + reactionsWithLaw);
     (new SBMLWriter()).write(doc, args[1]);
   }
+  
 }
 

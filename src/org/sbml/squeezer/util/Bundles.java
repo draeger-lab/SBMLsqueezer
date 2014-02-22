@@ -28,7 +28,7 @@ package org.sbml.squeezer.util;
  * 
  * @author Sebastian Nagel
  * @version $Rev$
- * @since 1.4
+ * @since 2.0
  */
 public class Bundles {
   /**

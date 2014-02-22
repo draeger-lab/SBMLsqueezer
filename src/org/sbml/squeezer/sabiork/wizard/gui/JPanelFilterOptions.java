@@ -36,6 +36,7 @@ import de.zbit.util.prefs.SBPreferences;
  * 
  * @author Matthias Rall
  * @version $Rev$
+ * @since 2.0
  */
 public class JPanelFilterOptions extends PreferencesPanelForKeyProvider{
   

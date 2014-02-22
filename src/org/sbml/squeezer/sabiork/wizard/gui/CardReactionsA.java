@@ -51,6 +51,7 @@ import org.sbml.squeezer.sabiork.wizard.model.WizardModel;
  * 
  * @author Matthias Rall
  * @version $Rev$
+ * @since 2.0
  */
 public class CardReactionsA extends Card implements ListSelectionListener,
 ActionListener, PropertyChangeListener {

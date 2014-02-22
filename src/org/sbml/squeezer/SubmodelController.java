@@ -66,7 +66,7 @@ import de.zbit.util.progressbar.AbstractProgressBar;
  * This class is responsible for miniModel creation and the synchronisation
  * with the main {@link Model}
  * 
- * @since 1.4
+ * @since 2.0
  * @version $Rev$
  * @author Andreas Dr&auml;ger
  * @author Sebastian Nagel

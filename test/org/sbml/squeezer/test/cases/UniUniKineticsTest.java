@@ -46,7 +46,7 @@ import org.sbml.squeezer.kinetics.TypeStandardVersion;
 /**
  * @author Julianus Pfeuffer
  * @version $Rev$
- * @since 1.4
+ * @since 2.0
  */
 public class UniUniKineticsTest extends KineticsTest {
   

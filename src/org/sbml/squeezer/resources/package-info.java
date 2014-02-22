@@ -28,5 +28,6 @@
  * Resource for loading these files.
  * 
  * @version $Rev$
+ * @since 1.0
  */
 package org.sbml.squeezer.resources;

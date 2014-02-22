@@ -32,7 +32,7 @@ package org.sbml.squeezer;
  * @author Sebastian Nagel
  * @date 2010-10-29
  * @version $Rev$
- * @since 1.4
+ * @since 2.0
  */
 public enum UnitConsistencyType {
   /**

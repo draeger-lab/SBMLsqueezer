@@ -38,6 +38,7 @@ import org.sbml.squeezer.sabiork.wizard.model.WizardProperties;
  * 
  * @author Matthias Rall
  * @version $Rev$
+ * @since 2.0
  */
 public class TableModelSearchMResults extends AbstractTableModel {
   

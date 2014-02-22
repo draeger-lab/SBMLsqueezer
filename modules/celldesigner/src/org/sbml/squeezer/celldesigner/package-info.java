@@ -2,7 +2,7 @@
  * $Id$
  * $URL$
  * ---------------------------------------------------------------------
- * This file is part of SBMLsqueezer, a Java program that creates rate 
+ * This file is part of SBMLsqueezer, a Java program that creates rate
  * equations for reactions in SBML files (http://sbml.org).
  *
  * Copyright (C) 2006-2014 by the University of Tuebingen, Germany.
@@ -27,5 +27,6 @@
  * CellDesigner and SBMLsqueezer.
  * 
  * @version $Rev$
+ * @since 1.0
  */
 package org.sbml.squeezer.celldesigner;

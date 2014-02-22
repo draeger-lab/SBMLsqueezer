@@ -28,6 +28,7 @@ package org.sbml.squeezer.sabiork.util;
  * 
  * @author Matthias Rall
  * @version $Rev$
+ * @since 2.0
  */
 public class WebServiceConnectException extends Exception {
   

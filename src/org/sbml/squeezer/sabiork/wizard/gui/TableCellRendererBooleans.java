@@ -34,6 +34,7 @@ import javax.swing.table.TableCellRenderer;
  * 
  * @author Matthias Rall
  * @version $Rev$
+ * @since 2.0
  */
 public class TableCellRendererBooleans implements TableCellRenderer {
   

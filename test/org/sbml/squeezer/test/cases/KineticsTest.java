@@ -60,10 +60,12 @@ import de.zbit.util.logging.LogUtil;
 import de.zbit.util.prefs.SBPreferences;
 
 /**
- * Abstract class for classes that test generated kinetic equations and derived units
+ * Abstract class for classes that test generated kinetic equations and derived
+ * units.
+ * 
  * @author Andreas Dr&auml;ger
  * @version $Rev$
- * @since 1.4
+ * @since 2.0
  */
 public abstract class KineticsTest {
   

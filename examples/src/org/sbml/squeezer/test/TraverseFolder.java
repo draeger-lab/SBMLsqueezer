@@ -2,7 +2,7 @@
  * $Id:  TraverseFolder.java 2:22:58 PM jpfeuffer$
  * $URL$
  * ---------------------------------------------------------------------
- * This file is part of SBMLsqueezer, a Java program that creates rate 
+ * This file is part of SBMLsqueezer, a Java program that creates rate
  * equations for reactions in SBML files (http://sbml.org).
  *
  * Copyright (C) 2006-2014 by the University of Tuebingen, Germany.
@@ -21,8 +21,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  * ---------------------------------------------------------------------
  */
-
 package org.sbml.squeezer.test;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -30,36 +30,36 @@ import java.util.ArrayList;
 /**
  * @author Julianus Pfeuffer
  * @version $Rev$
- * @since 1.4
+ * @since 2.0
  */
 public class TraverseFolder {
-
-    private ArrayList<File> files = new ArrayList<File>();
-    
-    /**
-     * Returns all files, that have been seen while traversing.
-     * @return
-     */
-    public ArrayList<File> getFiles() {
-    	return files;
+  
+  private ArrayList<File> files = new ArrayList<File>();
+  
+  /**
+   * Returns all files, that have been seen while traversing.
+   * @return
+   */
+  public ArrayList<File> getFiles() {
+    return files;
+  }
+  
+  /**
+   * Saves the files beyond a specified folder/file in this Object.
+   * @param givenFile
+   */
+  public void traverse(File givenFile) throws FileNotFoundException {
+    if (!givenFile.isHidden()) {
+      if (givenFile.isDirectory()) {
+        File filesOfFolder[] = givenFile.listFiles();
+        for (File aFile : filesOfFolder) {
+          traverse(aFile);
+        }
+        
+      } else if (givenFile.isFile()) {
+        files.add(givenFile);
+      }
     }
-
-    /**
-     * Saves the files beyond a specified folder/file in this Object.
-     * @param givenFile
-     */
-	public void traverse(File givenFile) throws FileNotFoundException {
-		if (!givenFile.isHidden()) {
-			if (givenFile.isDirectory()) {
-				File filesOfFolder[] = givenFile.listFiles();
-				for (File aFile : filesOfFolder) {
-					traverse(aFile);
-				}
-
-			} else if (givenFile.isFile()) {
-				files.add(givenFile);
-			}
-		}
-	}
-
+  }
+  
 }

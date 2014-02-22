@@ -28,5 +28,6 @@
  * file filtering.
  * 
  * @version $Rev$
+ * @since 1.3
  */
 package org.sbml.squeezer.io;

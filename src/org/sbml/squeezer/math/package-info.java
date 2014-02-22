@@ -26,5 +26,6 @@
  * This package is intended mathematical to contain mathematical functions.
  * 
  * @version $Rev$
+ * @since 1.0
  */
 package org.sbml.squeezer.math;

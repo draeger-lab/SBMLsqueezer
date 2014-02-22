@@ -47,6 +47,7 @@ import org.sbml.squeezer.sabiork.wizard.model.WizardModel;
 /**
  * @author Matthias Rall
  * @version $Rev$
+ * @since 2.0
  */
 public class CardReactionsM extends Card implements ListSelectionListener,
 ActionListener, PropertyChangeListener {
@@ -151,7 +152,7 @@ ActionListener, PropertyChangeListener {
    * @param reactionFilter
    * @return a list of {@link Reaction}
    */
-  private List<Reaction> getFilteredReactions(ReactionFilter reactionFilter) {
+  public List<Reaction> getFilteredReactions(ReactionFilter reactionFilter) {
     List<Reaction> reactions = new ArrayList<Reaction>();
     switch (reactionFilter) {
       case ALL_REACTIONS:

@@ -25,5 +25,6 @@
 /**
  * @author Andreas Dr&auml;ger
  * @version $Rev$
+ * @since 1.0
  */
 package org.sbml.squeezer.util;
