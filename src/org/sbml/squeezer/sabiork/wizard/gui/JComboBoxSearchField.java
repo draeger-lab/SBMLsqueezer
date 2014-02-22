@@ -45,6 +45,7 @@ import org.sbml.squeezer.sabiork.util.WebServiceResponseException;
  * 
  * @author Matthias Rall
  * @version $Rev$
+ * @since 2.0
  */
 public class JComboBoxSearchField extends JComboBox implements KeyListener {
   

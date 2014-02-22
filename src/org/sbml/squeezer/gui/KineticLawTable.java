@@ -100,7 +100,7 @@ public class KineticLawTable extends JTable implements MouseInputListener {
    * 
    * @author Andreas Dr&auml;ger
    * @version $Rev$
-   * @since 1.4
+   * @since 2.0
    */
   private static final class TableModelWorker extends SwingWorker<KineticLawTableModel, Void> {
     

@@ -50,6 +50,7 @@ public class ConsistencyReportBuilder {
    * 
    */
   public ConsistencyReportBuilder() {
+    super();
   }
   
   /**
@@ -65,6 +66,13 @@ public class ConsistencyReportBuilder {
       warnings.append("</p>");
     }
     return StringUtil.toHTML(warnings.toString());
+  }
+  
+  /**
+   * @return the formatter
+   */
+  public FormatBuilder getFormatter() {
+    return formatter;
   }
   
   /**

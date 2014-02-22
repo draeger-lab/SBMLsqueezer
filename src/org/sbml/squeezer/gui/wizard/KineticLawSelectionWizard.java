@@ -21,7 +21,6 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  * ---------------------------------------------------------------------
  */
-
 package org.sbml.squeezer.gui.wizard;
 
 import java.awt.Dimension;
@@ -48,7 +47,7 @@ import de.zbit.util.ResourceManager;
  * 
  * @author Sebastian Nagel
  * @date Feb 25, 2012
- * @since 1.4
+ * @since 2.0
  * @version $Rev: 830 $
  */
 public class KineticLawSelectionWizard extends Wizard {

@@ -21,7 +21,6 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  * ---------------------------------------------------------------------
  */
-
 package org.sbml.squeezer.test.cases;
 
 import org.junit.Test;
@@ -40,7 +39,7 @@ import org.sbml.squeezer.kinetics.TypeStandardVersion;
  * Class with tests for general reversible reactions
  * @author Julianus Pfeuffer
  * @version $Rev$
- * @since 1.4
+ * @since 2.0
  */
 public class ReversibleKinetics extends KineticsTest {
   

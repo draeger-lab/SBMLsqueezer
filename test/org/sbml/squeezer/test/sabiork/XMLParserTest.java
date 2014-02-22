@@ -2,7 +2,7 @@
  * $Id$
  * $URL$
  * ---------------------------------------------------------------------
- * This file is part of SBMLsqueezer, a Java program that creates rate 
+ * This file is part of SBMLsqueezer, a Java program that creates rate
  * equations for reactions in SBML files (http://sbml.org).
  *
  * Copyright (C) 2006-2014 by the University of Tuebingen, Germany.
@@ -33,31 +33,31 @@ import org.sbml.squeezer.sabiork.util.XMLParser;
 /**
  * @author Matthias Rall
  * @version $Rev$
- * ${tags}
+ * @since 2.0
  */
 public class XMLParserTest {
-
-	@Test
-	public void testGetMultipleXMLElementTextContent()
-			throws UnsupportedEncodingException, XMLStreamException {
-		String[] expecteds = new String[] { "glycolysis classical",
-				"glycerolipid metabolism", "glycolysis/gluconeogenesis",
-				"glycosphingolipid metabolism",
-				"glycerophospholipid metabolism",
-				"glycine, serine and threonine metabolism" };
-		String xml = "<Pathways><Pathway>glycolysis classical</Pathway><Pathway>glycerolipid metabolism</Pathway><Pathway>glycolysis/gluconeogenesis</Pathway><Pathway>glycosphingolipid metabolism</Pathway><Pathway>glycerophospholipid metabolism</Pathway><Pathway>glycine, serine and threonine metabolism</Pathway></Pathways>";
-		List<String> actuals = XMLParser.getMultipleXMLElementTextContent(xml,
-				"Pathway", "");
-		assertArrayEquals(expecteds, actuals.toArray());
-	}
-
-	@Test
-	public void testGetXMLElementTextContent()
-			throws UnsupportedEncodingException, XMLStreamException {
-		String expected = "glycolysis classical";
-		String xml = "<Pathways><Pathway>glycolysis classical</Pathway><Pathway>glycerolipid metabolism</Pathway><Pathway>glycolysis/gluconeogenesis</Pathway><Pathway>glycosphingolipid metabolism</Pathway><Pathway>glycerophospholipid metabolism</Pathway><Pathway>glycine, serine and threonine metabolism</Pathway></Pathways>";
-		String actual = XMLParser.getXMLElementTextContent(xml, "Pathway", "");
-		assertTrue(actual.equals(expected));
-	}
-
+  
+  @Test
+  public void testGetMultipleXMLElementTextContent()
+      throws UnsupportedEncodingException, XMLStreamException {
+    String[] expecteds = new String[] { "glycolysis classical",
+        "glycerolipid metabolism", "glycolysis/gluconeogenesis",
+        "glycosphingolipid metabolism",
+        "glycerophospholipid metabolism",
+    "glycine, serine and threonine metabolism" };
+    String xml = "<Pathways><Pathway>glycolysis classical</Pathway><Pathway>glycerolipid metabolism</Pathway><Pathway>glycolysis/gluconeogenesis</Pathway><Pathway>glycosphingolipid metabolism</Pathway><Pathway>glycerophospholipid metabolism</Pathway><Pathway>glycine, serine and threonine metabolism</Pathway></Pathways>";
+    List<String> actuals = XMLParser.getMultipleXMLElementTextContent(xml,
+      "Pathway", "");
+    assertArrayEquals(expecteds, actuals.toArray());
+  }
+  
+  @Test
+  public void testGetXMLElementTextContent()
+      throws UnsupportedEncodingException, XMLStreamException {
+    String expected = "glycolysis classical";
+    String xml = "<Pathways><Pathway>glycolysis classical</Pathway><Pathway>glycerolipid metabolism</Pathway><Pathway>glycolysis/gluconeogenesis</Pathway><Pathway>glycosphingolipid metabolism</Pathway><Pathway>glycerophospholipid metabolism</Pathway><Pathway>glycine, serine and threonine metabolism</Pathway></Pathways>";
+    String actual = XMLParser.getXMLElementTextContent(xml, "Pathway", "");
+    assertTrue(actual.equals(expected));
+  }
+  
 }

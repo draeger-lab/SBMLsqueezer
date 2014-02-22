@@ -35,7 +35,7 @@ import org.sbml.jsbml.util.TreeNodeRemovedEvent;
 /**
  * @author Andreas Dr&auml;ger
  * @version $Rev$
- * @since 1.4
+ * @since 2.0
  */
 public class ModelChangeListener implements TreeNodeChangeListener {
   

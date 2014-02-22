@@ -2,7 +2,7 @@
  * $Id$
  * $URL: https://rarepos.cs.uni-tuebingen.de/svn-path/SBMLsqueezer/trunk/src/org/sbml/squeezer/sabiork/wizard/console/SearchAResult.java$
  * ---------------------------------------------------------------------
- * This file is part of SBMLsqueezer, a Java program that creates rate 
+ * This file is part of SBMLsqueezer, a Java program that creates rate
  * equations for reactions in SBML files (http://sbml.org).
  *
  * Copyright (C) 2006-2014 by the University of Tuebingen, Germany.
@@ -32,80 +32,81 @@ import org.sbml.squeezer.sabiork.wizard.model.KineticLawImporter;
  * 
  * @author Matthias Rall
  * @version $Rev$
+ * @since 2.0
  */
 public class SearchAResult {
-
-	private Reaction reaction;
-	private List<KineticLawImporter> possibleKineticLawImporters;
-	private List<KineticLawImporter> impossibleKineticLawImporters;
-	private List<KineticLawImporter> totalKineticLawImporters;
-
-	/**
-	 * Creates a new result of the automatic search.
-	 * 
-	 * @param reaction
-	 * @param possibleKineticLawImporters
-	 * @param impossibleKineticLawImporters
-	 * @param totalKineticLawImporters
-	 */
-	public SearchAResult(Reaction reaction,
-			List<KineticLawImporter> possibleKineticLawImporters,
-			List<KineticLawImporter> impossibleKineticLawImporters,
-			List<KineticLawImporter> totalKineticLawImporters) {
-		this.reaction = reaction;
-		this.possibleKineticLawImporters = possibleKineticLawImporters;
-		this.impossibleKineticLawImporters = impossibleKineticLawImporters;
-		this.totalKineticLawImporters = totalKineticLawImporters;
-	}
-
-	/**
-	 * Returns the corresponding {@link Reaction}.
-	 * 
-	 * @return the corresponding {@link Reaction}
-	 */
-	public Reaction getReaction() {
-		return reaction;
-	}
-
-	/**
-	 * Returns a list of all importable {@link KineticLawImporter}.
-	 * 
-	 * @return a list of all importable {@link KineticLawImporter}
-	 */
-	public List<KineticLawImporter> getPossibleKineticLawImporters() {
-		return possibleKineticLawImporters;
-	}
-
-	/**
-	 * Returns a list of all {@link KineticLawImporter} which are not
-	 * importable.
-	 * 
-	 * @return a list of all {@link KineticLawImporter} which are not importable
-	 */
-	public List<KineticLawImporter> getImpossibleKineticLawImporters() {
-		return impossibleKineticLawImporters;
-	}
-
-	/**
-	 * Returns a list of all {@link KineticLawImporter}.
-	 * 
-	 * @return a list of all {@link KineticLawImporter}.
-	 */
-	public List<KineticLawImporter> getTotalKineticLawImporters() {
-		return totalKineticLawImporters;
-	}
-
-	/**
-	 * Returns the {@link KineticLawImporter} selected for import.
-	 * 
-	 * @return the {@link KineticLawImporter} selected for import
-	 */
-	public KineticLawImporter getSelectedKineticLawImporter() {
-		KineticLawImporter selectedKineticLawImporter = null;
-		if (!possibleKineticLawImporters.isEmpty()) {
-			selectedKineticLawImporter = possibleKineticLawImporters.get(0);
-		}
-		return selectedKineticLawImporter;
-	}
-
+  
+  private Reaction reaction;
+  private List<KineticLawImporter> possibleKineticLawImporters;
+  private List<KineticLawImporter> impossibleKineticLawImporters;
+  private List<KineticLawImporter> totalKineticLawImporters;
+  
+  /**
+   * Creates a new result of the automatic search.
+   * 
+   * @param reaction
+   * @param possibleKineticLawImporters
+   * @param impossibleKineticLawImporters
+   * @param totalKineticLawImporters
+   */
+  public SearchAResult(Reaction reaction,
+    List<KineticLawImporter> possibleKineticLawImporters,
+    List<KineticLawImporter> impossibleKineticLawImporters,
+    List<KineticLawImporter> totalKineticLawImporters) {
+    this.reaction = reaction;
+    this.possibleKineticLawImporters = possibleKineticLawImporters;
+    this.impossibleKineticLawImporters = impossibleKineticLawImporters;
+    this.totalKineticLawImporters = totalKineticLawImporters;
+  }
+  
+  /**
+   * Returns the corresponding {@link Reaction}.
+   * 
+   * @return the corresponding {@link Reaction}
+   */
+  public Reaction getReaction() {
+    return reaction;
+  }
+  
+  /**
+   * Returns a list of all importable {@link KineticLawImporter}.
+   * 
+   * @return a list of all importable {@link KineticLawImporter}
+   */
+  public List<KineticLawImporter> getPossibleKineticLawImporters() {
+    return possibleKineticLawImporters;
+  }
+  
+  /**
+   * Returns a list of all {@link KineticLawImporter} which are not
+   * importable.
+   * 
+   * @return a list of all {@link KineticLawImporter} which are not importable
+   */
+  public List<KineticLawImporter> getImpossibleKineticLawImporters() {
+    return impossibleKineticLawImporters;
+  }
+  
+  /**
+   * Returns a list of all {@link KineticLawImporter}.
+   * 
+   * @return a list of all {@link KineticLawImporter}.
+   */
+  public List<KineticLawImporter> getTotalKineticLawImporters() {
+    return totalKineticLawImporters;
+  }
+  
+  /**
+   * Returns the {@link KineticLawImporter} selected for import.
+   * 
+   * @return the {@link KineticLawImporter} selected for import
+   */
+  public KineticLawImporter getSelectedKineticLawImporter() {
+    KineticLawImporter selectedKineticLawImporter = null;
+    if (!possibleKineticLawImporters.isEmpty()) {
+      selectedKineticLawImporter = possibleKineticLawImporters.get(0);
+    }
+    return selectedKineticLawImporter;
+  }
+  
 }

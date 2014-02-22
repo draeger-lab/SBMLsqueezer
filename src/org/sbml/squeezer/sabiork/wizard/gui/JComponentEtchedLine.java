@@ -32,6 +32,7 @@ import javax.swing.border.EtchedBorder;
  * 
  * @author Matthias Rall
  * @version $Rev$
+ * @since 2.0
  */
 public class JComponentEtchedLine extends JComponent {
   

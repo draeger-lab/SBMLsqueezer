@@ -43,6 +43,7 @@ import org.sbml.squeezer.SubmodelController;
  * 
  * @author Matthias Rall
  * @version $Rev$
+ * @since 2.0
  */
 public class WizardModel implements PropertyChangeListener {
   

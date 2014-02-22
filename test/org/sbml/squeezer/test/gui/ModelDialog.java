@@ -35,81 +35,81 @@ import de.zbit.sbml.gui.SBMLModelSplitPane;
  * A dialog showing the structure of a model. Just for testing purposes.
  * 
  * @author Andreas Dr&auml;ger
- * @since 1.4
- * @date 2010-04-09
  * @version $Rev$
+ * @since 2.0
+ * @date 2010-04-09
  */
 @Ignore
 public class ModelDialog extends JDialog {
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 414365858348606128L;
-
-	/**
-	 * 
-	 * @param owner
-	 * @param model
-	 * @throws HeadlessException
-	 */
-	public ModelDialog(Dialog owner, Model model)
-			throws HeadlessException {
-		super(owner);
-		init(model);
-		setVisible(true);
-	}
-
-	/**
-	 * 
-	 * @param owner
-	 * @param model
-	 * @throws HeadlessException
-	 */
-	public ModelDialog(Frame owner, Model model)
-			throws HeadlessException {
-		super(owner);
-		init(model);
-		setVisible(true);
-	}
-
-	/**
-	 * 
-	 * @param miniModel
-	 */
-	public ModelDialog(Model model) {
-		super();
-		init(model);
-		setVisible(true);
-	}
-	
-	/**
-	 * 
-	 * @param miniModel
-	 */
-	public ModelDialog(String title, Model model) {
-		super();
-		init(model);
-		setTitle(title);
-		setVisible(true);
-	}
-
-	/**
-	 * 
-	 * @param model
-	 * @param settings
-	 */
-	private void init(Model model) {
-		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-		setModal(true);
-		setTitle("JSBML Model structure");
-		try {
-			getContentPane().add(new SBMLModelSplitPane(new OpenedFile<SBMLDocument>(model.getSBMLDocument()), true));
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		pack();
-		setLocationRelativeTo(getOwner());
-	}
-
+  
+  /**
+   * 
+   */
+  private static final long serialVersionUID = 414365858348606128L;
+  
+  /**
+   * 
+   * @param owner
+   * @param model
+   * @throws HeadlessException
+   */
+  public ModelDialog(Dialog owner, Model model)
+      throws HeadlessException {
+    super(owner);
+    init(model);
+    setVisible(true);
+  }
+  
+  /**
+   * 
+   * @param owner
+   * @param model
+   * @throws HeadlessException
+   */
+  public ModelDialog(Frame owner, Model model)
+      throws HeadlessException {
+    super(owner);
+    init(model);
+    setVisible(true);
+  }
+  
+  /**
+   * 
+   * @param miniModel
+   */
+  public ModelDialog(Model model) {
+    super();
+    init(model);
+    setVisible(true);
+  }
+  
+  /**
+   * 
+   * @param miniModel
+   */
+  public ModelDialog(String title, Model model) {
+    super();
+    init(model);
+    setTitle(title);
+    setVisible(true);
+  }
+  
+  /**
+   * 
+   * @param model
+   * @param settings
+   */
+  private void init(Model model) {
+    setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+    setModal(true);
+    setTitle("JSBML Model structure");
+    try {
+      getContentPane().add(new SBMLModelSplitPane(new OpenedFile<SBMLDocument>(model.getSBMLDocument()), true));
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    pack();
+    setLocationRelativeTo(getOwner());
+  }
+  
 }

@@ -37,10 +37,12 @@ import org.sbml.squeezer.kinetics.ZerothOrderForwardGMAK;
 import org.sbml.squeezer.kinetics.ZerothOrderReverseGMAK;
 
 /**
- * Class that tests the generated equations and derived units for reactions of the form _ (<)-> B
+ * Class that tests the generated equations and derived units for reactions of
+ * the form _ (<)-> B
+ * 
  * @author Julianus Pfeuffer
  * @version $Rev$
- * @since 1.4
+ * @since 2.0
  */
 public class ZeroReactantsTest extends KineticsTest {
   

@@ -39,6 +39,7 @@ import org.sbml.squeezer.sabiork.wizard.gui.JDialogWizard;
  * 
  * @author Matthias Rall
  * @version $Rev: 1031$
+ * @since 2.0
  */
 public class SABIORKWizard {
   

@@ -37,7 +37,7 @@ import de.zbit.util.prefs.Option;
  * listed here determines a key for a configuration value.
  * 
  * @author Sebastian Nagel
- * @since 1.4
+ * @since 2.0
  * @version $Rev: 808 $
  */
 

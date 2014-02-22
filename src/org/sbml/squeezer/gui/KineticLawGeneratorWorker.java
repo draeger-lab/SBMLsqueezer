@@ -36,7 +36,7 @@ import de.zbit.util.ResourceManager;
  * Generates kinetic laws using SwingWorker
  * 
  * @author Sebastian Nagel
- * @since 1.4
+ * @since 2.0
  * @version $Rev: 831 $
  */
 public class KineticLawGeneratorWorker extends SwingWorker<Void, Void> {

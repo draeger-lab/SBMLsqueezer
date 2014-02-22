@@ -44,6 +44,7 @@ import javax.swing.plaf.basic.BasicComboBoxRenderer;
  * 
  * @author Matthias Rall
  * @version $Rev$
+ * @since 2.0
  */
 public class ComboBoxModelCaptions extends DefaultComboBoxModel {
   

@@ -2,7 +2,7 @@
  * $Id:  OptionPanelTest.java 12:42:09 draeger$
  * $URL$
  * ---------------------------------------------------------------------
- * This file is part of SBMLsqueezer, a Java program that creates rate 
+ * This file is part of SBMLsqueezer, a Java program that creates rate
  * equations for reactions in SBML files (http://sbml.org).
  *
  * Copyright (C) 2006-2014 by the University of Tuebingen, Germany.
@@ -21,7 +21,6 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  * ---------------------------------------------------------------------
  */
-
 package org.sbml.squeezer.test;
 
 import java.awt.HeadlessException;
@@ -38,22 +37,22 @@ import de.zbit.gui.prefs.PreferencesPanelForKeyProvider;
 /**
  * @author Andreas Dr&auml;ger
  * @version $Rev$
- * @since 1.4
+ * @since 2.0
  */
 public class OptionPanelTest {
   
   /**
    * @param args
-   * @throws IOException 
-   * @throws HeadlessException 
-   * @throws UnsupportedLookAndFeelException 
-   * @throws IllegalAccessException 
-   * @throws InstantiationException 
-   * @throws ClassNotFoundException 
+   * @throws IOException
+   * @throws HeadlessException
+   * @throws UnsupportedLookAndFeelException
+   * @throws IllegalAccessException
+   * @throws InstantiationException
+   * @throws ClassNotFoundException
    */
   public static void main(String[] args) throws HeadlessException, IOException,
-    ClassNotFoundException, InstantiationException, IllegalAccessException,
-    UnsupportedLookAndFeelException {
+  ClassNotFoundException, InstantiationException, IllegalAccessException,
+  UnsupportedLookAndFeelException {
     UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
     JOptionPane.showMessageDialog(null, new PreferencesPanelForKeyProvider(
       OptionsGeneral.class));

@@ -48,7 +48,7 @@ import de.zbit.util.ResourceManager;
  * 
  * @author Sarah R. M&uuml;ller vom Hagen
  * @date Aug 9, 2011
- * @since 1.4
+ * @since 2.0
  * @version $Rev$
  */
 public class SqSBMLReader implements SBMLInputConverter<Model> {

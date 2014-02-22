@@ -42,7 +42,7 @@ import de.zbit.util.progressbar.gui.ProgressBarSwing;
  * 
  * @author Sebastian Nagel
  * @version $Rev$
- * @since 1.4
+ * @since 2.0
  */
 public class KineticLawSelectionEquationProgressPanelDescriptor extends WizardPanelDescriptor implements PropertyChangeListener {
   

@@ -62,8 +62,8 @@ import de.zbit.util.progressbar.AbstractProgressBar;
  * or to do the same with models that originate from libSBML.
  * 
  * @author Andreas Dr&auml;ger
- * @since 1.3
  * @version $Rev$
+ * @since 1.3
  * @param <T> the type of SBML documents that can be treated by this controller.
  */
 public class SBMLio<T> implements SBMLInputConverter<T>, SBMLOutputConverter<T>,

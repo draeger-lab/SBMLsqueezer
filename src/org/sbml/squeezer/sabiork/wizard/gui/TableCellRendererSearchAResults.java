@@ -42,6 +42,7 @@ import de.zbit.sbml.gui.ReactionPanel;
  * 
  * @author Matthias Rall
  * @version $Rev$
+ * @since 2.0
  */
 public class TableCellRendererSearchAResults implements TableCellRenderer {
   

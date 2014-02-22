@@ -53,7 +53,7 @@ import de.zbit.util.ResourceManager;
  * Provide all needed functions for the {@link sHotEqn} latex renderer.
  * 
  * @author Sebastian Nagel
- * @since 1.4
+ * @since 2.0
  * @version $Rev: 716 $
  */
 public class LaTeXRenderer implements EquationRenderer {
