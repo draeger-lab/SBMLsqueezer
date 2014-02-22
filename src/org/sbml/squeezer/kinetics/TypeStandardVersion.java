@@ -2,7 +2,7 @@
  * $Id: TypeStandardVersion.java 19.03.2012 17:55:34 draeger$
  * $URL$
  * ---------------------------------------------------------------------
- * This file is part of SBMLsqueezer, a Java program that creates rate 
+ * This file is part of SBMLsqueezer, a Java program that creates rate
  * equations for reactions in SBML files (http://sbml.org).
  *
  * Copyright (C) 2006-2014 by the University of Tuebingen, Germany.
@@ -24,7 +24,7 @@
 package org.sbml.squeezer.kinetics;
 
 /**
- * The possible selections for the three versions of modular rate laws (cf. 
+ * The possible selections for the three versions of modular rate laws (cf.
  * <a href="http://bioinformatics.oxfordjournals.org/cgi/content/abstract/btq141v1">
  * Liebermeister et al. (2010)</a>, Modular rate laws for enzymatic reactions:
  * thermodynamics, elasticities, and implementation)
@@ -35,18 +35,18 @@ package org.sbml.squeezer.kinetics;
  * @since 1.4
  */
 public enum TypeStandardVersion {
-	/**
-	 * The most simple version.
-	 */
-	cat,
-	/**
-	 * The more complicated version in which all parameters fulfill the
-	 * Haldane relationship.
-	 */
-	hal,
-	/**
-	 * The most sophisticated version in which all parameters fulfill
-	 * Wegscheider's condition.
-	 */
-	weg;
+  /**
+   * The most simple version.
+   */
+  cat,
+  /**
+   * The more complicated version in which all parameters fulfill the
+   * Haldane relationship.
+   */
+  hal,
+  /**
+   * The most sophisticated version in which all parameters fulfill
+   * Wegscheider's condition.
+   */
+  weg;
 }

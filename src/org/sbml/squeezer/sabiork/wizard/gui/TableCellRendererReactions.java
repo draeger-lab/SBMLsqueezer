@@ -2,7 +2,7 @@
  * $Id$
  * $URL$
  * ---------------------------------------------------------------------
- * This file is part of SBMLsqueezer, a Java program that creates rate 
+ * This file is part of SBMLsqueezer, a Java program that creates rate
  * equations for reactions in SBML files (http://sbml.org).
  *
  * Copyright (C) 2006-2014 by the University of Tuebingen, Germany.
@@ -38,28 +38,29 @@ import de.zbit.sbml.gui.ReactionPanel;
  * @version $Rev$
  */
 public class TableCellRendererReactions implements TableCellRenderer {
-
-	/* (non-Javadoc)
-	 * @see javax.swing.table.TableCellRenderer#getTableCellRendererComponent(javax.swing.JTable, java.lang.Object, boolean, boolean, int, int)
-	 */
-	public Component getTableCellRendererComponent(JTable table, Object value,
-			boolean isSelected, boolean hasFocus, int row, int column) {
-		JPanel panel = new JPanel();
-		Color colorForeground = table.getForeground();
-		Color colorBackground = table.getBackground();
-		Color colorSelectionForeground = table.getSelectionForeground();
-		Color colorSelectionBackground = table.getSelectionBackground();
-		if (value instanceof Reaction) {
-			panel = new ReactionPanel((Reaction) value, true);
-			table.setRowHeight(row, panel.getPreferredSize().height);
-		}
-		panel.setForeground(colorForeground);
-		panel.setBackground(colorBackground);
-		if (isSelected) {
-			panel.setForeground(colorSelectionForeground);
-			panel.setBackground(colorSelectionBackground);
-		}
-		return panel;
-	}
-
+  
+  /* (non-Javadoc)
+   * @see javax.swing.table.TableCellRenderer#getTableCellRendererComponent(javax.swing.JTable, java.lang.Object, boolean, boolean, int, int)
+   */
+  @Override
+  public Component getTableCellRendererComponent(JTable table, Object value,
+    boolean isSelected, boolean hasFocus, int row, int column) {
+    JPanel panel = new JPanel();
+    Color colorForeground = table.getForeground();
+    Color colorBackground = table.getBackground();
+    Color colorSelectionForeground = table.getSelectionForeground();
+    Color colorSelectionBackground = table.getSelectionBackground();
+    if (value instanceof Reaction) {
+      panel = new ReactionPanel((Reaction) value, true);
+      table.setRowHeight(row, panel.getPreferredSize().height);
+    }
+    panel.setForeground(colorForeground);
+    panel.setBackground(colorBackground);
+    if (isSelected) {
+      panel.setForeground(colorSelectionForeground);
+      panel.setBackground(colorSelectionBackground);
+    }
+    return panel;
+  }
+  
 }

@@ -135,8 +135,17 @@ import de.zbit.util.prefs.SBPreferences;
 public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 ChangeListener, PropertyChangeListener, TabClosingListener {
   
+  /**
+   * A {@link Logger} for this class.
+   */
   private static final transient Logger logger = Logger.getLogger(SBMLsqueezerUI.class.getName());
+  /**
+   * Localization support.
+   */
   private static final transient ResourceBundle MESSAGES = ResourceManager.getBundle(Bundles.MESSAGES);
+  /**
+   * Localization support.
+   */
   private static final transient ResourceBundle WARNINGS = ResourceManager.getBundle(Bundles.WARNINGS);
   
   /**

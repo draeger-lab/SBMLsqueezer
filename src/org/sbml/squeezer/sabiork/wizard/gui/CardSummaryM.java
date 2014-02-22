@@ -2,7 +2,7 @@
  * $Id$
  * $URL$
  * ---------------------------------------------------------------------
- * This file is part of SBMLsqueezer, a Java program that creates rate 
+ * This file is part of SBMLsqueezer, a Java program that creates rate
  * equations for reactions in SBML files (http://sbml.org).
  *
  * Copyright (C) 2006-2014 by the University of Tuebingen, Germany.
@@ -43,69 +43,72 @@ import org.sbml.squeezer.sabiork.wizard.model.WizardProperties;
  * @version $Rev$
  */
 public class CardSummaryM extends Card {
-
-	/**
-	 * Generated serial version identifier.
-	 */
-	private static final long serialVersionUID = 5350885163785722780L;
-	private JScrollPane textAreaSummaryScrollPane;
-	private JTextArea textAreaSummary;
-
-	/**
-	 * 
-	 * @param dialog
-	 * @param model
-	 */
-	public CardSummaryM(JDialogWizard dialog, WizardModel model) {
-		super(dialog, model);
-		initialize();
-	}
-
-	/**
-	 * 
-	 */
-	private void initialize() {
-		textAreaSummary = new JTextArea();
-		textAreaSummary.setEnabled(false);
-		textAreaSummaryScrollPane = new JScrollPane(textAreaSummary);
-
-		setLayout(new BorderLayout());
-		setBorder(BorderFactory.createTitledBorder(
-				BorderFactory.createEtchedBorder(),
-				WizardProperties.getText("CARD_SUMMARY_M_TEXT_SUMMARY")));
-		add(textAreaSummaryScrollPane, BorderLayout.CENTER);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see org.sbml.squeezer.sabiork.wizard.gui.Card#performBeforeShowing()
-	 */
-	public void performBeforeShowing() {
-		if (model.hasSelectedKineticLawImporter()) {
-			KineticLawImporter selectedKineticLawImporter = model
-					.getSelectedKineticLawImporter();
-			if (selectedKineticLawImporter.isImportableKineticLaw()) {
-				selectedKineticLawImporter.importKineticLaw();
-				textAreaSummary.setText(selectedKineticLawImporter.getReport());
-			}
-		}
-		dialog.setButtonState(ButtonState.FINISH);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see org.sbml.squeezer.sabiork.wizard.gui.Card#getPreviousCardID()
-	 */
-	public CardID getPreviousCardID() {
-		return CardID.MATCHING;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see org.sbml.squeezer.sabiork.wizard.gui.Card#getNextCardID()
-	 */
-	public CardID getNextCardID() {
-		return CardID.CONFIRM_DIALOG;
-	}
-
+  
+  /**
+   * Generated serial version identifier.
+   */
+  private static final long serialVersionUID = 5350885163785722780L;
+  private JScrollPane textAreaSummaryScrollPane;
+  private JTextArea textAreaSummary;
+  
+  /**
+   * 
+   * @param dialog
+   * @param model
+   */
+  public CardSummaryM(JDialogWizard dialog, WizardModel model) {
+    super(dialog, model);
+    initialize();
+  }
+  
+  /**
+   * 
+   */
+  private void initialize() {
+    textAreaSummary = new JTextArea();
+    textAreaSummary.setEnabled(false);
+    textAreaSummaryScrollPane = new JScrollPane(textAreaSummary);
+    
+    setLayout(new BorderLayout());
+    setBorder(BorderFactory.createTitledBorder(
+      BorderFactory.createEtchedBorder(),
+      WizardProperties.getText("CARD_SUMMARY_M_TEXT_SUMMARY")));
+    add(textAreaSummaryScrollPane, BorderLayout.CENTER);
+  }
+  
+  /*
+   * (non-Javadoc)
+   * @see org.sbml.squeezer.sabiork.wizard.gui.Card#performBeforeShowing()
+   */
+  @Override
+  public void performBeforeShowing() {
+    if (model.hasSelectedKineticLawImporter()) {
+      KineticLawImporter selectedKineticLawImporter = model
+          .getSelectedKineticLawImporter();
+      if (selectedKineticLawImporter.isImportableKineticLaw()) {
+        selectedKineticLawImporter.importKineticLaw();
+        textAreaSummary.setText(selectedKineticLawImporter.getReport());
+      }
+    }
+    dialog.setButtonState(ButtonState.FINISH);
+  }
+  
+  /*
+   * (non-Javadoc)
+   * @see org.sbml.squeezer.sabiork.wizard.gui.Card#getPreviousCardID()
+   */
+  @Override
+  public CardID getPreviousCardID() {
+    return CardID.MATCHING;
+  }
+  
+  /*
+   * (non-Javadoc)
+   * @see org.sbml.squeezer.sabiork.wizard.gui.Card#getNextCardID()
+   */
+  @Override
+  public CardID getNextCardID() {
+    return CardID.CONFIRM_DIALOG;
+  }
+  
 }

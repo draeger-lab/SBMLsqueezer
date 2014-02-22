@@ -2,7 +2,7 @@
  * $Id: KineticLawSelectionEquationPanelDescriptor.java 830 2012-02-26 00:33:31Z snagel $
  * $URL: https://rarepos.cs.uni-tuebingen.de/svn-path/SBMLsqueezer/trunk/src/org/sbml/squeezer/gui/wizard/KineticLawSelectionEquationPanelDescriptor.java $
  * ---------------------------------------------------------------------
- * This file is part of SBMLsqueezer, a Java program that creates rate 
+ * This file is part of SBMLsqueezer, a Java program that creates rate
  * equations for reactions in SBML files (http://sbml.org).
  *
  * Copyright (C) 2006-2014 by the University of Tuebingen, Germany.
@@ -46,94 +46,94 @@ import de.zbit.util.ResourceManager;
  * @version $Rev: 830 $
  */
 public class KineticLawSelectionEquationPanelDescriptor extends WizardPanelDescriptor {
-
-	/**
-	 * 
-	 */
-	public static final transient ResourceBundle MESSAGES = ResourceManager.getBundle(Bundles.MESSAGES);
-	
-	/**
-	 * 
-	 */
-	public static final transient ResourceBundle LABELS = ResourceManager.getBundle(Bundles.LABELS);
-	
-	/**
-	 * 
-	 */
-	public static final String IDENTIFIER = "KINETIC_LAW_EQUATION_PANEL";
-	
-	/**
-	 * 
-	 */
-	private KineticLawSelectionEquationPanel panel;
-	
-	/**
-	 * 
-	 * @param klg
-	 * @param sbmlIO
-	 */
-	public KineticLawSelectionEquationPanelDescriptor(KineticLawGenerator klg, SBMLio sbmlIO) {
-		super(IDENTIFIER, new KineticLawSelectionEquationPanel(klg, sbmlIO));
-		this.panel = ((KineticLawSelectionEquationPanel) this.getPanelComponent());
-	}
-	
-	/* (non-Javadoc)
-	 * @see de.zbit.gui.wizard.WizardPanelDescriptor#displayingPanel()
-	 */
-	@Override
-	public void displayingPanel() {
-		// when kinetic laws are generated, show the respective table
-		panel.generateKineticLawDone();
-	}
-
-	/* (non-Javadoc)
-	 * @see de.zbit.gui.wizard.WizardPanelDescriptor#addFinishingListener(de.zbit.gui.wizard.WizardFinishingListener)
-	 */
-	@Override
-	public boolean addFinishingListener(WizardFinishingListener listener) {
-		return panel.addFinishingListener(listener) && super.addFinishingListener(listener);
-	}
-
-	/* (non-Javadoc)
-	 * @see de.zbit.gui.wizard.WizardPanelDescriptor#getNextPanelDescriptor()
-	 */
-	@Override
-	public Object getNextPanelDescriptor() {
-		return FINISH;
-	}
+  
+  /**
+   * Localization support.
+   */
+  public static final transient ResourceBundle MESSAGES = ResourceManager.getBundle(Bundles.MESSAGES);
+  
+  /**
+   * Localization support.
+   */
+  public static final transient ResourceBundle LABELS = ResourceManager.getBundle(Bundles.LABELS);
+  
+  /**
+   * 
+   */
+  public static final String IDENTIFIER = "KINETIC_LAW_EQUATION_PANEL";
+  
+  /**
+   * 
+   */
+  private KineticLawSelectionEquationPanel panel;
+  
+  /**
+   * 
+   * @param klg
+   * @param sbmlIO
+   */
+  public KineticLawSelectionEquationPanelDescriptor(KineticLawGenerator klg, SBMLio<?> sbmlIO) {
+    super(IDENTIFIER, new KineticLawSelectionEquationPanel(klg, sbmlIO));
+    panel = ((KineticLawSelectionEquationPanel) getPanelComponent());
+  }
+  
+  /* (non-Javadoc)
+   * @see de.zbit.gui.wizard.WizardPanelDescriptor#displayingPanel()
+   */
+  @Override
+  public void displayingPanel() {
+    // when kinetic laws are generated, show the respective table
+    panel.generateKineticLawDone();
+  }
+  
+  /* (non-Javadoc)
+   * @see de.zbit.gui.wizard.WizardPanelDescriptor#addFinishingListener(de.zbit.gui.wizard.WizardFinishingListener)
+   */
+  @Override
+  public boolean addFinishingListener(WizardFinishingListener listener) {
+    return panel.addFinishingListener(listener) && super.addFinishingListener(listener);
+  }
+  
+  /* (non-Javadoc)
+   * @see de.zbit.gui.wizard.WizardPanelDescriptor#getNextPanelDescriptor()
+   */
+  @Override
+  public Object getNextPanelDescriptor() {
+    return FINISH;
+  }
+  
+  /* (non-Javadoc)
+   * @see de.zbit.gui.wizard.WizardPanelDescriptor#getBackPanelDescriptor()
+   */
+  @Override
+  public Object getBackPanelDescriptor() {
+    return KineticLawSelectionOptionPanelDescriptor.IDENTIFIER;
+  }
+  
+  /* (non-Javadoc)
+   * @see de.zbit.gui.wizard.WizardPanelDescriptor#getHelpAction()
+   */
+  @Override
+  public Component getHelpAction() {
+    JHelpBrowser helpBrowser = new JHelpBrowser(getWizard().getDialog(),
+      System.getProperty("app.name")
+      + " "
+      + String.format(LABELS.getString("ONLINE_HELP_FOR_THE_PROGRAM"),
+        System.getProperty("app.version")),
+        SBMLsqueezer.class.getResource("resources/html/help.html"));
+    helpBrowser.setLocationRelativeTo(getWizard().getDialog());
+    helpBrowser.setSize(640, 640);
     
-	/* (non-Javadoc)
-	 * @see de.zbit.gui.wizard.WizardPanelDescriptor#getBackPanelDescriptor()
-	 */
-	@Override
-	public Object getBackPanelDescriptor() {
-		return KineticLawSelectionOptionPanelDescriptor.IDENTIFIER;
-	}
-	
-	/* (non-Javadoc)
-	 * @see de.zbit.gui.wizard.WizardPanelDescriptor#getHelpAction()
-	 */
-	@Override
-	public Component getHelpAction() {
-		JHelpBrowser helpBrowser = new JHelpBrowser(getWizard().getDialog(),
-			System.getProperty("app.name")
-					+ " "
-					+ String.format(LABELS.getString("ONLINE_HELP_FOR_THE_PROGRAM"),
-						System.getProperty("app.version")),
-			SBMLsqueezer.class.getResource("resources/html/help.html"));
-		helpBrowser.setLocationRelativeTo(this.getWizard().getDialog());
-		helpBrowser.setSize(640, 640);
-		
-		return helpBrowser;
-	}
-
-	/* (non-Javadoc)
-	 * @see de.zbit.gui.wizard.WizardPanelDescriptor#finish()
-	 */
-	@Override
-	public boolean finish() {
-		panel.apply();
-		return false;
-	}
-
+    return helpBrowser;
+  }
+  
+  /* (non-Javadoc)
+   * @see de.zbit.gui.wizard.WizardPanelDescriptor#finish()
+   */
+  @Override
+  public boolean finish() {
+    panel.apply();
+    return false;
+  }
+  
 }

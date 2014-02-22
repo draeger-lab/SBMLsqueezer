@@ -880,7 +880,7 @@
         <include name="de/zbit/gui/wizard/**.class"/>
         <include name="de/zbit/gui/**.class"/>
         <include name="de/zbit/io/**"/>
-      	<include name="de/zbit/locales/**.xml"/>
+      	<include name="de/zbit/io/fileformat/**.class"/>
       	<include name="de/zbit/locales/**.class"/>
         <include name="de/zbit/math/**.class"/>
         <include name="de/zbit/resources/**.class"/>
@@ -898,10 +898,6 @@
         <include name="de/zbit/util/prefs/**.class"/>
         <include name="de/zbit/util/progressbar/**"/>
         <include name="de/zbit/util/**.class"/>
-      	<!-- These are already in JSBML:
-      	<exclude name="de/zbit/util/ResourceManager.class"/>
-      	<exclude name="de/zbit/util/XMLResourceBundleControl.class"/>
-      	-->
       </fileset>
       <fileset dir="${sysbio.dir}/resources" excludes="**/.svn*, package-info.*">
         <include name="de/zbit/garuda/img/**.png"/>

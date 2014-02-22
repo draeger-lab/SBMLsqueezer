@@ -2,7 +2,7 @@
  * $Id$
  * $URL$
  * ---------------------------------------------------------------------
- * This file is part of SBMLsqueezer, a Java program that creates rate 
+ * This file is part of SBMLsqueezer, a Java program that creates rate
  * equations for reactions in SBML files (http://sbml.org).
  *
  * Copyright (C) 2006-2014 by the University of Tuebingen, Germany.
@@ -30,61 +30,61 @@ package org.sbml.squeezer.sabiork.util;
  * @version $Rev$
  */
 public class WebServiceResponseException extends Exception {
-
-	/**
-	 * Generated serial version identifier.
-	 */
-	private static final long serialVersionUID = -6398077215479639974L;
-	
-	int responseCode;
-
-	/**
-	 * 
-	 * @param responseCode
-	 */
-	public WebServiceResponseException(int responseCode) {
-		super();
-		this.responseCode = responseCode;
-	}
-
-	/**
-	 * 
-	 * @param message
-	 * @param cause
-	 * @param responseCode
-	 */
-	public WebServiceResponseException(String message, Throwable cause,
-			int responseCode) {
-		super(message, cause);
-		this.responseCode = responseCode;
-	}
-
-	/**
-	 * 
-	 * @param message
-	 * @param responseCode
-	 */
-	public WebServiceResponseException(String message, int responseCode) {
-		super(message);
-		this.responseCode = responseCode;
-	}
-
-	/**
-	 * 
-	 * @param cause
-	 * @param responseCode
-	 */
-	public WebServiceResponseException(Throwable cause, int responseCode) {
-		super(cause);
-		this.responseCode = responseCode;
-	}
-
-	/**
-	 * 
-	 * @return responseCode the response code of the exception
-	 */
-	public int getResponseCode() {
-		return responseCode;
-	}
-
+  
+  /**
+   * Generated serial version identifier.
+   */
+  private static final long serialVersionUID = -6398077215479639974L;
+  
+  int responseCode;
+  
+  /**
+   * 
+   * @param responseCode
+   */
+  public WebServiceResponseException(int responseCode) {
+    super();
+    this.responseCode = responseCode;
+  }
+  
+  /**
+   * 
+   * @param message
+   * @param cause
+   * @param responseCode
+   */
+  public WebServiceResponseException(String message, Throwable cause,
+    int responseCode) {
+    super(message, cause);
+    this.responseCode = responseCode;
+  }
+  
+  /**
+   * 
+   * @param message
+   * @param responseCode
+   */
+  public WebServiceResponseException(String message, int responseCode) {
+    super(message);
+    this.responseCode = responseCode;
+  }
+  
+  /**
+   * 
+   * @param cause
+   * @param responseCode
+   */
+  public WebServiceResponseException(Throwable cause, int responseCode) {
+    super(cause);
+    this.responseCode = responseCode;
+  }
+  
+  /**
+   * 
+   * @return responseCode the response code of the exception
+   */
+  public int getResponseCode() {
+    return responseCode;
+  }
+  
 }

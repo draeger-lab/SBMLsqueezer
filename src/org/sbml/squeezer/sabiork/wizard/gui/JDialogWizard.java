@@ -2,7 +2,7 @@
  * $Id$
  * $URL$
  * ---------------------------------------------------------------------
- * This file is part of SBMLsqueezer, a Java program that creates rate 
+ * This file is part of SBMLsqueezer, a Java program that creates rate
  * equations for reactions in SBML files (http://sbml.org).
  *
  * Copyright (C) 2006-2014 by the University of Tuebingen, Germany.
@@ -74,480 +74,486 @@ import org.sbml.squeezer.sabiork.wizard.model.WizardProperties;
  * @version $Rev$
  */
 public class JDialogWizard extends JDialog implements ActionListener, WindowListener,
-		MouseListener {
-
-	/**
-	 * Generated serial version identifier.
-	 */
-	private static final long serialVersionUID = 2106891365126572604L;
-
-	/**
-	 * 
-	 * @author Matthias Rall
-	 * @version $Rev$
-	 */
-	public enum ButtonState {
-		START, NEXT_ENABLED, NEXT_DISABLED, FINISH, NEXT_BACK_ENABLED;
-	}
-
-	/**
-	 * 
-	 * @author Matthias Rall
-	 * @version $Rev$
-	 */
-	public enum CardID {
-		NOT_AVAILABLE, CONFIRM_DIALOG, MATCHING, METHOD, REACTIONS_A, REACTIONS_M, SEARCH_A, SEARCH_M, SUMMARY_A, SUMMARY_M, SEARCHRESULTS_A, SEARCHRESULTS_M;
-	}
-	
-	/**
-	 * 
-	 * @author Andreas Dr&auml;ger
-	 * @version $Rev$
-	 */
-	public enum Actions {
-		BACK, FINISH, CANCEL;
-	}
-
-	private Box boxButtons;
-	private CardID currentCardID;
-	private Map<CardID, Card> cards;
-	private JButton buttonBack;
-	private JButton buttonNextFinish;
-	private JButton buttonCancel;
-	private JLabel labelLogo;
-	private JPanel panelLogo;
-	private JPanel panelCards;
-	private JPanel panelButtons;
-	private WizardModel model;
-
-	/**
-	 * 
-	 * @param owner
-	 * @param modalityType
-	 * @param sbmlDocument
-	 * @param overwriteExistingLaws
-	 */
-	public JDialogWizard(Window owner, ModalityType modalityType,
-			SBMLDocument sbmlDocument, boolean overwriteExistingLaws) {
-		super(owner, modalityType);
-		addWindowListener(this);
-		this.model = new WizardModel(sbmlDocument, overwriteExistingLaws);
-		this.model.setSelectedReactions(sbmlDocument.getModel().getListOfReactions());
-		initialize(false);
-	}
-
-	/**
-	 * @param owner
-	 * @param modalityType
-	 * @param sbmlDocument
-	 * @param reactionId
-	 */
-	public JDialogWizard(Window owner, ModalityType modalityType,
-		SBMLDocument sbmlDocument, String reactionId) {
-		super(owner, modalityType);
-		addWindowListener(this);
-		this.model = new WizardModel(sbmlDocument, reactionId, true);
-		this.model.setSelectedReactions(sbmlDocument.getModel().getListOfReactions().filterList(new NameFilter(reactionId)));
-		initialize(true);
-	}
-
-	/**
-	 * 
-	 * @param manual
-	 */
-	private void initialize(boolean manual) {
-		Icon icon = UIManager.getIcon("JDIALOG_WIZARD_IMAGE_LOGO");
-		if (icon == null) {
-			icon = new ImageIcon(this.getClass().getResource(
-				WizardProperties.getText("JDIALOG_WIZARD_IMAGE_LOGO")));
-			UIManager.put("JDIALOG_WIZARD_IMAGE_LOGO", icon);
-		}
-		labelLogo = new JLabel(icon);
-		labelLogo.addMouseListener(this);
-
-		panelLogo = new JPanel(new BorderLayout());
-		panelLogo.setBackground(Color.WHITE);
-		panelLogo.add(labelLogo, BorderLayout.WEST);
-		panelLogo.add(new JComponentEtchedLine(), BorderLayout.SOUTH);
-
-		panelCards = new JPanel(new CardLayout());
-		panelCards.setBorder(new EmptyBorder(new Insets(10, 10, 10, 10)));
-
-		buttonBack = new JButton(
-				WizardProperties.getText("JDIALOG_WIZARD_TEXT_BUTTON_BACK"));
-		buttonBack.addActionListener(this);
-		buttonBack.setActionCommand(Actions.BACK.name());
-
-		buttonNextFinish = new JButton(
-				WizardProperties.getText("JDIALOG_WIZARD_TEXT_BUTTON_NEXT"));
-		buttonNextFinish.setSelected(true);
-		buttonNextFinish.addActionListener(this);
-		buttonNextFinish.setActionCommand(Actions.FINISH.name());
-
-		buttonCancel = new JButton(
-				WizardProperties.getText("JDIALOG_WIZARD_TEXT_BUTTON_CANCEL"));
-		buttonCancel.addActionListener(this);
-		buttonCancel.setActionCommand(Actions.CANCEL.name());
-		
-		// pressing the ESCAPE button triggers "Cancel"
-		getRootPane().registerKeyboardAction(this, Actions.CANCEL.name(),
-			KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
-			JComponent.WHEN_IN_FOCUSED_WINDOW);
-		// pressing the ENTER button triggers "OK"
-		getRootPane().registerKeyboardAction(this, Actions.FINISH.name(),
-			KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0),
-			JComponent.WHEN_IN_FOCUSED_WINDOW);
-
-		boxButtons = new Box(BoxLayout.LINE_AXIS);
-		boxButtons.setBorder(new EmptyBorder(new Insets(10, 10, 10, 10)));
-		boxButtons.add(buttonBack);
-		boxButtons.add(Box.createHorizontalStrut(10));
-		boxButtons.add(buttonNextFinish);
-		boxButtons.add(Box.createHorizontalStrut(30));
-		boxButtons.add(buttonCancel);
-
-		panelButtons = new JPanel(new BorderLayout());
-		panelButtons.add(new JComponentEtchedLine(), BorderLayout.NORTH);
-		panelButtons.add(boxButtons, BorderLayout.EAST);
-
-		setLayout(new BorderLayout());
-		setTitle(WizardProperties.getText("JDIALOG_WIZARD_TEXT_TITLE"));
-		setMinimumSize(new Dimension(480, 600));
-		setPreferredSize(new Dimension(640, 720));
-		setSize(getPreferredSize());
-		add(panelLogo, BorderLayout.NORTH);
-		add(panelCards, BorderLayout.CENTER);
-		add(panelButtons, BorderLayout.SOUTH);
-
-		cards = new HashMap<CardID, Card>();
-		cards.put(CardID.MATCHING, new CardMatching(this, model));
-		cards.put(CardID.METHOD, new CardMethod(this, model));
-		cards.put(CardID.REACTIONS_A, new CardReactionsA(this, model));
-		cards.put(CardID.REACTIONS_M, new CardReactionsM(this, model));
-		try {
-			cards.put(CardID.SEARCH_A, new CardSearchA(this, model));
-			cards.put(CardID.SEARCH_M, new CardSearchM(this, model));
-			cards.put(CardID.SEARCHRESULTS_A, new CardSearchResultsA(this, model));
-			cards.put(CardID.SEARCHRESULTS_M, new CardSearchResultsM(this, model));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		cards.put(CardID.SUMMARY_A, new CardSummaryA(this, model));
-		cards.put(CardID.SUMMARY_M, new CardSummaryM(this, model));
-
-		registerCards();
-
-		if (manual) {
-			currentCardID = CardID.REACTIONS_M;
-		} else {
-			currentCardID = CardID.REACTIONS_A;
-		}
-
-		pack();
-		showCard(currentCardID);
-	}
-
-	/**
-	 * Returns the result of the wizard.
-	 * 
-	 * @return
-	 */
-	public SubmodelController getResult() {
-		return model.getResult();
-	}
-
-	/**
-	 * Stores and registers all {@link Card}
-	 */
-	private void registerCards() {
-		for (Entry<CardID, Card> card : cards.entrySet()) {
-			panelCards.add(card.getValue(), card.getKey().toString());
-		}
-	}
-
-	/**
-	 * Shows a {@link Card}, a confirm dialog or does nothing according to the
-	 * given cardID.
-	 * 
-	 * @param cardID
-	 */
-	private void showCard(CardID cardID) {
-		switch (cardID) {
-		case NOT_AVAILABLE:
-			break;
-		case CONFIRM_DIALOG:
-			showConfirmDialog();
-			break;
-		default:
-			cards.get(cardID).performBeforeShowing();
-			((CardLayout) panelCards.getLayout()).show(panelCards, cardID.toString());
-			currentCardID = cardID;
-			break;
-		}
-	}
-
-	/**
-	 * Shows a confirm dialog.
-	 */
-	private void showConfirmDialog() {
-		if (JOptionPane.showConfirmDialog(this, 
-			WizardProperties.getText("JDIALOG_WIZARD_TEXT_CONFIRM_DIALOG_MESSAGE"),
-			WizardProperties.getText("JDIALOG_WIZARD_TEXT_CONFIRM_DIALOG_TITLE"),
-			JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
-			model.applyChanges();
-			dispose();
-		}
-	}
-
-	/**
-	 * Shows an error message concerning a web service connect exception.
-	 * 
-	 * @param e
-	 */
-	public static void showErrorDialog(WebServiceConnectException e) {
-		JOptionPane
-				.showMessageDialog(
-						null,
-						WizardProperties
-								.getText("JDIALOG_WIZARD_TEXT_ERROR_MESSAGE_WEB_SERVICE_CONNECT_EXCEPTION"),
-						WizardProperties
-								.getText("JDIALOG_WIZARD_TEXT_ERROR_MESSAGE_DIALOG_TITLE"),
-						JOptionPane.ERROR_MESSAGE);
-	}
-
-	/**
-	 * Shows an error message concerning a web service response exception.
-	 * 
-	 * @param e
-	 */
-	public static void showErrorDialog(WebServiceResponseException e) {
-		switch (e.getResponseCode()) {
-		case 400:
-			JOptionPane
-					.showMessageDialog(
-							null,
-							WizardProperties
-									.getText("JDIALOG_WIZARD_TEXT_ERROR_MESSAGE_WEB_SERVICE_RESPONSE_EXCEPTION_400"),
-							WizardProperties
-									.getText("JDIALOG_WIZARD_TEXT_ERROR_MESSAGE_DIALOG_TITLE"),
-							JOptionPane.ERROR_MESSAGE);
-			break;
-		case 404:
-			JOptionPane
-					.showMessageDialog(
-							null,
-							WizardProperties
-									.getText("JDIALOG_WIZARD_TEXT_ERROR_MESSAGE_WEB_SERVICE_RESPONSE_EXCEPTION_404"),
-							WizardProperties
-									.getText("JDIALOG_WIZARD_TEXT_ERROR_MESSAGE_DIALOG_TITLE"),
-							JOptionPane.ERROR_MESSAGE);
-			break;
-		case 500:
-			JOptionPane
-					.showMessageDialog(
-							null,
-							WizardProperties
-									.getText("JDIALOG_WIZARD_TEXT_ERROR_MESSAGE_WEB_SERVICE_RESPONSE_EXCEPTION_500"),
-							WizardProperties
-									.getText("JDIALOG_WIZARD_TEXT_ERROR_MESSAGE_DIALOG_TITLE"),
-							JOptionPane.ERROR_MESSAGE);
-			break;
-		default:
-			JOptionPane
-					.showMessageDialog(
-							null,
-							e.getMessage(),
-							WizardProperties
-									.getText("JDIALOG_WIZARD_TEXT_ERROR_MESSAGE_DIALOG_TITLE"),
-							JOptionPane.ERROR_MESSAGE);
-			break;
-		}
-	}
-
-	/**
-	 * Sets different properties of the wizard buttons for navigation according
-	 * to the given buttonState
-	 * 
-	 * @param buttonState
-	 */
-	public void setButtonState(ButtonState buttonState) {
-		switch (buttonState) {
-		case START:
-			buttonBack.setVisible(false);
-			buttonNextFinish.setText(WizardProperties
-					.getText("JDIALOG_WIZARD_TEXT_BUTTON_NEXT"));
-			buttonNextFinish.setEnabled(false);
-			break;
-		case NEXT_ENABLED:
-			buttonBack.setVisible(false);
-			buttonNextFinish.setText(WizardProperties
-					.getText("JDIALOG_WIZARD_TEXT_BUTTON_NEXT"));
-			buttonNextFinish.setEnabled(true);
-			break;
-		case NEXT_BACK_ENABLED:
-			buttonBack.setVisible(true);
-			buttonNextFinish.setText(WizardProperties
-			.getText("JDIALOG_WIZARD_TEXT_BUTTON_NEXT"));
-			buttonNextFinish.setEnabled(true);
-			break;
-		case NEXT_DISABLED:
-			buttonBack.setVisible(true);
-			buttonNextFinish.setText(WizardProperties
-					.getText("JDIALOG_WIZARD_TEXT_BUTTON_NEXT"));
-			buttonNextFinish.setEnabled(false);
-			break;
-		case FINISH:
-			buttonBack.setVisible(false);
-			buttonNextFinish.setText(WizardProperties
-					.getText("JDIALOG_WIZARD_TEXT_BUTTON_FINISH"));
-			buttonNextFinish.setEnabled(true);
-			break;
-		}
-	}
-
-	/**
-	 * Opens a URL in the browser window.
-	 * 
-	 * @param url
-	 */
-	private void openURL(String url) {
-		if (Desktop.isDesktopSupported()) {
-			Desktop desktop = Desktop.getDesktop();
-			if (desktop.isSupported(Desktop.Action.BROWSE)) {
-				try {
-					URI uri = new URI(url);
-					desktop.browse(uri);
-				} catch (URISyntaxException e) {
-					e.printStackTrace();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-	}
-
-	/* (non-Javadoc)
-	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-	 */
-	public void actionPerformed(ActionEvent e) {
-		try {
-			Actions action = Actions.valueOf(e.getActionCommand());
-			Card currentCard;
-			switch (action) {
-				case BACK:
-					currentCard = cards.get(currentCardID);
-					showCard(currentCard.getPreviousCardID());
-					currentCard.performAfterPressingBack();
-					break;
-				case CANCEL:
-					model.deleteResult();
-					currentCard = cards.get(currentCardID);
-					currentCard.performAfterCancel();
-					dispose();
-					break;
-				case FINISH:
-					if (buttonNextFinish.isEnabled()) {
-						currentCard = cards.get(currentCardID);
-						currentCard.performAfterNext();
-						showCard(currentCard.getNextCardID());
-					}
-					break;
-				default:
-					break;
-			}
-		} catch (Throwable t) {System.out.println(t.getMessage());}
-	}
-
-	/* (non-Javadoc)
-	 * @see java.awt.event.MouseListener#mouseClicked(java.awt.event.MouseEvent)
-	 */
-	public void mouseClicked(MouseEvent e) {
-		if (e.getSource().equals(labelLogo)) {
-			openURL(WizardProperties.getText("JDIALOG_WIZARD_TEXT_URL_SABIO_RK"));
-		}
-	}
-
-	/* (non-Javadoc)
-	 * @see java.awt.event.MouseListener#mouseEntered(java.awt.event.MouseEvent)
-	 */
-	public void mouseEntered(MouseEvent e) {
-		if (e.getSource().equals(labelLogo)) {
-			setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-			labelLogo.setToolTipText(WizardProperties
-					.getText("JDIALOG_WIZARD_TEXT_URL_SABIO_RK"));
-		}
-	}
-
-	/* (non-Javadoc)
-	 * @see java.awt.event.MouseListener#mouseExited(java.awt.event.MouseEvent)
-	 */
-	public void mouseExited(MouseEvent e) {
-		if (e.getSource().equals(labelLogo)) {
-			setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-		}
-	}
-
-	/* (non-Javadoc)
-	 * @see java.awt.event.MouseListener#mousePressed(java.awt.event.MouseEvent)
-	 */
-	public void mousePressed(MouseEvent e) {
-	}
-
-	/* (non-Javadoc)
-	 * @see java.awt.event.MouseListener#mouseReleased(java.awt.event.MouseEvent)
-	 */
-	public void mouseReleased(MouseEvent e) {
-	}
-
-	/* (non-Javadoc)
-	 * @see java.awt.event.WindowListener#windowOpened(java.awt.event.WindowEvent)
-	 */
-	@Override
-	public void windowOpened(WindowEvent e) {
-	}
-
-	/* (non-Javadoc)
-	 * @see java.awt.event.WindowListener#windowClosing(java.awt.event.WindowEvent)
-	 */
-	@Override
-	public void windowClosing(WindowEvent e) {
-		model.deleteResult();
-		dispose();
-	}
-
-	/* (non-Javadoc)
-	 * @see java.awt.event.WindowListener#windowClosed(java.awt.event.WindowEvent)
-	 */
-	@Override
-	public void windowClosed(WindowEvent e) {
-	}
-
-	/* (non-Javadoc)
-	 * @see java.awt.event.WindowListener#windowIconified(java.awt.event.WindowEvent)
-	 */
-	@Override
-	public void windowIconified(WindowEvent e) {
-	}
-
-	/* (non-Javadoc)
-	 * @see java.awt.event.WindowListener#windowDeiconified(java.awt.event.WindowEvent)
-	 */
-	@Override
-	public void windowDeiconified(WindowEvent e) {
-	}
-
-	/* (non-Javadoc)
-	 * @see java.awt.event.WindowListener#windowActivated(java.awt.event.WindowEvent)
-	 */
-	@Override
-	public void windowActivated(WindowEvent e) {
-	}
-
-	/* (non-Javadoc)
-	 * @see java.awt.event.WindowListener#windowDeactivated(java.awt.event.WindowEvent)
-	 */
-	@Override
-	public void windowDeactivated(WindowEvent e) {
-	}
-
+MouseListener {
+  
+  /**
+   * Generated serial version identifier.
+   */
+  private static final long serialVersionUID = 2106891365126572604L;
+  
+  /**
+   * 
+   * @author Matthias Rall
+   * @version $Rev$
+   */
+  public enum ButtonState {
+    START, NEXT_ENABLED, NEXT_DISABLED, FINISH, NEXT_BACK_ENABLED;
+  }
+  
+  /**
+   * 
+   * @author Matthias Rall
+   * @version $Rev$
+   */
+  public enum CardID {
+    NOT_AVAILABLE, CONFIRM_DIALOG, MATCHING, METHOD, REACTIONS_A, REACTIONS_M, SEARCH_A, SEARCH_M, SUMMARY_A, SUMMARY_M, SEARCHRESULTS_A, SEARCHRESULTS_M;
+  }
+  
+  /**
+   * 
+   * @author Andreas Dr&auml;ger
+   * @version $Rev$
+   */
+  public enum Actions {
+    BACK, FINISH, CANCEL;
+  }
+  
+  private Box boxButtons;
+  private CardID currentCardID;
+  private Map<CardID, Card> cards;
+  private JButton buttonBack;
+  private JButton buttonNextFinish;
+  private JButton buttonCancel;
+  private JLabel labelLogo;
+  private JPanel panelLogo;
+  private JPanel panelCards;
+  private JPanel panelButtons;
+  private WizardModel model;
+  
+  /**
+   * 
+   * @param owner
+   * @param modalityType
+   * @param sbmlDocument
+   * @param overwriteExistingLaws
+   */
+  public JDialogWizard(Window owner, ModalityType modalityType,
+    SBMLDocument sbmlDocument, boolean overwriteExistingLaws) {
+    super(owner, modalityType);
+    addWindowListener(this);
+    model = new WizardModel(sbmlDocument, overwriteExistingLaws);
+    model.setSelectedReactions(sbmlDocument.getModel().getListOfReactions());
+    initialize(false);
+  }
+  
+  /**
+   * @param owner
+   * @param modalityType
+   * @param sbmlDocument
+   * @param reactionId
+   */
+  public JDialogWizard(Window owner, ModalityType modalityType,
+    SBMLDocument sbmlDocument, String reactionId) {
+    super(owner, modalityType);
+    addWindowListener(this);
+    model = new WizardModel(sbmlDocument, reactionId, true);
+    model.setSelectedReactions(sbmlDocument.getModel().getListOfReactions().filterList(new NameFilter(reactionId)));
+    initialize(true);
+  }
+  
+  /**
+   * 
+   * @param manual
+   */
+  private void initialize(boolean manual) {
+    Icon icon = UIManager.getIcon("JDIALOG_WIZARD_IMAGE_LOGO");
+    if (icon == null) {
+      icon = new ImageIcon(this.getClass().getResource(
+        WizardProperties.getText("JDIALOG_WIZARD_IMAGE_LOGO")));
+      UIManager.put("JDIALOG_WIZARD_IMAGE_LOGO", icon);
+    }
+    labelLogo = new JLabel(icon);
+    labelLogo.addMouseListener(this);
+    
+    panelLogo = new JPanel(new BorderLayout());
+    panelLogo.setBackground(Color.WHITE);
+    panelLogo.add(labelLogo, BorderLayout.WEST);
+    panelLogo.add(new JComponentEtchedLine(), BorderLayout.SOUTH);
+    
+    panelCards = new JPanel(new CardLayout());
+    panelCards.setBorder(new EmptyBorder(new Insets(10, 10, 10, 10)));
+    
+    buttonBack = new JButton(
+      WizardProperties.getText("JDIALOG_WIZARD_TEXT_BUTTON_BACK"));
+    buttonBack.addActionListener(this);
+    buttonBack.setActionCommand(Actions.BACK.name());
+    
+    buttonNextFinish = new JButton(
+      WizardProperties.getText("JDIALOG_WIZARD_TEXT_BUTTON_NEXT"));
+    buttonNextFinish.setSelected(true);
+    buttonNextFinish.addActionListener(this);
+    buttonNextFinish.setActionCommand(Actions.FINISH.name());
+    
+    buttonCancel = new JButton(
+      WizardProperties.getText("JDIALOG_WIZARD_TEXT_BUTTON_CANCEL"));
+    buttonCancel.addActionListener(this);
+    buttonCancel.setActionCommand(Actions.CANCEL.name());
+    
+    // pressing the ESCAPE button triggers "Cancel"
+    getRootPane().registerKeyboardAction(this, Actions.CANCEL.name(),
+      KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
+      JComponent.WHEN_IN_FOCUSED_WINDOW);
+    // pressing the ENTER button triggers "OK"
+    getRootPane().registerKeyboardAction(this, Actions.FINISH.name(),
+      KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0),
+      JComponent.WHEN_IN_FOCUSED_WINDOW);
+    
+    boxButtons = new Box(BoxLayout.LINE_AXIS);
+    boxButtons.setBorder(new EmptyBorder(new Insets(10, 10, 10, 10)));
+    boxButtons.add(buttonBack);
+    boxButtons.add(Box.createHorizontalStrut(10));
+    boxButtons.add(buttonNextFinish);
+    boxButtons.add(Box.createHorizontalStrut(30));
+    boxButtons.add(buttonCancel);
+    
+    panelButtons = new JPanel(new BorderLayout());
+    panelButtons.add(new JComponentEtchedLine(), BorderLayout.NORTH);
+    panelButtons.add(boxButtons, BorderLayout.EAST);
+    
+    setLayout(new BorderLayout());
+    setTitle(WizardProperties.getText("JDIALOG_WIZARD_TEXT_TITLE"));
+    setMinimumSize(new Dimension(480, 600));
+    setPreferredSize(new Dimension(640, 720));
+    setSize(getPreferredSize());
+    add(panelLogo, BorderLayout.NORTH);
+    add(panelCards, BorderLayout.CENTER);
+    add(panelButtons, BorderLayout.SOUTH);
+    
+    cards = new HashMap<CardID, Card>();
+    cards.put(CardID.MATCHING, new CardMatching(this, model));
+    cards.put(CardID.METHOD, new CardMethod(this, model));
+    cards.put(CardID.REACTIONS_A, new CardReactionsA(this, model));
+    cards.put(CardID.REACTIONS_M, new CardReactionsM(this, model));
+    try {
+      cards.put(CardID.SEARCH_A, new CardSearchA(this, model));
+      cards.put(CardID.SEARCH_M, new CardSearchM(this, model));
+      cards.put(CardID.SEARCHRESULTS_A, new CardSearchResultsA(this, model));
+      cards.put(CardID.SEARCHRESULTS_M, new CardSearchResultsM(this, model));
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    cards.put(CardID.SUMMARY_A, new CardSummaryA(this, model));
+    cards.put(CardID.SUMMARY_M, new CardSummaryM(this, model));
+    
+    registerCards();
+    
+    if (manual) {
+      currentCardID = CardID.REACTIONS_M;
+    } else {
+      currentCardID = CardID.REACTIONS_A;
+    }
+    
+    pack();
+    showCard(currentCardID);
+  }
+  
+  /**
+   * Returns the result of the wizard.
+   * 
+   * @return
+   */
+  public SubmodelController getResult() {
+    return model.getResult();
+  }
+  
+  /**
+   * Stores and registers all {@link Card}
+   */
+  private void registerCards() {
+    for (Entry<CardID, Card> card : cards.entrySet()) {
+      panelCards.add(card.getValue(), card.getKey().toString());
+    }
+  }
+  
+  /**
+   * Shows a {@link Card}, a confirm dialog or does nothing according to the
+   * given cardID.
+   * 
+   * @param cardID
+   */
+  private void showCard(CardID cardID) {
+    switch (cardID) {
+      case NOT_AVAILABLE:
+        break;
+      case CONFIRM_DIALOG:
+        showConfirmDialog();
+        break;
+      default:
+        cards.get(cardID).performBeforeShowing();
+        ((CardLayout) panelCards.getLayout()).show(panelCards, cardID.toString());
+        currentCardID = cardID;
+        break;
+    }
+  }
+  
+  /**
+   * Shows a confirm dialog.
+   */
+  private void showConfirmDialog() {
+    if (JOptionPane.showConfirmDialog(this,
+      WizardProperties.getText("JDIALOG_WIZARD_TEXT_CONFIRM_DIALOG_MESSAGE"),
+      WizardProperties.getText("JDIALOG_WIZARD_TEXT_CONFIRM_DIALOG_TITLE"),
+      JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+      model.applyChanges();
+      dispose();
+    }
+  }
+  
+  /**
+   * Shows an error message concerning a web service connect exception.
+   * 
+   * @param e
+   */
+  public static void showErrorDialog(WebServiceConnectException e) {
+    JOptionPane
+    .showMessageDialog(
+      null,
+      WizardProperties
+      .getText("JDIALOG_WIZARD_TEXT_ERROR_MESSAGE_WEB_SERVICE_CONNECT_EXCEPTION"),
+      WizardProperties
+      .getText("JDIALOG_WIZARD_TEXT_ERROR_MESSAGE_DIALOG_TITLE"),
+      JOptionPane.ERROR_MESSAGE);
+  }
+  
+  /**
+   * Shows an error message concerning a web service response exception.
+   * 
+   * @param e
+   */
+  public static void showErrorDialog(WebServiceResponseException e) {
+    switch (e.getResponseCode()) {
+      case 400:
+        JOptionPane
+        .showMessageDialog(
+          null,
+          WizardProperties
+          .getText("JDIALOG_WIZARD_TEXT_ERROR_MESSAGE_WEB_SERVICE_RESPONSE_EXCEPTION_400"),
+          WizardProperties
+          .getText("JDIALOG_WIZARD_TEXT_ERROR_MESSAGE_DIALOG_TITLE"),
+          JOptionPane.ERROR_MESSAGE);
+        break;
+      case 404:
+        JOptionPane
+        .showMessageDialog(
+          null,
+          WizardProperties
+          .getText("JDIALOG_WIZARD_TEXT_ERROR_MESSAGE_WEB_SERVICE_RESPONSE_EXCEPTION_404"),
+          WizardProperties
+          .getText("JDIALOG_WIZARD_TEXT_ERROR_MESSAGE_DIALOG_TITLE"),
+          JOptionPane.ERROR_MESSAGE);
+        break;
+      case 500:
+        JOptionPane
+        .showMessageDialog(
+          null,
+          WizardProperties
+          .getText("JDIALOG_WIZARD_TEXT_ERROR_MESSAGE_WEB_SERVICE_RESPONSE_EXCEPTION_500"),
+          WizardProperties
+          .getText("JDIALOG_WIZARD_TEXT_ERROR_MESSAGE_DIALOG_TITLE"),
+          JOptionPane.ERROR_MESSAGE);
+        break;
+      default:
+        JOptionPane
+        .showMessageDialog(
+          null,
+          e.getMessage(),
+          WizardProperties
+          .getText("JDIALOG_WIZARD_TEXT_ERROR_MESSAGE_DIALOG_TITLE"),
+          JOptionPane.ERROR_MESSAGE);
+        break;
+    }
+  }
+  
+  /**
+   * Sets different properties of the wizard buttons for navigation according
+   * to the given buttonState
+   * 
+   * @param buttonState
+   */
+  public void setButtonState(ButtonState buttonState) {
+    switch (buttonState) {
+      case START:
+        buttonBack.setVisible(false);
+        buttonNextFinish.setText(WizardProperties
+          .getText("JDIALOG_WIZARD_TEXT_BUTTON_NEXT"));
+        buttonNextFinish.setEnabled(false);
+        break;
+      case NEXT_ENABLED:
+        buttonBack.setVisible(false);
+        buttonNextFinish.setText(WizardProperties
+          .getText("JDIALOG_WIZARD_TEXT_BUTTON_NEXT"));
+        buttonNextFinish.setEnabled(true);
+        break;
+      case NEXT_BACK_ENABLED:
+        buttonBack.setVisible(true);
+        buttonNextFinish.setText(WizardProperties
+          .getText("JDIALOG_WIZARD_TEXT_BUTTON_NEXT"));
+        buttonNextFinish.setEnabled(true);
+        break;
+      case NEXT_DISABLED:
+        buttonBack.setVisible(true);
+        buttonNextFinish.setText(WizardProperties
+          .getText("JDIALOG_WIZARD_TEXT_BUTTON_NEXT"));
+        buttonNextFinish.setEnabled(false);
+        break;
+      case FINISH:
+        buttonBack.setVisible(false);
+        buttonNextFinish.setText(WizardProperties
+          .getText("JDIALOG_WIZARD_TEXT_BUTTON_FINISH"));
+        buttonNextFinish.setEnabled(true);
+        break;
+    }
+  }
+  
+  /**
+   * Opens a URL in the browser window.
+   * 
+   * @param url
+   */
+  private void openURL(String url) {
+    if (Desktop.isDesktopSupported()) {
+      Desktop desktop = Desktop.getDesktop();
+      if (desktop.isSupported(Desktop.Action.BROWSE)) {
+        try {
+          URI uri = new URI(url);
+          desktop.browse(uri);
+        } catch (URISyntaxException e) {
+          e.printStackTrace();
+        } catch (IOException e) {
+          e.printStackTrace();
+        }
+      }
+    }
+  }
+  
+  /* (non-Javadoc)
+   * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+   */
+  @Override
+  public void actionPerformed(ActionEvent e) {
+    try {
+      Actions action = Actions.valueOf(e.getActionCommand());
+      Card currentCard;
+      switch (action) {
+        case BACK:
+          currentCard = cards.get(currentCardID);
+          showCard(currentCard.getPreviousCardID());
+          currentCard.performAfterPressingBack();
+          break;
+        case CANCEL:
+          model.deleteResult();
+          currentCard = cards.get(currentCardID);
+          currentCard.performAfterCancel();
+          dispose();
+          break;
+        case FINISH:
+          if (buttonNextFinish.isEnabled()) {
+            currentCard = cards.get(currentCardID);
+            currentCard.performAfterNext();
+            showCard(currentCard.getNextCardID());
+          }
+          break;
+        default:
+          break;
+      }
+    } catch (Throwable t) {System.out.println(t.getMessage());}
+  }
+  
+  /* (non-Javadoc)
+   * @see java.awt.event.MouseListener#mouseClicked(java.awt.event.MouseEvent)
+   */
+  @Override
+  public void mouseClicked(MouseEvent e) {
+    if (e.getSource().equals(labelLogo)) {
+      openURL(WizardProperties.getText("JDIALOG_WIZARD_TEXT_URL_SABIO_RK"));
+    }
+  }
+  
+  /* (non-Javadoc)
+   * @see java.awt.event.MouseListener#mouseEntered(java.awt.event.MouseEvent)
+   */
+  @Override
+  public void mouseEntered(MouseEvent e) {
+    if (e.getSource().equals(labelLogo)) {
+      setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+      labelLogo.setToolTipText(WizardProperties
+        .getText("JDIALOG_WIZARD_TEXT_URL_SABIO_RK"));
+    }
+  }
+  
+  /* (non-Javadoc)
+   * @see java.awt.event.MouseListener#mouseExited(java.awt.event.MouseEvent)
+   */
+  @Override
+  public void mouseExited(MouseEvent e) {
+    if (e.getSource().equals(labelLogo)) {
+      setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+    }
+  }
+  
+  /* (non-Javadoc)
+   * @see java.awt.event.MouseListener#mousePressed(java.awt.event.MouseEvent)
+   */
+  @Override
+  public void mousePressed(MouseEvent e) {
+  }
+  
+  /* (non-Javadoc)
+   * @see java.awt.event.MouseListener#mouseReleased(java.awt.event.MouseEvent)
+   */
+  @Override
+  public void mouseReleased(MouseEvent e) {
+  }
+  
+  /* (non-Javadoc)
+   * @see java.awt.event.WindowListener#windowOpened(java.awt.event.WindowEvent)
+   */
+  @Override
+  public void windowOpened(WindowEvent e) {
+  }
+  
+  /* (non-Javadoc)
+   * @see java.awt.event.WindowListener#windowClosing(java.awt.event.WindowEvent)
+   */
+  @Override
+  public void windowClosing(WindowEvent e) {
+    model.deleteResult();
+    dispose();
+  }
+  
+  /* (non-Javadoc)
+   * @see java.awt.event.WindowListener#windowClosed(java.awt.event.WindowEvent)
+   */
+  @Override
+  public void windowClosed(WindowEvent e) {
+  }
+  
+  /* (non-Javadoc)
+   * @see java.awt.event.WindowListener#windowIconified(java.awt.event.WindowEvent)
+   */
+  @Override
+  public void windowIconified(WindowEvent e) {
+  }
+  
+  /* (non-Javadoc)
+   * @see java.awt.event.WindowListener#windowDeiconified(java.awt.event.WindowEvent)
+   */
+  @Override
+  public void windowDeiconified(WindowEvent e) {
+  }
+  
+  /* (non-Javadoc)
+   * @see java.awt.event.WindowListener#windowActivated(java.awt.event.WindowEvent)
+   */
+  @Override
+  public void windowActivated(WindowEvent e) {
+  }
+  
+  /* (non-Javadoc)
+   * @see java.awt.event.WindowListener#windowDeactivated(java.awt.event.WindowEvent)
+   */
+  @Override
+  public void windowDeactivated(WindowEvent e) {
+  }
+  
 }

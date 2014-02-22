@@ -2,7 +2,7 @@
  * $Id$
  * $URL$
  * ---------------------------------------------------------------------
- * This file is part of SBMLsqueezer, a Java program that creates rate 
+ * This file is part of SBMLsqueezer, a Java program that creates rate
  * equations for reactions in SBML files (http://sbml.org).
  *
  * Copyright (C) 2006-2014 by the University of Tuebingen, Germany.
@@ -112,9 +112,9 @@ public class KineticLawTable extends JTable implements MouseInputListener {
     /**
      * 
      * @param klg
-     * @param progressBar 
+     * @param progressBar
      * @param table
-     * @param listener 
+     * @param listener
      */
     public TableModelWorker(KineticLawGenerator klg, AbstractProgressBar progressBar, KineticLawTable table, PropertyChangeListener listener) {
       super();
@@ -180,6 +180,7 @@ public class KineticLawTable extends JTable implements MouseInputListener {
   /* (non-Javadoc)
    * @see java.awt.event.MouseListener#mouseClicked(java.awt.event.MouseEvent)
    */
+  @Override
   public void mouseClicked(MouseEvent e) {
     // Point p = e.getPoint();
     // int rowIndex = rowAtPoint(p);
@@ -216,10 +217,10 @@ public class KineticLawTable extends JTable implements MouseInputListener {
         panel.add(component, BorderLayout.CENTER);
         panel.setLocation(((int) MouseInfo.getPointerInfo()
             .getLocation().getX())
-            - this.getTopLevelAncestor().getX(), this.getY() + 10);
+            - getTopLevelAncestor().getX(), getY() + 10);
         panel.setBorder(BorderFactory.createLoweredBevelBorder());
         JOptionPane.showMessageDialog(this, panel,
-          MessageFormat.format(MESSAGES.getString("RATE_LAW_OF_REACTION"), 
+          MessageFormat.format(MESSAGES.getString("RATE_LAW_OF_REACTION"),
             kinetic.getParentSBMLObject().getId()),
             JOptionPane.INFORMATION_MESSAGE);
         // JLayeredPane.getLayeredPaneAbove(getParent()).add(component,
@@ -232,36 +233,41 @@ public class KineticLawTable extends JTable implements MouseInputListener {
   /* (non-Javadoc)
    * @see java.awt.event.MouseMotionListener#mouseDragged(java.awt.event.MouseEvent)
    */
+  @Override
   public void mouseDragged(MouseEvent e) {
   }
   
   /* (non-Javadoc)
    * @see java.awt.event.MouseListener#mouseEntered(java.awt.event.MouseEvent)
    */
+  @Override
   public void mouseEntered(MouseEvent e) {
   }
   
   /* (non-Javadoc)
    * @see java.awt.event.MouseListener#mouseExited(java.awt.event.MouseEvent)
    */
+  @Override
   public void mouseExited(MouseEvent e) {
   }
   
   /* (non-Javadoc)
    * @see java.awt.event.MouseMotionListener#mouseMoved(java.awt.event.MouseEvent)
    */
+  @Override
   public void mouseMoved(MouseEvent e) {
   }
   
   /* (non-Javadoc)
    * @see java.awt.event.MouseListener#mousePressed(java.awt.event.MouseEvent)
    */
+  @Override
   public void mousePressed(MouseEvent e) {
     Point p = e.getPoint();
     int rowIndex = rowAtPoint(p);
     //		int colIndex = columnAtPoint(p);
     // Kinetic Law column
-    if (!editing) { // (convertColumnIndexToModel(colIndex) == 1) && 
+    if (!editing) { // (convertColumnIndexToModel(colIndex) == 1) &&
       // setCellEditor(null);
       try {
         setCellEditor(rowIndex);
@@ -274,6 +280,7 @@ public class KineticLawTable extends JTable implements MouseInputListener {
   /* (non-Javadoc)
    * @see java.awt.event.MouseListener#mouseReleased(java.awt.event.MouseEvent)
    */
+  @Override
   public void mouseReleased(MouseEvent e) {
   }
   
@@ -298,7 +305,7 @@ public class KineticLawTable extends JTable implements MouseInputListener {
       final Reaction reaction = klg.getModel().getReaction(
         ((KineticLawTableModel) dataModel).getKineticLaw(rowIndex).getParent().getId());
       try {
-        final Class<?> possibleTypes[] = this.klg.getReactionType(
+        final Class<?> possibleTypes[] = klg.getReactionType(
           reaction.getId()).identifyPossibleKineticLaws();
         final BasicKineticLaw possibleLaws[] = new BasicKineticLaw[possibleTypes.length];
         int selected = 0;
@@ -387,6 +394,7 @@ public class KineticLawTable extends JTable implements MouseInputListener {
           /* (non-Javadoc)
            * @see java.beans.PropertyChangeListener#propertyChange(java.beans.PropertyChangeEvent)
            */
+          @Override
           public void propertyChange(PropertyChangeEvent event) {
             // Let the defaultCloseOperation handle the closing
             // if the user closed the window without selecting a
@@ -448,7 +456,7 @@ public class KineticLawTable extends JTable implements MouseInputListener {
   
   /**
    * 
-   * @param rowIndex 
+   * @param rowIndex
    * @param possibleTypes
    * @param selectedKinetic
    * @param possibleLaws

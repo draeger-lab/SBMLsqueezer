@@ -2,7 +2,7 @@
  * $Id: KineticLawSelectionWizard.java 830 2012-02-26 00:33:31Z snagel $
  * $URL: https://rarepos.cs.uni-tuebingen.de/svn-path/SBMLsqueezer/trunk/src/org/sbml/squeezer/gui/wizard/KineticLawSelectionWizard.java $
  * ---------------------------------------------------------------------
- * This file is part of SBMLsqueezer, a Java program that creates rate 
+ * This file is part of SBMLsqueezer, a Java program that creates rate
  * equations for reactions in SBML files (http://sbml.org).
  *
  * Copyright (C) 2006-2014 by the University of Tuebingen, Germany.
@@ -52,91 +52,91 @@ import de.zbit.util.ResourceManager;
  * @version $Rev: 830 $
  */
 public class KineticLawSelectionWizard extends Wizard {
-	
-	/**
-	 * 
-	 */
-	public static final transient ResourceBundle MESSAGES = ResourceManager.getBundle(Bundles.MESSAGES);
-	
-	/**
-	 * A {@link Logger} for this class.
-	 */
-	private static final transient Logger logger = Logger.getLogger(KineticLawSelectionWizard.class.getName());
-
-	private SBMLio sbmlIO;
-
-	private JDialog dialog;
-	
-	/**
-	 * 
-	 * @param owner
-	 * @param sbmlIO
-	 * @param reactionID
-	 */
-	public KineticLawSelectionWizard(Frame owner, SBMLio sbmlIO) {
-		super(owner);
-		
-		this.sbmlIO = sbmlIO;
-		this.dialog = this.getDialog();
-		
-		// set dialog properties
-		dialog.setTitle(System.getProperty("app.name"));
-		dialog.setMinimumSize(new Dimension(650, 250));
-		dialog.setLocationRelativeTo(owner);
-		
-		setModal(true);
-		setWarningVisible(false);
-		
-		initDescriptors();
-	}
-
-	/**
-	 * init all descriptor (panels)
-	 */
-	private void initDescriptors() {
-		// try to init KineticLawGenerator with the selected model
-		KineticLawGenerator klg = null;
-		try {
-			klg = new KineticLawGenerator(this.sbmlIO.getSelectedModel());
-		} catch (ClassNotFoundException e) {
-			GUITools.showErrorMessage(this.getDialog(), e);
-		}
-
-		// option panel
-		WizardPanelDescriptor descriptor1 = new KineticLawSelectionOptionPanelDescriptor(klg);
-		registerWizardPanel(KineticLawSelectionOptionPanelDescriptor.IDENTIFIER, descriptor1);
-		
-		
-		// progress panel
-		WizardPanelDescriptor descriptor2 = new KineticLawSelectionEquationProgressPanelDescriptor(klg);
-		registerWizardPanel(KineticLawSelectionEquationProgressPanelDescriptor.IDENTIFIER, descriptor2);
-		
-		// equation panel
-		WizardPanelDescriptor descriptor3 = new KineticLawSelectionEquationPanelDescriptor(klg, this.sbmlIO);
-		registerWizardPanel(KineticLawSelectionEquationPanelDescriptor.IDENTIFIER, descriptor3);
-		
-		// set option panel as first panel
-		setCurrentPanel(KineticLawSelectionOptionPanelDescriptor.IDENTIFIER);
-	}
-	
-	/**
-	 * Method that indicates whether or not changes have been introduced into
-	 * the given model.
-	 * 
-	 * @return {@code true} if kinetic equations and parameters or anything else were
-	 *         changed by SBMLsqueezer.
-	 */
-	public boolean isKineticsAndParametersStoredInSBML() {
-		boolean result = true;
-		KineticLawSelectionEquationPanelDescriptor desc = (KineticLawSelectionEquationPanelDescriptor) this.getPanel(KineticLawSelectionEquationPanelDescriptor.IDENTIFIER);
-		try {
-			result = ((KineticLawSelectionEquationPanel) desc.getPanelComponent()).isKineticsAndParametersStoredInSBML();
-			logger.fine("stored kinetics: " + result);
-		} catch (Exception exc) {
-			logger.fine(exc.getLocalizedMessage());
-			exc.printStackTrace();
-		}
-		return result;
-	}
-
+  
+  /**
+   * Localization support.
+   */
+  public static final transient ResourceBundle MESSAGES = ResourceManager.getBundle(Bundles.MESSAGES);
+  
+  /**
+   * A {@link Logger} for this class.
+   */
+  private static final transient Logger logger = Logger.getLogger(KineticLawSelectionWizard.class.getName());
+  
+  private SBMLio<?> sbmlIO;
+  
+  private JDialog dialog;
+  
+  /**
+   * 
+   * @param owner
+   * @param sbmlIO
+   * @param reactionID
+   */
+  public KineticLawSelectionWizard(Frame owner, SBMLio<?> sbmlIO) {
+    super(owner);
+    
+    this.sbmlIO = sbmlIO;
+    dialog = getDialog();
+    
+    // set dialog properties
+    dialog.setTitle(System.getProperty("app.name"));
+    dialog.setMinimumSize(new Dimension(650, 250));
+    dialog.setLocationRelativeTo(owner);
+    
+    setModal(true);
+    setWarningVisible(false);
+    
+    initDescriptors();
+  }
+  
+  /**
+   * init all descriptor (panels)
+   */
+  private void initDescriptors() {
+    // try to init KineticLawGenerator with the selected model
+    KineticLawGenerator klg = null;
+    try {
+      klg = new KineticLawGenerator(sbmlIO.getSelectedModel());
+    } catch (ClassNotFoundException e) {
+      GUITools.showErrorMessage(getDialog(), e);
+    }
+    
+    // option panel
+    WizardPanelDescriptor descriptor1 = new KineticLawSelectionOptionPanelDescriptor(klg);
+    registerWizardPanel(KineticLawSelectionOptionPanelDescriptor.IDENTIFIER, descriptor1);
+    
+    
+    // progress panel
+    WizardPanelDescriptor descriptor2 = new KineticLawSelectionEquationProgressPanelDescriptor(klg);
+    registerWizardPanel(KineticLawSelectionEquationProgressPanelDescriptor.IDENTIFIER, descriptor2);
+    
+    // equation panel
+    WizardPanelDescriptor descriptor3 = new KineticLawSelectionEquationPanelDescriptor(klg, sbmlIO);
+    registerWizardPanel(KineticLawSelectionEquationPanelDescriptor.IDENTIFIER, descriptor3);
+    
+    // set option panel as first panel
+    setCurrentPanel(KineticLawSelectionOptionPanelDescriptor.IDENTIFIER);
+  }
+  
+  /**
+   * Method that indicates whether or not changes have been introduced into
+   * the given model.
+   * 
+   * @return {@code true} if kinetic equations and parameters or anything else were
+   *         changed by SBMLsqueezer.
+   */
+  public boolean isKineticsAndParametersStoredInSBML() {
+    boolean result = true;
+    KineticLawSelectionEquationPanelDescriptor desc = (KineticLawSelectionEquationPanelDescriptor) getPanel(KineticLawSelectionEquationPanelDescriptor.IDENTIFIER);
+    try {
+      result = ((KineticLawSelectionEquationPanel) desc.getPanelComponent()).isKineticsAndParametersStoredInSBML();
+      logger.fine("stored kinetics: " + result);
+    } catch (Exception exc) {
+      logger.fine(exc.getLocalizedMessage());
+      exc.printStackTrace();
+    }
+    return result;
+  }
+  
 }

@@ -51,7 +51,7 @@ import org.sbml.squeezer.sabiork.util.XMLParser;
 
 /**
  * The SABIORK class provides access to the SABIO-RK database via their RESTful
- * Web Services.
+ * Web Services. 
  * 
  * @author Matthias Rall
  * @version $Rev$

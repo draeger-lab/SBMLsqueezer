@@ -2,7 +2,7 @@
  * $Id$
  * $URL$
  * ---------------------------------------------------------------------
- * This file is part of SBMLsqueezer, a Java program that creates rate 
+ * This file is part of SBMLsqueezer, a Java program that creates rate
  * equations for reactions in SBML files (http://sbml.org).
  *
  * Copyright (C) 2006-2014 by the University of Tuebingen, Germany.
@@ -46,50 +46,51 @@ import de.zbit.gui.ColorPalette;
  * @version $Rev$
  */
 public class KineticLawTableCellRenderer extends JTextArea implements TableCellRenderer {
-
-	/**
-	 * Generated serial version identifier.
-	 */
-	private static final long serialVersionUID = -7760600735675079594L;
-
-	/**
-	 * TODO: Comment is missing
-	 * 
-	 * @param maxSpecies
-	 */
-	public KineticLawTableCellRenderer() {
-		super();
-	}
-
-	/* (non-Javadoc)
-	 * @see javax.swing.table.TableCellRenderer#getTableCellRendererComponent(javax.swing.JTable, java.lang.Object, boolean, boolean, int, int)
-	 */
-	public Component getTableCellRendererComponent(JTable table, Object value,
-			boolean isSelected, boolean hasFocus, int row, int column) {
-		table.setGridColor(ColorPalette.slateGray3);
-		table.setBackground(Color.WHITE);
-		KineticLawTableModel tabModel = (KineticLawTableModel) table.getModel();
-		if (tabModel.hasTooManyReactionParticipants(row)) {
-			setBackground(ColorPalette.lightRed);
-			setForeground(Color.WHITE);
-			setFont(getFont().deriveFont(Font.PLAIN));
-		} else {
-			if (row % 2 == 0) {
-				setBackground(Color.WHITE);
-			} else {
-				setBackground(ColorPalette.lightBlue);
-			}
-			setForeground(Color.BLACK);
-			setFont(getFont().deriveFont(Font.PLAIN));
-		}
-		if (value instanceof Double) {
-			setText(StringTools.toString(((Double) value).doubleValue()));
-		} else if (value instanceof String) {
-			setText((String) value);
-		} else {
-			setText(value.toString());
-		}
-		return this;
-	}
-
+  
+  /**
+   * Generated serial version identifier.
+   */
+  private static final long serialVersionUID = -7760600735675079594L;
+  
+  /**
+   * TODO: Comment is missing
+   * 
+   * @param maxSpecies
+   */
+  public KineticLawTableCellRenderer() {
+    super();
+  }
+  
+  /* (non-Javadoc)
+   * @see javax.swing.table.TableCellRenderer#getTableCellRendererComponent(javax.swing.JTable, java.lang.Object, boolean, boolean, int, int)
+   */
+  @Override
+  public Component getTableCellRendererComponent(JTable table, Object value,
+    boolean isSelected, boolean hasFocus, int row, int column) {
+    table.setGridColor(ColorPalette.slateGray3);
+    table.setBackground(Color.WHITE);
+    KineticLawTableModel tabModel = (KineticLawTableModel) table.getModel();
+    if (tabModel.hasTooManyReactionParticipants(row)) {
+      setBackground(ColorPalette.lightRed);
+      setForeground(Color.WHITE);
+      setFont(getFont().deriveFont(Font.PLAIN));
+    } else {
+      if (row % 2 == 0) {
+        setBackground(Color.WHITE);
+      } else {
+        setBackground(ColorPalette.lightBlue);
+      }
+      setForeground(Color.BLACK);
+      setFont(getFont().deriveFont(Font.PLAIN));
+    }
+    if (value instanceof Double) {
+      setText(StringTools.toString(((Double) value).doubleValue()));
+    } else if (value instanceof String) {
+      setText((String) value);
+    } else {
+      setText(value.toString());
+    }
+    return this;
+  }
+  
 }

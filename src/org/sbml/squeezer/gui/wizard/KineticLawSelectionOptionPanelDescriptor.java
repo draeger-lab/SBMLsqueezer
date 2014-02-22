@@ -2,7 +2,7 @@
  * $Id: KineticLawSelectionOptionPanelDescriptor.java 830 2012-02-26 00:33:31Z snagel $
  * $URL: https://rarepos.cs.uni-tuebingen.de/svn-path/SBMLsqueezer/trunk/src/org/sbml/squeezer/gui/wizard/KineticLawSelectionOptionPanelDescriptor.java $
  * ---------------------------------------------------------------------
- * This file is part of SBMLsqueezer, a Java program that creates rate 
+ * This file is part of SBMLsqueezer, a Java program that creates rate
  * equations for reactions in SBML files (http://sbml.org).
  *
  * Copyright (C) 2006-2014 by the University of Tuebingen, Germany.
@@ -21,7 +21,6 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  * ---------------------------------------------------------------------
  */
-
 package org.sbml.squeezer.gui.wizard;
 
 import java.awt.Component;
@@ -44,66 +43,66 @@ import de.zbit.util.ResourceManager;
  * @version $Rev: 830 $
  */
 public class KineticLawSelectionOptionPanelDescriptor extends WizardPanelDescriptor {
-
-	/**
-	 * 
-	 */
-	public static final transient ResourceBundle MESSAGES = ResourceManager.getBundle(Bundles.MESSAGES);
-	/**
-	 * 
-	 */
-	public static final transient ResourceBundle LABELS = ResourceManager.getBundle(Bundles.LABELS);
-	
-	/**
-	 * 
-	 */
-	public static final String IDENTIFIER = "KINETIC_LAW_OPTION_PANEL";
-	
-	/**
-	 * 
-	 */
-	public KineticLawSelectionOptionPanelDescriptor(KineticLawGenerator klg) {
-		super(IDENTIFIER, new KineticLawSelectionOptionPanel(klg));
-	}
-	
-	/* (non-Javadoc)
-	 * @see de.zbit.gui.wizard.WizardPanelDescriptor#aboutToDisplayPanel()
-	 */
-	@Override
-	public void aboutToDisplayPanel() {
-	}
-	
-	/* (non-Javadoc)
-	 * @see de.zbit.gui.wizard.WizardPanelDescriptor#getNextPanelDescriptor()
-	 */
-	@Override
-	public Object getNextPanelDescriptor() {
-		return KineticLawSelectionEquationProgressPanelDescriptor.IDENTIFIER;
-	}
-	
-	/* (non-Javadoc)
-	 * @see de.zbit.gui.wizard.WizardPanelDescriptor#getBackPanelDescriptor()
-	 */
-	@Override
-	public Object getBackPanelDescriptor() {
-		return null;
-	}
-	
-	/* (non-Javadoc)
-	 * @see de.zbit.gui.wizard.WizardPanelDescriptor#getHelpAction()
-	 */
-	@Override
-	public Component getHelpAction() {
-		JHelpBrowser helpBrowser = new JHelpBrowser(getWizard().getDialog(),
-			System.getProperty("app.name")
-					+ " "
-					+ String.format(LABELS.getString("ONLINE_HELP_FOR_THE_PROGRAM"),
-						System.getProperty("app.version")),
-						SBMLsqueezer.class.getResource("resources/html/help.html"));
-		helpBrowser.setLocationRelativeTo(this.getWizard().getDialog());
-		helpBrowser.setSize(640, 640);
-		
-		return helpBrowser;
-	}
-
+  
+  /**
+   * Localization support.
+   */
+  public static final transient ResourceBundle MESSAGES = ResourceManager.getBundle(Bundles.MESSAGES);
+  /**
+   * Localization support.
+   */
+  public static final transient ResourceBundle LABELS = ResourceManager.getBundle(Bundles.LABELS);
+  
+  /**
+   * 
+   */
+  public static final String IDENTIFIER = "KINETIC_LAW_OPTION_PANEL";
+  
+  /**
+   * 
+   */
+  public KineticLawSelectionOptionPanelDescriptor(KineticLawGenerator klg) {
+    super(IDENTIFIER, new KineticLawSelectionOptionPanel(klg));
+  }
+  
+  /* (non-Javadoc)
+   * @see de.zbit.gui.wizard.WizardPanelDescriptor#aboutToDisplayPanel()
+   */
+  @Override
+  public void aboutToDisplayPanel() {
+  }
+  
+  /* (non-Javadoc)
+   * @see de.zbit.gui.wizard.WizardPanelDescriptor#getNextPanelDescriptor()
+   */
+  @Override
+  public Object getNextPanelDescriptor() {
+    return KineticLawSelectionEquationProgressPanelDescriptor.IDENTIFIER;
+  }
+  
+  /* (non-Javadoc)
+   * @see de.zbit.gui.wizard.WizardPanelDescriptor#getBackPanelDescriptor()
+   */
+  @Override
+  public Object getBackPanelDescriptor() {
+    return null;
+  }
+  
+  /* (non-Javadoc)
+   * @see de.zbit.gui.wizard.WizardPanelDescriptor#getHelpAction()
+   */
+  @Override
+  public Component getHelpAction() {
+    JHelpBrowser helpBrowser = new JHelpBrowser(getWizard().getDialog(),
+      System.getProperty("app.name")
+      + " "
+      + String.format(LABELS.getString("ONLINE_HELP_FOR_THE_PROGRAM"),
+        System.getProperty("app.version")),
+        SBMLsqueezer.class.getResource("resources/html/help.html"));
+    helpBrowser.setLocationRelativeTo(getWizard().getDialog());
+    helpBrowser.setSize(640, 640);
+    
+    return helpBrowser;
+  }
+  
 }

@@ -2,7 +2,7 @@
  * $Id$
  * $URL$
  * ---------------------------------------------------------------------
- * This file is part of SBMLsqueezer, a Java program that creates rate 
+ * This file is part of SBMLsqueezer, a Java program that creates rate
  * equations for reactions in SBML files (http://sbml.org).
  *
  * Copyright (C) 2006-2014 by the University of Tuebingen, Germany.
@@ -33,42 +33,42 @@ package org.sbml.squeezer;
  * @date Aug 14, 2007
  */
 public class RateLawNotApplicableException extends Exception {
-
-	/**
-	 * ID
-	 */
-	private static final long serialVersionUID = -1467056182371100941L;
-
-	/**
-	 * Construct a new exception for cases in which the selected kinetic
-	 * formalism is not applicable.
-	 */
-	public RateLawNotApplicableException() {
-		super();
-	}
-
-	/**
-	 * Construct a new exception for cases in which the selected kinetic
-	 * formalism is not applicable.
-	 * 
-	 * @param message
-	 *            Exception message
-	 */
-	public RateLawNotApplicableException(String message) {
-		super(message);
-	}
-
-	/**
-	 * Construct a new exception for cases in which the selected kinetic
-	 * formalism is not applicable.
-	 * 
-	 * @param message
-	 *            Exception message
-	 * @param cause
-	 *            Reason for the exception to be thrown.
-	 */
-	public RateLawNotApplicableException(String message, Throwable cause) {
-		super(message, cause);
-	}
-
+  
+  /**
+   * Gernerated serial version identifier.
+   */
+  private static final long serialVersionUID = -1467056182371100941L;
+  
+  /**
+   * Construct a new exception for cases in which the selected kinetic
+   * formalism is not applicable.
+   */
+  public RateLawNotApplicableException() {
+    super();
+  }
+  
+  /**
+   * Construct a new exception for cases in which the selected kinetic
+   * formalism is not applicable.
+   * 
+   * @param message
+   *            Exception message
+   */
+  public RateLawNotApplicableException(String message) {
+    super(message);
+  }
+  
+  /**
+   * Construct a new exception for cases in which the selected kinetic
+   * formalism is not applicable.
+   * 
+   * @param message
+   *            Exception message
+   * @param cause
+   *            Reason for the exception to be thrown.
+   */
+  public RateLawNotApplicableException(String message, Throwable cause) {
+    super(message, cause);
+  }
+  
 }

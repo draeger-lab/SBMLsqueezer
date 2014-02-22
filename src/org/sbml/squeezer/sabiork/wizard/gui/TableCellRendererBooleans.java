@@ -2,7 +2,7 @@
  * $Id$
  * $URL$
  * ---------------------------------------------------------------------
- * This file is part of SBMLsqueezer, a Java program that creates rate 
+ * This file is part of SBMLsqueezer, a Java program that creates rate
  * equations for reactions in SBML files (http://sbml.org).
  *
  * Copyright (C) 2006-2014 by the University of Tuebingen, Germany.
@@ -36,28 +36,29 @@ import javax.swing.table.TableCellRenderer;
  * @version $Rev$
  */
 public class TableCellRendererBooleans implements TableCellRenderer {
-
-	/* (non-Javadoc)
-	 * @see javax.swing.table.TableCellRenderer#getTableCellRendererComponent(javax.swing.JTable, java.lang.Object, boolean, boolean, int, int)
-	 */
-	public Component getTableCellRendererComponent(JTable table, Object value,
-			boolean isSelected, boolean hasFocus, int row, int column) {
-		JCheckBox checkBox = new JCheckBox();
-		Color colorForeground = table.getForeground();
-		Color colorBackground = table.getBackground();
-		Color colorSelectionForeground = table.getSelectionForeground();
-		Color colorSelectionBackground = table.getSelectionBackground();
-		if (value instanceof Boolean) {
-			checkBox.setSelected((Boolean) value);
-		}
-		checkBox.setEnabled(false);
-		checkBox.setForeground(colorForeground);
-		checkBox.setBackground(colorBackground);
-		if (isSelected) {
-			checkBox.setForeground(colorSelectionForeground);
-			checkBox.setBackground(colorSelectionBackground);
-		}
-		return checkBox;
-	}
-
+  
+  /* (non-Javadoc)
+   * @see javax.swing.table.TableCellRenderer#getTableCellRendererComponent(javax.swing.JTable, java.lang.Object, boolean, boolean, int, int)
+   */
+  @Override
+  public Component getTableCellRendererComponent(JTable table, Object value,
+    boolean isSelected, boolean hasFocus, int row, int column) {
+    JCheckBox checkBox = new JCheckBox();
+    Color colorForeground = table.getForeground();
+    Color colorBackground = table.getBackground();
+    Color colorSelectionForeground = table.getSelectionForeground();
+    Color colorSelectionBackground = table.getSelectionBackground();
+    if (value instanceof Boolean) {
+      checkBox.setSelected((Boolean) value);
+    }
+    checkBox.setEnabled(false);
+    checkBox.setForeground(colorForeground);
+    checkBox.setBackground(colorBackground);
+    if (isSelected) {
+      checkBox.setForeground(colorSelectionForeground);
+      checkBox.setBackground(colorSelectionBackground);
+    }
+    return checkBox;
+  }
+  
 }

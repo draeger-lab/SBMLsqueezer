@@ -54,11 +54,11 @@ import de.zbit.util.progressbar.AbstractProgressBar;
 public class KineticLawSelectionDialog extends JDialog {
   
   /**
-   * 
+   * Localization support.
    */
   public static final transient ResourceBundle MESSAGES = ResourceManager.getBundle(Bundles.MESSAGES);
   /**
-   * 
+   * Localization support.
    */
   public static final transient ResourceBundle LABELS = ResourceManager.getBundle(Bundles.LABELS);
   

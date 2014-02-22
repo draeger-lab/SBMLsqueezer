@@ -2,7 +2,7 @@
  * $Id: SABIORKWizard.java 971 2012-08-17 13:36:54Z keller$
  * $URL: https://rarepos.cs.uni-tuebingen.de/svn-path/SBMLsqueezer/trunk/src/org/sbml/squeezer/sabiork/wizard/SABIORKWizard.java$
  * ---------------------------------------------------------------------
- * This file is part of SBMLsqueezer, a Java program that creates rate 
+ * This file is part of SBMLsqueezer, a Java program that creates rate
  * equations for reactions in SBML files (http://sbml.org).
  *
  * Copyright (C) 2006-2014 by the University of Tuebingen, Germany.
@@ -33,7 +33,6 @@ import org.sbml.squeezer.SubmodelController;
 import org.sbml.squeezer.sabiork.wizard.console.ConsoleWizard;
 import org.sbml.squeezer.sabiork.wizard.gui.JDialogWizard;
 
-
 /**
  * The SABIORKWizard class allows easy access to the data provided by the
  * SABIO-RK database.
@@ -42,89 +41,89 @@ import org.sbml.squeezer.sabiork.wizard.gui.JDialogWizard;
  * @version $Rev: 1031$
  */
 public class SABIORKWizard {
-
-	/**
-	 * Starts the SABIO-RK wizard in GUI mode and returns the result of the
-	 * wizard.
-	 * 
-	 * @param owner
-	 *            the top-level window of the wizard
-	 * @param modalityType
-	 *            the modality type
-	 * @param sbmlDocument
-	 *            the {@link SBMLDocument}
-	 * @return the resulting {@link SBMLDocument}
-	 */
-	public static SubmodelController getResultGUI(Window owner,
-			ModalityType modalityType, SBMLDocument sbmlDocument, boolean overwriteExistingLaws) {
-		JDialogWizard dialogWizard = new JDialogWizard(owner, modalityType,
-				sbmlDocument, overwriteExistingLaws);
-		dialogWizard.setLocationRelativeTo(owner);
-		dialogWizard.setResizable(true);
-		dialogWizard.setVisible(true);
-		return dialogWizard.getResult();
-	}
-
-	/**
-	 * Starts the SABIO-RK wizard in console mode and returns the result of the
-	 * wizard. If a filter option is set to {@code null} the default value
-	 * of that filter option will be used.
-	 * 
-	 * @param sbmlDocument
-	 *            the {@link SBMLDocument}
-	 * @param overwriteExistingRateLaws
-	 * @param pathway
-	 * @param tissue
-	 * @param organism
-	 * @param cellularLocation
-	 * @param isWildtype
-	 * @param isMutant
-	 * @param isRecombinant
-	 * @param hasKineticData
-	 * @param lowerpHValue
-	 * @param upperpHValue
-	 * @param lowerTemperature
-	 * @param upperTemperature
-	 * @param isDirectSubmission
-	 * @param isJournal
-	 * @param isEntriesInsertedSince
-	 * @param dateSubmitted
-	 *            a date of the format dd/MM/yyyy
-	 * @return the changed list of {@link Reaction}
-	 */
-	public static Set<Reaction> getResultConsole(SBMLDocument sbmlDocument,
-			boolean overwriteExistingRateLaws, String pathway, String tissue,
-			String organism, String cellularLocation, Boolean isWildtype,
-			Boolean isMutant, Boolean isRecombinant, Boolean hasKineticData,
-			Double lowerpHValue, Double upperpHValue, Double lowerTemperature,
-			Double upperTemperature, Boolean isDirectSubmission,
-			Boolean isJournal, Boolean isEntriesInsertedSince,
-			String dateSubmitted) {
-		ConsoleWizard consoleWizard = new ConsoleWizard(sbmlDocument,
-				overwriteExistingRateLaws, pathway, tissue, organism, cellularLocation,
-				isWildtype, isMutant, isRecombinant, hasKineticData,
-				lowerpHValue, upperpHValue, lowerTemperature, upperTemperature,
-				isDirectSubmission, isJournal, isEntriesInsertedSince,
-				dateSubmitted);
-		return consoleWizard.getResult();
-	}
-
-	/**
-	 * 
-	 * @param owner
-	 * @param modalityType
-	 * @param sbmlDocument
-	 * @param reactionId
-	 * @return
-	 */
-	public static SubmodelController getResultGUI(Window owner,
-		ModalityType modalityType, SBMLDocument sbmlDocument, String reactionId) {
-		JDialogWizard dialogWizard = new JDialogWizard(owner, modalityType,
-				sbmlDocument, reactionId);
-		dialogWizard.setLocationRelativeTo(owner);
-		dialogWizard.setResizable(true);
-		dialogWizard.setVisible(true);
-		return dialogWizard.getResult();
-	}
-
+  
+  /**
+   * Starts the SABIO-RK wizard in GUI mode and returns the result of the
+   * wizard.
+   * 
+   * @param owner
+   *            the top-level window of the wizard
+   * @param modalityType
+   *            the modality type
+   * @param sbmlDocument
+   *            the {@link SBMLDocument}
+   * @return the resulting {@link SBMLDocument}
+   */
+  public static SubmodelController getResultGUI(Window owner,
+    ModalityType modalityType, SBMLDocument sbmlDocument, boolean overwriteExistingLaws) {
+    JDialogWizard dialogWizard = new JDialogWizard(owner, modalityType,
+      sbmlDocument, overwriteExistingLaws);
+    dialogWizard.setLocationRelativeTo(owner);
+    dialogWizard.setResizable(true);
+    dialogWizard.setVisible(true);
+    return dialogWizard.getResult();
+  }
+  
+  /**
+   * Starts the SABIO-RK wizard in console mode and returns the result of the
+   * wizard. If a filter option is set to {@code null} the default value
+   * of that filter option will be used.
+   * 
+   * @param sbmlDocument
+   *            the {@link SBMLDocument}
+   * @param overwriteExistingRateLaws
+   * @param pathway
+   * @param tissue
+   * @param organism
+   * @param cellularLocation
+   * @param isWildtype
+   * @param isMutant
+   * @param isRecombinant
+   * @param hasKineticData
+   * @param lowerpHValue
+   * @param upperpHValue
+   * @param lowerTemperature
+   * @param upperTemperature
+   * @param isDirectSubmission
+   * @param isJournal
+   * @param isEntriesInsertedSince
+   * @param dateSubmitted
+   *            a date of the format dd/MM/yyyy
+   * @return the changed list of {@link Reaction}
+   */
+  public static Set<Reaction> getResultConsole(SBMLDocument sbmlDocument,
+    boolean overwriteExistingRateLaws, String pathway, String tissue,
+    String organism, String cellularLocation, Boolean isWildtype,
+    Boolean isMutant, Boolean isRecombinant, Boolean hasKineticData,
+    Double lowerpHValue, Double upperpHValue, Double lowerTemperature,
+    Double upperTemperature, Boolean isDirectSubmission,
+    Boolean isJournal, Boolean isEntriesInsertedSince,
+    String dateSubmitted) {
+    ConsoleWizard consoleWizard = new ConsoleWizard(sbmlDocument,
+      overwriteExistingRateLaws, pathway, tissue, organism, cellularLocation,
+      isWildtype, isMutant, isRecombinant, hasKineticData,
+      lowerpHValue, upperpHValue, lowerTemperature, upperTemperature,
+      isDirectSubmission, isJournal, isEntriesInsertedSince,
+      dateSubmitted);
+    return consoleWizard.getResult();
+  }
+  
+  /**
+   * 
+   * @param owner
+   * @param modalityType
+   * @param sbmlDocument
+   * @param reactionId
+   * @return
+   */
+  public static SubmodelController getResultGUI(Window owner,
+    ModalityType modalityType, SBMLDocument sbmlDocument, String reactionId) {
+    JDialogWizard dialogWizard = new JDialogWizard(owner, modalityType,
+      sbmlDocument, reactionId);
+    dialogWizard.setLocationRelativeTo(owner);
+    dialogWizard.setResizable(true);
+    dialogWizard.setVisible(true);
+    return dialogWizard.getResult();
+  }
+  
 }

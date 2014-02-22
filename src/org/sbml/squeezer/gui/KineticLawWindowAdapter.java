@@ -240,10 +240,11 @@ ComponentListener, PropertyChangeListener {
         && (event.getNewValue() != JOptionPane.UNINITIALIZED_VALUE)) {
       Object selectedValue = pane.getValue();
       value = JOptionPane.CLOSED_OPTION;
-      if (pane.getOptions() == null && selectedValue instanceof Integer) {
+      if ((pane.getOptions() == null) && (selectedValue instanceof Integer)) {
         value = ((Integer) selectedValue).intValue();
       }
       dialog.setVisible(false);
     }
   }
+  
 }

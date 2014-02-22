@@ -2,7 +2,7 @@
  * $Id$
  * $URL$
  * ---------------------------------------------------------------------
- * This file is part of SBMLsqueezer, a Java program that creates rate 
+ * This file is part of SBMLsqueezer, a Java program that creates rate
  * equations for reactions in SBML files (http://sbml.org).
  *
  * Copyright (C) 2006-2014 by the University of Tuebingen, Germany.
@@ -43,198 +43,203 @@ import org.sbml.squeezer.sabiork.util.WebServiceResponseException;
  * A class that provides a search field with suggestion support according to a
  * given SABIO-RK query field.
  * 
-* @author Matthias Rall
+ * @author Matthias Rall
  * @version $Rev$
  */
 public class JComboBoxSearchField extends JComboBox implements KeyListener {
-
-	/**
-	 * Generated serial version identifier.
-	 */
-	private static final long serialVersionUID = -8695598663076732686L;
-	private JTextField textFieldSearch;
-	private SABIORK.QueryField suggestionQueryField;
-	private SuggestionSearch suggestionSearch;
-
-	public JComboBoxSearchField() {
-		setEditable(true);
-		this.textFieldSearch = (JTextField) getEditor().getEditorComponent();
-		this.textFieldSearch.addKeyListener(this);
-		this.suggestionQueryField = null;
-		this.suggestionSearch = null;
-	}
-
-	/**
-	 * Shows all suggestions.
-	 * 
-	 * @param suggestions
-	 */
-	private void showSuggestions(List<String> suggestions) {
-		if (!suggestions.isEmpty()) {
-			String currentText = textFieldSearch.getText();
-			setModel(new DefaultComboBoxModel(suggestions.toArray()));
-			if (!suggestions.contains(currentText.trim())) {
-				showPopup();
-			}
-			textFieldSearch.setText(currentText);
-		}
-	}
-
-	/**
-	 * Returns the text of the search field.
-	 * 
-	 * @return
-	 */
-	public String getText() {
-		return textFieldSearch.getText();
-	}
-
-	/**
-	 * Returns the selected SABIO-RK query field for suggestions.
-	 * 
-	 * @return
-	 */
-	public SABIORK.QueryField getSuggestionQueryField() {
-		return suggestionQueryField;
-	}
-
-	/**
-	 * Sets the text of the search field.
-	 * 
-	 * @return
-	 */
-	public void setText(String text) {
-		textFieldSearch.setText(text);
-	}
-
-	/**
-	 * Sets the selected SABIO-RK query field for suggestions.
-	 * 
-	 * @return
-	 */
-	public void setSuggestionQueryField(SABIORK.QueryField suggestionQueryField) {
-		this.suggestionQueryField = suggestionQueryField;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see java.awt.event.KeyListener#keyPressed(java.awt.event.KeyEvent)
-	 */
-	public void keyPressed(KeyEvent e) {
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see java.awt.event.KeyListener#keyReleased(java.awt.event.KeyEvent)
-	 */
-	public void keyReleased(KeyEvent e) {
-		if (e.getSource().equals(textFieldSearch)) {
-			if (e.getKeyCode() != KeyEvent.VK_UP
-					&& e.getKeyCode() != KeyEvent.VK_DOWN
-					&& e.getKeyCode() != KeyEvent.VK_LEFT
-					&& e.getKeyCode() != KeyEvent.VK_RIGHT
-					&& e.getKeyCode() != KeyEvent.VK_ESCAPE) {
-				if (suggestionSearch != null && suggestionSearch.isStarted()) {
-					suggestionSearch.cancel();
-				}
-				hidePopup();
-				String currentTextTrimmed = textFieldSearch.getText().trim();
-				if (suggestionQueryField != null
-						&& !currentTextTrimmed.isEmpty()) {
-					suggestionSearch = new SuggestionSearch(
-							suggestionQueryField, currentTextTrimmed);
-					suggestionSearch.execute();
-				}
-			}
-			if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-				textFieldSearch.setText((String) getSelectedItem());
-			}
-		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see java.awt.event.KeyListener#keyTyped(java.awt.event.KeyEvent)
-	 */
-	public void keyTyped(KeyEvent e) {
-	}
-
-	/**
-	 * A class to perform the search for suggestions.
-	 * 
-	 * @author Matthias Rall
-	 * 
-	 */
-	private class SuggestionSearch extends SwingWorker<List<String>, Void> {
-
-		private SABIORK.QueryField queryField;
-		private String partialString;
-
-		/**
-		 * 
-		 * @param queryField
-		 * @param partialString
-		 */
-		public SuggestionSearch(SABIORK.QueryField queryField,
-				String partialString) {
-			this.queryField = queryField;
-			this.partialString = partialString;
-		}
-
-		/**
-		 * Checks if this search is already in progress.
-		 * 
-		 * @return {@code true} if this search is already in progress,
-		 *         {@code false} otherwise
-		 */
-		public boolean isStarted() {
-			return (getState() == StateValue.STARTED);
-		}
-
-		/**
-		 * Cancels this search.
-		 */
-		public void cancel() {
-			cancel(true);
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * @see javax.swing.SwingWorker#doInBackground()
-		 */
-		protected List<String> doInBackground() {
-			List<String> suggestions = new ArrayList<String>();
-			try {
-				suggestions = SABIORK.getSuggestions(queryField, partialString);
-			} catch (WebServiceConnectException e) {
-				JDialogWizard.showErrorDialog(e);
-				e.printStackTrace();
-			} catch (WebServiceResponseException e) {
-				JDialogWizard.showErrorDialog(e);
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			} catch (XMLStreamException e) {
-				e.printStackTrace();
-			}
-			return suggestions;
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * @see javax.swing.SwingWorker#done()
-		 */
-		protected void done() {
-			try {
-				showSuggestions(get());
-			} catch (CancellationException e) {
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			} catch (ExecutionException e) {
-				e.printStackTrace();
-			}
-		}
-
-	}
-
+  
+  /**
+   * Generated serial version identifier.
+   */
+  private static final long serialVersionUID = -8695598663076732686L;
+  private JTextField textFieldSearch;
+  private SABIORK.QueryField suggestionQueryField;
+  private SuggestionSearch suggestionSearch;
+  
+  public JComboBoxSearchField() {
+    setEditable(true);
+    textFieldSearch = (JTextField) getEditor().getEditorComponent();
+    textFieldSearch.addKeyListener(this);
+    suggestionQueryField = null;
+    suggestionSearch = null;
+  }
+  
+  /**
+   * Shows all suggestions.
+   * 
+   * @param suggestions
+   */
+  private void showSuggestions(List<String> suggestions) {
+    if (!suggestions.isEmpty()) {
+      String currentText = textFieldSearch.getText();
+      setModel(new DefaultComboBoxModel(suggestions.toArray()));
+      if (!suggestions.contains(currentText.trim())) {
+        showPopup();
+      }
+      textFieldSearch.setText(currentText);
+    }
+  }
+  
+  /**
+   * Returns the text of the search field.
+   * 
+   * @return
+   */
+  public String getText() {
+    return textFieldSearch.getText();
+  }
+  
+  /**
+   * Returns the selected SABIO-RK query field for suggestions.
+   * 
+   * @return
+   */
+  public SABIORK.QueryField getSuggestionQueryField() {
+    return suggestionQueryField;
+  }
+  
+  /**
+   * Sets the text of the search field.
+   * 
+   * @return
+   */
+  public void setText(String text) {
+    textFieldSearch.setText(text);
+  }
+  
+  /**
+   * Sets the selected SABIO-RK query field for suggestions.
+   * 
+   * @return
+   */
+  public void setSuggestionQueryField(SABIORK.QueryField suggestionQueryField) {
+    this.suggestionQueryField = suggestionQueryField;
+  }
+  
+  /*
+   * (non-Javadoc)
+   * @see java.awt.event.KeyListener#keyPressed(java.awt.event.KeyEvent)
+   */
+  @Override
+  public void keyPressed(KeyEvent e) {
+  }
+  
+  /*
+   * (non-Javadoc)
+   * @see java.awt.event.KeyListener#keyReleased(java.awt.event.KeyEvent)
+   */
+  @Override
+  public void keyReleased(KeyEvent e) {
+    if (e.getSource().equals(textFieldSearch)) {
+      if (e.getKeyCode() != KeyEvent.VK_UP
+          && e.getKeyCode() != KeyEvent.VK_DOWN
+          && e.getKeyCode() != KeyEvent.VK_LEFT
+          && e.getKeyCode() != KeyEvent.VK_RIGHT
+          && e.getKeyCode() != KeyEvent.VK_ESCAPE) {
+        if (suggestionSearch != null && suggestionSearch.isStarted()) {
+          suggestionSearch.cancel();
+        }
+        hidePopup();
+        String currentTextTrimmed = textFieldSearch.getText().trim();
+        if (suggestionQueryField != null
+            && !currentTextTrimmed.isEmpty()) {
+          suggestionSearch = new SuggestionSearch(
+            suggestionQueryField, currentTextTrimmed);
+          suggestionSearch.execute();
+        }
+      }
+      if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+        textFieldSearch.setText((String) getSelectedItem());
+      }
+    }
+  }
+  
+  /*
+   * (non-Javadoc)
+   * @see java.awt.event.KeyListener#keyTyped(java.awt.event.KeyEvent)
+   */
+  @Override
+  public void keyTyped(KeyEvent e) {
+  }
+  
+  /**
+   * A class to perform the search for suggestions.
+   * 
+   * @author Matthias Rall
+   * 
+   */
+  private class SuggestionSearch extends SwingWorker<List<String>, Void> {
+    
+    private SABIORK.QueryField queryField;
+    private String partialString;
+    
+    /**
+     * 
+     * @param queryField
+     * @param partialString
+     */
+    public SuggestionSearch(SABIORK.QueryField queryField,
+      String partialString) {
+      this.queryField = queryField;
+      this.partialString = partialString;
+    }
+    
+    /**
+     * Checks if this search is already in progress.
+     * 
+     * @return {@code true} if this search is already in progress,
+     *         {@code false} otherwise
+     */
+    public boolean isStarted() {
+      return (getState() == StateValue.STARTED);
+    }
+    
+    /**
+     * Cancels this search.
+     */
+    public void cancel() {
+      cancel(true);
+    }
+    
+    /*
+     * (non-Javadoc)
+     * @see javax.swing.SwingWorker#doInBackground()
+     */
+    @Override
+    protected List<String> doInBackground() {
+      List<String> suggestions = new ArrayList<String>();
+      try {
+        suggestions = SABIORK.getSuggestions(queryField, partialString);
+      } catch (WebServiceConnectException e) {
+        JDialogWizard.showErrorDialog(e);
+        e.printStackTrace();
+      } catch (WebServiceResponseException e) {
+        JDialogWizard.showErrorDialog(e);
+        e.printStackTrace();
+      } catch (IOException e) {
+        e.printStackTrace();
+      } catch (XMLStreamException e) {
+        e.printStackTrace();
+      }
+      return suggestions;
+    }
+    
+    /*
+     * (non-Javadoc)
+     * @see javax.swing.SwingWorker#done()
+     */
+    @Override
+    protected void done() {
+      try {
+        showSuggestions(get());
+      } catch (CancellationException e) {
+      } catch (InterruptedException e) {
+        e.printStackTrace();
+      } catch (ExecutionException e) {
+        e.printStackTrace();
+      }
+    }
+    
+  }
+  
 }
