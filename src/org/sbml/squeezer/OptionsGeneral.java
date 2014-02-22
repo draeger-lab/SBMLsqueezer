@@ -49,7 +49,7 @@ import de.zbit.util.prefs.Range;
 public interface OptionsGeneral extends KeyProvider {
   
   /**
-   * 
+   * Localization support
    */
   public static final ResourceBundle OPTIONS_BUNDLE = ResourceManager.getBundle(Bundles.OPTIONS);
   

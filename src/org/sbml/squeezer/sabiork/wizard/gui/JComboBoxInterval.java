@@ -2,7 +2,7 @@
  * $Id$
  * $URL$
  * ---------------------------------------------------------------------
- * This file is part of SBMLsqueezer, a Java program that creates rate 
+ * This file is part of SBMLsqueezer, a Java program that creates rate
  * equations for reactions in SBML files (http://sbml.org).
  *
  * Copyright (C) 2006-2014 by the University of Tuebingen, Germany.
@@ -35,75 +35,75 @@ import javax.swing.JComboBox;
  * @version $Rev$
  */
 public class JComboBoxInterval extends JComboBox {
-
-	/**
-	 * Generate serial version identifier.
-	 */
-	private static final long serialVersionUID = 780253734453909235L;
-	private double minimum;
-	private double maximum;
-
-	public JComboBoxInterval(double minimum, double maximum) {
-		this.minimum = round(minimum);
-		this.maximum = round(maximum);
-		setInterval(minimum, maximum);
-	}
-
-	/**
-	 * Returns the rounded value.
-	 * 
-	 * @param value
-	 * @return
-	 */
-	private double round(double value) {
-		value = value * 10;
-		value = Math.round(value);
-		value = value / 10;
-		return value;
-	}
-
-	/**
-	 * Adds all values from {@code lowerValue} to {@code upperValue}
-	 * to the model (step size of {@code 0.1}).
-	 * 
-	 * @param lowerValue
-	 * @param upperValue
-	 */
-	public void setInterval(double lowerValue, double upperValue) {
-		DefaultComboBoxModel model = new DefaultComboBoxModel();
-		lowerValue = round(lowerValue);
-		upperValue = round(upperValue);
-		for (double i = lowerValue; i <= upperValue; i = i + 0.1) {
-			model.addElement(round(i));
-		}
-		setModel(model);
-	}
-
-	/**
-	 * Returns the minimum value.
-	 * 
-	 * @return
-	 */
-	public double getMinimum() {
-		return minimum;
-	}
-
-	/**
-	 * Returns the maximum value.
-	 * 
-	 * @return
-	 */
-	public double getMaximum() {
-		return maximum;
-	}
-
-	/**
-	 * Returns the selected value.
-	 * 
-	 * @return
-	 */
-	public double getSelectedValue() {
-		return ((Double) getSelectedItem());
-	}
-
+  
+  /**
+   * Generate serial version identifier.
+   */
+  private static final long serialVersionUID = 780253734453909235L;
+  private double minimum;
+  private double maximum;
+  
+  public JComboBoxInterval(double minimum, double maximum) {
+    this.minimum = round(minimum);
+    this.maximum = round(maximum);
+    setInterval(minimum, maximum);
+  }
+  
+  /**
+   * Returns the rounded value.
+   * 
+   * @param value
+   * @return
+   */
+  private double round(double value) {
+    value = value * 10;
+    value = Math.round(value);
+    value = value / 10;
+    return value;
+  }
+  
+  /**
+   * Adds all values from {@code lowerValue} to {@code upperValue}
+   * to the model (step size of {@code 0.1}).
+   * 
+   * @param lowerValue
+   * @param upperValue
+   */
+  public void setInterval(double lowerValue, double upperValue) {
+    DefaultComboBoxModel model = new DefaultComboBoxModel();
+    lowerValue = round(lowerValue);
+    upperValue = round(upperValue);
+    for (double i = lowerValue; i <= upperValue; i = i + 0.1) {
+      model.addElement(round(i));
+    }
+    setModel(model);
+  }
+  
+  /**
+   * Returns the minimum value.
+   * 
+   * @return
+   */
+  public double getMinimum() {
+    return minimum;
+  }
+  
+  /**
+   * Returns the maximum value.
+   * 
+   * @return
+   */
+  public double getMaximum() {
+    return maximum;
+  }
+  
+  /**
+   * Returns the selected value.
+   * 
+   * @return
+   */
+  public double getSelectedValue() {
+    return ((Double) getSelectedItem());
+  }
+  
 }

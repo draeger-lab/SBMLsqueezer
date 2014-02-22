@@ -92,11 +92,11 @@ import de.zbit.util.progressbar.gui.ProgressBarSwing;
 public class KineticLawSelectionEquationPanel extends JPanel implements ActionListener, PropertyChangeListener {
   
   /**
-   * 
+   * Localization support.
    */
   public static final transient ResourceBundle MESSAGES = ResourceManager.getBundle(Bundles.MESSAGES);
   /**
-   * 
+   * Localization support.
    */
   public static final transient ResourceBundle LABELS = ResourceManager.getBundle(Bundles.LABELS);
   
@@ -112,7 +112,7 @@ public class KineticLawSelectionEquationPanel extends JPanel implements ActionLi
   
   private KineticLawGenerator klg;
   
-  private SBMLio sbmlIO;
+  private SBMLio<?> sbmlIO;
   
   private SBPreferences prefs;
   
@@ -131,7 +131,7 @@ public class KineticLawSelectionEquationPanel extends JPanel implements ActionLi
    * @param klg
    * @param sbmlIO
    */
-  public KineticLawSelectionEquationPanel(KineticLawGenerator klg, SBMLio sbmlIO) {
+  public KineticLawSelectionEquationPanel(KineticLawGenerator klg, SBMLio<?> sbmlIO) {
     super(new BorderLayout());
     
     prefs = new SBPreferences(OptionsGeneral.class);

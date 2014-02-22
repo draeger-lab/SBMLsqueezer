@@ -2,7 +2,7 @@
  * $Id: IOOptions.java 808 2012-02-03 13:53:59Z snagel $
  * $URL: https://rarepos.cs.uni-tuebingen.de/svn-path/SBMLsqueezer/trunk/src/org/sbml/squeezer/io/IOOptions.java $
  * ---------------------------------------------------------------------
- * This file is part of SBMLsqueezer, a Java program that creates rate 
+ * This file is part of SBMLsqueezer, a Java program that creates rate
  * equations for reactions in SBML files (http://sbml.org).
  *
  * Copyright (C) 2006-2014 by the University of Tuebingen, Germany.
@@ -33,7 +33,7 @@ import de.zbit.util.prefs.KeyProvider;
 import de.zbit.util.prefs.Option;
 
 /**
- * This is a list of possible io command line options. Each element 
+ * This is a list of possible io command line options. Each element
  * listed here determines a key for a configuration value.
  * 
  * @author Sebastian Nagel
@@ -42,33 +42,33 @@ import de.zbit.util.prefs.Option;
  */
 
 public interface IOOptions extends KeyProvider {
-	
-	/**
-	 * for localization support.
-	 */
-	public static final ResourceBundle OPTIONS_BUNDLE = ResourceManager.getBundle(Bundles.OPTIONS);
-	
-	/**
-	 * SBML input file.
-	 */
-	public static final Option<File> SBML_IN_FILE = new Option<File>(
-			"SBML_IN_FILE", File.class, OPTIONS_BUNDLE,
-			new File(""));
-	/**
-	 * Specifies the file where SBMLsqueezer writes its SBML output.
-	 */
-	public static final Option<File> SBML_OUT_FILE = new Option<File>(
-			"SBML_OUT_FILE", File.class, OPTIONS_BUNDLE,
-			new File(""));
-		
-	/**
-	 * If {@code true}, the application will try to load the library libSBML for reading and
-	 * writing SBML files, otherwise everything will be done with JSBML only, i.e., pure Java. 
-	 */
-	public static final Option<Boolean> TRY_LOADING_LIBSBML = new Option<Boolean>(
-			"TRY_LOADING_LIBSBML",
-			Boolean.class, 
-			OPTIONS_BUNDLE, 
-			false);
-
+  
+  /**
+   * for localization support.
+   */
+  public static final ResourceBundle OPTIONS_BUNDLE = ResourceManager.getBundle(Bundles.OPTIONS);
+  
+  /**
+   * SBML input file.
+   */
+  public static final Option<File> SBML_IN_FILE = new Option<File>(
+      "SBML_IN_FILE", File.class, OPTIONS_BUNDLE,
+      new File(""));
+  /**
+   * Specifies the file where SBMLsqueezer writes its SBML output.
+   */
+  public static final Option<File> SBML_OUT_FILE = new Option<File>(
+      "SBML_OUT_FILE", File.class, OPTIONS_BUNDLE,
+      new File(""));
+  
+  /**
+   * If {@code true}, the application will try to load the library libSBML for reading and
+   * writing SBML files, otherwise everything will be done with JSBML only, i.e., pure Java.
+   */
+  public static final Option<Boolean> TRY_LOADING_LIBSBML = new Option<Boolean>(
+      "TRY_LOADING_LIBSBML",
+      Boolean.class,
+      OPTIONS_BUNDLE,
+      false);
+  
 }

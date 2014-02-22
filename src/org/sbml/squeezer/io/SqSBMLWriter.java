@@ -50,7 +50,7 @@ import de.zbit.util.ResourceManager;
 public class SqSBMLWriter implements SBMLOutputConverter<Model> {
   
   /**
-   * 
+   * Localization support.
    */
   public static final transient ResourceBundle WARNINGS = ResourceManager.getBundle(Bundles.WARNINGS);
   

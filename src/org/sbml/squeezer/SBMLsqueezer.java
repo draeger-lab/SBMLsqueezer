@@ -96,11 +96,11 @@ import de.zbit.util.progressbar.ProgressBar;
 public class SBMLsqueezer<T> extends Launcher {
   
   /**
-   * 
+   * Localization support.
    */
   public static final transient ResourceBundle MESSAGES = ResourceManager.getBundle(Bundles.MESSAGES);
   /**
-   * 
+   * Localization support.
    */
   public static final transient ResourceBundle WARNINGS = ResourceManager.getBundle(Bundles.WARNINGS);
   

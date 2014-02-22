@@ -1,7 +1,7 @@
 /* $Id: KineticLawGeneratorWorker.java 831 2012-02-26 12:33:51Z snagel $
  * $URL: https://rarepos.cs.uni-tuebingen.de/svn-path/SysBio/trunk/src/de/zbit/sbml/gui/KineticLawGeneratorWorker.java $
  * ---------------------------------------------------------------------
- * This file is part of SBMLsqueezer, a Java program that creates rate 
+ * This file is part of SBMLsqueezer, a Java program that creates rate
  * equations for reactions in SBML files (http://sbml.org).
  *
  * Copyright (C) 2006-2014 by the University of Tuebingen, Germany.
@@ -40,42 +40,46 @@ import de.zbit.util.ResourceManager;
  * @version $Rev: 831 $
  */
 public class KineticLawGeneratorWorker extends SwingWorker<Void, Void> {
-	/**
-	 * A {@link Logger} for this class.
-	 */
-	private static final transient Logger logger = Logger.getLogger(KineticLawGeneratorWorker.class.getName());
-		
-	private KineticLawGenerator klg;
-	
-	/**
-	 * 
-	 * @param klg
-	 */
-	public KineticLawGeneratorWorker(KineticLawGenerator klg) {
-		super();
-		this.klg = klg;
-	}
-
-	/* (non-Javadoc)
-	 * @see javax.swing.SwingWorker#doInBackground()
-	 */
-	protected Void doInBackground() {
-		try {
-			klg.generateLaws();
-		} catch (Throwable e) {
-			logger.log(Level.WARNING, e.getLocalizedMessage());
-			e.printStackTrace();
-		}
-		return null;
-	}
-	
-	/* (non-Javadoc)
-	 * @see javax.swing.SwingWorker#done()
-	 */
-	@Override
-	protected void done() {
-		logger.log(Level.INFO, ResourceManager.getBundle(Bundles.LABELS).getString("READY"));
-		firePropertyChange("generateKineticLawDone", null, null);
-	}
-	
+  /**
+   * A {@link Logger} for this class.
+   */
+  private static final transient Logger logger = Logger.getLogger(KineticLawGeneratorWorker.class.getName());
+  
+  /**
+   * 
+   */
+  private KineticLawGenerator klg;
+  
+  /**
+   * 
+   * @param klg
+   */
+  public KineticLawGeneratorWorker(KineticLawGenerator klg) {
+    super();
+    this.klg = klg;
+  }
+  
+  /* (non-Javadoc)
+   * @see javax.swing.SwingWorker#doInBackground()
+   */
+  @Override
+  protected Void doInBackground() {
+    try {
+      klg.generateLaws();
+    } catch (Throwable e) {
+      logger.log(Level.WARNING, e.getLocalizedMessage());
+      e.printStackTrace();
+    }
+    return null;
+  }
+  
+  /* (non-Javadoc)
+   * @see javax.swing.SwingWorker#done()
+   */
+  @Override
+  protected void done() {
+    logger.log(Level.INFO, ResourceManager.getBundle(Bundles.LABELS).getString("READY"));
+    firePropertyChange("generateKineticLawDone", null, null);
+  }
+  
 }

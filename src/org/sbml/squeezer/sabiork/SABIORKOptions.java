@@ -2,7 +2,7 @@
  * $Id$
  * $URL$
  * ---------------------------------------------------------------------
- * This file is part of SBMLsqueezer, a Java program that creates rate 
+ * This file is part of SBMLsqueezer, a Java program that creates rate
  * equations for reactions in SBML files (http://sbml.org).
  *
  * Copyright (C) 2006-2012 by the University of Tuebingen, Germany.
@@ -37,35 +37,37 @@ import de.zbit.util.prefs.OptionGroup;
  * @version $Rev$
  */
 public interface SABIORKOptions extends KeyProvider {
-
-	/**
-	 * 
-	 */
-	public static final ResourceBundle OPTIONS_BUNDLE = ResourceManager.getBundle(Bundles.OPTIONS);
-	
-	/**
-	 * The pathway for which the kinetics have been determined.
-	 */
-	public static final Option<String> PATHWAY = new Option<String>("PATHWAY", String.class, OPTIONS_BUNDLE, null);
-	
-	/**
-	 * The tissue for which the kinetics have been determined.
-	 */
-	public static final Option<String> TISSUE = new Option<String>("TISSUE", String.class, OPTIONS_BUNDLE, null);
-	
-	/**
-	 * The cellular location for which the kinetics have been determined.
-	 */
-	public static final Option<String> CELLULAR_LOCATION = new Option<String>("CELLULAR_LOCATION", String.class, OPTIONS_BUNDLE, null);
-	
-	/**
-	 * The organism for which the kinetics have been determined.
-	 */
-	public static final Option<String> ORGANISM = new Option<String>("ORGANISM", String.class, OPTIONS_BUNDLE, null);
-	
-	
-	@SuppressWarnings({ "unchecked" })
-	public static final OptionGroup<String> GROUP_GENERAL_OPTIONS = new OptionGroup<String>(
-			"GROUP_GENERAL_OPTIONS", OPTIONS_BUNDLE, PATHWAY, TISSUE, CELLULAR_LOCATION, ORGANISM);
-
+  
+  /**
+   * Localization support.
+   */
+  public static final ResourceBundle OPTIONS_BUNDLE = ResourceManager.getBundle(Bundles.OPTIONS);
+  
+  /**
+   * The pathway for which the kinetics have been determined.
+   */
+  public static final Option<String> PATHWAY = new Option<String>("PATHWAY", String.class, OPTIONS_BUNDLE, null);
+  
+  /**
+   * The tissue for which the kinetics have been determined.
+   */
+  public static final Option<String> TISSUE = new Option<String>("TISSUE", String.class, OPTIONS_BUNDLE, null);
+  
+  /**
+   * The cellular location for which the kinetics have been determined.
+   */
+  public static final Option<String> CELLULAR_LOCATION = new Option<String>("CELLULAR_LOCATION", String.class, OPTIONS_BUNDLE, null);
+  
+  /**
+   * The organism for which the kinetics have been determined.
+   */
+  public static final Option<String> ORGANISM = new Option<String>("ORGANISM", String.class, OPTIONS_BUNDLE, null);
+  
+  /**
+   * 
+   */
+  @SuppressWarnings({ "unchecked" })
+  public static final OptionGroup<String> GROUP_GENERAL_OPTIONS = new OptionGroup<String>(
+      "GROUP_GENERAL_OPTIONS", OPTIONS_BUNDLE, PATHWAY, TISSUE, CELLULAR_LOCATION, ORGANISM);
+  
 }

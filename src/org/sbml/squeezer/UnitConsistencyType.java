@@ -2,7 +2,7 @@
  * $Id: UnitConsistencyType.java 19.03.2012 17:52:21 draeger$
  * $URL$
  * ---------------------------------------------------------------------
- * This file is part of SBMLsqueezer, a Java program that creates rate 
+ * This file is part of SBMLsqueezer, a Java program that creates rate
  * equations for reactions in SBML files (http://sbml.org).
  *
  * Copyright (C) 2006-2014 by the University of Tuebingen, Germany.
@@ -35,12 +35,16 @@ package org.sbml.squeezer;
  * @since 1.4
  */
 public enum UnitConsistencyType {
-	/**
-	 * 
-	 */
-	amount,
-	/**
-	 * 
-	 */
-	concentration;
+  /**
+   * Used to express that the units of a species are to be brought to substance
+   * units. This can, for instance, be achieved by multiplying a species that is
+   * given as a concentration with its surround compartment.
+   */
+  amount,
+  /**
+   * With this item, it can be stated that a species is to expressed in terms of
+   * concentration units. This can be achieved, for instance, by dividing it by
+   * its surrounding compartment.
+   */
+  concentration;
 }

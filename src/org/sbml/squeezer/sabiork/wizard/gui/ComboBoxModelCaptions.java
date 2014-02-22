@@ -2,7 +2,7 @@
  * $Id$
  * $URL$
  * ---------------------------------------------------------------------
- * This file is part of SBMLsqueezer, a Java program that creates rate 
+ * This file is part of SBMLsqueezer, a Java program that creates rate
  * equations for reactions in SBML files (http://sbml.org).
  *
  * Copyright (C) 2006-2014 by the University of Tuebingen, Germany.
@@ -46,149 +46,155 @@ import javax.swing.plaf.basic.BasicComboBoxRenderer;
  * @version $Rev$
  */
 public class ComboBoxModelCaptions extends DefaultComboBoxModel {
-
-	/**
-	 * Generated serial version identifier.
-	 */
-	private static final long serialVersionUID = -8192713936539530850L;
-
-	/**
-	 * 
-	 */
-	private Set<Integer> captionIndices;
-
-	/**
-	 * 
-	 */
-	public ComboBoxModelCaptions() {
-		this.captionIndices = new HashSet<Integer>();
-	}
-
-	/**
-	 * Adds a caption to the model.
-	 * 
-	 * @param anObject
-	 */
-	public void addCaption(Object anObject) {
-		super.addElement(anObject);
-		captionIndices.add(getSize() - 1);
-	}
-
-	/* (non-Javadoc)
-	 * @see javax.swing.DefaultComboBoxModel#insertElementAt(java.lang.Object, int)
-	 */
-	public void insertElementAt(Object anObject, int index) {
-		List<Object> captions = new ArrayList<Object>();
-		for (int captionIndex : captionIndices) {
-			captions.add(getElementAt(captionIndex));
-		}
-		super.insertElementAt(anObject, index);
-		captionIndices.clear();
-		for (Object caption : captions) {
-			captionIndices.add(getIndexOf(caption));
-		}
-	}
-
-	/* (non-Javadoc)
-	 * @see javax.swing.DefaultComboBoxModel#removeAllElements()
-	 */
-	public void removeAllElements() {
-		super.removeAllElements();
-		captionIndices.clear();
-	}
-
-	/* (non-Javadoc)
-	 * @see javax.swing.DefaultComboBoxModel#removeElement(java.lang.Object)
-	 */
-	public void removeElement(Object anObject) {
-		super.removeElement(anObject);
-		captionIndices.remove(getIndexOf(anObject));
-	}
-
-	/* (non-Javadoc)
-	 * @see javax.swing.DefaultComboBoxModel#removeElementAt(int)
-	 */
-	public void removeElementAt(int index) {
-		captionIndices.remove(index);
-		List<Object> captions = new ArrayList<Object>();
-		for (int captionIndex : captionIndices) {
-			captions.add(getElementAt(captionIndex));
-		}
-		super.removeElementAt(index);
-		captionIndices.clear();
-		for (Object caption : captions) {
-			captionIndices.add(getIndexOf(caption));
-		}
-	}
-
-	/* (non-Javadoc)
-	 * @see javax.swing.DefaultComboBoxModel#setSelectedItem(java.lang.Object)
-	 */
-	public void setSelectedItem(Object anObject) {
-		if (!captionIndices.contains(getIndexOf(anObject))) {
-			super.setSelectedItem(anObject);
-		}
-	}
-
-	/**
-	 * Returns the Renderer that is needed to display the captions correctly.
-	 * 
-	 * @return
-	 */
-	public ComboBoxRendererCaptions getRenderer() {
-		return new ComboBoxRendererCaptions();
-	}
-
-	private class ComboBoxRendererCaptions extends BasicComboBoxRenderer {
-
-		/**
-		 * Generated serial version identifier.
-		 */
-		private static final long serialVersionUID = 6019369936231709859L;
-
-		/* (non-Javadoc)
-		 * @see javax.swing.plaf.basic.BasicComboBoxRenderer#getListCellRendererComponent(javax.swing.JList, java.lang.Object, int, boolean, boolean)
-		 */
-		public Component getListCellRendererComponent(JList list, Object value,
-				int index, boolean isSelected, boolean cellHasFocus) {
-			JLabel label = new JLabel();
-			Border border = new EmptyBorder(new Insets(0, 15, 0, 0));
-			Font font = list.getFont();
-			Color colorForeground = list.getForeground();
-			Color colorBackground = list.getBackground();
-			Color colorSelectionForeground = list.getSelectionForeground();
-			Color colorSelectionBackground = list.getSelectionBackground();
-			if (value != null) {
-				label.setText(value.toString());
-			}
-			ListModel listModel = list.getModel();
-			if (listModel instanceof ComboBoxModelCaptions) {
-				if (((ComboBoxModelCaptions) listModel).captionIndices
-						.contains(index)) {
-					border = new EmptyBorder(new Insets(5, 0, 5, 0));
-					font = new Font(list.getFont().getName(), Font.BOLD, list
-							.getFont().getSize());
-					if (isSelected) {
-						colorSelectionForeground = colorForeground;
-						colorSelectionBackground = colorBackground;
-					}
-				}
-			}
-			if (index == -1) {
-				border = new EmptyBorder(new Insets(0, 0, 0, 0));
-			}
-			label.setOpaque(true);
-			label.setBorder(border);
-			label.setFont(font);
-			label.setForeground(colorForeground);
-			label.setBackground(colorBackground);
-			if (isSelected) {
-				label.setForeground(colorSelectionForeground);
-				label.setBackground(colorSelectionBackground);
-			}
-			return label;
-		}
-
-	}
-
+  
+  /**
+   * Generated serial version identifier.
+   */
+  private static final long serialVersionUID = -8192713936539530850L;
+  
+  /**
+   * 
+   */
+  private Set<Integer> captionIndices;
+  
+  /**
+   * 
+   */
+  public ComboBoxModelCaptions() {
+    captionIndices = new HashSet<Integer>();
+  }
+  
+  /**
+   * Adds a caption to the model.
+   * 
+   * @param anObject
+   */
+  public void addCaption(Object anObject) {
+    super.addElement(anObject);
+    captionIndices.add(getSize() - 1);
+  }
+  
+  /* (non-Javadoc)
+   * @see javax.swing.DefaultComboBoxModel#insertElementAt(java.lang.Object, int)
+   */
+  @Override
+  public void insertElementAt(Object anObject, int index) {
+    List<Object> captions = new ArrayList<Object>();
+    for (int captionIndex : captionIndices) {
+      captions.add(getElementAt(captionIndex));
+    }
+    super.insertElementAt(anObject, index);
+    captionIndices.clear();
+    for (Object caption : captions) {
+      captionIndices.add(getIndexOf(caption));
+    }
+  }
+  
+  /* (non-Javadoc)
+   * @see javax.swing.DefaultComboBoxModel#removeAllElements()
+   */
+  @Override
+  public void removeAllElements() {
+    super.removeAllElements();
+    captionIndices.clear();
+  }
+  
+  /* (non-Javadoc)
+   * @see javax.swing.DefaultComboBoxModel#removeElement(java.lang.Object)
+   */
+  @Override
+  public void removeElement(Object anObject) {
+    super.removeElement(anObject);
+    captionIndices.remove(getIndexOf(anObject));
+  }
+  
+  /* (non-Javadoc)
+   * @see javax.swing.DefaultComboBoxModel#removeElementAt(int)
+   */
+  @Override
+  public void removeElementAt(int index) {
+    captionIndices.remove(index);
+    List<Object> captions = new ArrayList<Object>();
+    for (int captionIndex : captionIndices) {
+      captions.add(getElementAt(captionIndex));
+    }
+    super.removeElementAt(index);
+    captionIndices.clear();
+    for (Object caption : captions) {
+      captionIndices.add(getIndexOf(caption));
+    }
+  }
+  
+  /* (non-Javadoc)
+   * @see javax.swing.DefaultComboBoxModel#setSelectedItem(java.lang.Object)
+   */
+  @Override
+  public void setSelectedItem(Object anObject) {
+    if (!captionIndices.contains(getIndexOf(anObject))) {
+      super.setSelectedItem(anObject);
+    }
+  }
+  
+  /**
+   * Returns the Renderer that is needed to display the captions correctly.
+   * 
+   * @return
+   */
+  public ComboBoxRendererCaptions getRenderer() {
+    return new ComboBoxRendererCaptions();
+  }
+  
+  private class ComboBoxRendererCaptions extends BasicComboBoxRenderer {
+    
+    /**
+     * Generated serial version identifier.
+     */
+    private static final long serialVersionUID = 6019369936231709859L;
+    
+    /* (non-Javadoc)
+     * @see javax.swing.plaf.basic.BasicComboBoxRenderer#getListCellRendererComponent(javax.swing.JList, java.lang.Object, int, boolean, boolean)
+     */
+    @Override
+    public Component getListCellRendererComponent(JList list, Object value,
+      int index, boolean isSelected, boolean cellHasFocus) {
+      JLabel label = new JLabel();
+      Border border = new EmptyBorder(new Insets(0, 15, 0, 0));
+      Font font = list.getFont();
+      Color colorForeground = list.getForeground();
+      Color colorBackground = list.getBackground();
+      Color colorSelectionForeground = list.getSelectionForeground();
+      Color colorSelectionBackground = list.getSelectionBackground();
+      if (value != null) {
+        label.setText(value.toString());
+      }
+      ListModel listModel = list.getModel();
+      if (listModel instanceof ComboBoxModelCaptions) {
+        if (((ComboBoxModelCaptions) listModel).captionIndices
+            .contains(index)) {
+          border = new EmptyBorder(new Insets(5, 0, 5, 0));
+          font = new Font(list.getFont().getName(), Font.BOLD, list
+            .getFont().getSize());
+          if (isSelected) {
+            colorSelectionForeground = colorForeground;
+            colorSelectionBackground = colorBackground;
+          }
+        }
+      }
+      if (index == -1) {
+        border = new EmptyBorder(new Insets(0, 0, 0, 0));
+      }
+      label.setOpaque(true);
+      label.setBorder(border);
+      label.setFont(font);
+      label.setForeground(colorForeground);
+      label.setBackground(colorBackground);
+      if (isSelected) {
+        label.setForeground(colorSelectionForeground);
+        label.setBackground(colorSelectionBackground);
+      }
+      return label;
+    }
+    
+  }
+  
 }

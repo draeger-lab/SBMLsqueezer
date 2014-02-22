@@ -2,7 +2,7 @@
  * $Id:  ModelChangeListener.java 13:43:19 draeger$
  * $URL$
  * ---------------------------------------------------------------------
- * This file is part of SBMLsqueezer, a Java program that creates rate 
+ * This file is part of SBMLsqueezer, a Java program that creates rate
  * equations for reactions in SBML files (http://sbml.org).
  *
  * Copyright (C) 2006-2014 by the University of Tuebingen, Germany.
@@ -21,7 +21,6 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  * ---------------------------------------------------------------------
  */
-
 package org.sbml.squeezer.util;
 
 import java.beans.PropertyChangeEvent;
@@ -39,43 +38,43 @@ import org.sbml.jsbml.util.TreeNodeRemovedEvent;
  * @since 1.4
  */
 public class ModelChangeListener implements TreeNodeChangeListener {
-
-	/**
-	 * A {@link Logger} for this class.
-	 */
-	private Logger logger = Logger.getLogger(ModelChangeListener.class.getName());
-	
-	/**
-	 * 
-	 */
-	public ModelChangeListener() {
-		super();
-	}
-
-	/* (non-Javadoc)
-	 * @see org.sbml.jsbml.util.TreeNodeChangeListener#nodeAdded(javax.swing.tree.TreeNode)
-	 */
-	@Override
-	public void nodeAdded(TreeNode node) {
-		logger.log(Level.FINE, "[ADD] " + node.toString());
-	}
-
-	/* (non-Javadoc)
-	 * @see java.beans.PropertyChangeListener#propertyChange(java.beans.PropertyChangeEvent)
-	 */
-	@Override
-	public void propertyChange(PropertyChangeEvent event) {
-		logger.log(Level.FINE, "[CHG] " + event.toString());    
-	}
-
-	/* (non-Javadoc)
-	 * @see org.sbml.jsbml.util.TreeNodeChangeListener#nodeRemoved(org.sbml.jsbml.util.TreeNodeRemovedEvent)
-	 */
-	@Override
-	public void nodeRemoved(TreeNodeRemovedEvent evt) {
-		TreeNode node = evt.getSource();
-
-		logger.log(Level.FINE, "[DEL] " + node.toString());
-	}
-
+  
+  /**
+   * A {@link Logger} for this class.
+   */
+  private Logger logger = Logger.getLogger(ModelChangeListener.class.getName());
+  
+  /**
+   * 
+   */
+  public ModelChangeListener() {
+    super();
+  }
+  
+  /* (non-Javadoc)
+   * @see org.sbml.jsbml.util.TreeNodeChangeListener#nodeAdded(javax.swing.tree.TreeNode)
+   */
+  @Override
+  public void nodeAdded(TreeNode node) {
+    logger.log(Level.FINE, "[ADD] " + node.toString());
+  }
+  
+  /* (non-Javadoc)
+   * @see java.beans.PropertyChangeListener#propertyChange(java.beans.PropertyChangeEvent)
+   */
+  @Override
+  public void propertyChange(PropertyChangeEvent event) {
+    logger.log(Level.FINE, "[CHG] " + event.toString());
+  }
+  
+  /* (non-Javadoc)
+   * @see org.sbml.jsbml.util.TreeNodeChangeListener#nodeRemoved(org.sbml.jsbml.util.TreeNodeRemovedEvent)
+   */
+  @Override
+  public void nodeRemoved(TreeNodeRemovedEvent evt) {
+    TreeNode node = evt.getSource();
+    
+    logger.log(Level.FINE, "[DEL] " + node.toString());
+  }
+  
 }

@@ -2,7 +2,7 @@
  * $Id$
  * $URL$
  * ---------------------------------------------------------------------
- * This file is part of SBMLsqueezer, a Java program that creates rate 
+ * This file is part of SBMLsqueezer, a Java program that creates rate
  * equations for reactions in SBML files (http://sbml.org).
  *
  * Copyright (C) 2006-2014 by the University of Tuebingen, Germany.
@@ -34,19 +34,19 @@ import javax.swing.border.EtchedBorder;
  * @version $Rev$
  */
 public class JComponentEtchedLine extends JComponent {
-
-	/**
-	 * Generated serial version identifier.
-	 */
-	private static final long serialVersionUID = 2648773760851854370L;
-
-	/**
-	 * 
-	 */
-	public JComponentEtchedLine() {
-		setBorder(new EtchedBorder(EtchedBorder.LOWERED));
-		setPreferredSize(new Dimension(1, 2));
-		setMaximumSize(new Dimension(Integer.MAX_VALUE, 2));
-	}
-
+  
+  /**
+   * Generated serial version identifier.
+   */
+  private static final long serialVersionUID = 2648773760851854370L;
+  
+  /**
+   * 
+   */
+  public JComponentEtchedLine() {
+    setBorder(new EtchedBorder(EtchedBorder.LOWERED));
+    setPreferredSize(new Dimension(1, 2));
+    setMaximumSize(new Dimension(Integer.MAX_VALUE, 2));
+  }
+  
 }

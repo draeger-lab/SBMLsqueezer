@@ -2,7 +2,7 @@
  * $Id$
  * $URL$
  * ---------------------------------------------------------------------
- * This file is part of SBMLsqueezer, a Java program that creates rate 
+ * This file is part of SBMLsqueezer, a Java program that creates rate
  * equations for reactions in SBML files (http://sbml.org).
  *
  * Copyright (C) 2006-2014 by the University of Tuebingen, Germany.
@@ -51,6 +51,9 @@ public class KineticLawSelectionEquationProgressPanelDescriptor extends WizardPa
    */
   public static final String IDENTIFIER = "KINETIC_LAW_EQUATION_PROGRESS_PANEL";
   
+  /**
+   * 
+   */
   private KineticLawGenerator klg;
   
   /**
@@ -87,7 +90,7 @@ public class KineticLawSelectionEquationProgressPanelDescriptor extends WizardPa
    */
   @Override
   public void aboutToHidePanel() {
-  }    
+  }
   
   /* (non-Javadoc)
    * @see de.zbit.gui.wizard.WizardPanelDescriptor#getNextPanelDescriptor()
@@ -112,7 +115,7 @@ public class KineticLawSelectionEquationProgressPanelDescriptor extends WizardPa
   public void propertyChange(PropertyChangeEvent evt) {
     if (evt.getPropertyName().equals("generateKineticLawDone")) {
       // when progress is done, go to next panel automatically
-      this.getWizard().goToNextPanel();
+      getWizard().goToNextPanel();
     }
   }
   

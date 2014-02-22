@@ -1,8 +1,8 @@
 /*
  * $Id:  Bundles.java 17:32:00 snagel$
- * $URL: https://rarepos.cs.uni-tuebingen.de/svn-path/SBMLsqueezer/trunk/src/org/sbml/squeezer/util/Bundles.java $
+ * $URL$
  * ---------------------------------------------------------------------
- * This file is part of SBMLsqueezer, a Java program that creates rate 
+ * This file is part of SBMLsqueezer, a Java program that creates rate
  * equations for reactions in SBML files (http://sbml.org).
  *
  * Copyright (C) 2006-2014 by the University of Tuebingen, Germany.
@@ -21,37 +21,39 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  * ---------------------------------------------------------------------
  */
-
 package org.sbml.squeezer.util;
 
 /**
+ * Localization support.
+ * 
  * @author Sebastian Nagel
- * @version $Rev: 815 $
+ * @version $Rev$
  * @since 1.4
  */
 public class Bundles {
-	/**
-	 * 
-	 */
-	public static final transient String MESSAGES = "org.sbml.squeezer.gui.locales.Messages";
-
-	/**
-	 * 
-	 */
-	public static final transient String OPTIONS = "org.sbml.squeezer.gui.locales.Options";
-	
-	/**
-	 * 
-	 */
-	public static final transient String WARNINGS = "org.sbml.squeezer.gui.locales.Warnings";
-
-	/**
-	 * 
-	 */
-	public static final transient String LABELS = "de.zbit.locales.Labels";
-	
-	/**
-	 * 
-	 */
-	public static final transient String BASE = "de.zbit.locales.BaseAction";
+  /**
+   * 
+   */
+  public static final transient String MESSAGES = "org.sbml.squeezer.gui.locales.Messages";
+  
+  /**
+   * 
+   */
+  public static final transient String OPTIONS = "org.sbml.squeezer.gui.locales.Options";
+  
+  /**
+   * 
+   */
+  public static final transient String WARNINGS = "org.sbml.squeezer.gui.locales.Warnings";
+  
+  /**
+   * 
+   */
+  public static final transient String LABELS = "de.zbit.locales.Labels";
+  
+  /**
+   * 
+   */
+  public static final transient String BASE = "de.zbit.locales.BaseAction";
+  
 }

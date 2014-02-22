@@ -60,6 +60,9 @@ import de.zbit.util.ResourceManager;
  */
 public class UnitFactory {
   
+  /**
+   * Localization support.
+   */
   public static final transient ResourceBundle WARNINGS = ResourceManager.getBundle(Bundles.WARNINGS);
   
   /**

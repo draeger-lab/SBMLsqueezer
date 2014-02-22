@@ -48,6 +48,8 @@ import de.zbit.sbml.util.SBMLtools;
 import de.zbit.util.ResourceManager;
 
 /**
+ * This class has many factory methods for the creation of parameters to be used
+ * in varous kinetic equations for a specific model.
  * 
  * @author Andreas Dr&auml;ger
  * @author Sarah R. M&uuml;ller vom Hagen

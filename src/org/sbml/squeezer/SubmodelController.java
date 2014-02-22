@@ -74,12 +74,12 @@ import de.zbit.util.progressbar.AbstractProgressBar;
 public class SubmodelController {
   
   /**
-   * 
+   * Localization support.
    */
   public static final transient ResourceBundle WARNINGS = ResourceManager.getBundle(Bundles.WARNINGS);
   
   /**
-   * 
+   * A {@link Logger} for this class.
    */
   private final Logger logger = Logger.getLogger(SubmodelController.class.getName());
   
@@ -202,7 +202,7 @@ public class SubmodelController {
         submodel.setAreaUnits(modelOrig.getAreaUnits());
       } else {
         UnitDefinition areaUD = UnitDefinition.getPredefinedUnit(UnitDefinition.AREA, 2, 4);
-        SBMLtools.setLevelAndVersion(areaUD, level, version);
+        org.sbml.jsbml.util.SBMLtools.setLevelAndVersion(areaUD, level, version);
         submodel.addUnitDefinition(areaUD);
         if (level > 2) {
           submodel.setAreaUnits(areaUD.getId());
@@ -220,7 +220,7 @@ public class SubmodelController {
         submodel.setLengthUnits(modelOrig.getLengthUnits());
       } else {
         UnitDefinition lengthUD = UnitDefinition.getPredefinedUnit(UnitDefinition.LENGTH, 2, 4);
-        SBMLtools.setLevelAndVersion(lengthUD, level, version);
+        org.sbml.jsbml.util.SBMLtools.setLevelAndVersion(lengthUD, level, version);
         submodel.addUnitDefinition(lengthUD);
         if (level > 2) {
           submodel.setLengthUnits(lengthUD.getId());
@@ -238,7 +238,7 @@ public class SubmodelController {
         submodel.setSubstanceUnits(modelOrig.getSubstanceUnits());
       } else {
         UnitDefinition substanceUD = UnitDefinition.getPredefinedUnit(UnitDefinition.SUBSTANCE, 2, 4);
-        SBMLtools.setLevelAndVersion(substanceUD, level, version);
+        org.sbml.jsbml.util.SBMLtools.setLevelAndVersion(substanceUD, level, version);
         submodel.addUnitDefinition(substanceUD);
         if (level > 2) {
           submodel.setSubstanceUnits(substanceUD.getId());
@@ -256,7 +256,7 @@ public class SubmodelController {
         submodel.setTimeUnits(modelOrig.getTimeUnits());
       } else {
         UnitDefinition timeUD = UnitDefinition.getPredefinedUnit(UnitDefinition.TIME, 2, 4);
-        SBMLtools.setLevelAndVersion(timeUD, level, version);
+        org.sbml.jsbml.util.SBMLtools.setLevelAndVersion(timeUD, level, version);
         submodel.addUnitDefinition(timeUD);
         if (level > 2) {
           submodel.setTimeUnits(timeUD.getId());
@@ -274,7 +274,7 @@ public class SubmodelController {
         submodel.setVolumeUnits(modelOrig.getVolumeUnits());
       } else {
         UnitDefinition volumeUD = UnitDefinition.getPredefinedUnit(UnitDefinition.VOLUME, 2, 4);
-        SBMLtools.setLevelAndVersion(volumeUD, level, version);
+        org.sbml.jsbml.util.SBMLtools.setLevelAndVersion(volumeUD, level, version);
         submodel.addUnitDefinition(volumeUD);
         if (level > 2) {
           submodel.setVolumeUnits(volumeUD.getId());
@@ -1157,7 +1157,7 @@ public class SubmodelController {
           ud = model.getLengthUnitsInstance();
           if (ud == null) {
             ud = UnitDefinition.getPredefinedUnit(UnitDefinition.LENGTH, 2, 4);
-            SBMLtools.setLevelAndVersion(ud, modelToWrite.getLevel(), modelToWrite.getVersion());
+            org.sbml.jsbml.util.SBMLtools.setLevelAndVersion(ud, modelToWrite.getLevel(), modelToWrite.getVersion());
             modelToWrite.setLengthUnits(ud);
           }
           compartment.setUnits(ud);
@@ -1166,7 +1166,7 @@ public class SubmodelController {
           ud = model.getAreaUnitsInstance();
           if (ud == null) {
             ud = UnitDefinition.getPredefinedUnit(UnitDefinition.AREA, 2, 4);
-            SBMLtools.setLevelAndVersion(ud, modelToWrite.getLevel(), modelToWrite.getVersion());
+            org.sbml.jsbml.util.SBMLtools.setLevelAndVersion(ud, modelToWrite.getLevel(), modelToWrite.getVersion());
             modelToWrite.setAreaUnits(ud);
           }
           compartment.setUnits(ud);
@@ -1175,7 +1175,7 @@ public class SubmodelController {
           ud = model.getUnitDefinition(UnitDefinition.VOLUME);
           if (ud == null) {
             ud = UnitDefinition.getPredefinedUnit(UnitDefinition.VOLUME, 2, 4);
-            SBMLtools.setLevelAndVersion(ud, modelToWrite.getLevel(), modelToWrite.getVersion());
+            org.sbml.jsbml.util.SBMLtools.setLevelAndVersion(ud, modelToWrite.getLevel(), modelToWrite.getVersion());
             modelToWrite.setVolumeUnits(ud);
           }
           compartment.setUnits(ud);
@@ -1204,7 +1204,7 @@ public class SubmodelController {
       UnitDefinition ud = species.getModel().getUnitDefinition(UnitDefinition.SUBSTANCE);
       if (ud == null) {
         ud = UnitDefinition.getPredefinedUnit(UnitDefinition.SUBSTANCE, 2, 4);
-        SBMLtools.setLevelAndVersion(ud, miniModel.getLevel(), miniModel.getVersion());
+        org.sbml.jsbml.util.SBMLtools.setLevelAndVersion(ud, miniModel.getLevel(), miniModel.getVersion());
         miniModel.setSubstanceUnits(ud);
       }
       species.setSubstanceUnits(ud);

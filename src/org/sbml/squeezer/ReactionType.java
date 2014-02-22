@@ -86,7 +86,7 @@ public class ReactionType {
    */
   private static final transient Logger logger = Logger.getLogger(ReactionType.class.getName());
   /**
-   * 
+   * Localization support
    */
   public static final transient ResourceBundle MESSAGES = ResourceManager.getBundle(Bundles.MESSAGES);
   
