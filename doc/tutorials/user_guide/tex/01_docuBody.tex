@@ -186,6 +186,7 @@ On the most \Unix and \Linux platforms, this variable is called
 On \MacOSX, you should instead define the variable \texttt{DYLD\_LIBRARY\_PATH}.
 Follow the instrcutions at \url{http://sbml.org/Software/libSBML/docs/cpp-api/libsbml-accessing.html#accessing-java}
 before launching SBMLsqueezer.
+On Windows you should add the directory to the PATH environment in the Control Panel.
 The following skript can help you to to run SBMLsqueezer on your \Unix platform:
 \begin{lstlisting}[language=bash]
 VM_ARGS="-Xms32M -Xmx512M -Djava.library.path="
@@ -265,7 +266,7 @@ TODO: Write some text.
 
 \chapter{Example use cases}
 
-\section{\emph{De-novo} creation of kineitc equations}
+\section{\emph{De-novo} creation of kinetic equations}
 \subsection{For an entire network}
 \subsection{For selected reactions}
 \section{Extraction of rate laws from SABIO-RK (does not apply for CellDesigner plugin)}
