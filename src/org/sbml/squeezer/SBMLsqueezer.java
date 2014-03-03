@@ -23,7 +23,6 @@
  */
 package org.sbml.squeezer;
 
-import java.awt.Window;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -41,6 +40,7 @@ import java.util.logging.Logger;
 
 import javax.xml.stream.XMLStreamException;
 
+import jp.sbi.garuda.client.backend.BackendNotInitializedException;
 import jp.sbi.garuda.platform.commons.exception.NetworkException;
 
 import org.sbml.jsbml.Model;
@@ -67,7 +67,6 @@ import org.sbml.tolatex.SBML2LaTeX;
 import de.zbit.AppConf;
 import de.zbit.Launcher;
 import de.zbit.UserInterface;
-import de.zbit.garuda.BackendNotInitializedException;
 import de.zbit.garuda.GarudaOptions;
 import de.zbit.garuda.GarudaSoftwareBackend;
 import de.zbit.gui.GUIOptions;
@@ -122,17 +121,35 @@ public class SBMLsqueezer<T> extends Launcher {
     return Arrays.asList(getInteractiveConfigOptionsArray());
   }
   
+  private static boolean sabiorkEnabled = true;
+  
+  /**
+   * @return the sabiorkEnabled
+   */
+  public static boolean isSABIORKEnabled() {
+    return sabiorkEnabled;
+  }
+  
+  /**
+   * @param sabiorkEnabled the sabiorkEnabled to set
+   */
+  public static void setSABIORKEnabled(boolean sabiorkEnabled) {
+    SBMLsqueezer.sabiorkEnabled = sabiorkEnabled;
+  }
+  
   /**
    * 
    * @return
    */
   public static Class<? extends KeyProvider>[] getInteractiveConfigOptionsArray() {
-    Class<? extends KeyProvider>[] list = new Class[5];
+    Class<? extends KeyProvider>[] list = new Class[sabiorkEnabled ? 5 : 3];
     list[0] = OptionsGeneral.class;
     list[1] = OptionsRateLaws.class;
-    list[2] = SABIORKOptions.class;
-    list[3] = SABIORKPreferences.class;
-    list[4] = LaTeXOptions.class;
+    if (sabiorkEnabled) {
+      list[2] = SABIORKOptions.class;
+      list[3] = SABIORKPreferences.class;
+    }
+    list[sabiorkEnabled ? 4 : 2] = LaTeXOptions.class;
     return list;
   }
   
@@ -387,12 +404,12 @@ public class SBMLsqueezer<T> extends Launcher {
    * @see de.zbit.Launcher#initGUI(de.zbit.AppConf)
    */
   @Override
-  public Window initGUI(AppConf appConf) {
+  public java.awt.Window initGUI(AppConf appConf) {
     SBProperties properties = appConf.getCmdArgs();
     if (properties.containsKey(IOOptions.SBML_IN_FILE)) {
       readSBMLSource(properties.get(IOOptions.SBML_IN_FILE));
     }
-    final Window gui = new SBMLsqueezerUI(getSBMLIO(), appConf);
+    final java.awt.Window gui = new SBMLsqueezerUI(getSBMLIO(), appConf);
     if (getCmdLineOptions().contains(GarudaOptions.class)
         && (!appConf.getCmdArgs().containsKey(GarudaOptions.CONNECT_TO_GARUDA) ||
             appConf.getCmdArgs().getBoolean(GarudaOptions.CONNECT_TO_GARUDA))) {
@@ -419,15 +436,21 @@ public class SBMLsqueezer<T> extends Launcher {
                   folder + "Screenshot_3.png"})
                 );
             garudaBackend.addInputFileFormat("xml", "SBML");
+            garudaBackend.addInputFileFormat("xml", "sbml");
             garudaBackend.addInputFileFormat("sbml", "SBML");
+            garudaBackend.addInputFileFormat("sbml", "sbml");
+            // TODO: Only for testing
+            garudaBackend.addInputFileFormat("*", "*");
             garudaBackend.addOutputFileFormat("xml", "SBML");
+            garudaBackend.addOutputFileFormat("xml", "sbml");
             garudaBackend.addOutputFileFormat("sbml", "SBML");
+            garudaBackend.addOutputFileFormat("sbml", "sbml");
             garudaBackend.init();
             garudaBackend.registedSoftwareToGaruda();
           } catch (NetworkException exc) {
             GUITools.showErrorMessage(gui, exc);
           } catch (BackendNotInitializedException exc) {
-            GUITools.showErrorMessage(gui, exc);
+            logger.fine(exc.getLocalizedMessage() != null ? exc.getLocalizedMessage() : exc.getMessage());
           } catch (Throwable exc) {
             logger.fine(exc.getLocalizedMessage());
           }

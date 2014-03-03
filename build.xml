@@ -1,5 +1,29 @@
 <?xml version="1.0"?>
-<!-- $Id$ -->
+<!--
+ * $Id$
+ * $URL$
+ *
+ * This file is part of SBMLsqueezer, a Java program that creates rate
+ * equations for reactions in SBML files (http://sbml.org).
+ *
+ * Copyright (C) 2006-2014 by the University of Tuebingen, Germany.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ *
+ *
+ * Version: $Rev$
+-->
 
 <project
   name="SBMLsqueezer"
@@ -14,7 +38,7 @@
     <tstamp>
       <format property="YEAR" pattern="yyyy"/>
     </tstamp>
-
+  	
     <property name="Name" value="SBMLsqueezer"/>
     <property name="version" value="2.0"/>
     <property name="api.version" value="2.0 alpha"/>
@@ -346,6 +370,7 @@
       <zipfileset excludes="META-INF/INDEX.LIST META-INF/MANIFEST.MF, COPYING.txt, package.html, package-info.class, licenses/COPYING.txt, overview.html, AUTHORS.txt" src="${lib}/jsbml-1.0-a1-with-dependencies.jar"/>
       <zipfileset excludes="META-INF/**, COPYING.txt, licenses/COPYING.txt, package.html, package-info.class, overview.html, AUTHORS.txt" src="${lib}/SysBio.jar"/>
       <zipfileset excludes="META-INF/**, COPYING.txt, licenses/COPYING.txt, package.html, package-info.class, overview.html, AUTHORS.txt" src="${lib}/quaqua.jar"/>
+      <zipfileset excludes="META-INF/**, COPYING.txt, licenses/COPYING.txt, package.html, package-info.class, overview.html, AUTHORS.txt" src="${lib}/garuda/GarudaBackend.jar"/>
       <zipfileset excludes="META-INF/**, COPYING.txt, licenses/COPYING.txt, package.html, package-info.class, overview.html, AUTHORS.txt" src="${lib}/garuda/garuda-csr.jar"/>
       <zipfileset excludes="META-INF/**, COPYING.txt, licenses/COPYING.txt, package.html, package-info.class, overview.html, AUTHORS.txt" src="${lib}/garuda/jsonic-1.2.10.jar"/>
     </jar>
@@ -921,8 +946,32 @@
     
   	<property name="uuid"           value="${UUID}"/>
   	<property name="gadget.config"  value="${dist}/gadget_config.xml"/>
+  	
+    <!-- Launch command is platform dependent -> Determine command for platform -->
+    <!-- Windows: cmd /c start javaw.exe -jar gadgets/[GADGET_UUID]/[JAR_NAME] -->
+    <!-- Linux:   java -jar gadgets/[GADGET_UUID]/[JAR_NAME] -->
+    <!-- Mac OS:  open gadgets/[GADGET_UUID]/[JAR_NAME] -->
+  	<condition property="jar.executor" value="open">
+  	  <os family="mac"/>
+  	</condition>
+  	<condition property="jar.executor" value="cmd /c start javaw.exe -jar">
+  	  <os family="windows"/>
+  	</condition>
+  	<condition property="jar.executor" value="java -jar">
+  	  <and>
+  	    <os family="unix"/>
+  	  	<not>
+  	  	  <os family="mac"/>
+  	  	</not>
+  	  </and>
+  	</condition>
 
   	<echo message="Updating Garuda gadget configuration..."/>
+  	<replace
+      file="${gadget.config}"
+  	  token="[LAUNCH_COMMAND]"
+  	  value="${jar.executor}"
+  	/>
   	<replace
   	  file="${gadget.config}"
   	  token="[GADGET_UUID]"
