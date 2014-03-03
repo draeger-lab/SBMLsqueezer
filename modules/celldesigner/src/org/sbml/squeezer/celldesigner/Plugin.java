@@ -72,9 +72,6 @@ public class Plugin extends AbstractCellDesignerPlugin {
   public Plugin() {
     super();
     try {
-      // Initializing all necessary SysBio and SBMLsqueezer images
-      ImageTools.initImages();
-      SBMLsqueezerUI.initImages();
       
       // Initialize CellDesigner/JSBML communication interface
       PluginSBMLReader reader = new PluginSBMLReader(
@@ -82,8 +79,13 @@ public class Plugin extends AbstractCellDesignerPlugin {
       PluginSBMLWriter writer = new PluginSBMLWriter(this);
       
       // Launch SBMLsqueezer
+      SBMLsqueezer.setSABIORKEnabled(false);
       sbmlSqueezer = new SBMLsqueezer<PluginModel>(reader, writer);
       sbmlSqueezer.checkForUpdate();
+      
+      // Initializing all necessary SysBio and SBMLsqueezer images
+      ImageTools.initImages();
+      SBMLsqueezerUI.initImages();
       
       // Initializing CellDesigner's menu entries
       addPluginMenu();

@@ -130,6 +130,7 @@ import de.zbit.util.prefs.SBPreferences;
  * to this UI class and will therefore start the given action.
  * 
  * @author Andreas Dr&auml;ger
+ * @version $Rev$
  * @since 1.0
  */
 public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
@@ -498,11 +499,19 @@ ChangeListener, PropertyChangeListener, TabClosingListener {
     items.add(GUITools.createJMenuItem(this,
       Command.TO_LATEX, UIManager.getIcon("ICON_LATEX_16"),
       KeyStroke.getKeyStroke('E', InputEvent.CTRL_DOWN_MASK)));
+    return items.toArray(new JMenuItem[0]);
+  }
+  
+  /* (non-Javadoc)
+   * @see de.zbit.gui.BaseFrame#additionalFileMenuItems()
+   */
+  @Override
+  protected JMenuItem[] additionalFileMenuItems() {
     if (!appConf.getCmdArgs().containsKey(GarudaOptions.CONNECT_TO_GARUDA)
         || appConf.getCmdArgs().getBoolean(GarudaOptions.CONNECT_TO_GARUDA)) {
-      items.add(GarudaGUIfactory.createGarudaMenu(this));
+      return new JMenuItem[] {GarudaGUIfactory.createGarudaMenu(this)};
     }
-    return items.toArray(new JMenuItem[0]);
+    return super.additionalFileMenuItems();
   }
   
   /* (non-Javadoc)
@@ -944,10 +953,12 @@ ChangeListener, PropertyChangeListener, TabClosingListener {
     String propName = evt.getPropertyName();
     if (propName.equals(OpenedFile.FILE_CONTENT_CHANGED_EVENT)) {
       setFileStateMark(sbmlIO.getSelectedOpenedFile());
-    } else if (propName.equals(GarudaSoftwareBackend.GARUDA_ACTIVATED)) {
-      garudaBackend = (GarudaSoftwareBackend) evt.getNewValue();
-      if (sbmlIO.getListOfOpenedFiles().size() > 0) {
-        GUITools.setEnabled(true, getJMenuBar(), getJToolBar(), GarudaActions.SENT_TO_GARUDA);
+    } else {
+      if (propName.equals(GarudaSoftwareBackend.GARUDA_ACTIVATED)) {
+        garudaBackend = (GarudaSoftwareBackend) evt.getNewValue();
+        if (sbmlIO.getListOfOpenedFiles().size() > 0) {
+          GUITools.setEnabled(true, getJMenuBar(), getJToolBar(), GarudaActions.SENT_TO_GARUDA);
+        }
       }
     }
   }
