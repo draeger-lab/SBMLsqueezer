@@ -1,0 +1,91 @@
+\documentclass[12pt]{article}
+
+% \usepackage{ngerman}
+\usepackage{mathptmx}
+\usepackage{helvet}
+\usepackage{courier}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{color}
+\usepackage{multirow}
+\usepackage[headexclude,footexclude]{typearea}
+\usepackage[paperwidth=21cm, paperheight=26cm, top=0.05cm, left=0cm,
+bottom=0.05cm]{geometry}
+% \usepackage[paper=a4paper,landscape=false,centering]{geometry}
+% \usepackage[latin1]{inputenc}
+
+%opening
+\title{}
+\author{}
+
+% \areaset[0cm]{21cm}{29.7cm} %{29.7cm}
+\pagestyle{empty}
+
+\definecolor{grau}{gray}{0.8}
+\setlength{\fboxrule}{.1cm}
+\setlength{\fboxsep}{.75cm}
+
+% \selectfont
+
+\begin{document}
+\begin{minipage}[t][.8cm][t]{\textwidth}
+\ \
+\end{minipage}
+\begin{center}
+\vspace{-1.7cm}
+% \hspace*{1.2cm}
+\includegraphics[width=21cm]{SBMLsqueezerWorkflowConverted}
+% SBMLsqueezer1.2.pdf: 842x595 pixel, 72dpi, 29.70x20.99 cm, bb=0 0 842 595
+\\
+%Figure1/workflowScreenshots_Ink1.eps}\\ %workflowBilder
+\vspace{-.37cm}
+\begin{tabular}{lc}
+\hspace{-.435cm} &
+\fcolorbox{grau}{white}{\begin{minipage}[c]{18.9cm} % 17.5cm
+\section{Rate Laws}
+\subsection{Reaction: \texttt{re1}}
+
+\begin{equation}
+v_{1}=\mathtt{vmaf\-\_re1}\cdot \frac{\left([\mathtt{s1}]\cdot
+\mathrm{vol}\left(\mathtt{c1}\right)\right)^{\mathtt{hic\-\_re1\-\_s1}}}{\left([
+\mathtt{s1}]\cdot
+\mathrm{vol}\left(\mathtt{c1}\right)\right)^{\mathtt{hic\-\_re1\-\_s1}}+\mathtt{
+ksp\-\_re1\-\_s1}^{\mathtt{hic\-\_re1\-\_s1}}}
+\end{equation}
+\subsection{Reaction: \texttt{re2}}
+
+\begin{equation}
+v_{2}=[\mathtt{s3}]\cdot \mathrm{vol}\left(\mathtt{c1}\right)\cdot
+\frac{\mathtt{kcrf\-\_re2\-\_s3}\cdot \frac{[\mathtt{s4}]\cdot
+\mathrm{vol}\left(\mathtt{c1}\right)}{\mathtt{kmc\-\_re2\-\_s4\-\_s3}}\cdot
+\frac{[\mathtt{s5}]\cdot
+\mathrm{vol}\left(\mathtt{c1}\right)}{\mathtt{kmc\-\_re2\-\_s5\-\_s3}}-\mathtt{
+kcrr\-\_re2\-\_s3}\cdot \frac{[\mathtt{s6}]\cdot
+\mathrm{vol}\left(\mathtt{c1}\right)}{\mathtt{kmc\-\_re2\-\_s6\-\_s3}}}{
+\left(1+\frac{[\mathtt{s4}]\cdot
+\mathrm{vol}\left(\mathtt{c1}\right)}{\mathtt{kmc\-\_re2\-\_s4\-\_s3}}
+\right)\cdot\left(1+\frac{[\mathtt{s5}]\cdot
+\mathrm{vol}\left(\mathtt{c1}\right)}{\mathtt{kmc\-\_re2\-\_s5\-\_s3}}
+\right)+\frac{[\mathtt{s6}]\cdot
+\mathrm{vol}\left(\mathtt{c1}\right)}{\mathtt{kmc\-\_re2\-\_s6\-\_s3}}}
+\end{equation}
+\subsection{Reaction: \texttt{re3}}
+
+\begin{equation}
+v_{3}=[\mathtt{s8}]\cdot \mathrm{vol}\left(\mathtt{c1}\right)\cdot
+\frac{\frac{\mathtt{kcrf\-\_re3\-\_s8}}{\mathtt{kmc\-\_re3\-\_s6\-\_s8}}\cdot
+[\mathtt{s6}]\cdot
+\mathrm{vol}\left(\mathtt{c1}\right)-\frac{\mathtt{kcrr\-\_re3\-\_s8}}{\mathtt{
+kmc\-\_re3\-\_s7\-\_s8}}\cdot [\mathtt{s7}]\cdot
+\mathrm{vol}\left(\mathtt{c1}\right)}{1+\frac{[\mathtt{s6}]\cdot
+\mathrm{vol}\left(\mathtt{c1}\right)}{\mathtt{kmc\-\_re3\-\_s6\-\_s8}}+\frac{[
+\mathtt{s7}]\cdot
+\mathrm{vol}\left(\mathtt{c1}\right)}{\mathtt{kmc\-\_re3\-\_s7\-\_s8}}}
+\end{equation}
+\begin{center}
+$\vdots$
+\end{center}
+\end{minipage}}
+\end{tabular}
+\end{center}
+\end{document}
