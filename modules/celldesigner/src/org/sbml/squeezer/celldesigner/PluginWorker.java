@@ -160,7 +160,7 @@ public class PluginWorker extends SwingWorker<SBMLDocument, Void> {
           wizard.isKineticsAndParametersStoredInSBML();
           break;
         case SQUEEZE_REACTION:
-          logger.fine(MessageFormat.format(bundle.getString(""), reactionNode.get(0)));
+          logger.fine(MessageFormat.format(bundle.getString("SQUEEZE_REACTION"), reactionNode.get(0)));
           try {
             new KineticLawSelectionDialog(null, plugin.getSBMLsqueezer().getSBMLIO(), ((PluginReaction) reactionNode.get(0)).getId());
           } catch (Throwable exc) {
@@ -215,6 +215,7 @@ public class PluginWorker extends SwingWorker<SBMLDocument, Void> {
         message += '\n' + t.getCause().getLocalizedMessage() + '\n';
         message += Arrays.toString(t.getCause().getStackTrace()).replace(',', '\n');
       }
+      t.printStackTrace();
       GUITools.showErrorMessage(null, t, message.substring(1, message.length() - 1));
     }
     super.done();
