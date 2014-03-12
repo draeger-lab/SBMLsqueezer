@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sbml xmlns="http://www.sbml.org/sbml/level2/version4" level="2" version="4">
+<model metaid="untitled" id="untitled" sboTerm="SBO:0000231">
+<annotation/>
+<listOfUnitDefinitions>
+<unitDefinition id="substance" name="substance">
+<listOfUnits>
+<unit kind="mole"/>
+</listOfUnits>
+</unitDefinition>
+<unitDefinition id="volume" name="volume">
+<listOfUnits>
+<unit kind="litre"/>
+</listOfUnits>
+</unitDefinition>
+<unitDefinition id="area" name="area">
+<listOfUnits>
+<unit kind="metre" exponent="2"/>
+</listOfUnits>
+</unitDefinition>
+<unitDefinition id="length" name="length">
+<listOfUnits>
+<unit kind="metre"/>
+</listOfUnits>
+</unitDefinition>
+<unitDefinition id="time" name="time">
+<listOfUnits>
+<unit kind="second"/>
+</listOfUnits>
+</unitDefinition>
+</listOfUnitDefinitions>
+<listOfCompartments>
+<compartment id="default" size="1" units="volume" sboTerm="SBO:0000240"/>
+<compartment id="c1" name="cytosol" size="1" units="volume" outside="default" sboTerm="SBO:0000240">
+<annotation/>
+</compartment>
+</listOfCompartments>
+<listOfSpecies>
+<species id="s1" name="s1" compartment="c1" initialAmount="0" charge="0" sboTerm="SBO:0000243">
+<annotation/>
+</species>
+<species id="s2" name="s2" compartment="c1" initialAmount="0" sboTerm="SBO:0000250">
+<annotation/>
+</species>
+<species id="s3" name="s3" compartment="c1" initialAmount="0" sboTerm="SBO:0000253">
+<annotation/>
+</species>
+<species id="s4" name="s4" compartment="c1" initialAmount="0" sboTerm="SBO:0000247">
+<annotation/>
+</species>
+<species id="s5" name="s5" compartment="c1" initialAmount="0" sboTerm="SBO:0000247">
+<annotation/>
+</species>
+<species id="s6" name="s6" compartment="c1" initialAmount="0" sboTerm="SBO:0000247">
+<annotation/>
+</species>
+<species id="s7" name="s7" compartment="c1" initialAmount="0" sboTerm="SBO:0000247">
+<annotation/>
+</species>
+<species id="s8" name="s8" compartment="c1" initialAmount="0" sboTerm="SBO:0000252">
+<annotation/>
+</species>
+<species id="s9" name="sa3_degraded" compartment="c1" initialAmount="0" sboTerm="SBO:0000291">
+<annotation/>
+</species>
+<species id="s10" name="sa8_degraded" compartment="c1" initialAmount="0" sboTerm="SBO:0000291">
+<annotation/>
+</species>
+<species id="s11" name="s11" compartment="c1" initialAmount="0" sboTerm="SBO:0000291">
+<annotation/>
+</species>
+<species id="s12" name="s12" compartment="c1" initialAmount="0" sboTerm="SBO:0000291">
+<annotation/>
+</species>
+</listOfSpecies>
+<listOfReactions>
+<reaction id="re1" reversible="false" sboTerm="SBO:0000183">
+<annotation/>
+<listOfReactants>
+<speciesReference sboTerm="SBO:0000003" species="s11"/>
+</listOfReactants>
+<listOfProducts>
+<speciesReference sboTerm="SBO:0000003" species="s2"/>
+</listOfProducts>
+<listOfModifiers>
+<modifierSpeciesReference sboTerm="SBO:0000461" species="s1"/>
+</listOfModifiers>
+</reaction>
+<reaction id="re2" reversible="false" sboTerm="SBO:0000231">
+<annotation/>
+<listOfReactants>
+<speciesReference sboTerm="SBO:0000003" species="s4"/>
+<speciesReference sboTerm="SBO:0000003" species="s5"/>
+</listOfReactants>
+<listOfProducts>
+<speciesReference sboTerm="SBO:0000003" species="s6"/>
+</listOfProducts>
+<listOfModifiers>
+<modifierSpeciesReference sboTerm="SBO:0000460" species="s3"/>
+</listOfModifiers>
+</reaction>
+<reaction id="re3" reversible="false" sboTerm="SBO:0000231">
+<annotation/>
+<listOfReactants>
+<speciesReference sboTerm="SBO:0000003" species="s6"/>
+</listOfReactants>
+<listOfProducts>
+<speciesReference sboTerm="SBO:0000003" species="s7"/>
+</listOfProducts>
+<listOfModifiers>
+<modifierSpeciesReference sboTerm="SBO:0000460" species="s8"/>
+</listOfModifiers>
+</reaction>
+<reaction id="re4" reversible="false" sboTerm="SBO:0000184">
+<annotation/>
+<listOfReactants>
+<speciesReference sboTerm="SBO:0000003" species="s12"/>
+</listOfReactants>
+<listOfProducts>
+<speciesReference sboTerm="SBO:0000003" species="s3"/>
+</listOfProducts>
+<listOfModifiers>
+<modifierSpeciesReference sboTerm="SBO:0000461" species="s2"/>
+</listOfModifiers>
+</reaction>
+<reaction id="re5" reversible="false" sboTerm="SBO:0000231">
+<annotation/>
+<listOfReactants>
+<speciesReference sboTerm="SBO:0000003" species="s3"/>
+</listOfReactants>
+<listOfProducts>
+<speciesReference sboTerm="SBO:0000003" species="s9"/>
+</listOfProducts>
+</reaction>
+<reaction id="re6" reversible="false" sboTerm="SBO:0000231">
+<annotation/>
+<listOfReactants>
+<speciesReference sboTerm="SBO:0000003" species="s8"/>
+</listOfReactants>
+<listOfProducts>
+<speciesReference sboTerm="SBO:0000003" species="s10"/>
+</listOfProducts>
+</reaction>
+</listOfReactions>
+</model>
+</sbml>
