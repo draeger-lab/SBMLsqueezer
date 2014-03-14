@@ -33,6 +33,8 @@ import javax.xml.stream.XMLStreamException;
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.ListOf;
 import org.sbml.jsbml.LocalParameter;
+import org.sbml.jsbml.Model;
+import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SpeciesReference;
 import org.sbml.jsbml.Unit;
@@ -169,83 +171,99 @@ InterfaceIrreversibleKinetics, InterfaceModulatedKinetics {
     ASTNode equation;
     LocalParameter p_kM;
     
-    ListOf<SpeciesReference> listOf = forward ? reaction
-        .getListOfReactants() : reaction.getListOfProducts();
-        
-        if (!fullRank) {
-          int i;
-          for (i = 0; i < listOf.size(); i++) {
-            SpeciesReference ref = listOf.get(i);
-            p_kM = parameterFactory.parameterMichaelis(ref.getSpecies(),
-              enzyme, forward);
-            if (forward) {
-              reactants[i] = ASTNode.pow(speciesTerm(ref).divideBy(p_kM), stoichiometryTerm(ref));
-            } else {
-              products[i] = ASTNode.pow(speciesTerm(ref).divideBy(p_kM), stoichiometryTerm(ref));
-            }
-          }
-          i = 0;
-          for (SpeciesReference ref : reaction.getListOfReactants()) {
-            reactantsroot[i++] = ASTNode.times(
-              this,
-              parameterFactory.parameterKG(ref.getSpecies()),
-              parameterFactory.parameterMichaelis(ref.getSpecies(),
-                enzyme, forward)).raiseByThePowerOf(
-                  stoichiometryTerm(ref));
-          }
-          i = 0;
-          for (SpeciesReference ref : reaction.getListOfProducts()) {
-            productroot[i++] = ASTNode.times(
-              this,
-              parameterFactory.parameterKG(ref.getSpecies()),
-              parameterFactory.parameterMichaelis(ref.getSpecies(),
-                enzyme, forward)).raiseByThePowerOf(
-                  stoichiometryTerm(ref));
-          }
-          if (forward) {
-            // TODO: in Level 3 assign a unit to the numbers
-            ASTNode proot = ASTNode.times(productroot);
-            if (proot == null) {
-              proot = new ASTNode(1, this);
-              SBMLtools.setUnits(proot, Unit.Kind.DIMENSIONLESS.getName());
-            }
-            ASTNode rroot = ASTNode.times(reactantsroot);
-            if (rroot == null) {
-              rroot = new ASTNode(1, this);
-              SBMLtools.setUnits(proot, Unit.Kind.DIMENSIONLESS.getName());
-            }
-            equation = ASTNode.times(ASTNode.times(reactants), ASTNode
-              .sqrt(ASTNode.frac(rroot, proot)));
-          } else {
-            ASTNode proot = ASTNode.times(productroot);
-            if (proot == null) {
-              proot = new ASTNode(1, this);
-              SBMLtools.setUnits(proot, Unit.Kind.DIMENSIONLESS.getName());
-            }
-            ASTNode rroot = ASTNode.times(reactantsroot);
-            if (rroot == null) {
-              rroot = new ASTNode(1, this);
-              SBMLtools.setUnits(proot, Unit.Kind.DIMENSIONLESS.getName());
-            }
-            equation = ASTNode.times(ASTNode.times(products), ASTNode
-              .sqrt(ASTNode.frac(proot, rroot)));
-          }
+    ListOf<SpeciesReference> listOf = forward ? reaction.getListOfReactants() : reaction.getListOfProducts();
+    
+    if (!fullRank) {
+      // Thermodynamically independent form
+      int i;
+      for (i = 0; i < listOf.size(); i++) {
+        SpeciesReference ref = listOf.get(i);
+        p_kM = parameterFactory.parameterMichaelis(ref.getSpecies(), enzyme, forward);
+        if (forward) {
+          reactants[i] = ASTNode.pow(speciesTerm(ref).divideBy(p_kM), stoichiometryTerm(ref));
         } else {
-          LocalParameter kcat = parameterFactory.parameterKcatOrVmax(enzyme,
-            forward);
-          ASTNode curr;
-          equation = new ASTNode(kcat, this);
-          for (SpeciesReference specRef : listOf) {
-            p_kM = parameterFactory.parameterMichaelis(
-              specRef.getSpecies(), enzyme, forward);
-            curr = speciesTerm(specRef).divideBy(p_kM);
-            if ((specRef.getStoichiometry() != 1d) || ((specRef.isSetId()) && (getLevel() > 2))) {
-              curr.raiseByThePowerOf(stoichiometryTerm(specRef));
-            }
-            equation.multiplyWith(curr);
-          }
+          products[i] = ASTNode.pow(speciesTerm(ref).divideBy(p_kM), stoichiometryTerm(ref));
         }
-        return equation;
+      }
+      i = 0;
+      double stoichReac = 0d, stoichProd = 0d;
+      for (SpeciesReference ref : reaction.getListOfReactants()) {
+        reactantsroot[i++] = ASTNode.times(
+          this,
+          parameterFactory.parameterKG(ref.getSpecies()),
+          parameterFactory.parameterMichaelis(ref.getSpecies(),
+            enzyme, forward)).raiseByThePowerOf(stoichiometryTerm(ref));
+        stoichReac += ref.getStoichiometry();
+      }
+      i = 0;
+      for (SpeciesReference ref : reaction.getListOfProducts()) {
+        productroot[i++] = ASTNode.times(
+          this,
+          parameterFactory.parameterKG(ref.getSpecies()),
+          parameterFactory.parameterMichaelis(ref.getSpecies(),
+            enzyme, forward)).raiseByThePowerOf(stoichiometryTerm(ref));
+        stoichProd += ref.getStoichiometry();
+      }
+      ASTNode rroot = ASTNode.times(reactantsroot);
+      ASTNode proot = ASTNode.times(productroot);
+      
+      double diff = Math.abs((Double.isNaN(stoichReac) ? 1d : stoichReac) - (Double.isNaN(stoichProd) ? 1d : stoichProd));
+      // TODO: UnitFix!!!
+      diff = 0d;
+      if (diff > 0d) {
+        if (getLevel() < 3) {
+          Parameter conc = parameterFactory.parameterStandardConcentration();
+          ASTNode standardConc = ASTNode.pow(new ASTNode(conc, this), diff);
+          proot.multiplyWith(standardConc);
+        } else {
+          Model model = getModel();
+          ASTNode standardConc = new ASTNode(1, this);
+          SBMLtools.setUnits(standardConc, parameterFactory.getUnitFactory().unitSubstancePerSize(model.getSubstanceUnitsInstance(), model.getVolumeUnitsInstance()));
+          proot.multiplyWith(ASTNode.pow(standardConc, diff));
+        }
+      }
+      
+      if (forward) {
+        if (proot == null) {
+          proot = new ASTNode(1, this);
+          SBMLtools.setUnits(proot, Unit.Kind.DIMENSIONLESS.getName());
+        }
+        if (rroot == null) {
+          rroot = new ASTNode(1, this);
+          SBMLtools.setUnits(proot, Unit.Kind.DIMENSIONLESS.getName());
+        }
+        equation = ASTNode.times(
+          ASTNode.times(reactants),
+          ASTNode.sqrt(ASTNode.frac(rroot, proot)));
+      } else {
+        if (proot == null) {
+          proot = new ASTNode(1, this);
+          SBMLtools.setUnits(proot, Unit.Kind.DIMENSIONLESS.getName());
+        }
+        if (rroot == null) {
+          rroot = new ASTNode(1, this);
+          SBMLtools.setUnits(proot, Unit.Kind.DIMENSIONLESS.getName());
+        }
+        equation = ASTNode.times(
+          ASTNode.times(products),
+          ASTNode.sqrt(ASTNode.frac(proot, rroot)));
+      }
+    } else {
+      // Simple form
+      LocalParameter kcat = parameterFactory.parameterKcatOrVmax(enzyme, forward);
+      ASTNode curr;
+      equation = new ASTNode(kcat, this);
+      for (SpeciesReference specRef : listOf) {
+        p_kM = parameterFactory.parameterMichaelis(
+          specRef.getSpecies(), enzyme, forward);
+        curr = speciesTerm(specRef).divideBy(p_kM);
+        if ((specRef.getStoichiometry() != 1d) || ((specRef.isSetId()) && (getLevel() > 2))) {
+          curr.raiseByThePowerOf(stoichiometryTerm(specRef));
+        }
+        equation.multiplyWith(curr);
+      }
+    }
+    return equation;
   }
   
   /**

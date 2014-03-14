@@ -237,6 +237,7 @@
       sourcepathref="sourcepath"
       target="1.6"
       verbose="${verbose}"
+      fork="true"
     >
       <!-- Source -->
       <src path="${src}"/>
@@ -252,25 +253,29 @@
     <manifest file="${build.dest}/META-INF/MANIFEST.MF">
       <attribute name="Main-Class"             value="org.sbml.squeezer.SBMLsqueezer"/>
       <attribute name="SplashScreen-Image"     value="org/sbml/squeezer/resources/img/SBMLsqueezerSplash.gif"/>
-      <attribute name="Bundle-Name"            value="${Name}" /> 
       <attribute name="Built-By"               value="${user.name}"/>
       <attribute name="Built-Date"             value="${TODAY}"/>
-      <attribute name="Bundle-Revision"        value="${repository.revision}" />
-	  <attribute name="Implementation-Title"   value="${Name}"/>
-	  <attribute name="Implementation-Vendor"  value="University of Tuebingen"/>
-	  <attribute name="Implementation-Version" value="Revision ${repository.revision} (Build ${build.number})"/>
-      <attribute name="Implementation-URL"     value="http://www.cogsys.cs.uni-tuebingen.de/software/SBMLsqueezer/"/>
       <section name="${Name}">
+	    <attribute name="Implementation-Title"   value="${Name}"/>
+	    <attribute name="Implementation-Vendor"  value="University of Tuebingen"/>
+	    <attribute name="Implementation-Version" value="Revision ${repository.revision} (Build ${build.number})"/>
+        <attribute name="Implementation-URL"     value="http://www.cogsys.cs.uni-tuebingen.de/software/SBMLsqueezer/"/>
         <attribute name="Specification-Title"    value="${Name}"/>
         <attribute name="Specification-Version"  value="${api.version}"/>
         <attribute name="Specification-Vendor"   value="Center for Bioinformatics Tuebingen (ZBIT)"/>
       </section>
+      <attribute name="Bundle-Name"            value="${Name}"/> 
       <attribute name="Bundle-SymbolicName"    value="${UUID}"/>
+      <attribute name="Bundle-Revision"        value="${repository.revision}"/>
       <attribute name="Bundle-Vendor"          value="University of California, San Diego"/>
       <attribute name="Bundle-RequiredExecutionEnvironment" value="JavaSE-1.6"/>
       <attribute name="Bundle-Version"         value="${version}"/>
       <attribute name="Provide-Package"        value="org.sbml.squeezer,org.sbml.squeezer.celldesigner,org.sbml.squeezer.gui,org.sbml.squeezer.gui.locales,org.sbml.squeezer.gui.wizard,org.sbml.squeezer.io,org.sbml.squeezer.kinetics,org.sbml.squeezer.math,org.sbml.squeezer.resources,org.sbml.squeezer.resources.html,org.sbml.squeezer.resources.img,org.sbml.squeezer.sabiork,org.sbml.squeezer.sabiork.util,org.sbml.squeezer.sabiork.wizard,org.sbml.squeezer.sabiork.wizard.console,org.sbml.squeezer.test,org.sbml.squeezer.test.cases,org.sbml.squeezer.test.data,org.sbml.squeezer.test.gui,org.sbml.squeezer.test.sabiork,org.sbml.squeezer.util"/>
     </manifest>
+  	
+  	<copy todir="${build.dest}/META-INF/" verbose="true">
+  	  <fileset dir="${basedir}/licenses"/>
+  	</copy>
   
   </target>
 
@@ -354,25 +359,26 @@
       <fileset 
         dir="${build.src}"
         includes="**.txt, **/*.txt, **.xml, **/*.xml, **.properties, **/*.properties, **.cfg, **/*.cfg, **.obo, **/*.obo, **/*.html, **.html, **/*.htm, **.htm, **/*.png, **.png, **/*.gif, **.gif, **/*.jpg, **.jpg"
-        excludes="**.java"
+        excludes="**.java, overview.html"
       />
       <fileset dir="${basedir}">
         <include name="LICENSE.txt"/>
         <include name="README.txt"/>
+      	<include name="AUTHORS"/>
       </fileset>
-      <fileset dir="${basedir}/licenses">
-        <include name="AUTHORS.txt"/>
+      <fileset dir="${build.dest}/META-INF/">
+      	<exclude name="MANIFEST.MF"/>
       </fileset>
       
       <!-- These libraries are required by most classes -->
-      <zipfileset excludes="META-INF/**, COPYING.txt, licenses/COPYING.txt, package.html, package-info.class, overview.html, AUTHORS.txt" src="${lib}/SBML2LaTeX_v1.0_slim.jar"/>
-      <zipfileset excludes="META-INF/**, COPYING.txt, licenses/COPYING.txt, package.html, package-info.class, overview.html, AUTHORS.txt" src="${lib}/jlatexmath-1.0.0.jar"/>
-      <zipfileset excludes="META-INF/INDEX.LIST META-INF/MANIFEST.MF, COPYING.txt, package.html, package-info.class, licenses/COPYING.txt, overview.html, AUTHORS.txt" src="${lib}/jsbml-1.0-a1-with-dependencies.jar"/>
-      <zipfileset excludes="META-INF/**, COPYING.txt, licenses/COPYING.txt, package.html, package-info.class, overview.html, AUTHORS.txt" src="${lib}/SysBio.jar"/>
-      <zipfileset excludes="META-INF/**, COPYING.txt, licenses/COPYING.txt, package.html, package-info.class, overview.html, AUTHORS.txt" src="${lib}/quaqua.jar"/>
-      <zipfileset excludes="META-INF/**, COPYING.txt, licenses/COPYING.txt, package.html, package-info.class, overview.html, AUTHORS.txt" src="${lib}/garuda/GarudaBackend.jar"/>
-      <zipfileset excludes="META-INF/**, COPYING.txt, licenses/COPYING.txt, package.html, package-info.class, overview.html, AUTHORS.txt" src="${lib}/garuda/garuda-csr.jar"/>
-      <zipfileset excludes="META-INF/**, COPYING.txt, licenses/COPYING.txt, package.html, package-info.class, overview.html, AUTHORS.txt" src="${lib}/garuda/jsonic-1.2.10.jar"/>
+      <zipfileset excludes="META-INF/**, COPYING.txt, licenses/**, package.html, package-info.class, overview.html, AUTHORS.txt" src="${lib}/SBML2LaTeX_v1.0_slim.jar"/>
+      <zipfileset excludes="META-INF/**, COPYING.txt, licenses/**, package.html, package-info.class, overview.html, AUTHORS.txt" src="${lib}/jlatexmath-1.0.0.jar"/>
+      <zipfileset excludes="META-INF/INDEX.LIST META-INF/MANIFEST.MF, COPYING.txt, package.html, package-info.class, licenses/**, overview.html, AUTHORS.txt" src="${lib}/jsbml-1.0-a1-with-dependencies.jar"/>
+      <zipfileset excludes="META-INF/**, COPYING.txt, licenses/**, package.html, package-info.class, overview.html, AUTHORS.txt" src="${lib}/SysBio.jar"/>
+      <zipfileset excludes="META-INF/**, COPYING.txt, licenses/**, package.html, package-info.class, overview.html, AUTHORS.txt" src="${lib}/quaqua.jar"/>
+      <zipfileset excludes="META-INF/**, COPYING.txt, licenses/**, package.html, package-info.class, overview.html, AUTHORS.txt" src="${lib}/garuda/GarudaBackend.jar"/>
+      <zipfileset excludes="META-INF/**, COPYING.txt, licenses/**, package.html, package-info.class, overview.html, AUTHORS.txt" src="${lib}/garuda/garuda-csr.jar"/>
+      <zipfileset excludes="META-INF/**, COPYING.txt, licenses/**, package.html, package-info.class, overview.html, AUTHORS.txt" src="${lib}/garuda/jsonic-1.2.10.jar"/>
     </jar>
     
   </target>
@@ -462,7 +468,11 @@
 
   </target>
 
-  <target name="dist" depends="prepare-src" description="Creates the distribution">
+  <target
+  	name="dist"
+  	depends="prepare-src"
+  	description="Creates the distribution"
+  >
 
     <!-- Creates the standard jar file -->
 
@@ -945,7 +955,7 @@
     description="Creates a ZIP file for Garuda">
     
   	<property name="uuid"           value="${UUID}"/>
-  	<property name="gadget.config"  value="${dist}/gadget_config.xml"/>
+  	<property name="gadget.config"  value="gadget_config.xml"/>
   	
     <!-- Launch command is platform dependent -> Determine command for platform -->
     <!-- Windows: cmd /c start javaw.exe -jar gadgets/[GADGET_UUID]/[JAR_NAME] -->
@@ -966,19 +976,27 @@
   	  </and>
   	</condition>
 
+  	<copy file="${dist}/${gadget.config}" todir="${dist.dir}/" verbose="true"/>
+  	<property name="sbmlsqueezer.config" value="${dist.dir}/${gadget.config}"/>
+  	
   	<echo message="Updating Garuda gadget configuration..."/>
   	<replace
-      file="${gadget.config}"
+      file="${sbmlsqueezer.config}"
   	  token="[LAUNCH_COMMAND]"
   	  value="${jar.executor}"
   	/>
   	<replace
-  	  file="${gadget.config}"
+  	  file="${sbmlsqueezer.config}"
   	  token="[GADGET_UUID]"
   	  value="${uuid}"
     />
   	<replace
-  	  file="${gadget.config}"
+  	  file="${sbmlsqueezer.config}"
+  	  token="[GADGET_NAME]"
+  	  value="${Name}"
+  	/>
+  	<replace
+  	  file="${sbmlsqueezer.config}"
   	  token="[JAR_NAME]"
   	  value="${jar.name}_incl-libs.jar"
   	/>
@@ -993,7 +1011,7 @@
       update="true"
    	>
       <mappedresources>
-  	    <fileset file="${gadget.config}"/>
+  	    <fileset file="${sbmlsqueezer.config}"/>
         <globmapper from="*" to="${uuid}/*"/>
       </mappedresources>
       <mappedresources>
@@ -1018,17 +1036,7 @@
       </mappedresources>
     </zip>
   	
-  	<echo message="Reverting changes in Garuda gadget configuration file..."/>
-  	<replace
-  	  file="${gadget.config}"
-  	  token="${uuid}"
-  	  value="[GADGET_UUID]"
-  	/>
-  	<replace
-  	  file="${gadget.config}"
-  	  token="${jar.name}_incl-libs.jar"
-  	  value="[JAR_NAME]"
-  	/>
+  	<delete file="${sbmlsqueezer.config}" verbose="true"/>
 
   </target>
 

@@ -40,7 +40,6 @@ import java.util.logging.Logger;
 
 import javax.xml.stream.XMLStreamException;
 
-import jp.sbi.garuda.client.backend.BackendNotInitializedException;
 import jp.sbi.garuda.platform.commons.exception.NetworkException;
 
 import org.sbml.jsbml.Model;
@@ -420,37 +419,11 @@ public class SBMLsqueezer<T> extends Launcher {
         @Override
         public void run() {
           try {
-            String localPath = SBMLsqueezer.class.getProtectionDomain().getCodeSource().getLocation().getPath();
-            String folder = new File(localPath).getParent() + "/resources/org/sbml/squeezer/resources/img/";
-            String icon = folder + "SBMLsqueezerIcon_64.png";
-            
             GarudaSoftwareBackend garudaBackend = new GarudaSoftwareBackend(
-              "dd624b40-7bc0-11e2-b92a-0800200c9a66",
-              (UserInterface) gui,
-              icon,
-              MESSAGES.getString("PROGRAM_DESCRIPTION"),
-              Arrays.asList(MESSAGES.getStringArray("KEYWORDS")),
-              Arrays.asList(new String[] {
-                  folder + "Screenshot_1.png",
-                  folder + "Screenshot_2.png",
-                  folder + "Screenshot_3.png"})
-                );
-            garudaBackend.addInputFileFormat("xml", "SBML");
-            garudaBackend.addInputFileFormat("xml", "sbml");
-            garudaBackend.addInputFileFormat("sbml", "SBML");
-            garudaBackend.addInputFileFormat("sbml", "sbml");
-            // TODO: Only for testing
-            garudaBackend.addInputFileFormat("*", "*");
-            garudaBackend.addOutputFileFormat("xml", "SBML");
-            garudaBackend.addOutputFileFormat("xml", "sbml");
-            garudaBackend.addOutputFileFormat("sbml", "SBML");
-            garudaBackend.addOutputFileFormat("sbml", "sbml");
+              "dd624b40-7bc0-11e2-b92a-0800200c9a66", (UserInterface) gui);
             garudaBackend.init();
-            garudaBackend.registedSoftwareToGaruda();
           } catch (NetworkException exc) {
             GUITools.showErrorMessage(gui, exc);
-          } catch (BackendNotInitializedException exc) {
-            logger.fine(exc.getLocalizedMessage() != null ? exc.getLocalizedMessage() : exc.getMessage());
           } catch (Throwable exc) {
             logger.fine(exc.getLocalizedMessage());
           }
