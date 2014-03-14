@@ -312,8 +312,9 @@ ChangeListener {
   @SuppressWarnings("unchecked")
   public boolean writeSelectedModelToSBML(String filename)
       throws SBMLException, IOException {
+    Model model = listOfOpenedFiles.get(selectedModel).getDocument().getModel();
     return writer.writeSBML(
-      (T) listOfOpenedFiles.get(selectedModel).getDocument().getModel().getUserObject(LINK_TO_LIBSBML),
+      (T) (model.getUserObject(LINK_TO_LIBSBML) != null ? model.getUserObject(LINK_TO_LIBSBML) : model),
       filename,
       System.getProperty("app.name"),
       System.getProperty("app.version")

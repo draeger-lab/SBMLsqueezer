@@ -171,8 +171,10 @@ public class UnitFactory {
           sb.append("1E");
           if (u.getScale() < 0) {
             sb.append("minus");
+            sb.append((-1) * u.getScale());
+          } else {
+            sb.append(u.getScale());
           }
-          sb.append(u.getScale());
           sb.append('x');
         } else {
           sb.append(prefix);

@@ -448,7 +448,6 @@ public class KineticLawSelectionEquationPanel extends JPanel implements ActionLi
       
       add(reactionsPanel, BorderLayout.CENTER);
       validate();
-      validateTree();
       
     } catch (Throwable exc) {
       GUITools.showErrorMessage(this, exc);

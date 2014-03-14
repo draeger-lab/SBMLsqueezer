@@ -322,7 +322,7 @@ ChangeListener, PropertyChangeListener, TabClosingListener {
           GUITools.showErrorMessage(this, exc);
         }
       }
-      GarudaFileSender sender = new GarudaFileSender(this, garudaBackend, file, "SBML");
+      GarudaFileSender sender = new GarudaFileSender(this, garudaBackend, file, "sbml");
       sender.execute();
     } else {
       SBMLModelSplitPane split = (SBMLModelSplitPane) tabbedPane.getSelectedComponent();

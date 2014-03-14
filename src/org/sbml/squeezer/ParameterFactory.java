@@ -258,6 +258,25 @@ public class ParameterFactory {
   }
   
   /**
+   * For the additive Model: activation curve's y-intercept
+   * 
+   * @return Parameter
+   */
+  public LocalParameter parameterBeta(String rId) {
+    LocalParameter p = createOrGetParameter("beta_", rId);
+    if (!p.isSetSBOTerm()) {
+      SBMLtools.setSBOTerm(p, 2);
+    }
+    if (!p.isSetUnits()) {
+      p.setUnits(Unit.Kind.DIMENSIONLESS);
+    }
+    if (!p.isSetName()) {
+      p.setName(MESSAGES.getString("WEIGHT_ACTIVATION_FUNCTION_PARAMETERS"));
+    }
+    return p;
+  }
+  
+  /**
    * For the HillRadde Model: weight parameter
    * 
    * @return weight for the weight matrix
@@ -274,25 +293,6 @@ public class ParameterFactory {
     if (!p.isSetName()) {
       p.setName(MESSAGES.getString("FOR_ADDITIVE_MODEL")
         + ": " + MESSAGES.getString("BASIS_EXPRESSION_LEVEL"));
-    }
-    return p;
-  }
-  
-  /**
-   * For the additive Model: activation curve's y-intercept
-   * 
-   * @return Parameter
-   */
-  public LocalParameter parameterBeta(String rId) {
-    LocalParameter p = createOrGetParameter("beta_", rId);
-    if (!p.isSetSBOTerm()) {
-      SBMLtools.setSBOTerm(p, 2);
-    }
-    if (!p.isSetUnits()) {
-      p.setUnits(Unit.Kind.DIMENSIONLESS);
-    }
-    if (!p.isSetName()) {
-      p.setName(MESSAGES.getString("WEIGHT_ACTIVATION_FUNCTION_PARAMETERS"));
     }
     return p;
   }
@@ -327,6 +327,27 @@ public class ParameterFactory {
       coeff.setUnits(Unit.Kind.DIMENSIONLESS);
     }
     return coeff;
+  }
+  
+  /**
+   * 
+   * @param r
+   * @return
+   */
+  public ASTNode parameterCStandard(KineticLaw kl) {
+    ASTNode cStandard = new ASTNode(1, kl);
+    if ((kl.getLevel() > 2) && !cStandard.isSetUnits()) {
+      UnitDefinition ud = model.getSubstanceUnitsInstance().clone();
+      ud.raiseByThePowerOf(.5d);
+      ud = ud.simplify();
+      if ((ud.getUnitCount() == 1) && (ud.getUnit(0).isDimensionless())) {
+        cStandard.setUnits(Unit.Kind.DIMENSIONLESS);
+      } else {
+        ud = UnitFactory.checkUnitDefinitions(ud, model);
+        cStandard.setUnits(ud);
+      }
+    }
+    return cStandard;
   }
   
   /**
@@ -437,27 +458,6 @@ public class ParameterFactory {
       }
     }
     return keq;
-  }
-  
-  /**
-   * 
-   * @param r
-   * @return
-   */
-  public ASTNode parameterCStandard(KineticLaw kl) {
-    ASTNode cStandard = new ASTNode(1, kl);
-    if ((kl.getLevel() > 2) && !cStandard.isSetUnits()) {
-      UnitDefinition ud = model.getSubstanceUnitsInstance().clone();
-      ud.raiseByThePowerOf(.5d);
-      ud = ud.simplify();
-      if ((ud.getUnitCount() == 1) && (ud.getUnit(0).isDimensionless())) {
-        cStandard.setUnits(Unit.Kind.DIMENSIONLESS);
-      } else {
-        ud = UnitFactory.checkUnitDefinitions(ud, model);
-        cStandard.setUnits(ud);
-      }
-    }
-    return cStandard;
   }
   
   /**
@@ -1154,6 +1154,20 @@ public class ParameterFactory {
   }
   
   /**
+   * Needed in convenience kinetics to correct the units of the root terms in
+   * Eq. (24) of the paper Liebermeister, W. & Klipp, E. Bringing metabolic
+   * networks to life: convenience rate law and thermodynamic constraints Theor
+   * Biol Med Model, 2006, 3, 41.
+   * @return
+   */
+  public Parameter parameterStandardConcentration() {
+    Parameter conc = createOrGetGlobalParameter("standarc_conc");
+    conc.setValue(1d);
+    conc.setUnits(unitFactory.unitSubstancePerSize(model.getSubstanceUnitsInstance(), model.getVolumeUnitsInstance()));
+    return conc;
+  }
+  
+  /**
    * Standard Temperature
    * 
    * @return Temperature parameter with standard value of 288.15 K.
@@ -1248,38 +1262,6 @@ public class ParameterFactory {
   }
   
   /**
-   * For the additive Model: weight parameter
-   * 
-   * @param name
-   * @param rid
-   * @return weight for the weight matrix
-   */
-  @SuppressWarnings("deprecation")
-  public LocalParameter parameterVHSystem(String name, String rId) {
-    LocalParameter p = createOrGetParameter("v_", rId, StringTools.underscore, name);
-    if (!p.isSetSBOTerm()) {
-      SBMLtools.setSBOTerm(p, 2);
-    }
-    if (!p.isSetUnits()) {
-      Reaction reaction = model.getReaction(rId);
-      ////p.setUnits(unitFactory.unitPerTime());
-      //p.setUnits(unitFactory.unitPerTimeOrSizePerTime(model.getSpecies(name).getCompartmentInstance()));
-      UnitDefinition ud = unitFactory.unitPerTimeAndConcentrationOrSubstance(reaction.getListOfModifiers(), false);
-      if (unitFactory.getBringToConcentration()) {
-        for (SpeciesReference specRef : reaction.getListOfProducts()) {
-          ud.multiplyWith(specRef.getSpeciesInstance().getSpatialSizeUnitsInstance());
-        }
-      }
-      p.setUnits(UnitFactory.checkUnitDefinitions(ud, model));
-    }
-    if (!p.isSetName()) {
-      p.setName(MESSAGES.getString("FOR_ADDITIVE_MODEL")
-        + ": " + MESSAGES.getString("WEIGHT_PARAMETER_FOR_EXTERNAL_INPUTS"));
-    }
-    return p;
-  }
-  
-  /**
    * Creates and annotates the velocity constant for the reaction with the
    * given id and the number of enzymes.
    * 
@@ -1324,6 +1306,38 @@ public class ParameterFactory {
       }
     }
     return kVr;
+  }
+  
+  /**
+   * For the additive Model: weight parameter
+   * 
+   * @param name
+   * @param rid
+   * @return weight for the weight matrix
+   */
+  @SuppressWarnings("deprecation")
+  public LocalParameter parameterVHSystem(String name, String rId) {
+    LocalParameter p = createOrGetParameter("v_", rId, StringTools.underscore, name);
+    if (!p.isSetSBOTerm()) {
+      SBMLtools.setSBOTerm(p, 2);
+    }
+    if (!p.isSetUnits()) {
+      Reaction reaction = model.getReaction(rId);
+      ////p.setUnits(unitFactory.unitPerTime());
+      //p.setUnits(unitFactory.unitPerTimeOrSizePerTime(model.getSpecies(name).getCompartmentInstance()));
+      UnitDefinition ud = unitFactory.unitPerTimeAndConcentrationOrSubstance(reaction.getListOfModifiers(), false);
+      if (unitFactory.getBringToConcentration()) {
+        for (SpeciesReference specRef : reaction.getListOfProducts()) {
+          ud.multiplyWith(specRef.getSpeciesInstance().getSpatialSizeUnitsInstance());
+        }
+      }
+      p.setUnits(UnitFactory.checkUnitDefinitions(ud, model));
+    }
+    if (!p.isSetName()) {
+      p.setName(MESSAGES.getString("FOR_ADDITIVE_MODEL")
+        + ": " + MESSAGES.getString("WEIGHT_PARAMETER_FOR_EXTERNAL_INPUTS"));
+    }
+    return p;
   }
   
   /**
@@ -1418,23 +1432,6 @@ public class ParameterFactory {
     return p;
   }
   
-  public LocalParameter valueSubstancePerTime() {
-    LocalParameter p = createOrGetParameter("sub_per_time");
-    p.setValue(1d);
-    
-    if (!p.isSetUnits()) {
-      p.setUnits(unitFactory.unitSubstancePerTime(model
-        .getSubstanceUnitsInstance(), model
-        .getTimeUnitsInstance()));
-    }
-    
-    if (!p.isSetName()) {
-      p.setName("substance per time");
-    }
-    
-    return p;
-  }
-  
   public LocalParameter valuePerSubstanceAndConcentration() {
     LocalParameter p = createOrGetParameter("per_sub_con");
     p.setValue(1d);
@@ -1452,6 +1449,23 @@ public class ParameterFactory {
     
     if (!p.isSetName()) {
       p.setName("");
+    }
+    
+    return p;
+  }
+  
+  public LocalParameter valueSubstancePerTime() {
+    LocalParameter p = createOrGetParameter("sub_per_time");
+    p.setValue(1d);
+    
+    if (!p.isSetUnits()) {
+      p.setUnits(unitFactory.unitSubstancePerTime(model
+        .getSubstanceUnitsInstance(), model
+        .getTimeUnitsInstance()));
+    }
+    
+    if (!p.isSetName()) {
+      p.setName("substance per time");
     }
     
     return p;
