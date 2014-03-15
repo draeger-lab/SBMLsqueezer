@@ -23,6 +23,9 @@
  */
 
 /**
+ * This package contains classes of the graphical user interface for the wizard
+ * that helps users to generate kinetic equations in one single step for the
+ * entire model.
  * 
  * @version $Rev$
  * @since 2.0

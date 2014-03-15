@@ -23,6 +23,8 @@
  */
 
 /**
+ * The HTML pages in this package are used to display user messages, e.g.,
+ * about the program, the general help page, the license etc.
  * 
  * @version $Rev$
  * @since 2.0
