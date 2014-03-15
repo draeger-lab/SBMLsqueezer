@@ -23,6 +23,9 @@
  */
 
 /**
+ * This package contains the basic user interface wizard for the
+ * search in SABIO-RK.
+ * 
  * @author Matthias Rall
  * @version $Rev$
  * @since 2.0

@@ -23,6 +23,9 @@
  */
 
 /**
+ * The classes in this package are required for the graphical user interface
+ * of the SABIO-RK wizard.
+ * 
  * @author Matthias Rall
  * @version $Rev$
  * @since 2.0

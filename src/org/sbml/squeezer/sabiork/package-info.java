@@ -23,6 +23,9 @@
  */
 
 /**
+ * This package provides classes to extract kinetic equations from the SABIO-RK
+ * database.
+ * 
  * @author Matthias Rall
  * @version $Rev$
  * @since 2.0

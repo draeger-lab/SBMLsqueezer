@@ -23,6 +23,8 @@
  */
 
 /**
+ * General utility functions are maintained in this package.
+ * 
  * @author Andreas Dr&auml;ger
  * @version $Rev$
  * @since 1.0

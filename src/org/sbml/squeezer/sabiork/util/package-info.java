@@ -23,6 +23,9 @@
  */
 
 /**
+ * Important utility functions for the online search of SBMLsqueezer in the
+ * SABIO-RK database.
+ * 
  * @author Matthias Rall
  * @version $Rev$
  * @since 2.0

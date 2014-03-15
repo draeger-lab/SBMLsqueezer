@@ -417,7 +417,7 @@
        doctitle="${Name} ${version}"
        excludepackagenames="org.sbml.squeezer.test.*"
        footer="Generated at ${TODAY}&lt;br/&gt;Version ${version} Revision ${repository.revision}"
-       header="&lt;img src=&quot;resources/${icon.file.name}&quot;/&gt;"
+       header="&lt;img src=&quot;resources/${icon.file.name}&quot; alt=&quot;${Name} ${version}&quot; title=&quot;${Name} ${version}&quot;/&gt;"
        maxmemory="96m"
        noindex="false"
        nodeprecated="false"
@@ -462,7 +462,14 @@
 
   </target>
 
-  <target name="jar-javadoc" depends="javadoc" description="Creates the javadocs jar package">
+  <!-- =================================================================== -->
+  <!-- Creates the javadocs jar package                                    -->
+  <!-- =================================================================== -->
+  <target
+  	name="jar-javadoc"
+  	depends="javadoc"
+  	description="Creates the javadocs jar package"
+  >
 
     <jar jarfile="${build.dir}/${Name}-${version}-javadoc.jar" basedir="${doc}"/>
 
