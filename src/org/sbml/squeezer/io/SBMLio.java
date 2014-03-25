@@ -23,6 +23,7 @@
  */
 package org.sbml.squeezer.io;
 
+import static de.zbit.util.Utils.getMessage;
 import static org.sbml.jsbml.xml.libsbml.LibSBMLConstants.LINK_TO_LIBSBML;
 
 import java.io.File;
@@ -234,7 +235,7 @@ ChangeListener {
     try {
       return getWriteWarnings((T) listOfOpenedFiles.get(selectedModel).getDocument().getModel().getUserObject(LINK_TO_LIBSBML));
     } catch(Exception exc) {
-      logger.fine(exc.getLocalizedMessage());
+      logger.fine(getMessage(exc));
     }
     return getWriteWarnings((T) openedModel.getUserObject(LINK_TO_LIBSBML));
   }

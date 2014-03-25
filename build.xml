@@ -19,8 +19,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
+ * along with this program. If not, see http://www.gnu.org/licenses/.
  *
  * Version: $Rev$
 -->
@@ -273,7 +272,7 @@
       <attribute name="Provide-Package"        value="org.sbml.squeezer,org.sbml.squeezer.celldesigner,org.sbml.squeezer.gui,org.sbml.squeezer.gui.locales,org.sbml.squeezer.gui.wizard,org.sbml.squeezer.io,org.sbml.squeezer.kinetics,org.sbml.squeezer.math,org.sbml.squeezer.resources,org.sbml.squeezer.resources.html,org.sbml.squeezer.resources.img,org.sbml.squeezer.sabiork,org.sbml.squeezer.sabiork.util,org.sbml.squeezer.sabiork.wizard,org.sbml.squeezer.sabiork.wizard.console,org.sbml.squeezer.test,org.sbml.squeezer.test.cases,org.sbml.squeezer.test.data,org.sbml.squeezer.test.gui,org.sbml.squeezer.test.sabiork,org.sbml.squeezer.util"/>
     </manifest>
   	
-  	<copy todir="${build.dest}/META-INF/" verbose="true">
+  	<copy todir="${build.dest}/META-INF/" verbose="${verbose}">
   	  <fileset dir="${basedir}/licenses"/>
   	</copy>
   
@@ -366,16 +365,16 @@
         <include name="README.txt"/>
       	<include name="AUTHORS"/>
       </fileset>
-      <fileset dir="${build.dest}/META-INF/">
+      <zipfileset dir="${build.dest}/META-INF/" prefix="META-INF/">
       	<exclude name="MANIFEST.MF"/>
-      </fileset>
+      </zipfileset>
       
       <!-- These libraries are required by most classes -->
       <zipfileset excludes="META-INF/**, COPYING.txt, licenses/**, package.html, package-info.class, overview.html, AUTHORS.txt" src="${lib}/SBML2LaTeX_v1.0_slim.jar"/>
       <zipfileset excludes="META-INF/**, COPYING.txt, licenses/**, package.html, package-info.class, overview.html, AUTHORS.txt" src="${lib}/jlatexmath-1.0.0.jar"/>
-      <zipfileset excludes="META-INF/INDEX.LIST META-INF/MANIFEST.MF, COPYING.txt, package.html, package-info.class, licenses/**, overview.html, AUTHORS.txt" src="${lib}/jsbml-1.0-a1-with-dependencies.jar"/>
+      <zipfileset excludes="META-INF/INDEX.LIST META-INF/MANIFEST.MF, COPYING.txt, package.html, package-info.class, licenses/**, overview.html, AUTHORS.txt" src="${lib}/jsbml-1.0-b1-incl-libs.jar"/>
       <zipfileset excludes="META-INF/**, COPYING.txt, licenses/**, package.html, package-info.class, overview.html, AUTHORS.txt" src="${lib}/SysBio.jar"/>
-      <zipfileset excludes="META-INF/**, COPYING.txt, licenses/**, package.html, package-info.class, overview.html, AUTHORS.txt" src="${lib}/quaqua.jar"/>
+      <zipfileset excludes="META-INF/**, COPYING.txt, licenses/**, package.html, package-info.class, overview.html, AUTHORS.txt" src="${lib}/quaqua-filechooser-only.jar"/>
       <zipfileset excludes="META-INF/**, COPYING.txt, licenses/**, package.html, package-info.class, overview.html, AUTHORS.txt" src="${lib}/garuda/GarudaBackend.jar"/>
       <zipfileset excludes="META-INF/**, COPYING.txt, licenses/**, package.html, package-info.class, overview.html, AUTHORS.txt" src="${lib}/garuda/garuda-csr.jar"/>
       <zipfileset excludes="META-INF/**, COPYING.txt, licenses/**, package.html, package-info.class, overview.html, AUTHORS.txt" src="${lib}/garuda/jsonic-1.2.10.jar"/>
@@ -568,19 +567,19 @@
   	<echo message="Defining basic properties of the JSBML project"/>
   	<property name="jsbml.dir" value="${basedir}/../JSBML"/>
   	<property name="jsbml.name" value="JSBML"/>
-  	<property name="jsbml.version" value="1.0-a1"/>
+  	<property name="jsbml.version" value="1.0-b1"/>
   	
   	
     <echo message="Determining the revision number of JSBML"/>
-    <exec executable="svn" outputproperty="svninfo.xml">
-      <arg line="info --xml"/>
+    <exec executable="svn" outputproperty="${jsbml.dir}/svninfo.xml">
+      <arg line="info --xml ${jsbml.dir}"/>
     </exec>
     <xmlproperty collapseAttributes="true">
-      <propertyresource name="svninfo.xml"/>
+      <propertyresource name="${jsbml.dir}/svninfo.xml"/>
     </xmlproperty>
 	<property name="jsbml.revision" value="${info.entry.revision}"/>
 
-    <echo message="Compiling the entire JSBML project"/>
+    <echo message="Compiling the entire JSBML project for revision ${jsbml.revision}"/>
     <delete dir="${jsbml.dir}/bin"/>
     <mkdir dir="${jsbml.dir}/bin"/>
   	
@@ -595,6 +594,7 @@
   	  debug="${debug}"
   	  deprecation="${deprecation}"
   	  destdir="${jsbml.dir}/bin"
+  	  fork="true"
   	  includeantruntime="false"
   	  listfiles="yes"
   	  memoryMaximumSize="512M"
@@ -689,23 +689,36 @@
     <copy file="${jsbml.dir}/AUTHORS.txt" tofile="${jsbml.dir}/core/licenses/JSBML-AUTHORS.txt"/>
   	
     <echo message="Packing a minimal JAR file containing only parts required for SBMLsqueezer"/>
+    <property name="vendor" value="The JSBML Team"/>
+  	
     <jar
       compress="true"
       filesetmanifest="mergewithoutmain"
       index="true"
       indexMetaInf="true"
-      jarfile="${lib}/jsbml-1.0-a1-with-dependencies.jar"
+      jarfile="${lib}/jsbml-${jsbml.version}-incl-libs.jar"
       level="9"
       manifestencoding="utf-8"
       strict="warn"
       update="true"
     >
+
       <manifest>
+      	<attribute name="Built-By" value="${user.name}"/>
+      	<attribute name="Built-Date" value="${TODAY}"/>
+      	<attribute name="Bundle-Name"            value="${jsbml.name}"/>
+      	<attribute name="Bundle-Version"         value="${version}"/>
+      	<attribute name="Bundle-Vendor"          value="${vendor}"/>
+      	<attribute name="Bundle-RequiredExecutionEnvironment" value="JavaSE-1.6"/>
+      	<attribute name="Created-By"             value="${vendor}"/>
       	<section name="${jsbml.name}">
-          <attribute name="Specification-Title" value="${jsbml.name}"/>
-          <attribute name="Specification-Version" value="${jsbml.version}"/>
-          <attribute name="Implementation-Title" value="${jsbml.name}"/>
+          <attribute name="Specification-Title"    value="${jsbml.name}"/>
+          <attribute name="Specification-Version"  value="${jsbml.version}"/>
+      	  <attribute name="Specification-Vendor"   value="${vendor}"/>
+          <attribute name="Implementation-Title"   value="${jsbml.name}"/>
       	  <attribute name="Implementation-Version" value="Revision ${jsbml.revision} (Build ${DSTAMP}-${TSTAMP})"/>
+      	  <attribute name="Implementation-Vendor"  value="${vendor}"/>
+      	  <attribute name="Implementation-URL"     value="http://sbml.org/Software/JSBML/"/>
         </section>
       </manifest>
       <fileset
@@ -849,7 +862,7 @@
 	<property name="sysbio.revision" value="${info.entry.revision}"/>
 
     <echo message="Deleting all previous versions of SysBio JAR files"/>
-    <delete verbose="true">
+    <delete verbose="${verbose}">
       <fileset dir="${lib}">
         <include name="SysBio**.jar"/>
       </fileset>
@@ -864,6 +877,7 @@
       debug="${debug}"
       deprecation="${deprecation}"
       destdir="${sysbio.dir}/bin"
+      fork="true"
       listfiles="yes"
       memoryMaximumSize="512M"
       nowarn="no"
@@ -899,12 +913,12 @@
           <attribute name="Implementation-Vendor"  value="University of Tuebingen"/>
         </section>
       </manifest>
-      <fileset dir="${sysbio.dir}">
+      <zipfileset dir="${sysbio.dir}" prefix="META-INF/">
         <include name="licenses/COPYING.txt"/>
         <include name="licenses/lib-licenses/*.txt"/>
         <include name="licenses/lib-licenses/*.html"/>
         <include name="licenses/AUTHORS.txt"/>
-      </fileset>
+      </zipfileset>
       <fileset dir="${sysbio.dir}/bin" excludes="**/.svn*, **/package-info.class">
         <include name="de/zbit/**.class"/>
         <include name="de/zbit/collection/**.class"/>
@@ -927,13 +941,11 @@
         <include name="de/zbit/math/**.class"/>
         <include name="de/zbit/resources/**.class"/>
         <include name="de/zbit/sbml/**.class"/>
-        <include name="de/zbit/sbml/gui/*.class"/>
-        <include name="de/zbit/sbml/io/*.class"/>
-        <include name="de/zbit/sbml/layout/*.class"/>
-        <exclude name="de/zbit/sbml/layout/y"/>
-        <include name="de/zbit/sbml/util/*.class"/>
+        <include name="de/zbit/sbml/gui/**.class"/>
+        <include name="de/zbit/sbml/io/**.class"/>
+        <include name="de/zbit/sbml/util/**.class"/>
         <include name="de/zbit/text/**.class"/>
-        <include name="de/zbit/util/*.class"/>
+        <include name="de/zbit/util/**.class"/>
       	<include name="de/zbit/util/argparser/**.class"/>
         <include name="de/zbit/util/logging/**.class"/>
         <include name="de/zbit/util/objectwrapper/**.class"/>
@@ -983,7 +995,7 @@
   	  </and>
   	</condition>
 
-  	<copy file="${dist}/${gadget.config}" todir="${dist.dir}/" verbose="true"/>
+  	<copy file="${dist}/${gadget.config}" todir="${dist.dir}/" verbose="${verbose}"/>
   	<property name="sbmlsqueezer.config" value="${dist.dir}/${gadget.config}"/>
   	
   	<echo message="Updating Garuda gadget configuration..."/>
@@ -1029,21 +1041,12 @@
         <fileset file="${resources}/org/sbml/squeezer/resources/img/SBMLsqueezerIcon_64.png"/>
         <globmapper from="*" to="${uuid}/icons/*"/>
       </mappedresources>
-      <mappedresources>
-        <fileset file="${dist}/Screenshot_1.png"/>
-        <globmapper from="*" to="${uuid}/snapshot/*"/>
-      </mappedresources>
-      <mappedresources>
-        <fileset file="${dist}/Screenshot_2.png"/>
-        <globmapper from="*" to="${uuid}/snapshot/*"/>
-      </mappedresources>
-      <mappedresources>
-        <fileset file="${dist}/Screenshot_3.png"/>
-        <globmapper from="*" to="${uuid}/snapshot/*"/>
-      </mappedresources>
+      <zipfileset dir="${dist}/" prefix="${uuid}/snapshot/">
+      	<include name="Screenshot_*.png"/>
+      </zipfileset>
     </zip>
   	
-  	<delete file="${sbmlsqueezer.config}" verbose="true"/>
+  	<delete file="${sbmlsqueezer.config}" verbose="${verbose}"/>
 
   </target>
 
@@ -1097,7 +1100,7 @@
       message="Please enter path to save the graph.dot:"
       addproperty="output.path"
       defaultvalue="${basedir}/doc/UMLGraph"
-  	/>  	
+  	/>
     <javadoc access="private" additionalparam="-d ${output.path}" classpath="../SysBio/lib/junit-4.3.1.jar:../JSBML0.8/lib/xstream-1.3.1.jar:../JSBML0.8/lib/biojava-1.7-ontology.jar:../JSBML0.8/lib/jigsaw-dateParser.jar:../SysBio/lib/commons-cli-1.1.jar:../SysBio/lib/commons-discovery.jar:lib/jsbmlbridge.jar:../SysBio/lib/jaxrpc.jar:../JSBML0.8/bin:lib/HotEqn.jar:../JSBML0.8/lib/log4j-1.2.8.jar:../SBML2LaTeX/bin:../SysBio/lib/axis.jar:../SysBio/lib/Java5/saaj.jar:/afs/cs.uni-tuebingen.de/home/jpfeuffer/Downloads/eclipse/plugins/org.junit_4.8.2.v4_8_2_v20110321-1705/junit.jar:../JSBML0.8/lib/staxmate-2.0.0.jar:../SysBio/lib/WSDbfetch.jar:../JSBML0.8/lib/stax-api-1.0.1.jar:../JSBML0.8/lib/junit-4.8.jar:../SBML2LaTeX/lib/html2latex.jar:../SysBio/lib/commons-logging.jar:/afs/cs.uni-tuebingen.de/home/jpfeuffer/Downloads/eclipse/plugins/org.hamcrest.core_1.1.0.v20090501071000.jar:lib/jsbmlio.jar:../SysBio/lib/keggapi.jar:../SysBio/lib/wsdl4j.jar:../SysBio/bin:../JSBML0.8/lib/stax2-api-3.0.3.jar:../JSBML0.8/lib/woodstox-core-lgpl-4.0.9.jar" sourcefiles="src/de/zbit/gui/prefs/SettingsPanelDefaultMechanisms.java" sourcepath="src:resources:test">
       <doclet name="org.umlgraph.doclet.UmlGraph" path="${jar.path}"/>
     </javadoc>

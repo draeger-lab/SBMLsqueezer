@@ -23,6 +23,8 @@
  */
 package org.sbml.squeezer;
 
+import static de.zbit.util.Utils.getMessage;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -356,7 +358,7 @@ public class SBMLsqueezer<T> extends Launcher {
     try {
       url = new URL("http://www.gnu.org/licenses/gpl-3.0-standalone.html");
     } catch (MalformedURLException exc) {
-      logger.log(Level.FINER, exc.getLocalizedMessage(), exc);
+      logger.log(Level.FINER, getMessage(exc), exc);
     }
     return url;
   }
@@ -370,7 +372,7 @@ public class SBMLsqueezer<T> extends Launcher {
     try {
       url = new URL("http://www.cogsys.cs.uni-tuebingen.de/software/SBMLsqueezer/downloads/");
     } catch (MalformedURLException exc) {
-      logger.log(Level.FINER, exc.getLocalizedMessage(), exc);
+      logger.log(Level.FINER, getMessage(exc), exc);
     }
     return url;
   }
@@ -425,7 +427,7 @@ public class SBMLsqueezer<T> extends Launcher {
           } catch (NetworkException exc) {
             GUITools.showErrorMessage(gui, exc);
           } catch (Throwable exc) {
-            logger.fine(exc.getLocalizedMessage());
+            logger.fine(getMessage(exc));
           }
         }
       }).start();
@@ -445,7 +447,7 @@ public class SBMLsqueezer<T> extends Launcher {
       model = getSBMLIO().convertModel((T) sbmlSource);
       logger.info(MessageFormat.format(MESSAGES.getString("DONE_IN_MS"), (System.currentTimeMillis() - time)));
     } catch (Exception exc) {
-      logger.log(Level.WARNING, String.format(WARNINGS.getString("CANT_READ_MODEL"), exc.getLocalizedMessage()));
+      logger.log(Level.WARNING, String.format(WARNINGS.getString("CANT_READ_MODEL"), getMessage(exc)));
     }
     return model;
   }

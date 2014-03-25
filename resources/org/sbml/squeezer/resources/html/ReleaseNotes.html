@@ -21,6 +21,15 @@ http://www.cogsys.cs.uni-tuebingen.de/software/SBMLsqueezer/downloads</a>.
             1.0&#946;1</li>
         <li>As a stand-alone program based on a libSBML back-end, which means
             that real offline SBML validation is possible.</li>
+        <li>Irrespective of whether JSBML or libSBML is used as SBML library,
+            the stand-alone version provides both, a graphical user interface
+            as well as a fully-featured command-line version. For large-scale
+            rate law generation, this command-line interface has already proven
+            to be useful (as part of the path2models project).</li>
+        <li>SBMLsqueezer can be launched directly from the website
+            <a href="http://www.cogsys.cs.uni-tuebingen.de/software/SBMLsqueezer/">www.cogsys.cs.uni-tuebingen.de/software/SBMLsqueezer/</a>
+            as a Java&trade; Web Start program without the need of any local
+            installation.</li>
         <li>As a plug-in for CellDesigner 4.3</li>
         <li>As a Garuda gadget, as which it can communicate with further
             Garuda gadgets</li>
@@ -86,8 +95,8 @@ kinetic equations cannot under all conditions be evaluated to extend per time
 units. The reasons are often the structure of the definition of the rate law.
 Some equations that have been defined for gene-regulatory networks, for
 instance, give a purely phenomenological description of the system (e.g.,
-H-systems). In other equations, it is assumed that the equilibrium constant is
-always dimensionless. If this is not the case, it cannot be guaranteed that
+S- or H-systems). In other equations, it is assumed that the equilibrium constant
+is always dimensionless. If this is not the case, it cannot be guaranteed that
 SBMLsqueezer will create correct units for these equations (e.g., modular rate
 laws and convenience kinetics). It is therefore recommended to check the units
 of generated rate laws, even if in the vast majority of cases these will be

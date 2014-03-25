@@ -23,6 +23,8 @@
  */
 package org.sbml.squeezer.gui.wizard;
 
+import static de.zbit.util.Utils.getMessage;
+
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.util.ResourceBundle;
@@ -132,7 +134,7 @@ public class KineticLawSelectionWizard extends Wizard {
       result = ((KineticLawSelectionEquationPanel) desc.getPanelComponent()).isKineticsAndParametersStoredInSBML();
       logger.fine("stored kinetics: " + result);
     } catch (Exception exc) {
-      logger.fine(exc.getLocalizedMessage());
+      logger.fine(getMessage(exc));
       exc.printStackTrace();
     }
     return result;
