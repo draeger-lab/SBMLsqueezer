@@ -23,6 +23,8 @@
  */
 package org.sbml.squeezer.gui;
 
+import static de.zbit.util.Utils.getMessage;
+
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dialog.ModalityType;
@@ -713,7 +715,7 @@ ChangeListener, PropertyChangeListener, TabClosingListener {
         try {
           prefs.flush();
         } catch (Exception exc) {
-          exception.append(exc.getLocalizedMessage());
+          exception.append(getMessage(exc));
           exception.append('\n');
         }
       }

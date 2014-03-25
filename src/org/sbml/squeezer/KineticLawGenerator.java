@@ -23,6 +23,8 @@
  */
 package org.sbml.squeezer;
 
+import static de.zbit.util.Utils.getMessage;
+
 import java.io.File;
 import java.lang.reflect.Constructor;
 import java.text.MessageFormat;
@@ -489,7 +491,7 @@ public class KineticLawGenerator {
       Constructor<?> constructor = kineticsClass.getConstructor(reaction.getClass(), typeParameters.getClass());
       return (BasicKineticLaw) constructor.newInstance(reaction, typeParameters);
     } catch (Throwable exc) {
-      logger.warning(exc.getLocalizedMessage() != null ? exc.getLocalizedMessage() : exc.getMessage());
+      logger.warning(getMessage(exc));
       throw exc.getCause();
     }
   }

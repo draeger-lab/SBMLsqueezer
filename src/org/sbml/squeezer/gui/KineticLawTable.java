@@ -23,6 +23,8 @@
  */
 package org.sbml.squeezer.gui;
 
+import static de.zbit.util.Utils.getMessage;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
@@ -141,7 +143,7 @@ public class KineticLawTable extends JTable implements MouseInputListener {
         table.setModel(get());
         listener.propertyChange(new PropertyChangeEvent(table, "done", null, table.getModel()));
       } catch (Exception exc) {
-        Logger.getLogger(TableModelWorker.class.getName()).fine(exc.getLocalizedMessage());
+        Logger.getLogger(TableModelWorker.class.getName()).fine(getMessage(exc));
       }
     }
     
