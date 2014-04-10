@@ -1,8 +1,8 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
  * $Id$
  * $URL$
- *
+ * =================================================================== 
  * This file is part of SBMLsqueezer, a Java program that creates rate
  * equations for reactions in SBML files (http://sbml.org).
  *
@@ -20,16 +20,19 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see http://www.gnu.org/licenses/.
+ * =================================================================== 
  *
  * Version: $Rev$
 -->
-
 <project
   name="SBMLsqueezer"
   default ="usage"
   basedir="."
 >
 
+  <!-- =================================================================== -->
+  <!-- Initialization target                                               -->
+  <!-- =================================================================== -->
   <target
    name="init"
    description="Initialization target"
@@ -53,27 +56,27 @@
     <property name="debug" value="on"/>
     <property name="optimize" value="on"/>
     <property name="deprecation" value="false"/>
-    <property name="verbose" value="false"/>
+    <property name="verbose" value="true"/>
 
     <property name="build.number" value="${DSTAMP}-${TSTAMP}"/>
     <property name="build.name" value="${version} (build ${build.number})"/>
 
-    <property name="src" value="${basedir}/src"/>
-  	<property name="classes" location="${basedir}/bin"/>
-    <property name="test" value="${basedir}/test"/>
-    <property name="build.dir" value="${basedir}/build"/>
-    <property name="build.src" value="${basedir}/build/src"/>
-    <property name="build.dest" value="${basedir}/build/classes"/>
-    <property name="doc" value="${basedir}/doc/api"/>
-    <property name="lib" value="${basedir}/lib"/>
-    <property name="dist" value="${basedir}/dist"/>
-    <property name="dist.dir" value="${dist}/${Name}-${version}"/>
-    <property name="resources" value="${basedir}/resources"/>
-  	<property name="celldesigner" value="${basedir}/modules/celldesigner"/>
-  	<property name="celldesigner.src" value="${celldesigner}/src"/>
-  	<property name="celldesigner.test" value="${celldesigner}/test"/>
+    <property name="src"                    value="${basedir}/src"/>
+  	<property name="classes"                location="${basedir}/bin"/>
+    <property name="test"                   value="${basedir}/test"/>
+    <property name="build.dir"              value="${basedir}/build"/>
+    <property name="build.src"              value="${basedir}/build/src"/>
+    <property name="build.dest"             value="${basedir}/build/classes"/>
+    <property name="doc"                    value="${basedir}/doc/api"/>
+    <property name="lib"                    value="${basedir}/lib"/>
+    <property name="dist"                   value="${basedir}/dist"/>
+    <property name="dist.dir"               value="${dist}/${Name}-${version}"/>
+    <property name="resources"              value="${basedir}/resources"/>
+  	<property name="celldesigner"           value="${basedir}/modules/celldesigner"/>
+  	<property name="celldesigner.src"       value="${celldesigner}/src"/>
+  	<property name="celldesigner.test"      value="${celldesigner}/test"/>
   	<property name="celldesigner.resources" value="${celldesigner}/resources"/>
-  	<property name="UUID" value="dd624b40-7bc0-11e2-b92a-0800200c9a66"/>
+  	<property name="UUID"                   value="dd624b40-7bc0-11e2-b92a-0800200c9a66"/>
   	
   	<property name="jar.name" value="${Name}_v${version}"/>
   	<property name="appJar"   value="${dist.dir}/${jar.name}_incl-libs.jar"/>
@@ -228,6 +231,7 @@
       debug="${debug}"
       deprecation="${deprecation}"
       destdir="${build.dest}"
+      fork="true"
       listfiles="yes"
       memoryMaximumSize="512M"
       nowarn="no"
@@ -236,7 +240,6 @@
       sourcepathref="sourcepath"
       target="1.6"
       verbose="${verbose}"
-      fork="true"
     >
       <!-- Source -->
       <src path="${src}"/>
@@ -258,7 +261,7 @@
 	    <attribute name="Implementation-Title"   value="${Name}"/>
 	    <attribute name="Implementation-Vendor"  value="University of Tuebingen"/>
 	    <attribute name="Implementation-Version" value="Revision ${repository.revision} (Build ${build.number})"/>
-        <attribute name="Implementation-URL"     value="http://www.cogsys.cs.uni-tuebingen.de/software/SBMLsqueezer/"/>
+        <attribute name="Implementation-URL"     value="http://www.cogsys.cs.uni-tuebingen.de/software/${Name}/"/>
         <attribute name="Specification-Title"    value="${Name}"/>
         <attribute name="Specification-Version"  value="${api.version}"/>
         <attribute name="Specification-Vendor"   value="Center for Bioinformatics Tuebingen (ZBIT)"/>
@@ -322,7 +325,7 @@
   	  <propertyresource name="svninfo.xml"/>
   	</xmlproperty>
   	<property name="repository.revision" value="${info.entry.revision}"/>
-  	<echo message="Current revision is ${repository.revision}" />
+  	<echo message="Current revision is ${repository.revision}"/>
   </target>
 
 
@@ -336,6 +339,7 @@
   >
     <jar
       compress="true"
+      duplicate="preserve"
       filesetmanifest="mergewithoutmain"
       index="true"
       indexMetaInf="true"
@@ -727,13 +731,13 @@
       />
     	
       <!-- Licenses -->
-      <fileset dir="${jsbml.dir}/core">
+      <zipfileset dir="${jsbml.dir}/core" prefix="META-INF/">
         <include name="licenses/COPYING.txt"/>
       	<include name="licenses/COPYING.html"/>
         <include name="licenses/lib-licenses/*.txt"/>
         <include name="licenses/lib-licenses/*.html"/>
         <include name="licenses/JSBML-AUTHORS.txt"/>
-      </fileset>
+      </zipfileset>
       <!-- Binaries -->
       <fileset
       	dir="${jsbml.dir}/bin"
@@ -943,6 +947,7 @@
         <include name="de/zbit/sbml/**.class"/>
         <include name="de/zbit/sbml/gui/**.class"/>
         <include name="de/zbit/sbml/io/**.class"/>
+      	<include name="de/zbit/sbml/layout/**.class"/>
         <include name="de/zbit/sbml/util/**.class"/>
         <include name="de/zbit/text/**.class"/>
         <include name="de/zbit/util/**.class"/>

@@ -1139,7 +1139,7 @@ public class SubmodelController {
     }
     
     
-    //		volumeUD = miniModel.getUnitDefinition(UnitDefinition.VOLUME);
+    //		volumeUD = miniModel.getVolumeUnitsInstance();
     //		if (volumeUD == null) {
     //			// This may happen in Level 3.
     //			// TODO: Depending on which compartments are in the model, we might need also Area and Length!
@@ -1172,7 +1172,7 @@ public class SubmodelController {
           compartment.setUnits(ud);
           break;
         case 3:
-          ud = model.getUnitDefinition(UnitDefinition.VOLUME);
+          ud = model.getVolumeUnitsInstance();
           if (ud == null) {
             ud = UnitDefinition.getPredefinedUnit(UnitDefinition.VOLUME, 2, 4);
             org.sbml.jsbml.util.SBMLtools.setLevelAndVersion(ud, modelToWrite.getLevel(), modelToWrite.getVersion());
@@ -1186,7 +1186,7 @@ public class SubmodelController {
     }
     if (((spatialD <= 0d) || (spatialD > 3d)) && (1 < compartment.getLevel())) {
       compartment.setSpatialDimensions(3d);
-      compartment.setUnits(model.getUnitDefinition(UnitDefinition.VOLUME));
+      compartment.setUnits(model.getVolumeUnitsInstance());
       logger.warning(MessageFormat.format(
         WARNINGS.getString("INVALID_COMPARTMENT_DIMENSION"),
         compartment.getId()));

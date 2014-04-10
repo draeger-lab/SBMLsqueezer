@@ -201,17 +201,26 @@ public class ParameterFactory {
   }
   
   /**
+   * 
+   * @return
+   * @see #parameterAssociationConst(String)
+   */
+  public LocalParameter parameterAssociationConst() {
+    return parameterAssociationConst(null);
+  }
+  
+  /**
    * Association constant from mass action kinetics.
    * 
    * 
    * @param catalyst
-   *            Identifier of the catalyst. Can be null.
+   *            Identifier of the catalyst. Can be {@code null}.
    * @return
    */
   public LocalParameter parameterAssociationConst(String catalyst) {
     boolean zerothOrder = orderReactants == 0d;
     Reaction r = kineticLaw.getParentSBMLObject();
-    StringBuilder kass = StringTools.concatStringBuilder("kass_", r.getId());
+    StringBuilder kass = StringTools.concatStringBuilder("kf_", r.getId());
     if (zerothOrder) {
       kass.insert(0, 'z');
     }
@@ -287,8 +296,9 @@ public class ParameterFactory {
       SBMLtools.setSBOTerm(p, 2);
     }
     if (!p.isSetUnits()) {
-      p.setUnits(unitFactory.unitSubstancePerTime(model.getUnitDefinition(UnitDefinition.SUBSTANCE),
-        model.getUnitDefinition(UnitDefinition.TIME)));
+      p.setUnits(unitFactory.unitSubstancePerTime(
+    	      model.getSubstanceUnitsInstance(),
+    	      model.getTimeUnitsInstance()));
     }
     if (!p.isSetName()) {
       p.setName(MESSAGES.getString("FOR_ADDITIVE_MODEL")
@@ -360,7 +370,7 @@ public class ParameterFactory {
   public LocalParameter parameterDissociationConst(String catalyst) {
     boolean zerothOrder = orderProducts == 0d;
     Reaction r = kineticLaw.getParentSBMLObject();
-    StringBuilder kdiss = StringTools.concatStringBuilder("kdiss_", r.getId());
+    StringBuilder kdiss = StringTools.concatStringBuilder("kr_", r.getId());
     if (zerothOrder) {
       kdiss.insert(0, 'z');
     }
@@ -400,8 +410,8 @@ public class ParameterFactory {
       keq.setName(MessageFormat.format(MESSAGES.getString("EQUILIBRIUM_CONSTANT_OF_REACTION"), SBMLtools.getName(r)));
     }
     if (!keq.isSetUnits()) {
-      UnitDefinition ud = null;
       double stoichDiff = 0d;
+      UnitDefinition udReac = null;
       if (r.isSetListOfReactants()) {
         for (SpeciesReference specRef : r.getListOfReactants()) {
           Species spec = specRef.getSpeciesInstance();
@@ -410,7 +420,35 @@ public class ParameterFactory {
             if (specUd != null) {
               specUd = specUd.clone();
               if (specRef.isSetStoichiometry() || ((specRef.getLevel() < 3) && !specRef.isSetStoichiometryMath())) {
+                stoichDiff += specRef.getStoichiometry();
+                specUd.raiseByThePowerOf(specRef.getStoichiometry());
+              }
+              Compartment compartment = spec.getCompartmentInstance();
+              if (!spec.hasOnlySubstanceUnits() && !unitFactory.getBringToConcentration() && (compartment != null)) {
+                specUd.multiplyWith(compartment.getDerivedUnitDefinition());
+              }
+              if (udReac == null) {
+                udReac = specUd;
+              } else {
+                udReac.multiplyWith(specUd);
+              }
+            }
+          }
+        }
+      }
+      UnitDefinition ud = null;
+      
+      // Keq must always consider reactants and products (irrespective of reversibility).
+      if (/*r.getReversible() &&*/ r.isSetListOfProducts()) {
+        for (SpeciesReference specRef : r.getListOfProducts()) {
+          Species spec = specRef.getSpeciesInstance();
+          if (spec != null) {
+            UnitDefinition specUd = spec.getDerivedUnitDefinition();
+            if (specUd != null) {
+              specUd = specUd.clone();
+              if (specRef.isSetStoichiometry() || ((specRef.getLevel() < 3) && !specRef.isSetStoichiometryMath())) {
                 stoichDiff -= specRef.getStoichiometry();
+                specUd.raiseByThePowerOf(specRef.getStoichiometry());
               }
               Compartment compartment = spec.getCompartmentInstance();
               if (!spec.hasOnlySubstanceUnits() && !unitFactory.getBringToConcentration() && (compartment != null)) {
@@ -425,32 +463,17 @@ public class ParameterFactory {
           }
         }
       }
-      if (r.getReversible() && r.isSetListOfProducts()) {
-        for (SpeciesReference specRef : r.getListOfProducts()) {
-          Species spec = specRef.getSpeciesInstance();
-          if (spec != null) {
-            UnitDefinition specUd = spec.getDerivedUnitDefinition();
-            if (specUd != null) {
-              specUd = specUd.clone();
-              if (specRef.isSetStoichiometry() || ((specRef.getLevel() < 3) && !specRef.isSetStoichiometryMath())) {
-                stoichDiff += specRef.getStoichiometry();
-              }
-              Compartment compartment = spec.getCompartmentInstance();
-              if (!spec.hasOnlySubstanceUnits() && !unitFactory.getBringToConcentration() && (compartment != null)) {
-                specUd.multiplyWith(compartment.getDerivedUnitDefinition());
-              }
-              if (ud == null) {
-                ud = specUd;
-              } else {
-                ud.divideBy(specUd);
-              }
-            }
-          }
+      if (udReac!= null) {
+        if (ud == null) {
+          ud = udReac.raiseByThePowerOf(-1d);
+        } else {
+          ud = ud.divideBy(udReac);
         }
       }
-      ud.raiseByThePowerOf(stoichDiff);
-      ud = ud.simplify();
-      if ((ud.getUnitCount() == 1) && (ud.getUnit(0).isDimensionless())) {
+      if (ud != null) {
+        ud = ud.simplify();
+      }
+      if ((ud == null) || ((ud.getUnitCount() == 1) && (ud.getUnit(0).isDimensionless()) || (ud.getUnitCount() == 0))) {
         keq.setUnits(Unit.Kind.DIMENSIONLESS);
       } else {
         ud = UnitFactory.checkUnitDefinitions(ud, model);
@@ -628,8 +651,8 @@ public class ParameterFactory {
          * bringToConcentration ? unitmMperSecond() :
          */
         kr.setUnits(unitFactory.unitSubstancePerTime(
-          model.getUnitDefinition(UnitDefinition.SUBSTANCE),
-          model.getUnitDefinition(UnitDefinition.TIME)));
+          model.getSubstanceUnitsInstance(),
+          model.getTimeUnitsInstance()));
       }
     }
     return kr;
@@ -821,16 +844,15 @@ public class ParameterFactory {
    * Michaelis constant.
    * 
    * @param species
-   *            Must not be null.
+   *            Must not be {@code null}.
    * @param enzyme
-   *            Identifier of the catalyzing enzyme. Can be null.
+   *            Identifier of the catalyzing enzyme. Can be {@code null}.
    * @return
    */
   public LocalParameter parameterMichaelis(String species, String enzyme) {
     Reaction r = kineticLaw.getParent();
     String reactionID = r.getId();
-    StringBuffer id = StringTools.concat("kmc_", reactionID,
-      StringTools.underscore, species);
+    StringBuffer id = StringTools.concat("kmc_", reactionID, StringTools.underscore, species);
     if (enzyme != null) {
       StringTools.append(id, StringTools.underscore, enzyme);
     }
@@ -839,17 +861,34 @@ public class ParameterFactory {
       SBMLtools.setSBOTerm(kM, 27);
     }
     if (!kM.isSetName()) {
+      Species spec = model.getSpecies(species);
       if (enzyme != null) {
         kM.setName(MessageFormat.format(MESSAGES.getString("MICHAELIS_CONSTANT_OF_SPECIES_AND_ENZYME_IN_REACTION"),
-          SBMLtools.getName(model.getSpecies(species)), SBMLtools.getName(model.getSpecies(enzyme)), SBMLtools.getName(r)));
+          SBMLtools.getName(spec), SBMLtools.getName(model.getSpecies(enzyme)), SBMLtools.getName(r)));
       } else {
         kM.setName(MessageFormat.format(MESSAGES.getString("MICHAELIS_CONSTANT_OF_SPECIES_IN_REACTION"),
-          SBMLtools.getName(model.getSpecies(species)), SBMLtools.getName(r)));
+          SBMLtools.getName(spec), SBMLtools.getName(r)));
       }
     }
     if (!kM.isSetUnits()) {
       Species spec = model.getSpecies(species);
-      kM.setUnits(unitFactory.unitSubstancePerSizeOrSubstance(spec));
+      UnitDefinition ud = null;
+      if (spec != null) {
+        ud = unitFactory.unitSubstancePerSizeOrSubstance(spec);
+      } else if (model.getLevel() > 2) {
+        if (unitFactory.getBringToConcentration()) {
+          ud = unitFactory.unitSubstancePerSize(model.getSubstanceUnitsInstance().clone(), model.getVolumeUnitsInstance().clone());
+        } else {
+          ud = model.getSubstanceUnitsInstance();
+        }
+      }
+      if (ud != null) {
+        if (ud.getId().endsWith(UnitDefinition.BASE_UNIT_SUFFIX)) {
+          kM.setUnits(ud.getId().substring(0, ud.getId().length() - 5));
+        } else {
+          kM.setUnits(ud);
+        }
+      }
     }
     return kM;
   }

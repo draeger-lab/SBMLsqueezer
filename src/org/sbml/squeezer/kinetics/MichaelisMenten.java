@@ -110,7 +110,7 @@ InterfaceIrreversibleKinetics, InterfaceModulatedKinetics {
           .getString("INCORRECT_STOICHIOMETRY_OF_PRODUCT_SPECIES"),
           getSimpleName(), reaction.getId()));
     }
-    SBMLtools.setSBOTerm(this,269); // enzymatic rate law for unireactant enzymes
+    SBMLtools.setSBOTerm(this, 269); // enzymatic rate law for unireactant enzymes
     switch (modE.size()) {
       case 0: // no enzyme, irreversible
         if (!getParentSBMLObject().getReversible() && (modActi.size() == 0)

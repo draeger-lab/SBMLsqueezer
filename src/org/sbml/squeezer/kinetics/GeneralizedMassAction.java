@@ -82,9 +82,9 @@ InterfaceIrreversibleKinetics, InterfaceModulatedKinetics {
    */
   private void setSBOTerm() {
     Reaction r = getParentSBMLObject();
-    SBMLtools.setSBOTerm(this,12);
-    double stoichiometryLeft = 0;
-    double stoichiometryRight = 0;
+    SBMLtools.setSBOTerm(this, 12);
+    double stoichiometryLeft = 0d;
+    double stoichiometryRight = 0d;
     for (SpeciesReference specRef : r.getListOfReactants()) {
       if (!specRef.isSetStoichiometryMath()) {
         stoichiometryLeft += specRef.getStoichiometry();
@@ -96,12 +96,12 @@ InterfaceIrreversibleKinetics, InterfaceModulatedKinetics {
       }
     }
     if (r.getReversible()) {
-      SBMLtools.setSBOTerm(this,42);
+      SBMLtools.setSBOTerm(this, 42);
       if (orderReactants == 0) {
         // mass action rate law for zeroth order reversible reactions
-        SBMLtools.setSBOTerm(this,69);
+        SBMLtools.setSBOTerm(this, 69);
         if ((stoichiometryRight == 1d) && (r.getProductCount() == 1)) {
-          SBMLtools.setSBOTerm(this,70);
+          SBMLtools.setSBOTerm(this, 70);
         } else if (stoichiometryRight == 2d) {
           switch (r.getProductCount()) {
             case 1:
@@ -432,15 +432,13 @@ InterfaceIrreversibleKinetics, InterfaceModulatedKinetics {
       for (int i = 0; i < mods.length; i++) {
         if (type) {
           // Activator Mod
-          LocalParameter p_kAn = parameterFactory
-              .parameterKa(modifiers.get(i));
+          LocalParameter p_kAn = parameterFactory.parameterKa(modifiers.get(i));
           mods[i] = ASTNode.frac(speciesTerm(modifiers.get(i)),
             ASTNode.sum(new ASTNode(p_kAn, this),
               speciesTerm(modifiers.get(i))));
         } else {
           // Inhibitor Mod
-          LocalParameter p_kIn = parameterFactory
-              .parameterKi(modifiers.get(i));
+          LocalParameter p_kIn = parameterFactory.parameterKi(modifiers.get(i));
           ASTNode kI = new ASTNode(p_kIn, this);
           mods[i] = ASTNode.frac(kI, ASTNode.sum(kI.clone(),
             speciesTerm(modifiers.get(i))));

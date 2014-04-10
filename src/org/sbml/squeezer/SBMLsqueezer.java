@@ -67,7 +67,6 @@ import org.sbml.tolatex.SBML2LaTeX;
 
 import de.zbit.AppConf;
 import de.zbit.Launcher;
-import de.zbit.UserInterface;
 import de.zbit.garuda.GarudaOptions;
 import de.zbit.garuda.GarudaSoftwareBackend;
 import de.zbit.gui.GUIOptions;
@@ -410,7 +409,7 @@ public class SBMLsqueezer<T> extends Launcher {
     if (properties.containsKey(IOOptions.SBML_IN_FILE)) {
       readSBMLSource(properties.get(IOOptions.SBML_IN_FILE));
     }
-    final java.awt.Window gui = new SBMLsqueezerUI(getSBMLIO(), appConf);
+    final SBMLsqueezerUI gui = new SBMLsqueezerUI(getSBMLIO(), appConf);
     if (getCmdLineOptions().contains(GarudaOptions.class)
         && (!appConf.getCmdArgs().containsKey(GarudaOptions.CONNECT_TO_GARUDA) ||
             appConf.getCmdArgs().getBoolean(GarudaOptions.CONNECT_TO_GARUDA))) {
@@ -422,7 +421,7 @@ public class SBMLsqueezer<T> extends Launcher {
         public void run() {
           try {
             GarudaSoftwareBackend garudaBackend = new GarudaSoftwareBackend(
-              "dd624b40-7bc0-11e2-b92a-0800200c9a66", (UserInterface) gui);
+              "dd624b40-7bc0-11e2-b92a-0800200c9a66", gui);
             garudaBackend.init();
           } catch (NetworkException exc) {
             GUITools.showErrorMessage(gui, exc);

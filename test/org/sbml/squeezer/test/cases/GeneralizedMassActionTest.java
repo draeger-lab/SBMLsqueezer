@@ -203,7 +203,7 @@ public class GeneralizedMassActionTest extends KineticsTest {
   public void irreversibleUniUni() throws Throwable {
     Reaction r2 = model.getReaction("r2");
     KineticLaw kl = klg.createKineticLaw(r2, GeneralizedMassAction.class, false, TypeStandardVersion.cat, UnitConsistencyType.amount, 1d);
-    test(r2, kl, "kass_r2*s01");
+    test(r2, kl, "kf_r2*s01");
     assertTrue(!r2.isReversible());
   }
   
@@ -216,7 +216,7 @@ public class GeneralizedMassActionTest extends KineticsTest {
     Reaction r1 = model.getReaction("r1");
     ReactionType.removeSpeciesAccordingToIgnoreList(r1, klg.getSpeciesIgnoreList());
     KineticLaw kl = klg.createKineticLaw(r1, GeneralizedMassAction.class, true, TypeStandardVersion.cat, UnitConsistencyType.concentration, 1d);
-    test(r1, kl, "kass_r1*s01/cell*s02/cell*s03/cell*s04/cell*s05/cell-kdiss_r1*s06/cell*s07/cell*s08/cell*s09/cell*s11/cell");
+    test(r1, kl, "kf_r1*s01/cell*s02/cell*s03/cell*s04/cell*s05/cell-kr_r1*s06/cell*s07/cell*s08/cell*s09/cell*s11/cell");
     assertTrue(r1.isReversible());
   }
   
@@ -229,7 +229,7 @@ public class GeneralizedMassActionTest extends KineticsTest {
     Reaction r1 = model.getReaction("r1");
     ReactionType.removeSpeciesAccordingToIgnoreList(r1, klg.getSpeciesIgnoreList());
     KineticLaw kl = klg.createKineticLaw(r1, GeneralizedMassAction.class, true, TypeStandardVersion.cat, UnitConsistencyType.amount, 1d);
-    test(r1, kl, "kass_r1*s01*s02*s03*s04*s05-kdiss_r1*s06*s07*s08*s09*s11");
+    test(r1, kl, "kf_r1*s01*s02*s03*s04*s05-kr_r1*s06*s07*s08*s09*s11");
     assertTrue(r1.isReversible());
   }
   
@@ -241,11 +241,11 @@ public class GeneralizedMassActionTest extends KineticsTest {
   public void testGMAKexponent() throws Throwable {
     Reaction r = model.getReaction("R00006");
     KineticLaw kl = klg.createKineticLaw(r, GeneralizedMassAction.class, true, TypeStandardVersion.cat, UnitConsistencyType.amount, 1d);
-    test(r, kl, "kass_R00006*s12*s09-kdiss_R00006*s13^2");
+    test(r, kl, "kf_R00006*s12*s09-kr_R00006*s13^2");
     assertTrue(r.isReversible());
     
     kl = klg.createKineticLaw(model.getReaction("R00006"), GeneralizedMassAction.class, true, TypeStandardVersion.cat, UnitConsistencyType.concentration, 1d);
-    test(r, kl, "kass_R00006*s12/cell*s09/cell-kdiss_R00006*(s13/cell)^2");
+    test(r, kl, "kf_R00006*s12/cell*s09/cell-kr_R00006*(s13/cell)^2");
   }
   
   /**
@@ -258,7 +258,7 @@ public class GeneralizedMassActionTest extends KineticsTest {
     ReactionType.removeSpeciesAccordingToIgnoreList(r, klg.getSpeciesIgnoreList());
     KineticLaw kl = klg.createKineticLaw(r, GeneralizedMassAction.class, true, TypeStandardVersion.cat, UnitConsistencyType.amount, 1d);
     // note that h+ is ignored
-    test(r, kl, "kass_R00344*s13*s14*s15-kdiss_R00344*s16*s04*s17");
+    test(r, kl, "kf_R00344*s13*s14*s15-kr_R00344*s16*s04*s17");
     assertTrue(r.isReversible());
   }
   
