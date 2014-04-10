@@ -78,6 +78,15 @@ public class UnitFactory {
    */
   public static final UnitDefinition checkUnitDefinitions(
     UnitDefinition unitdef, Model model) {
+    for (int i = unitdef.getUnitCount() - 1; i >= 0; i--) {
+      Unit u = unitdef.getUnit(i);
+      if (u.isDimensionless()) {
+    	u.removeScale();
+    	if (!u.isSetMultiplier() || (u.getMultiplier() == 1d)) {
+          unitdef.removeUnit(i);
+    	}
+      }
+    }
     UnitDefinition ud = model.findIdentical(unitdef);
     if (ud == null) {
       String identifier = createId(unitdef);
@@ -88,7 +97,7 @@ public class UnitFactory {
       if (ud == null) {
         updateAnnotation(unitdef, model.getSBMLDocument());
         if (Unit.Kind.isValidUnitKindString(identifier, model.getLevel(), model.getVersion())) {
-          unitdef = model.getPredefinedUnitDefinition(identifier.toLowerCase() + "_base");
+          unitdef = model.getPredefinedUnitDefinition(identifier.toLowerCase() + UnitDefinition.BASE_UNIT_SUFFIX);
         } else {
           unitdef.setId(identifier);
           unitdef.setName(createName(unitdef));
@@ -130,12 +139,15 @@ public class UnitFactory {
     for (int i = 0; i < unitdef.getUnitCount(); i++) {
       
       Unit u = unitdef.getUnit(i);
+      int scale = u.getScale();
       double exp = u.getExponent();
+      double multiplier = u.getMultiplier();
+      String kind = forID ? u.getKind().toString().toLowerCase() : u.getKind().getName();
       
       if (i > 0) {
         sb.append(forID ? '_' : ' ');
       }
-      if (exp < 0) {
+      if (exp < 0d) {
         sb.append("per");
         sb.append(forID ? '_' : ' ');
         exp *= -1;
@@ -147,40 +159,64 @@ public class UnitFactory {
       if (brackets) {
         sb.append(forID ? "brackOpn_" : "(");
       }
-      if (u.isSetOffset()) {
+      if (u.isSetOffset() && (u.getOffset() != 0d)) {
         if (forID) {
           sb.append(format(u.getOffset()));
           sb.append("_plus_");
         } else {
           sb.append(StringTools.toString(Locale.ENGLISH, u.getOffset()));
+          //sb.append("\u00A0+\u00A0");
           sb.append(" + ");
         }
       }
-      if (u.getMultiplier() != 1d) {
+      
+      if (u.isSecond()) {
+        if (multiplier >= 3600) {
+          kind = "hour";
+          multiplier = multiplier/3600;
+        } else if (multiplier >= 60) {
+          kind = "min";
+          multiplier = multiplier/60;
+        }
+      }
+      
+      if (multiplier != 1d) {
         if (forID) {
-          sb.append(format(u.getMultiplier()));
-          sb.append("x");
+          sb.append(format(multiplier));
+          sb.append("_x_");
         } else {
-          sb.append(StringTools.toString(Locale.ENGLISH, u.getMultiplier()));
+          sb.append(StringTools.toString(Locale.ENGLISH, multiplier));
+          //sb.append("\u00A0\u2219\u00A0");
           sb.append(" x ");
         }
       }
-      if (u.getScale() != 0) {
-        String prefix = (u.getScale() == -6) ? u.getPrefixAsWord() : u.getPrefix();
-        if (forID && prefix.contains("^")) {
-          sb.append("1E");
-          if (u.getScale() < 0) {
-            sb.append("minus");
-            sb.append((-1) * u.getScale());
+      if (scale != 0) {
+        String prefix = (scale == -6) ? u.getPrefixAsWord() : u.getPrefix();
+        if (!prefix.contains("^")) {
+          if (forID || (scale != -6)) {
+            sb.append(prefix);
           } else {
-            sb.append(u.getScale());
+            sb.append(u.getPrefixAsWord());
           }
-          sb.append('x');
         } else {
-          sb.append(prefix);
+          if (forID) {
+            sb.append("1E");
+            if (scale < 0) {
+              sb.append("minus");
+              sb.append((-1) * scale);
+            } else {
+              sb.append(scale);
+            }
+            sb.append("_x_");
+          } else {
+            sb.append("10");
+            //sb.append(exponent(scale));
+            sb.append('^');
+            sb.append(Integer.toString(scale));
+          }
         }
       }
-      sb.append(forID ? u.getKind() : u.getKind().getName());
+      sb.append(kind);
       if (exp != 1d) {
         if (brackets) {
           sb.append(forID ? "_brackCls" : ")");
@@ -189,9 +225,65 @@ public class UnitFactory {
           sb.append("_pow_");
           sb.append(format(exp));
         } else {
-          sb.append('^');
-          sb.append(StringTools.toString(Locale.ENGLISH, exp));
+          if (((int) exp) - exp == 0) {
+            //sb.append(exponent((int) exp));
+            sb.append('^');
+            sb.append(Integer.toString((int) exp));
+          } else {
+            sb.append('^');
+            sb.append(StringTools.toString(Locale.ENGLISH, exp));
+          }
         }
+      }
+    }
+    String id = sb.toString();
+    if (id.length() > 0) {
+      if (Character.isDigit(id.charAt(0))) {
+        sb.insert(0, '_');
+      }
+    }
+    return sb.toString();
+  }
+  
+  /**
+   * 
+   * @param scale
+   * @return
+   */
+  private static String exponent(int scale) {
+    StringBuffer sb = new StringBuffer();
+    for (char num : Integer.toString(scale).toCharArray()) {
+      switch (num) {
+        case '0':
+          sb.append('\u2070');
+          break;
+        case '1':
+          sb.append('\u00B9');
+          break;
+        case '2':
+          sb.append('\u00B2');
+          break;
+        case '3':
+          sb.append('\u00B3');
+          break;
+        case '4':
+          sb.append('\u2074');
+          break;
+        case '5':
+          sb.append('\u2075');
+          break;
+        case '6':
+          sb.append('\u2076');
+          break;
+        case '7':
+          sb.append('\u2077');
+          break;
+        case '8':
+          sb.append('\u2078');
+          break;
+        case '9':
+          sb.append('\u2079');
+          break;
       }
     }
     return sb.toString();
@@ -298,7 +390,7 @@ public class UnitFactory {
     //      u.setExponent(-1d);
     //    } else {
     //      speciesUnit = new UnitDefinition(level, version);
-    //      speciesUnit.addUnit(new Unit(Unit.Kind.MOLE, -1, level, version));
+    //      speciesUnit.addUnit(new Unit(1d, 0, Unit.Kind.MOLE, -1d, level, version));
     //    }
     
     if (bringToConcentration) {
@@ -342,10 +434,26 @@ public class UnitFactory {
         species = specRef.getSpeciesInstance();
         speciesUnit = species.getDerivedUnitDefinition().clone();
         if ((level == 2) && ((version == 1) || (version == 2))) {
-          compartmentUnit = species.getSpatialSizeUnitsInstance();
+          compartmentUnit = species.getSpatialSizeUnitsInstance().clone();
         } else {
           Compartment compartment = species.getCompartmentInstance();
           compartmentUnit = compartment.getDerivedUnitDefinition().clone();
+        }
+        if ((compartmentUnit != null) && (specRef instanceof SpeciesReference)) {
+          SpeciesReference ref = (SpeciesReference) specRef;
+          if (ref.isSetStoichiometry() && (ref.getStoichiometry() != 1d) && (x.length < listOf.size())) {
+            compartmentUnit.raiseByThePowerOf(ref.getStoichiometry());
+          }
+        }
+        for (Unit u : speciesUnit.getListOfUnits()) {
+          if (specRef instanceof SpeciesReference) {
+            SpeciesReference ref = (SpeciesReference) specRef;
+            if (ref.isSetStoichiometry() && (ref.getStoichiometry() != 1d) && (x.length < listOf.size())) {
+              u.setExponent(u.getExponent() * ref.getStoichiometry());
+            }
+          } else if (x.length == listOf.size()) {
+            u.setExponent(x[i]);
+          }
         }
         if (bringToConcentration) {
           if (species.hasOnlySubstanceUnits()) {
@@ -360,16 +468,6 @@ public class UnitFactory {
           } else {
             // species times compartment size
             speciesUnit.multiplyWith(compartmentUnit);
-          }
-        }
-        for (Unit u : speciesUnit.getListOfUnits()) {
-          if (specRef instanceof SpeciesReference) {
-            SpeciesReference ref = (SpeciesReference) specRef;
-            if (ref.isSetStoichiometry() && (ref.getStoichiometry() != 1d) && (x.length < listOf.size())) {
-              u.setExponent(u.getExponent() * (ref.getStoichiometry()));
-            }
-          } else if (x.length == listOf.size()) {
-            u.setExponent(x[i]);
           }
         }
         amount.multiplyWith(speciesUnit);
@@ -387,8 +485,8 @@ public class UnitFactory {
     int level = model.getLevel(), version = model.getVersion();
     UnitDefinition ud = new UnitDefinition(level, version);
     ud.addUnit(Unit.Kind.JOULE);
-    ud.addUnit(new Unit(1, 0, Unit.Kind.KELVIN, -1, level, version));
-    ud.addUnit(new Unit(1, 0, Unit.Kind.MOLE, -1, level, version));
+    ud.addUnit(new Unit(1d, 0, Unit.Kind.KELVIN, -1d, level, version));
+    ud.addUnit(new Unit(1d, 0, Unit.Kind.MOLE, -1d, level, version));
     return checkUnitDefinitions(ud, model);
   }
   
@@ -400,7 +498,7 @@ public class UnitFactory {
   public UnitDefinition unitkJperSubstance(UnitDefinition substance) {
     int level = model.getLevel(), version = model.getVersion();
     UnitDefinition ud = new UnitDefinition(level, version);
-    ud.addUnit(new Unit(3, Unit.Kind.JOULE, level, version));
+    ud.addUnit(new Unit(1d, 3, Unit.Kind.JOULE, 1d, level, version));
     ud.divideBy(substance);
     return checkUnitDefinitions(ud, model);
   }
@@ -417,7 +515,7 @@ public class UnitFactory {
       ud.getUnit(0).setExponent(-1d);
     } else {
       ud = new UnitDefinition(level, version);
-      ud.addUnit(new Unit(Unit.Kind.SECOND, -1, level, version));
+      ud.addUnit(new Unit(1d, 0, Unit.Kind.SECOND, -1d, level, version));
     }
     return checkUnitDefinitions(ud, model);
   }
@@ -570,7 +668,19 @@ public class UnitFactory {
    * @return
    */
   public UnitDefinition unitSubstancePerSizeOrSubstance(Species species) {
-    return bringToConcentration ? unitSubstancePerSize(species) : species.getSubstanceUnitsInstance();
+    if (bringToConcentration) {
+      return unitSubstancePerSize(species);
+    }
+    if (species.isSetSubstanceUnits()) {
+      return species.getSubstanceUnitsInstance();
+    }
+    if (species.getLevel() > 2) {
+      Model model = species.getModel();
+      if (model.isSetSubstanceUnits()) {
+        return model.getSubstanceUnitsInstance();
+      }
+    }
+    return null;
   }
   
   /**

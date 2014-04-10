@@ -268,7 +268,7 @@ ChangeListener, PropertyChangeListener, TabClosingListener {
   private SBPreferences prefs;
   
   /**
-   * 
+   * A reference to the Garuda core.
    */
   private GarudaSoftwareBackend garudaBackend;
   

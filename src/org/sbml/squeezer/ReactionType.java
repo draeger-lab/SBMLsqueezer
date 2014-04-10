@@ -1186,7 +1186,8 @@ public class ReactionType {
       spec = listOfParticipants.get(i).getSpeciesInstance();
       for (String string : ignoreList) {
         if (spec.filterCVTerms(Qualifier.BQB_IS, ".*" + string + ".*").size() > 0) {
-          listOfParticipants.remove(i);
+          SpeciesReference sr = listOfParticipants.remove(i);
+          logger.fine("Removed " + sr + " from reaction " + listOfParticipants.getParent());
           break;
         }
       }

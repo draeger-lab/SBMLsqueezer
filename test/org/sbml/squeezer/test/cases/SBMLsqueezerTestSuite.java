@@ -40,5 +40,4 @@ import org.junit.runners.Suite.SuiteClasses;
     ZeroReactantsTest.class
 })
 public class SBMLsqueezerTestSuite {
-  
 }
