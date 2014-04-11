@@ -4,16 +4,15 @@
 The program SBMLsqueezer is a versatile tool for the assembly and assignment of
 complex kinetic equations of reactions and processes in biochemical networks
 \citep{Draeger2008, Draeger2010a, Draeger2011a}.
-A list of currently implemented rate laws can be found in 
-\vref{chap:RateLaws}.
+A list of currently implemented rate laws can be found in \vref{chap:RateLaws}.
 
-The data format understood by SBMLsqueezer is the Systems Biology Markup
-Language\footnote{\url{http://sbml.org}} (SBML) in all of its levels and
+The data format understood by SBMLsqueezer is the
+\SBML\footnote{\url{http://sbml.org}} in all of its levels and
 versions \citep{Hucka2001, Hucka2003, M.Hucka03012003, Hucka2007, Hucka2008,
 Hucka2010a, Finney2003, Finney2006}.
-All generated equations are stored, depending on the version of SBML, in form of
-infix formula strings (SBML Level~1) or MathML \citep{Buswell1999} expressions
-(for all other SBML versions).
+When using \SBML Level~1 (not recommended), all generated equations are stored
+in form of infix formula strings. For all other versions of \SBML, the generated
+equations are stored in form of MathML \citep{Buswell1999} expressions.
 
 Kinetic equations contain a set of parameters, whose units must be derived to
 ensure that the overal equation can be interpreted in units of the extent of the
@@ -35,7 +34,7 @@ Laible2007, Courtot2011}.
 The selection of the kinetic equations is done automatically by the program,
 where several settings allow users to influence the algorithm's choice.
 In many cases, SBMLsqueezer suggests multiple equations for the same process,
-from which the user can choose as desired.
+from which the user can choose as desired one.
 This behavior of the program is important to ensure that only appropriate
 equations can be selected at any time.
 
@@ -65,10 +64,22 @@ CellDesigner\footnote{\url{http://www.celldesigner.org/}}
 \citep{Funahashi2003, Funahashi2006, Funahashi2007a, Funahashi2008}.
 By default, the stand-alone version is based on the \JSBML backend 
 \citep{Draeger2011b}, but you can also use \libSBML \citep{Bornstein2008} as its
-SBML backend instead if its more elaborated offline model validation matters.
+\SBML backend instead if this library's more elaborated offline model validation
+matters.
 If you neither like to download SBMLsqueezer, nor to install any software on
 your local computer, you can even use SBMLsqueezer as a Galaxy-based webservice,
-available at \url{http://webservices.cs.uni-tuebingen.de/}. 
+available at \url{http://webservices.cs.uni-tuebingen.de/}, or launch it as a
+\JavaWebStart application directly from your web browser by
+clicking at
+\url{http://www.cogsys.cs.uni-tuebingen.de/software/SBMLsqueezer/downloads/SBMLsqueezer.jnlp}.
+
+In addition, SBMLsqueezer implements the Garuda specification and can therefore
+also be used as a gadget within this powerful framework for systems biology
+\citep{Ghosh2011}. In this configuration, the output of tools that assist you
+to create your models, such as KEGGtranslator \citep{Wrzodek2011, Wrzodek2013}
+can directly be piped as the input to SBMLsqueezer. Furthermore, SBMLsqueezer's
+output can be forwarded to further programs, such as SBMLsimulator
+\citep{Keller2013} for further analysis.
 
 Finally, the command-line mode of SBMLsqueezer provides all capabilities of the
 program without any restriction.
@@ -79,19 +90,20 @@ You can hence equip a large number of files with kinetic equations without the
 need to open each file in a graphical user interface.
 The usefulness of this approach has recently been demonstrated as part of the
 path2models project\footnote{\url{http://www.ebi.ac.uk/biomodels-main/path2models}},
-in which more than 142,000 SBML models have been processed with SBMLsqueezer.
+in which more than 142,000 \SBML models have been processed with SBMLsqueezer
+\citep{Buechel2013}.
 
 For the documentation of your model, SBMLsqueezer includes the program
 \SBMLLaTeX\footnote{\url{http://www.cogsys.cs.uni-tuebingen.de/software/SBML2LaTeX/}},
 which generates a comprehensive report of your model, including a detailed
 description of all components and equations \citep{Draeger2009b, Draeger2010a}.
 These reports can be very handy to support scientific writing, because you can
-easily copy the formulas into your paper.
+easily copy the formulas into your scientific paper.
 
-\vspace{3cm}
-\begin{center}
-\includegraphics[width=2.5cm]{img/LOGO.png}
-\end{center}
+% \vspace{3cm}
+% \begin{center}
+% \includegraphics[width=2.5cm]{img/LOGO.png}
+% \end{center}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % 02_Installation
@@ -100,7 +112,7 @@ easily copy the formulas into your paper.
 \chapter{Installation}
 
 To obtain a local copy of SBMLsqueezer, you can download it in form of a 
-\JavaArchive from the website
+\JAR from the website
 \url{http://www.cogsys.cs.uni-tuebingen.de/software/SBMLsqueezer/}.
 
 In the most common scenario, you might want to launch the program as a
@@ -121,12 +133,12 @@ SBMLsqueezer can be be used in multiple ways, depending on your preferences:
     \item via its command-line interface
   \end{itemize}
         In both cases, you can choose between \JSBML or \libSBML as your backend
-        for SBML.
+        for \SBML.
   \item As a plug-in for CellDesigner
   \item As a gadget for GARUDA
-  \item As an online program
+  \item As an online program embedded in the Galaxy webservice environment
   \item As a \JavaWebStart application
-  \item As a rate law core in an end-user application
+  \item As a rate law core in an end-user application via its \API
 \end{itemize}
 Depending on how you like to use SBMLsqueezer, differnt requirements must be
 fulfilled before launching the program for the first time.
@@ -136,13 +148,13 @@ fulfilled before launching the program for the first time.
 With at least 1\,GB main memory, you should be able to perform most tasks
 without any problem. For large models, you should have at least 2\,GB of main
 memory. An active internet connection is required for accessing the SABIO-RK
-database.
+database and to automatically obtain update information for SBMLsqueezer.
 
 \subsection{Software}\label{sec:SoftwareRequirements}
 
 SBMLsqueezer is entirely implemented in \Java and runs on any \OS, where a 
-suitable \JVM, \JDK version~1.5 or newer, is installed.
-For instructions how to obtain an up-to-date JVM for your system, see, for 
+suitable \JVM, \JDK version~1.6 or newer, is installed.
+For instructions how to obtain an up-to-date \JVM for your system, see, for 
 example, the \Java SE download
 page\footnote{\url{http://www.oracle.com/technetwork/java/javase/downloads/}\label{fn:jvmldl}}.
 
@@ -150,23 +162,23 @@ SBMLsqueezer has successfully been tested with
 \begin{itemize}
   \item Microsoft \WindowsSeven Professional (64~bit),
   \item Microsoft \WindowsSeven Professional (SP1, 64~bit),
-  \item \MacOSX (version 10.8.2), and \UbuntuLinux (version 12.04, 64~bit).
+  \item \MacOSX (versions 10.8.2 through 10.9.2), and \UbuntuLinux (version 12.04, 64~bit).
 \end{itemize}
 See \vref{ch:faq} if you encounter any problems.
 
 \subsection{Stand-alone application}
 
-No special requirements are necessary if you like to use SBMLsqueezer as a
-stand-alone application.
+Besides what is explained above, no further requirements are necessary if you
+like to use SBMLsqueezer as a stand-alone application.
 The program SBMLsqueezer does not have to be installed in order to be execuded, 
 just copy the \JAR of SBMLsqueezer to your prefered path on your harddisk
 to launch the application.
 On \MacOSX, you may like to copy the \JAR into your \texttt{/Applications/}
 folder.
 On \Windows systems, the preferred position for the \JAR could be, for
-instance, \texttt{C:\textbackslash Program\textbackslash{} Files\textbackslash}.
+instance, \texttt{C:\textbackslash Program{\textvisiblespace}Files\textbackslash}.
 For \Linux, we propose to copy the \JAR to the \texttt{/opt/} folder.
- 
+
 
 \subsubsection{Using the \JSBML backend}
 
@@ -182,12 +194,12 @@ On some platforms, you may have to define an environment variable pointing
 to the installation directory of \libSBML before being able to use its \Java
 binding.
 On the most \Unix and \Linux platforms, this variable is called
-\texttt{LD\_LIBRARY\_PATH}.
-On \MacOSX, you should instead define the variable \texttt{DYLD\_LIBRARY\_PATH}.
+\LDLIBRARYPATH.
+On \MacOSX, you should instead define the variable \DYLDLIBRARYPATH.
 Follow the instrcutions at \url{http://sbml.org/Software/libSBML/docs/cpp-api/libsbml-accessing.html#accessing-java}
 before launching SBMLsqueezer.
-On Windows you should add the directory to the PATH environment in the Control Panel.
-The following skript can help you to to run SBMLsqueezer on your \Unix platform:
+On Windows you should add the directory to the \PATH environment in the Control Panel.
+The following script can help you to to run SBMLsqueezer on your \Unix platform:
 \begin{lstlisting}[language=bash]
 VM_ARGS="-Xms32M -Xmx512M -Djava.library.path="
 
@@ -200,7 +212,7 @@ VM_ARGS="${VM_ARGS}\
 /usr/local/lib"
 #:[path to xerces]/xerces/lib
 CLASS_PATH="/usr/local/share/java/libsbmlj.jar:\
-[path to ]SBMLsqueezer2.jar"
+[path to ]SBMLsqueezer_v2.0.jar"
 
 # Set the environment variable; under Linux or most Unix systems this is
 LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:/usr/local/lib"
@@ -272,12 +284,927 @@ TODO: Write some text.
 \section{Extraction of rate laws from SABIO-RK (does not apply for CellDesigner plugin)}
 \subsection{For an entire network}
 Please note: The reactions you want to equip with kinetic equations should be annotated with KEGG reaction ids.
-Click on the SABIO-RK symbol and the wizard will be started. On the first window you can select the reactions you want to equip with kinetic equations from SABIO-RK. Press Ctrl while clicking on these reactions and click on NEXT when finished. The KEGG id of a reaction is always included in the respective search, as the API searches for rate equations for several reactions simultaneously. On the next window you can add search terms that should apply for the rate equations of all reactions such as the organism by choosing from the provided terms and typing in the value of the term. You can remove a query field again by clicking on DELETE. Your search can be further restricted by changing the bounds of pH, temperature, etc. in the right panel. On the following window you see for which reactions matching entries have been found. A reaction is marked in green, if a matching rate equation has been found, yellow, if the found rate equations do not fit exactly to your model, and red, if no matching rate equation has been found. If you are satisfied with the results, you can click on NEXT. A summary of all necessary changes to the model for adding rate equations to the reactions marked in green, is displayed. If you now click on FINISH and confirm the changes afterwards, the rate equations will be added and the necessary changes will be applied to your model.
+Click on the SABIO-RK symbol and the wizard will be started. On the first window you can select the reactions you want to equip with kinetic equations from SABIO-RK.
+Press Ctrl while clicking on these reactions and click on NEXT when finished.
+The KEGG id of a reaction is always included in the respective search, as the API searches for rate equations for several reactions simultaneously.
+On the next window you can add search terms that should apply for the rate equations of all reactions such as the organism by choosing from the provided terms and typing in the value of the term.
+You can remove a query field again by clicking on DELETE.
+Your search can be further restricted by changing the bounds of pH, temperature, etc. in the right panel.
+On the following window you see for which reactions matching entries have been found.
+A reaction is marked in green, if a matching rate equation has been found, yellow, if the found rate equations do not fit exactly to your model, and red, if no matching rate equation has been found.
+If you are satisfied with the results, you can click on NEXT.
+A summary of all necessary changes to the model for adding rate equations to the reactions marked in green, is displayed.
+If you now click on FINISH and confirm the changes afterwards, the rate equations will be added and the necessary changes will be applied to your model.
 
 \subsection{For selected reations}
-Select a reaction and right-click on it. Then click on the SABIO-RK symbol and the wizard will be started. The reaction is shown again in the first window and you can just click on NEXT. A window for selecting search terms is shown afterwards. You can add search tearms such as the organism by choosing from the provided terms and typing in the value of the term. The search can be further restricted by changing the bounds of pH, temperature, etc. in the right panel. You can remove a query field by clicking on DELETE (like when adding kinetic laws to several reactions simultaneously). After you are satisfied with your choice of search terms, click on NEXT. The rate equations that match your search criteria are displayed then. You can select a reaction and click on NEXT or you can click on BACK and change your search criteria. If you click on NEXT, you can then choose how to match the species, compartments, etc., contained in the selected rate equation to the respective SBML elements in your model. The necessary elements to import, such as function definitions contained in the rate equation to add, are also shown. If you now click on NEXT, a summary of all necessary changes to the model for adding the selected rate equation is displayed. Now click on FINISH  and confirm the changes afterwards. Then the rate equation will be added and the necessary changes will be applied to your model.
+Select a reaction and right-click on it. Then click on the SABIO-RK symbol and the wizard will be started.
+The reaction is shown again in the first window and you can just click on NEXT.
+A window for selecting search terms is shown afterwards.
+You can add search tearms such as the organism by choosing from the provided terms and typing in the value of the term.
+The search can be further restricted by changing the bounds of pH, temperature, etc. in the right panel.
+You can remove a query field by clicking on DELETE (like when adding kinetic laws to several reactions simultaneously).
+After you are satisfied with your choice of search terms, click on NEXT.
+The rate equations that match your search criteria are displayed then.
+You can select a reaction and click on NEXT or you can click on BACK and change your search criteria.
+If you click on NEXT, you can then choose how to match the species, compartments, etc., contained in the selected rate equation to the respective \SBML elements in your model.
+The necessary elements to import, such as function definitions contained in the rate equation to add, are also shown.
+If you now click on NEXT, a summary of all necessary changes to the model for adding the selected rate equation is displayed.
+Now click on FINISH  and confirm the changes afterwards.
+Then the rate equation will be added and the necessary changes will be applied to your model.
 
 \chapter{Command-line arguments}
+\renewcommand{\descriptionlabel}[1]{\textcolor{blue}{\texttt{#1}}}
+
+All functions of the program SBMLsqueezer are also available as command-line
+arguments. SBMLsqueezer is therefore fully functional even if you do not use
+its graphical user interface.
+This can be useful if you like to generate kinetic equations, units, and
+parameter objects for a large number of \SBML files in a loop or in a more
+complex schedule.
+To benefit from this functionality, just open a command line window on your
+\OS, e.g., excecute the \texttt{cmd.exe} in \Windows or open a terminal window
+in \Unix (incl. \Linux and \MacOSX).
+
+It should also be noted that the command line options impact the graphical user
+interface. It is hence possible to use command-line options in order to launch
+SBMLsqueezer with a pre-defined configuration.
+
+\section{Program usage}
+
+To launch the program from the command line, type
+\begin{lstlisting}[language=bash,numbers=none]
+java -jar SBMLsqueezer_v2.0.jar org.sbml.squeezer.SBMLsqueezer [options]
+\end{lstlisting}
+Under \Windows, you might use the command \texttt{javaw} instead of
+\texttt{java}. Note that for future versions of SBMLsqueezer the name of the
+\JAR could change, because it includes the version number.
+Use the following program parameters to lists all available options of
+SBMLsqueezer: \texttt{--help, -?}.
+The subsequent sections describ all available options of SBMLsqueezer
+version~2.0. 
+
+\section{Input/output options}
+
+\begin{description}
+\item[--sbml-in-file{[} |={]}<File>]
+  Specifies the \SBML input file.
+  Default value: none
+
+\item[--sbml-out-file{[} |={]}<File>]
+  Specifies the file where SBMLsqueezer writes its \SBML output.
+  Default value: none
+
+\item[--try-loading-libsbml]
+  If selected, the application will try to load the library \libSBML
+  for reading and writing \SBML files, otherwise everything will
+  be done with \JSBML only, i.e., pure \Java and therefore platform independent.
+  Default value: \texttt{false}
+\end{description}
+
+\section{Basic configuration}
+With the options introduced in this section, you can specify which assumptions
+SBMLsqueezer should make when values or information are missing, i.e., if the 
+model is lacking more information than just kinetic equations. You can also
+specify how to interprete the model and when error messages should be displayed.
+
+\subsection{General Options}
+The behavior of SBMLsqueezer can be specified by the following options, for
+instance, to decide if error messages should be displayed under
+certain circumstances.
+\begin{description}
+\item[--overwrite-existing-rate-laws{[} |={]}<Boolean>]
+  If this flag is set to \texttt{true}, a new rate law will be created for
+  each reaction irrespective of whether there is already a rate
+  law assigned to this reaction or not. If \texttt{false} (default), new
+  rate laws are only generated if missing in the \SBML file. Note
+  that if this option is checked, already existing kinetic laws
+  will be overwritten.
+  Default value: \texttt{true}
+
+\item[--set-boundary-condition-for-genes{[} |={]}<Boolean>]
+  If \texttt{true} (default), the boundary condition of all species that
+  represent gene-coding elements, such as genes or gene coding
+  regions, will be set to \texttt{true}.
+  Default value: \texttt{true}
+
+\item[--all-reactions-as-enzyme-catalyzed{[} |={]}<Boolean>]
+  If \texttt{true}, all reactions within the network are considered to be
+  enzyme-catalyzed reactions. If \texttt{false} (default), an explicit
+  enzymatic catalyst must be assigned to a reaction to obtain
+  this status.
+  Default value: \texttt{true}
+
+\item[--remove-unnecessary-parameters-and-units{[} |={]}<Boolean>]
+  If \texttt{true} (default), parameters and units that are never referenced
+  by any element of the model are automatically deleted after
+  creating kinetic equations.
+  Default value: \texttt{true}
+
+\item[--new-parameters-global]
+  If \texttt{true} (default), all parameters are stored globally for the
+  whole model. Otherwise the majority of parameters is stored
+  locally for the respective kinetic equation they belong to.
+  Note that some parameters represent global properties of the
+  entire model and should therefore be always stored in the global
+  list of prameters. In this way, these parameters are valid within
+  the entire model.
+  Default value: \texttt{false}
+
+\item[--warnings-for-too-many-reactants{[} |={]}<Boolean>]
+  If \texttt{true} (default), warnings will be displayed for reactions with
+  an unrealistic number of reactants. The maximal number of reactants
+  that are believed to be still realistic can be defined if this
+  option is selected.
+  Default value: \texttt{true}
+
+\item[--show-sbml-warnings{[} |={]}<Boolean>]
+  If \texttt{true} (default), \SBML warnings are displayed. These warnings are
+  mainly the result of a syntactical model check and do not give much
+  information about the semantic correctness of your model.
+  Since the SBML library performs this check, SBMLsqueezer cannot influence the
+  content of the syntax check Note that this option only works properly if you
+  use \libSBML as your \SBML backend, because \JSBML does not provide a full
+  validity check for \SBML models.
+  Default value: \texttt{true}
+
+\item[--read-from-sabio-rk{[} |={]}<Boolean>]
+  This option lets the user choose whether to search for experimentally
+  obtained rate laws in the reaction kinetics database SABIO-RK. Note that
+  performing this search requires an active internet connection.
+  Default value: \texttt{true}
+\end{description}
+
+\subsection{Default values}
+
+The options in this group allow you to specify several default values to be
+applied in addition to the actual rate law generation, such as the default
+compartment size etc., and to define model wide settings to be taken into
+account when creating rate equations.
+\begin{description}
+\item[--max-number-of-reactants{[} |={]}<Integer>]
+  A simultaneous collision of a high number of reactants just by
+  chance is very unlikely. Usually, these reactions proceed in
+  a sequence of separate steps, each involving only very few molecules.
+  Here you can specifiy the maximal number of reactants so that
+  the reaction is still considered plausible. By default this
+  value is set to three. Note that this option is only available if
+  you decide that this kind of warning should be displayed.
+  Default value: \texttt{3}
+
+\item[--default-compartment-spatial-dim{[} |={]}<Double>]
+  If no spatial dimensions are defined for a compartment, the value
+  defined by this option will be used as a default.
+  Default value: \texttt{3.0}
+
+\item[--default-compartment-size{[} |={]}<Double>]
+  For compartments that are not yet initialized, SBMLsqueezer will
+  use this value as the default initial size. By default this
+  value is set to one.
+  Default value: \texttt{1.0}
+
+\item[--default-species-init-val{[} |={]}<Double>]
+  If species are not yet initialized, SBMLsqueezer will use this
+  value as initial amount or initial concentration of the species.
+  Which kind of quantity is used, depends on whether the species
+  has only substance units. This means, for species that are to
+  be interpreted in terms of concentration, an initial concentration
+  will be set, whereas an initial amount will be set if the species
+  is to be interpreted in terms of molecule counts. By default
+  this value is set to unity.
+  Default value: \texttt{1.0}
+
+\item[--default-new-parameter-val{[} |={]}<Double>]
+  Here you can specify the default value that is set for newly
+  created parameters. By default this value is one.
+  Default value: \texttt{1.0}
+
+\item[--default-species-has-only-substance-units{[} |={]}<Boolean>]
+  This option allows users to specify that the numerical value
+  of a species should be interpreted as a value given in substance
+  units in cases where this has not yet been defined. If not selected,
+  species with undefined meaning will be conceived as a quantity
+  in concentration units.
+  Default value: \texttt{true}
+
+\item[--ignore-these-species-when-creating-laws{[} |={]}<String>]
+  Allows the user to ignore species that are annotated with the
+  given compound identifiers when creating rate laws for reactions
+  that involve these species. For instance, water or single protons
+  can often be ignored when creating rate equations, hence simplifying
+  the resulting rate equations. Preselected are the KEGG compound
+  identifiers for several ions and small molecules, including water and
+  protons. See \vref{tab:MIRIAMignoreList} for details.
+  Default value: \texttt{C00001, C00038, C00070, C00076, C00080, C00175, C00238, C00282, C00291, C01327, C01528, C14818, C14819}
+\end{description}
+
+\subsection{Species to be treated as enzymes}
+
+In many situations, it is not clear, which kinds of chemical species can be
+considered an enzyme. The following options allow you to select, which kind
+of species SBMLsqueezer should interprete as an enzyme when acting as a
+catalytic modifier of a reaction.
+\begin{description}
+\item[--possible-enzyme-antisense-rna{[} |={]}<Boolean>]
+  If \texttt{true}, antisense \RNA molecules are treated as enzymes when
+  catalyzing a reaction. If \texttt{false} (default) antisense \RNA molecule
+  catalyzed reactions are not considered to be enzyme-catalyzed
+  reactions.
+  Default value: \texttt{false}
+
+\item[--possible-enzyme-complex{[} |={]}<Boolean>]
+  If checked (default), complex molecules are treated as enzymes
+  when catalyzing a reaction. Otherwise, complex-catalyzed reactions
+  are not considered to be enzyme reactions.
+  Default value: \texttt{true}
+
+\item[--possible-enzyme-generic{[} |={]}<Boolean>]
+  If \texttt{true} (default), generic proteins are treated as enzymes when
+  catalyzing a reaction. Otherwise, generic protein-catalyzed
+  reactions are not considered to be enzyme reactions.
+  Default value: \texttt{true}
+
+\item[--possible-enzyme-macromolecule{[} |={]}<Boolean>]
+  If this options is selected, species that are annotated as macromolecules
+  are treated as enzymes when catalyzing a reaction. Otherwise,
+  macormolecule-catalyzed reactions are not considered enzyme
+  reactions. If a modifier of a reaction that is annotated as
+  an enzymatic catalyst refers to a macromolecule but this option
+  is not active, SBMLsqueezer will reduce the modifier to a simple
+  catalyst.
+  Default value: \texttt{true}
+
+\item[--possible-enzyme-receptor{[} |={]}<Boolean>]
+  If \texttt{true}, receptors are treated as enzymes when catalyzing a reaction.
+  If \texttt{false} (default), receptor-catalyzed reactions are not considered
+  to be enzyme reactions.
+  Default value: \texttt{false}
+
+\item[--possible-enzyme-rna{[} |={]}<Boolean>]
+  If \texttt{true} (default), \RNA is treated as an enzyme when catalyzing
+  a reaction. Otherwise \RNA-catalyzed reactions are not considered
+  to be enzyme-catalyzed reactions.
+  Default value: \texttt{true}
+
+\item[--possible-enzyme-simple-molecule]
+  If \texttt{true}, simple molecules are treated as enzymes when catalyzing
+  a reaction. If \texttt{false} (default), simple molecule-catalyzed reactions
+  are not considered to be enzyme reactions.
+  Default value: \texttt{false}
+
+\item[--possible-enzyme-truncated{[} |={]}<Boolean>]
+  If \texttt{true} (default), truncated proteins are treated as enzymes
+  when catalyzing a reaction. Otherwise, truncated protein-catalyzed
+  reactions are not considered to be enzyme reactions.
+  Default value: \texttt{true}
+
+\item[--possible-enzyme-unknown]
+  If \texttt{true}, unknown molecules are treated as enzymes when catalyzing
+  a reaction. If \texttt{false} (default), unknown molecule-catalyzed reactions
+  are not considered to be enzyme reactions.
+  Default value: \texttt{false}
+\end{description}
+
+\subsection{How to ensure unit consistency}
+
+Unit consistency is an important property for kinetic models. In \SBML, the
+kinetics of all reactions should be defined so that these can be evaluated to
+units of substance per time. Since Level~3, the extend units of a model can be
+defined. Since then, evaluating reactions should result in extend units per time
+units. The main difficulty when dealing with units are transport reactions and
+the ability to specify reactive species in terms of molecule counts (amounts) or
+concentration units, which is amounts per size. In addition, the sizes of
+compartments do not necessarily have to be three dimensional. In \SBML, the
+spatial dimensions do not have to be integers either. However, SBMLsqueezer
+contains several complex algorithms to determin appropriate units for newly
+generated parameters and to incorporate the sizes of surrounding compartments
+into the generated rate laws. Here you can specify how to do that.  
+\begin{description}
+\item[--type-unit-consistency{[} |={]}<UnitConsistencyType>]
+  This option ensures unit consistency and can attain two different
+  values: Choose \emph{amount} to bring each occurrence of a participating
+  species to a substance unit. Depending on whether the species
+  has only substance units or not it might be necessary to multiply
+  the species with the size of its surrounding compartment. Choose
+  \emph{concentration} to bring each participating species to concentration
+  units. In this case the species will be divided by the surrounding
+  compartment size in a kinetic equations if it is defined to
+  have only substance units. The units of parameters are set accordingly.
+  All possible values for type \texttt{<UnitConsistencyType>} are:
+  \texttt{amount} and \texttt{concentration}.
+  Default value: \texttt{amount}
+\end{description}
+
+\section{Rate law selection}
+
+The options in this group allow you to define the rate laws with highest
+priority when generating kinetic equations in one single step for an entire
+network.
+To this end, SBMLsqueezer defines several basic types of reactions and provides
+a list of applicable generic equations for each type. Special cases of these
+equations have to be derived for each individual case, also depending on
+unit consistency, compartment dimensions etc.
+The actual selection of a rate law means that you can specify, which class of
+the program SBMLsqueezer should be used to generate a rate law of this type.
+You do not need to have deep programming skills for this. All you need to know
+here is that the the names of the rate laws are a bit more complicated than the
+actual human-readable names, because you must specify, how SBMLsqueezer
+internally names these rate laws. For more advanced uses, it might be
+interesting to know that SBMLsqueezer uses the concept known as reflection to
+select its kinetic equations.
+
+Furthermore, you can decide how to deal with information about reversible or
+irreversible reactions.
+
+\subsection{Reversibility}
+
+These two options are mutually exclusive and their values must not contradict.
+Use either one of both.
+\begin{description}
+\item[--treat-all-reactions-reversible]
+  If \texttt{true}, all reactions are set to reversible before creating
+  new kinetic equations. Otherwise, the information given by the
+  \SBML file will be left unchanged.
+  Default value: \texttt{false}
+
+\item[--treat-reactions-reversible-as-given{[} |={]}<Boolean>]
+  If checked, the information about reversiblity will be left unchanged.
+  Default value: \texttt{true}
+\end{description}
+
+\subsection{Gene regulation kinetics}
+\begin{description}
+\item[--kinetics-gene-regulation{[} |={]}<Class>]
+  Please specify the default kinetic law to be applied for reactions
+  that are identified to belong to gene-regulatory processes (reactions
+  involving genes, \RNA, and proteins), such as transcription or
+  translation.
+  All possible values for type \texttt{<Class>} are:
+  \begin{itemize}
+  \item\texttt{org.sbml.squeezer.kinetics.NetGeneratorLinear},
+  \item\texttt{org.sbml.squeezer.kinetics.HSystem},
+  \item\texttt{org.sbml.squeezer.kinetics.NetGeneratorNonLinear},
+  \item\texttt{org.sbml.squeezer.kinetics.Weaver},
+  \item\texttt{org.sbml.squeezer.kinetics.HillEquation},
+  \item\texttt{org.sbml.squeezer.kinetics.SSystem},
+  \item\texttt{org.sbml.squeezer.kinetics.AdditiveModelNonLinear},
+  \item\texttt{org.sbml.squeezer.kinetics.HillRaddeEquation},
+  \item\texttt{org.sbml.squeezer.kinetics.Vohradsky},
+  \item\texttt{org.sbml.squeezer.kinetics.HillHinzeEquation}, and 
+  \item\texttt{org.sbml.squeezer.kinetics.AdditiveModelLinear}.
+  \end{itemize}
+  Default value: \texttt{org.sbml.squeezer.kinetics.HillHinzeEquation}
+
+\item[--kinetics-zero-reactants{[} |={]}<Class>]
+  Default rate law with zeroth order reactants
+  All possible values for type \texttt{<Class>} are:
+  \begin{itemize}
+  \item\texttt{org.sbml.squeezer.kinetics.NetGeneratorLinear},
+  \item\texttt{org.sbml.squeezer.kinetics.HSystem},
+  \item\texttt{org.sbml.squeezer.kinetics.ZerothOrderReverseGMAK},
+  \item\texttt{org.sbml.squeezer.kinetics.ZerothOrderForwardGMAK},
+  \item\texttt{org.sbml.squeezer.kinetics.NetGeneratorNonLinear},
+  \item\texttt{org.sbml.squeezer.kinetics.Weaver},
+  \item\texttt{org.sbml.squeezer.kinetics.SSystem},
+  \item\texttt{org.sbml.squeezer.kinetics.AdditiveModelNonLinear},
+  \item\texttt{org.sbml.squeezer.kinetics.HillRaddeEquation},
+  \item\texttt{org.sbml.squeezer.kinetics.Vohradsky},
+  \item\texttt{org.sbml.squeezer.kinetics.HillHinzeEquation}, and 
+  \item\texttt{org.sbml.squeezer.kinetics.AdditiveModelLinear}.
+  \end{itemize}
+  Default value: \texttt{org.sbml.squeezer.kinetics.ZerothOrderReverseGMAK}
+
+\item[--kinetics-zero-products{[} |={]}<Class>]
+  Default rate law with zeroth order products
+  All possible values for type \texttt{<Class>} are:
+  \begin{itemize}
+  \item\texttt{org.sbml.squeezer.kinetics.NetGeneratorLinear},
+  \item\texttt{org.sbml.squeezer.kinetics.HSystem},
+  \item\texttt{org.sbml.squeezer.kinetics.ZerothOrderReverseGMAK},
+  \item\texttt{org.sbml.squeezer.kinetics.ZerothOrderForwardGMAK},
+  \item\texttt{org.sbml.squeezer.kinetics.NetGeneratorNonLinear},
+  \item\texttt{org.sbml.squeezer.kinetics.Weaver},
+  \item\texttt{org.sbml.squeezer.kinetics.SSystem},
+  \item\texttt{org.sbml.squeezer.kinetics.AdditiveModelNonLinear},
+  \item\texttt{org.sbml.squeezer.kinetics.HillRaddeEquation},
+  \item\texttt{org.sbml.squeezer.kinetics.Vohradsky},
+  \item\texttt{org.sbml.squeezer.kinetics.HillHinzeEquation}, and 
+  \item\texttt{org.sbml.squeezer.kinetics.AdditiveModelLinear}.
+  \end{itemize}
+  Default value: \texttt{org.sbml.squeezer.kinetics.ZerothOrderReverseGMAK}
+\end{description}
+
+\subsection{Reversible rate laws}
+\begin{description}
+\item[--type-standard-version{[} |={]}<TypeStandardVersion>]
+  This option declares the version of the modular rate laws and
+  can attain the three different values \emph{cat}, \emph{hal}, and \emph{weg}
+  as described in the publications of \citet{Liebermeister2010}. This option
+  can only be accessed if all reactions are modeled reversibly.
+  All possible values for type \texttt{<TypeStandardVersion>} are:
+  \texttt{cat}, \texttt{hal}, and \texttt{weg}.
+  Default value: \texttt{cat}
+
+\item[--kinetics-reversible-non-enzyme-reactions{[} |={]}<Class>]
+  Determines the key for the standard kinetic law to be applied
+  for reactions that are catalyzed by non-enzymes or that are
+  not catalyzed at all. The value may be any rate law that implements
+  \texttt{InterfaceNonEnzymeKinetics}
+  All possible values for type \texttt{<Class>} are:
+  \begin{itemize}
+  \item\texttt{org.sbml.squeezer.kinetics.ZerothOrderForwardGMAK},
+  \item\texttt{org.sbml.squeezer.kinetics.ZerothOrderReverseGMAK}, and
+  \item\texttt{org.sbml.squeezer.kinetics.GeneralizedMassAction}.
+  \end{itemize}
+  Default value: \texttt{org.sbml.squeezer.kinetics.GeneralizedMassAction}
+
+\item[--kinetics-reversible-uni-uni-type{[} |={]}<Class>]
+  This key defines the default kinetic law to be applied to enzyme-catalyzed
+  reactions with one reactant and one product.
+  All possible values for type \texttt{<Class>} are:
+  \begin{itemize}
+  \item\texttt{org.sbml.squeezer.kinetics.DirectBindingModularRateLaw},
+  \item\texttt{org.sbml.squeezer.kinetics.CommonModularRateLaw},
+  \item\texttt{org.sbml.squeezer.kinetics.HillEquation},
+  \item\texttt{org.sbml.squeezer.kinetics.SimultaneousBindingModularRateLaw},
+  \item\texttt{org.sbml.squeezer.kinetics.ForceDependentModularRateLaw},
+  \item\texttt{org.sbml.squeezer.kinetics.ConvenienceKinetics},
+  \item\texttt{org.sbml.squeezer.kinetics.MichaelisMenten}, and
+  \item\texttt{org.sbml.squeezer.kinetics.PowerLawModularRateLaw}.
+  \end{itemize}
+  Default value: \texttt{org.sbml.squeezer.kinetics.MichaelisMenten}
+
+\item[--kinetics-reversible-bi-uni-type{[} |={]}<Class>]
+  Choose the type of the default kinetic law for reversible bi-uni
+  reactions (two reactants, one product).
+  All possible values for type \texttt{<Class>} are:
+  \begin{itemize}
+  \item\texttt{org.sbml.squeezer.kinetics.DirectBindingModularRateLaw},
+  \item\texttt{org.sbml.squeezer.kinetics.CommonModularRateLaw},
+  \item\texttt{org.sbml.squeezer.kinetics.SimultaneousBindingModularRateLaw},
+  \item\texttt{org.sbml.squeezer.kinetics.ForceDependentModularRateLaw},
+  \item\texttt{org.sbml.squeezer.kinetics.ConvenienceKinetics},
+  \item\texttt{org.sbml.squeezer.kinetics.RandomOrderMechanism},
+  \item\texttt{org.sbml.squeezer.kinetics.OrderedMechanism}, and
+  \item\texttt{org.sbml.squeezer.kinetics.PowerLawModularRateLaw}.
+  \end{itemize}
+  Default value: \texttt{org.sbml.squeezer.kinetics.RandomOrderMechanism}
+
+\item[--kinetics-reversible-bi-bi-type{[} |={]}<Class>]
+  Select the type of the default kinetic law for reversible bi-bi
+  reactions (two reactants, two products).
+  All possible values for type \texttt{<Class>} are:
+  \begin{itemize}
+  \item\texttt{org.sbml.squeezer.kinetics.DirectBindingModularRateLaw},
+  \item\texttt{org.sbml.squeezer.kinetics.PingPongMechanism},
+  \item\texttt{org.sbml.squeezer.kinetics.CommonModularRateLaw},
+  \item\texttt{org.sbml.squeezer.kinetics.SimultaneousBindingModularRateLaw},
+  \item\texttt{org.sbml.squeezer.kinetics.ForceDependentModularRateLaw},
+  \item\texttt{org.sbml.squeezer.kinetics.ConvenienceKinetics},
+  \item\texttt{org.sbml.squeezer.kinetics.RandomOrderMechanism},
+  \item\texttt{org.sbml.squeezer.kinetics.OrderedMechanism}, and
+  \item\texttt{org.sbml.squeezer.kinetics.PowerLawModularRateLaw}.
+  \end{itemize}
+  Default value: \texttt{org.sbml.squeezer.kinetics.RandomOrderMechanism}
+
+\item[--kinetics-reversible-arbitrary-enzyme-reactions{[} |={]}<Class>]
+  Arbitrary reversible enzyme reactions
+  All possible values for type \texttt{<Class>} are:
+  \begin{itemize}
+  \item\texttt{org.sbml.squeezer.kinetics.DirectBindingModularRateLaw},
+  \item\texttt{org.sbml.squeezer.kinetics.CommonModularRateLaw},
+  \item\texttt{org.sbml.squeezer.kinetics.SimultaneousBindingModularRateLaw},
+  \item\texttt{org.sbml.squeezer.kinetics.ForceDependentModularRateLaw},
+  \item\texttt{org.sbml.squeezer.kinetics.ConvenienceKinetics}, and
+  \item\texttt{org.sbml.squeezer.kinetics.PowerLawModularRateLaw}.
+  \end{itemize}
+  Default value: \texttt{org.sbml.squeezer.kinetics.CommonModularRateLaw}
+\end{description}
+
+\subsection{Irreversible rate laws}
+\begin{description}
+\item[--kinetics-irreversible-non-enzyme-reactions{[} |={]}<Class>]
+  Determines the key for the standard kinetic law to be applied
+  for reactions that are catalyzed by non-enzymes or that are
+  not catalyzed at all. The value may be any rate law that implements
+  InterfaceNonEnzymeKinetics
+  All possible values for type \texttt{<Class>} are:
+  \begin{itemize}
+  \item\texttt{org.sbml.squeezer.kinetics.ZerothOrderForwardGMAK},
+  \item\texttt{org.sbml.squeezer.kinetics.ZerothOrderReverseGMAK}, and
+  \item\texttt{org.sbml.squeezer.kinetics.GeneralizedMassAction}.
+  \end{itemize}
+  Default value: \texttt{org.sbml.squeezer.kinetics.GeneralizedMassAction}
+
+\item[--kinetics-irreversible-uni-uni-type{[} |={]}<Class>]
+  This key defines the default kinetic law to be applied to enzyme-catalyzed
+  reactions with one reactant and one product.
+  All possible values for type \texttt{<Class>} are:
+  \begin{itemize}
+  \item\texttt{org.sbml.squeezer.kinetics.IrrevCompetNonCooperativeEnzymes},
+  \item\texttt{org.sbml.squeezer.kinetics.IrrevNonModulatedNonInteractingEnzymes},
+  \item\texttt{org.sbml.squeezer.kinetics.HillEquation},
+  \item\texttt{org.sbml.squeezer.kinetics.ConvenienceKinetics}, and
+  \item\texttt{org.sbml.squeezer.kinetics.MichaelisMenten}.
+  \end{itemize}
+  Default value: \texttt{org.sbml.squeezer.kinetics.MichaelisMenten}
+
+\item[--kinetics-irreversible-bi-uni-type{[} |={]}<Class>]
+  Choose the type of the default kinetic law for irreversible bi-uni
+  reactions (two reactants, one product).
+  All possible values for type \texttt{<Class>} are:
+  \begin{itemize}
+  \item\texttt{org.sbml.squeezer.kinetics.IrrevNonModulatedNonInteractingEnzymes},
+  \item\texttt{org.sbml.squeezer.kinetics.ConvenienceKinetics},
+  \item\texttt{org.sbml.squeezer.kinetics.RandomOrderMechanism}, and
+  \item\texttt{org.sbml.squeezer.kinetics.OrderedMechanism}.
+  \end{itemize}
+  Default value: \texttt{org.sbml.squeezer.kinetics.RandomOrderMechanism}
+
+\item[--kinetics-irreversible-bi-bi-type{[} |={]}<Class>]
+  Select the type of the default kinetic law for irreversible bi-bi
+  reactions (two reactants, two products).
+  All possible values for type \texttt{<Class>} are:
+  \begin{itemize}
+  \item\texttt{org.sbml.squeezer.kinetics.IrrevNonModulatedNonInteractingEnzymes},
+  \item\texttt{org.sbml.squeezer.kinetics.PingPongMechanism},
+  \item\texttt{org.sbml.squeezer.kinetics.ConvenienceKinetics},
+  \item\texttt{org.sbml.squeezer.kinetics.RandomOrderMechanism}, and
+  \item\texttt{org.sbml.squeezer.kinetics.OrderedMechanism}.
+  \end{itemize}
+  Default value: \texttt{org.sbml.squeezer.kinetics.RandomOrderMechanism}
+
+\item[--kinetics-irreversible-arbitrary-enzyme-reactions{[} |={]}<Class>]
+  Arbitrary irreversible enzyme reactions
+  All possible values for type \texttt{<Class>} are:
+  \begin{itemize}
+  \item\texttt{org.sbml.squeezer.kinetics.IrrevNonModulatedNonInteractingEnzymes} and
+  \item\texttt{org.sbml.squeezer.kinetics.ConvenienceKinetics}.
+  \end{itemize}
+  Default value:
+  \texttt{org.sbml.squeezer.kinetics.IrrevNonModulatedNonInteractingEnzymes}
+\end{description}
+
+\section{SABIO-RK search preferences}
+\subsection{General properties}
+\begin{description}
+\item[--is-wildtype{[} |={]}<Boolean>]
+  Search for wildtype kinetics
+  Default value: \texttt{true}
+
+\item[--is-mutant{[} |={]}<Boolean>]
+  Search for kinetics of mutants
+  Default value: \texttt{true}
+
+\item[--is-recombinant]
+  Search for kinetics of recombinant organisms
+  Default value: \texttt{false}
+
+\item[--has-kinetic-data{[} |={]}<Boolean>]
+  Search for entries containing kinetic data
+  Default value: \texttt{true}
+
+\item[--is-direct-submission{[} |={]}<Boolean>]
+  Search for entries directly submitted
+  Default value: \texttt{true}
+
+\item[--is-journal{[} |={]}<Boolean>]
+  Search for entries referring to journal publications
+  Default value: \texttt{true}
+
+\item[--is-entries-inserted-since]
+  Consider only entries inserted after the specified date
+  Default value: \texttt{false}
+\end{description}
+
+\subsection{Temperature}
+\begin{description}
+\item[--lowest-temperature-value{[} |={]}<Double>]
+  The lowest possible temperature for entries (in °C).
+  Arguments must fit into the range {[-271.15,1000]}.
+  Default value: \texttt{-10.0}
+
+\item[--highest-temperature-value{[} |={]}<Double>]
+  The highest possible temperature for entries (in °C).
+  Arguments must fit into the range {[-271.15,1000]}.
+  Default value: \texttt{115.0}
+
+
+\end{description}
+\subsection{Range of pH values}
+\begin{description}
+\item[--lowest-ph-value{[} |={]}<Double>]
+  The lowest possible pH value for entries
+  Arguments must fit into the range {[0,14]}.
+  Default value: \texttt{0.0}
+
+\item[--highest-ph-value{[} |={]}<Double>]
+  The highest possible pH value for entries
+  Arguments must fit into the range {[0,14]}.
+  Default value: \texttt{14.0}
+\end{description}
+
+\subsection{Date}
+\begin{description}
+\item[--lowest-date{[} |={]}<Date>]
+  Define the earliest acceptable date when the entries have been
+  inserted into SABIO-RK.
+  Default value: \texttt{Wed Oct 15 00:00:00 PDT 2008}
+\end{description}
+
+\section{SABIO-RK search options}
+\subsection{General options}
+\begin{description}
+\item[--pathway{[} |={]}<String>]
+  Define the pathway for which the kinetics are to be determined.
+
+\item[--tissue{[} |={]}<String>]
+  Define the tissue for which the kinetics are to be determined.
+
+\item[--cellular-location{[} |={]}<String>]
+  Define the cellular location for which the kinetics are to be
+  determined.
+
+\item[--organism{[} |={]}<String>]
+  Define the organism for which the kinetics are to be determined.
+\end{description}
+
+\section{Options for the graphical user interface}
+\subsection{Additional options}
+\begin{description}
+\item[--check-for-updates{[} |={]}<Boolean>]
+  Decide whether or not this program should search for updates
+  at start-up.
+  Default value: \texttt{true}
+
+\item[--gui] If this option is given, the program will display its graphical
+  user interface.
+  Default value: \texttt{false}
+
+\item[--log-level{[} |={]}<String>]
+  Change the log-level of this application.
+  All possible values for type \texttt{<String>} are:
+  \texttt{ALL}, \texttt{CONFIG},
+  \texttt{FINE}, \texttt{FINER},
+  \texttt{FINEST}, \texttt{INFO},
+  \texttt{OFF}, \texttt{SEVERE},
+  and \texttt{WARNING}.
+  Default value: \texttt{INFO}
+\end{description}
+
+\section{LaTeX Options}
+\subsection{LaTeX compiler location}
+\begin{description}
+\item[--load-latex-compiler{[} |={]}<File>]
+  The path to the LaTeX compiler to generate PDF, DVI or other
+  files from the created LaTeX report file. Accepts All files
+  (*).
+  Default value: \texttt{/Users/draeger/Documents/workspace/SBMLsqueezer}
+\end{description}
+
+\subsection{Report options}
+\begin{description}
+\item[--check-consistency]
+  If \texttt{true}, the automatic model consistency check is performed and
+  the results are written in the appendix of the model report file.
+  Default value: \texttt{false}
+
+\item[--miriam-annotation{[} |={]}<Boolean>]
+  If \texttt{true} (default), MIRIAM annotations are included into the model
+  report if there are any. In this case, \SBMLLaTeX generates
+  links to the resources for each annotated element.
+  Default value: \texttt{true}
+
+\item[--show-predefined-units{[} |={]}<Boolean>]
+  If \texttt{true} (default), all predefined unit declarations of the \SBML
+  are made explicit in the report file as these are defined by
+  the corresponding \SBML Level and Version. Otherwise only unit
+  definitions from the model are included. Note that this option
+  is only available if the option \texttt{INCLUDE\_SECTION\_UNIT\_DEFINITIONS}
+  is active.
+  Default value: \texttt{true}
+
+\item[--print-full-ode-system]
+  If set to \texttt{true}, the entire rate of change will be written for
+  each species. By default, \SBMLLaTeX only prints the sum of
+  the individual reaction rates, which are hyper-linked but displayed
+  at a different position of the report. Note that this option
+  is only available if the option \texttt{INCLUDE\_SECTION\_REACTIONS}
+  is active.
+  Default value: \texttt{false}
+
+\item[--clean-workspace]
+  If this option is set to \texttt{true}, all temporary files will be deleted
+  after running \SBMLLaTeX. In case of PDF creation, for instance,
+  this will cause even the TeX file to be deleted. However, this
+  option can be meaningful to remove all the temporary files created
+  by your system's LaTeX compiler.
+  Default value: \texttt{false}
+\end{description}
+
+\subsection{Layout options}
+\begin{description}
+\item[--landscape]
+  This option decides whether to set the LaTeX document in landscape
+  or portrait mode. By default most pages are in portrait format.
+  Default value: \texttt{false}
+
+\item[--print-names-if-available]
+  If selected, the names of \SBML elements (NamedSBase) are displayed
+  instead of their identifiers. This can only be done if the element
+  has a name.
+  Default value: \texttt{false}
+
+\item[--title-page]
+  If \texttt{true}, a separate title page will be created. By default the
+  title is written as a simple heading on the first page.
+  Default value: \texttt{false}
+
+\item[--typewriter{[} |={]}<Boolean>]
+  This option decides whether a typewriter font should be applied
+  to highlight \SBML identifiers. This is particularly important
+  when these occur in mathematical equations.
+  Default value: \texttt{true}
+
+\item[--reactants-overview-table]
+  If \texttt{true}, the details (identifier and name) of all reactants,
+  modifiers and products participating in a reaction are listed
+  in one table. By default a separate table is created for each
+  one of the three participant groups including its SBO term.
+  Note that this option is only available if the option
+  \texttt{INCLUDE\_SECTION\_REACTIONS}
+  is active.
+  Default value: \texttt{false}
+\end{description}
+
+\subsection{Typographical options}
+\begin{description}
+\item[--font-headings{[} |={]}<SansSerifFont>]
+  Allows to select the font of captions and other (by default sans
+  serif) text.
+  All possible values for type \texttt{<SansSerifFont>} are:
+  \texttt{avant}, \texttt{cmss}, and \texttt{helvetica}.
+  Default value: \texttt{helvetica}
+
+\item[--font-size{[} |={]}<Short>]
+  This option allows you to select the size of the standard text
+  font. Headings appear with a larger font.
+  All possible values for type \texttt{<Short>} are:
+  \texttt{8}, \texttt{9}, \texttt{10}, \texttt{11}, \texttt{12}, \texttt{14},
+  and \texttt{17}.
+  Default value: \texttt{11}
+
+\item[--font-text{[} |={]}<SerifFont>]
+  Allows to select the font of continuous text. Choosing \texttt{times}
+  is actually not recommended because in some cases equations
+  might not look as nicely as they do when using \texttt{mathptmx}.
+  All possible values for type \texttt{<SerifFont>} are:
+  \texttt{chancery}, \texttt{charter}, \texttt{cmr}, \texttt{mathptmx},
+  \texttt{palatino}, \texttt{times}, and \texttt{utopia}.
+  Default value: \texttt{mathptmx}
+
+\item[--font-typewriter{[} |={]}<String>]
+  Select a typewriter font that can be used for identifiers if
+  option 'TYPEWRITER' is selected. URLs and other resources are
+  also marked with this font.
+  All possible values for type \texttt{<String>} are:
+  \texttt{cmt} and \texttt{courier}.
+  Default value: \texttt{cmt}
+
+\item[--paper-size{[} |={]}<PaperSize>]
+  The paper size for LaTeX documents. With this option the paper
+  format can be influenced. Default paper size: DIN A4. All sizes
+  a?, b?, c? and d? are European DIN sizes. Letter, legal and
+  executive are US paper formats.
+  All possible values for type \texttt{<PaperSize>} are:
+  \texttt{letter}, \texttt{legal},
+  \texttt{executive}, \texttt{a0},
+  \texttt{a1}, \texttt{a2},
+  \texttt{a3}, \texttt{a4},
+  \texttt{a5}, \texttt{a6},
+  \texttt{a7}, \texttt{a8},
+  \texttt{a9}, \texttt{b0},
+  \texttt{b1}, \texttt{b2},
+  \texttt{b3}, \texttt{b4},
+  \texttt{b5}, \texttt{b6},
+  \texttt{b7}, \texttt{b8},
+  \texttt{b9}, \texttt{c0},
+  \texttt{c1}, \texttt{c2},
+  \texttt{c3}, \texttt{c4},
+  \texttt{c5}, \texttt{c6},
+  \texttt{c7}, \texttt{c8},
+  \texttt{c9}, \texttt{d0},
+  \texttt{d1}, \texttt{d2},
+  \texttt{d3}, \texttt{d4},
+  \texttt{d5}, \texttt{d6},
+  \texttt{d7}, \texttt{d8},
+  and \texttt{d9}.
+  Default value: \texttt{letter}
+\end{description}
+
+\subsection{Content of the report}
+\begin{description}
+\item[--include-section-compartment-types{[} |={]}<Boolean>]
+  This option decides whether or not a section about compartment
+  types should be included in the resulting model report. Note
+  that this option only causes an effect if the model contains
+  compartment type declarations.
+  Default value: \texttt{true}
+
+\item[--include-section-compartments{[} |={]}<Boolean>]
+  This option decides whether or not a section about compartments
+  should be included in the resulting model report. Note that
+  this option only causes an effect if the model contains compartment
+  declarations.
+  Default value: \texttt{true}
+
+\item[--include-section-constraints{[} |={]}<Boolean>]
+  This option decides whether or not a section about constraints
+  should be included in the resulting model report. Note that
+  this option only causes an effect if the model contains constraint
+  declarations.
+  Default value: \texttt{true}
+
+\item[--include-section-events{[} |={]}<Boolean>]
+  This option decides whether or not a section about events should
+  be included in the resulting model report. Note that this option
+  only causes an effect if the model contains event declarations.
+  Default value: \texttt{true}
+
+\item[--include-section-function-definitions{[} |={]}<Boolean>]
+  This option decides whether or not a section about function definitions
+  should be included in the resulting model report. Note that
+  this option only causes an effect if the model declares any
+  function definitions.
+  Default value: \texttt{true}
+
+\item[--include-section-initial-assignments{[} |={]}<Boolean>] This option decides whether or not a section about initial assignments
+  should be included in the resulting model report. Note that
+  this option only causes an effect if the model declares any
+  initial assignments.
+  Default value: \texttt{true}
+
+\item[--include-section-parameters{[} |={]}<Boolean>]
+  This option decides whether or not a section about parameters
+  should be included in the resulting model report. Note that
+  this option only causes an effect if the model declares any
+  parameters.
+  Default value: \texttt{true}
+
+\item[--include-section-reactions{[} |={]}<Boolean>]
+  This option decides whether or not a section about reactions
+  should be included in the resulting model report. Note that
+  this option only causes an effect if the model declares any
+  reactions. Furthermore, this option also decides if a summary
+  of the differential equation system that is implied by the given
+  model should be generated. Again, this will only cause an effect
+  if the model contains any species.
+  Default value: \texttt{true}
+
+\item[--include-section-rules{[} |={]}<Boolean>]
+  This option decides whether or not a section about rules should
+  be included in the resulting model report. Note that this option
+  only causes an effect if the model declares any rules, no matter
+  if these are of algebraic, assignment or rate rule type.
+  Default value: \texttt{true}
+
+\item[--include-section-species{[} |={]}<Boolean>]
+  This option decides whether or not a section about the species
+  in the given model should be included in the resulting model
+  report. Note that this option only causes an effect if the model
+  declares any species.
+  Default value: \texttt{true}
+
+\item[--include-section-species-types{[} |={]}<Boolean>]
+  If this option is selected, a section about species types will
+  occur in the model report. Otherwise, this section will be excluded
+  from the report.
+  Default value: \texttt{true}
+
+\item[--include-section-unit-definitions{[} |={]}<Boolean>]
+  This option decides whether or not a section about the unit definitions
+  of the given model should be included in the resulting model
+  report. Note that this option only causes an effect if the model
+  declares any unit definitions. However, in some level/version
+  combinations \SBML models contain predefined unit definitions
+  which might be included in the model report if this option is
+  active.
+  Default value: \texttt{true}
+\end{description}
+
+\subsection{Additional options}
+\begin{description}
+\item[--include-section-layouts{[} |={]}<Boolean>]
+  Include a section with images of model layouts if these are available.
+  Default value: \texttt{true}
+\end{description}
+
+\section{Garuda options}
+\begin{description}
+\item[--connect-to-garuda{[} |={]}<Boolean>]
+  Decides whether or not the current application should attempt to connect to
+  the Garuda Core. Default value: \texttt{true}
+\end{description}
+\renewcommand{\descriptionlabel}[1]{\textcolor{black}{\textbf{#1}}}
 
 \chapter{Supported rate laws}\label{chap:RateLaws}
 
@@ -348,6 +1275,49 @@ equations for the same reaction.
   \item S-systems \citep{Savageau1969, spieth04optimizing, Tournier2005, Spieth2006, Hecker2009}
   \item H-systems \citep{Spieth2006}
 \end{itemize}
+
+\begin{table}[htb]
+\centering
+\caption[KEGG identifiers of small molecules and ions]{KEGG identifiers of
+small molecules and ions. This table gives the default list of all small
+molecules and ions that are ignored by SBMLsqueezer when creating kinetic
+equations. This list was created according to \citet{Blum2009}.}
+\label{tab:MIRIAMignoreList}
+\begin{tabular}{lll}
+\toprule
+Chemical formula & Common name & KEGG identifier \\
+\midrule
+\ce{H2O} & Water &
+\href{http://identifiers.org/kegg.compound/C00001}{\texttt{C00001}}\\
+\ce{Zn^{2+}} & Zinc ion &
+\href{http://identifiers.org/kegg.compound/C00038}{\texttt{C00038}}\\
+\ce{Cu^{2+}} & Copper ion &
+\href{http://identifiers.org/kegg.compound/C00070}{\texttt{C00070}}\\
+\ce{Ca^{2+}} & Calcium ion &
+\href{http://identifiers.org/kegg.compound/C00076}{\texttt{C00076}}\\
+\ce{H+} & Proton &
+\href{http://identifiers.org/kegg.compound/C00080}{\texttt{C00080}}\\
+\ce{Co^{2+}} & Cobalt ion &
+\href{http://identifiers.org/kegg.compound/C00175}{\texttt{C00175}}\\
+\ce{K+} & Potassium ion &
+\href{http://identifiers.org/kegg.compound/C00238}{\texttt{C00238}}\\
+\ce{H2} & Hydrogen &
+\href{http://identifiers.org/kegg.compound/C00282}{\texttt{C00282}}\\
+\ce{Ni^{2+}} & Nickel ion &
+\href{http://identifiers.org/kegg.compound/C00291}{\texttt{C00291}}\\
+\ce{Cl-} & Chloride ion &
+\href{http://identifiers.org/kegg.compound/C00698}{\texttt{C00698}}\\
+\ce{HCl} & Hydrochloric acid &
+\href{http://identifiers.org/kegg.compound/C01327}{\texttt{C01327}}\\
+\ce{H2Se} & Hydrogen selenide &
+\href{http://identifiers.org/kegg.compound/C01528}{\texttt{C01528}}\\
+\ce{Fe^{2+}} & Iron II ion &
+\href{http://identifiers.org/kegg.compound/C14818}{\texttt{C14818}}\\
+\ce{Fe^{3+}} & Iron III ion &
+\href{http://identifiers.org/kegg.compound/C14819}{\texttt{C14819}}\\
+\bottomrule
+\end{tabular}
+\end{table}
 
 
 % 03_Troubleshooting
@@ -421,38 +1391,39 @@ GNU General Public License. If not, please see
 
 \chapter{Acknowledgments}
 
-This work has been funded by the Federal Ministry of Education and Research
-(BMBF, Germany) in the projects National Genome Research Network (NGFN-Plus,
-project number 01GS08134) and the Virtual Liver Network (project number 0315756).
-
-During the years, many people contributed to this project.
-We are grateful to each contribution, such as source code, advice, proof reading
-etc. Special thanks goes to Oliver Kohlbacher and Leif J. Pallesen.
-The following list gives tribute to all people who have been working on the
-implementation of this application.
+This work has been funded by a Marie Curie International Outgoing Fellowship
+awarded to Andreas Dr\"ager within the EU 7\textsuperscript{th} Framework
+Program for Research and Technological Development (project AMBiCon, 332020) and
+by the Federal Ministry of Education and Research (BMBF, Germany) in the
+projects Virtual Liver Network (project number 0315756), National Genome
+Research Network (NGFN-Plus, project number 01GS08134), and Spher4Sys (grant
+number 0315384C).
 
 \section{Core developers}
 
 The following people implemented wide parts of SBMLsqueezer:
 \begin{itemize}
 \item Andreas Dr\"ager, 
+  University of California, San Diego, La Jolla, California, USA and
   University of Tuebingen, Germany
-  \href{mailto:andreas.draeger@uni-tuebingen.de}{andreas.draeger@uni-tuebingen.de}
+  \href{mailto:andraeger@eng.ucsd.edu}{andraeger@eng.ucsd.edu}
 \item Alexander D\"orr, 
   University of Tuebingen, Germany
   \href{mailto:alexander.doerr@uni-tuebingen.de}{alexander.doerr@uni-tuebingen.de}
 \item Roland Keller,
   University of Tuebingen, Germany
   \href{mailto:roland.keller@uni-tuebingen.de}{roland.keller@uni-tuebingen.de}
-\end{itemize}
-
-\section{Contributors}
-
-We like to acknowledge the valuable contribution of
-\begin{itemize}
 \item Johannes Eichner,
   University of Tuebingen, Germany
   \href{mailto:johannes.eichner@uni-tuebingen.de}{johannes.eichner@uni-tuebingen.de}
+\end{itemize}
+
+\section{Principal Investigators}
+
+\begin{itemize}
+\item Bernhard \O. Palsson,
+  University of California, San Diego, La Jolla, California, USA
+  \href{mailto:palsson@ucsd.edu}{palsson@ucsd.edu}
 \item Andreas Zell, 
   University of Tuebingen, Germany
   \href{mailto:andreas.zell@uni-tuebingen.de}{andreas.zell@uni-tuebingen.de}
@@ -460,13 +1431,19 @@ We like to acknowledge the valuable contribution of
 
 \section{Alumni}
 
-We are greateful to our former colleagues and students
+During the years, many people contributed to this project.
+We are grateful to each contribution, such as source code, advice, proof reading
+and much more. In particular, we like to thank our former scientific advisors,
+colleagues, and students, who are here listed all together in alphabetical
+order:
 Meike Aichele,
 Hannes Borch,
 Nadine Hassis,
 Marcel Kronfeld,
+Oliver Kohlbacher,
 Sarah Rachel M\"uller vom Hagen,
 Sebastian Nagel,
+Leif J. Pallesen,
 Alexander Peltzer,
 Julianus Pfeuffer,
 Matthias Rall,

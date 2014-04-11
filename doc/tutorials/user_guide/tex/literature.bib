@@ -1,3 +1,263 @@
+@PHDTHESIS{Blum2009,
+  author = {Blum, Torsten},
+  title = {Computational Approaches for Analyzing Metabolic Pathways},
+  school = {Eberhard-Karls-Universit{\"a}t T{\"u}bingen},
+  year = {2009},
+  address = {T{\"u}bingen, Germany},
+  month = {July},
+  abstract = {The metabolism of living organisms consists of a complex network of
+	chemical reactions that transform small molecules to gain energy
+	and biomass from nutrients. In such a network, metabolic pathways
+	represent regulated functional units for converting particular source
+	metabolites into product molecules by a sequence of reactions. However,
+	knowledge about pathways, especially in newly sequenced genomes,
+	is incomplete or remains to be experimentally verified.
+	
+	The potential presence of novel or alternative pathways has to be
+	considered when investigating metabolic capabilities of organisms.
+	In this context, computational inference of biologically meaningful
+	pathways constitutes an attractive complement to experimental studies
+	and has numerous applications in systems biology.
+	
+	This thesis presents several novel computational approaches for analyzing
+	metabolic pathways in genome-scale networks. A graph theoretical
+	approach was developed that maps the metabolic network onto a weighted
+	graph and uses an efficient path-finding algorithm to calculate relevant
+	biotransformation routes.
+	
+	The approach was complemented by the integration of further relevant
+	information derived from the biochemical entities (metabolites, reactions
+	and enzymes) that build up the network. For this purpose, an improved
+	method was created that automatically calculates atom mapping rules
+	from chemical structures of the network compounds. Given a chemical
+	reaction, an atom mapping rule defines which atom of an educt compound
+	is transferred to which atom of a product compound. The application
+	of these rules allows one to trace the flow of atoms in the path
+	search, which is useful for detecting biochemically unfeasible routes.
+	A further method for estimating Gibbs energy changes of reactions
+	under (biochemical) standard conditions was developed and used to
+	improve the path search. The third method extended the pathway analysis
+	using predicted information about subcellular localizations of the
+	enzymes involved.
+	
+	To demonstrate the usefulness of the developed approaches for metabolic
+	pathway analysis, experimentally verified biotransformation routes
+	in the metabolic networks of Escherichia coli and Arabidopsis thaliana
+	were predicted.
+	
+	In the last part of this thesis a user-friendly web interface, called
+	MetaRoute, for exploring the metabolic networks for hundreds of organisms,
+	is described.},
+  keywords = {Bioinformatics , Systems biology , Metabolism , Graph theory},
+  url = {http://nbn-resolving.de/urn:nbn:de:bsz:21-opus-41532}
+}
+
+
+@ARTICLE{Buechel2013,
+  author = {B{\"u}chel, Finja and Rodriguez, Nicolas and Swainston, Neil and
+	Wrzodek, Clemens and Czauderna, Tobias and Keller, Roland and Mittag,
+	Florian and Schubert, Michael and Glont, Mihai and Golebiewski, Martin
+	and van Iersel, Martijn and Keating, Sarah and Rall, Matthias and
+	Wybrow, Michael and Hermjakob, Henning and Hucka, Michael and Kell,
+	Douglas B. and M{\"u}ller, Wolfgang and Mendes, Pedro and Zell, Andreas
+	and Chaouiya, Claudine and Saez-Rodriguez, Julio and Schreiber, Falk
+	and Laibe, Camille and Dr{\"a}ger, Andreas and Le Nov\`{e}re, Nicolas},
+  title = {Large-scale generation of computational models from biochemical pathway
+	maps},
+  journal = {BMC Systems Biology},
+  year = {2013},
+  volume = {7},
+  pages = {116},
+  number = {1},
+  month = nov,
+  abstract = {Background
+	
+	Systems biology projects and omics technologies have led to a growing
+	number of biochemical pathway models and reconstructions. However,
+	the majority of these models are still created de novo, based on
+	literature mining and the manual processing of pathway data.
+	
+	Results
+	
+	To increase the efficiency of model creation, the Path2Models project
+	has automatically generated mathematical models from pathway representations
+	using a suite of freely available software. Data sources include
+	KEGG, BioCarta, MetaCyc and SABIO-RK. Depending on the source data,
+	three types of models are provided: kinetic, logical and constraint-based.
+	Models from over 2 600 organisms are encoded consistently in SBML,
+	and are made freely available through BioModels Database at http://www.ebi.ac.uk/biomodels-main/path2models.
+	Each model contains the list of participants, their interactions,
+	the relevant mathematical constructs, and initial parameter values.
+	Most models are also available as easy-to-understand graphical SBGN
+	maps.
+	
+	Conclusions
+	
+	To date, the project has resulted in more than 140 000 freely available
+	models. Such a resource can tremendously accelerate the development
+	of mathematical models by providing initial starting models for simulation
+	and analysis, which can be subsequently curated and further parameterized.},
+  doi = {10.1186/1752-0509-7-116},
+  keywords = {Modular rate law, Constraint based models, Logical models, SBGN, SBML},
+  url = {http://www.biomedcentral.com/1752-0509/7/116/}
+}
+
+@ARTICLE{Keller2013,
+  author = {Keller, Roland and D\"orr, Alexander and Tabira, Akito and Funahashi,
+	Akira and Ziller, Michael J. and Adams, Richard and Rodriguez, Nicolas
+	and {Le Nov{\`e}re}, Nicolas and Hiroi, Noriko and Planatscher, Hannes
+	and Zell, Andreas and Dr\"ager, Andreas},
+  title = {The systems biology simulation core algorithm},
+  journal = {BMC Syst Biol},
+  year = {2013},
+  abstract = {Background: With the increasing availability of high dimensional time
+	course data for metabolites, genes, and fluxes, the mathematical
+	description of dynamical systems has become an essential aspect of
+	research in systems biology. Models are often encoded in formats
+	such as SBML, whose structure is very complex and difficult to evaluate
+	due to many special cases.
+	
+	Results: This article describes an efficient algorithm to solve SBML
+	models that are interpreted in terms of ordinary differential equations.
+	We begin our consideration with a formal representation of the mathematical
+	form of the models and explain all parts of the algorithm in detail,
+	including several preprocessing steps. We provide a flexible reference
+	implementation as part of the Systems Biology Simulation Core Library,
+	a community-driven project providing a large collection of numerical
+	solvers and a sophisticated interface hierarchy for the definition
+	of custom differential equation systems. To demonstrate the capabilities
+	of the new algorithm, it has been tested with the entire SBML Test
+	Suite and all models of BioModels Database.
+	
+	Conclusions: The formal description of the mathematics behind the
+	SBML format facilitates the implementation of the algorithm within
+	specifically tailored programs. The reference implementation can
+	be used as a simulation backend for Java-based programs. Source code,
+	binaries, and documentation can be freely obtained under the terms
+	of the LGPL version 3 from \url{http://simulation-core.sourceforge.net}.
+	Feature requests, bug reports, contributions, or any further discussion
+	can be directed to the mailing list \url{mailto:simulation-core-development@lists.sourceforge.net}.},
+  doi = {10.1186/1752-0509-7-55},
+  url = {http://www.biomedcentral.com/1752-0509/7/55/abstract}
+}
+
+@ARTICLE{Wrzodek2013,
+  author = {Wrzodek, Clemens and B\"uchel, Finja and Ruff, Manuel and Dr\"ager,
+	Andreas and Zell, Andreas},
+  title = {Precise generation of systems biology models from KEGG pathways},
+  journal = {BMC Syst Biol},
+  year = {2013},
+  volume = {7},
+  pages = {15},
+  number = {1},
+  month = feb,
+  abstract = {BACKGROUND: The KEGG PATHWAY database provides a plethora of pathways
+	for a diversity of organisms. All pathway components are directly
+	linked to other KEGG databases, such as KEGG COMPOUND or KEGG REACTION.
+	Therefore, the pathways can be extended with an enormous amount of
+	information and provide a foundation for initial structural modeling
+	approaches. As a drawback, KGML-formatted KEGG pathways are primarily
+	designed for visualization purposes and often omit important details
+	for the sake of a clear arrangement of its entries. Thus, a direct
+	conversion into systems biology models would produce incomplete and
+	erroneous models.
+	
+	RESULTS: Here, we present a precise method for processing and converting
+	KEGG pathways into initial metabolic and signaling models encoded
+	in the standardized community pathway formats SBML (Levels 2 and
+	3) and BioPAX (Levels 2 and 3). This method involves correcting invalid
+	or incomplete KGML content, creating complete and valid stoichiometric
+	reactions, translating relations to signaling models and augmenting
+	the pathway content with various information, such as cross-references
+	to Entrez Gene, OMIM, UniProt ChEBI, and many more. Finally, we compare
+	several existing conversion tools for KEGG pathways and show that
+	the conversion from KEGG to BioPAX does not involve a loss of information,
+	whilst lossless translations to SBML can only be performed using
+	SBML Level 3, including its recently proposed qualitative models
+	and groups extension packages. 
+	
+	CONCLUSIONS: Building correct BioPAX and SBML signaling models from
+	the KEGG database is a unique characteristic of the proposed method.
+	Further, there is no other approach that is able to appropriately
+	construct metabolic models from KEGG pathways, including correct
+	reactions with stoichiometry. The resulting initial models, which
+	contain valid and comprehensive SBML or BioPAX code and a multitude
+	of cross-references, lay the foundation to facilitate further modeling
+	steps.},
+  doi = {10.1186/1752-0509-7-15},
+  language = {eng},
+  medline-pst = {aheadofprint},
+  pii = {1752-0509-7-15},
+  pmid = {23433509},
+  url = {http://dx.doi.org/10.1186/1752-0509-7-15}
+}
+
+@ARTICLE{Wrzodek2011,
+  author = {Wrzodek, Clemens and Dr\"ager, Andreas and Zell, Andreas},
+  title = {{KEGGtranslator: visualizing and converting the KEGG PATHWAY database
+	to various formats}},
+  journal = {Bioinformatics},
+  year = {2011},
+  volume = {27},
+  pages = {2314--2315},
+  number = {16},
+  month = aug,
+  abstract = {The KEGG PATHWAY database provides a widely used service for metabolic
+	and nonmetabolic pathways. It contains manually drawn pathway maps
+	with information about the genes, reactions and relations contained
+	therein. To store these pathways, KEGG uses KGML, a proprietary XML-format.
+	Parsers and translators are needed to process the pathway maps for
+	usage in other applications and algorithms. We have developed KEGGtranslator,
+	an easy-to-use stand-alone application that can visualize and convert
+	KGML formatted XML-files into multiple output formats. Unlike other
+	translators, KEGGtranslator supports a plethora of output formats,
+	is able to augment the information in translated documents (e.g.
+	MIRIAM annotations) beyond the scope of the KGML document, and amends
+	missing components to fragmentary reactions within the pathway to
+	allow simulations on those.KEGGtranslator is freely available as
+	a Java(â„¢) Web Start application and for download at http://www.cogsys.cs.uni-tuebingen.de/software/KEGGtranslator/.
+	KGML files can be downloaded from within the application.clemens.wrzodek@uni-tuebingen.deSupplementary
+	data are available at Bioinformatics online.},
+  doi = {10.1093/bioinformatics/btr377},
+  institution = {Center for Bioinformatics Tuebingen, University of Tuebingen, 72076
+	TÃ¼bingen, Germany. clemens.wrzodek@uni-tuebingen.de},
+  keywords = {Algorithms; Computer Graphics; Databases, Factual; Metabolic Networks
+	and Pathways; Software},
+  language = {eng},
+  medline-pst = {ppublish},
+  pii = {btr377},
+  pmid = {21700675},
+  url = {http://dx.doi.org/10.1093/bioinformatics/btr377}
+}
+
+
+@ARTICLE{Ghosh2011,
+  author = {Ghosh, Samik and Matsuoka, Yukiko and Asai, Yoshiyuki and Hsin, Kun-Yi
+	and Kitano, Hiroaki},
+  title = {Software for systems biology: from tools to integrated platforms},
+  journal = {Nature Reviews Genetics},
+  year = {2011},
+  volume = {12},
+  pages = {821--832},
+  number = {12},
+  month = dec,
+  abstract = {Understanding complex biological systems requires extensive support
+	from software tools. Such tools are needed at each step of a systems
+	biology computational workflow, which typically consists of data
+	handling, network inference, deep curation, dynamical simulation
+	and model analysis. In addition, there are now efforts to develop
+	integrated software platforms, so that tools that are used at different
+	stages of the workflow and by different researchers can easily be
+	used together. This Review describes the types of software tools
+	that are required at different stages of systems biology research
+	and the current options that are available for systems biology researchers.
+	We also discuss the challenges and prospects for modelling the effects
+	of genetic changes on physiology and the concept of an integrated
+	platform.},
+  publisher = {Nature Publishing Group},
+  url = {http://www.nature.com/nrg/journal/v12/n12/abs/nrg3096.html}
+}
+
 
 @ARTICLE{Guldberg1879,
   author = {Guldberg, Cato Maximilian and Waage, Peter},
@@ -1006,8 +1266,8 @@
 	index, define and relate terms used in quantitative modelling, and
 	by extension quantitative biochemistry. SBO is currently made up
 	of five different vocabularies: quantitative parameters, participant
-	roles, modelling frameworks, mathematical expressions Ð that refers
-	to the three previous branches Ð and events. SBO can be used not
+	roles, modelling frameworks, mathematical expressions ï¿½ that refers
+	to the three previous branches ï¿½ and events. SBO can be used not
 	only to annotate quantitative models, but also biochemical experiements.
 	It is expected that the adoption of those two semantic layers will
 	favour the reusability of quantitative biochemical descriptions,
@@ -1275,7 +1535,7 @@
   author = {Wittig, Ulrike and Kania, Renate and Golebiewski, Martin and Rey,
 	Maja and Shi, Lei and Jong, Lenneke and Algaa, Enkhjargal and Weidemann,
 	Andreas and Sauer-Danzwith, Heidrun and Mir, Saqib and Krebs, Olga
-	and Bittkowski, Meik and Wetsch, Elina and Rojas, Isabel and MŸller,
+	and Bittkowski, Meik and Wetsch, Elina and Rojas, Isabel and Mï¿½ller,
 	Wolfgang},
   title = {{SABIO-RK--database for biochemical reaction kinetics}},
   journal = {Nucleic Acids Res},
