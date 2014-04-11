@@ -15,6 +15,7 @@
 ]{scrreprt}
 
 \usepackage{UT}
+\usepackage{cleveref}
 
 \usepackage{xspace}
 % booktabs is for toprule, bottomrule, etc. in tables.
@@ -24,8 +25,9 @@
 \usepackage{hyperref} % Links im dokument
 %\usepackage[utf8]{inputenc} %unicode support
 \usepackage[T1]{fontenc}
+\usepackage[version=3]{mhchem}
 
-%\usepackage[font=small,totoc]{idxlayout}
+\usepackage[font=small,totoc]{idxlayout}
 
 \usepackage[printonlyused]{acronym}
 \usepackage{makeidx}
@@ -62,14 +64,16 @@
 % Gestaltung der Titelseite     %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+%\renewcommand{\headrule}{\color{gold}\hrule{\textwidth}{1pt}}
+\patchcmd{\headrule}{\hrule}{\color{gold}\rule{\textwidth}}{}{}
 \newcolumntype{C}[1]{>{\centering\arraybackslash}m{#1}}
 \newcolumntype{L}[1]{>{\centering\arraybackslash}p{#1}}
 \newcommand{\SBMLLaTeX}{{\sffamily\upshape\raisebox{-.35ex}{S\hspace{-.425ex}BML}\hspace{-0.5ex}\begin{rotate}{-17.5}\raisebox{-.1ex}{2}\end{rotate}\hspace{1ex}\LaTeX}}
 
-\titlehead{\centering\includegraphics[width=0.75\textwidth]{img/UT_WBMW_mathnat_4C}}
-\subject{User's Guide}
-\title{\includegraphics[width=.75\textwidth]{img/LOGO}}
-%SBMLsqueezer~2}
+\titlehead{\centering\includegraphics[width=0.75\textwidth]{img/UT_WBMW_mathnat_4C}\\
+\noindent\makebox[\linewidth]{\color{gold}\rule{\textwidth}{1pt}}}
+\subject{Users' Guide}
+\title{SBMLsqueezer~2}
 \subtitle{A context-based generator of kinetic equations}
 
 \author{Andreas Dr\"ager%
@@ -80,8 +84,7 @@ Roland Keller\and
 Johannes Eichner\and
 Andreas Zell}
 \date{\today}
-\publishers{Center for Bioinformatics Tuebingen (ZBIT)}
-
+\publishers{\includegraphics[width=48px]{img/LOGO}\\[2cm]Center for Bioinformatics Tuebingen (ZBIT)\\University of California, San Diego}
 
 \makeindex
 
