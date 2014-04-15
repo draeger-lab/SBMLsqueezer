@@ -478,6 +478,9 @@
 
   </target>
 
+  <!-- =================================================================== -->
+  <!-- Creates the distribution                                            -->
+  <!-- =================================================================== -->
   <target
   	name="dist"
   	depends="prepare-src"
@@ -544,6 +547,15 @@
 
     <!-- Not generating a tar.gz a having only a zip file should be enough -->
     <!-- <tar basedir="${dist}" destfile="${dist}/${Name}-${version}.tar.gz" includes="${Name}-${version}/**" compression="gzip"/> -->
+  	
+  	<property name="jnlp.file.name" value="SBMLsqueezer.jnlp"/>
+    <property name="jnlp.file" value="${dist.dir}/${jnlp.file.name}"/>
+  	<copy file="${dist}/${jnlp.file.name}" todir="${dist.dir}/" verbose="${verbose}"/>
+  	<replace
+  	  file="${jnlp.file}"
+  	  token="[JAR_NAME]"
+  	  value="${jar.name}.jar"
+  	/>
 
   </target>
 

@@ -52,7 +52,7 @@
   
   <!-- ConvenienceKinetics -->
   
-  <entry key="CONVENIENCE_KINETICS_SIMPLE_NAME">Convenience Kinetics</entry>
+  <entry key="CONVENIENCE_KINETICS_SIMPLE_NAME">Convenience kinetics</entry>
   <entry key="THERMODYNAMICALLY_INDEPENDENT_CONVENIENCE_KINETICS">thermodynamically independent convenience kinetics</entry>
   <entry key="CONVENIENCE_KINETICS">convenience kinetics</entry>
   
@@ -91,7 +91,7 @@
   
   <!-- IrrevNonModulatedNonInteractingEnzymes -->
   
-  <entry key="IRREV_NON_MODULATED_NON_INTERACTING_ENZYMES_SIMPLE_NAME">Irreversible non-modulated non-interacting reactants</entry>
+  <entry key="IRREV_NON_MODULATED_NON_INTERACTING_ENZYMES_SIMPLE_NAME">Irreversible non-modulated non-interacting reactant enzymes</entry>
   
   <!-- KineticLawSelectionDialog -->
   
@@ -315,7 +315,7 @@
   
   <!-- SSystem -->
   
-  <entry key="SSYSTEM_SIMPLE_NAME">S-System based kinetic</entry>
+  <entry key="SSYSTEM_SIMPLE_NAME">S-System-based kinetic</entry>
   
   <!-- Vohradsky -->
   
