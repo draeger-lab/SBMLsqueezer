@@ -16,6 +16,8 @@
 
 \usepackage{UT}
 \usepackage{cleveref}
+\usepackage{upgreek}
+\usepackage{nicefrac}
 
 \usepackage{xspace}
 % booktabs is for toprule, bottomrule, etc. in tables.
@@ -113,7 +115,7 @@ Andreas Zell}
 
 \cleardoublepage		% Erzeugt neue Leerseite. Muss ggf. auskommentiert werden.
 \pagenumbering{arabic}		% Ab hier mit arabischen Zahlen numerieren
-\include{tex/01_docuBody}
+\input{tex/01_docuBody}
 
 % 
 % 
@@ -122,7 +124,7 @@ Andreas Zell}
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % 
 % 
-% \include{tex/01_docuBody}
+% \input{tex/01_docuBody}
 
 
 % 
@@ -130,6 +132,7 @@ Andreas Zell}
 % Das Literaturverzeichnis      %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \appendix
+\input{tex/Release_Notes.tex}
 \input{tex/abbreviations.tex}
 \bibliographystyle{natbib}
 \bibliography{tex/literature}
