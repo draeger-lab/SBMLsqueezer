@@ -1,0 +1,539 @@
+\chapter{Release Notes}
+
+This chapter gives a brief overview of the main user-visible changes of
+SBMLsqueezer since its first release. As such, this chapter gives you an
+historic overview about the development of SBMLsqueezer as a large software
+project.  
+
+\section{Version 1.0}
+
+Release date: April 28\textsuperscript{th} 2008.
+
+This is the initial release of the software that has been made available as
+a supplement to the original publication from in \citeyear{Draeger2008}. All
+features of this version are therefore described in the corresponding
+publication \cite{Draeger2008}.
+
+\section{Version 1.1}
+
+Release date: February 9\textsuperscript{th} 2009.
+
+\subsection{New features}
+
+SBMLsqueezer now allows you to specify whether new parameters should be stored
+locally (only vailid within the respective kinetic law) or globally (valid for
+the whole model). Both, the main window and the context menu contain switches to
+make this decision. Please note that the $k_G$ parameters of the
+thermodynamically independent convenience kinetics are always stored globally
+because these do not belong to a specific reaction but to a specific reacting
+species.
+
+The context menu of SBMLsqueezer now also shows already existing kinetic
+equations and renders their formula. The name of the kinetic equation created by
+SBMLsqueezer is now written to the notes element of the newly created kinetic
+law.
+
+The \LaTeX{} export function was improved:
+\begin{itemize}
+  \item Several choices allow for a customization of the output.
+  \item The context menu also allows you to export a LaTeX file for a specific
+        kinetic equation.
+  \item It now includes HTML2\LaTeX{} that converts notes elements from XHTML to
+        \LaTeX. Therfore, SBMLsqueezer also includes your notes in its model
+        report.
+\end{itemize}
+
+Please note that SBMLsqueezer's \LaTeX{} export function is, however, still not
+comprehensive. For a fully-featured model report generator, we strongly recoment
+to have a look on our latest project: \SBMLLaTeX on
+\url{http://webservices.cs.uni-tuebingen.de} and
+\url{http://www.ra.cs.uni-tuebingen.de/software/SBML2LaTeX}.
+
+SBMLsqueezer version 1.1 is distributed under the terms of the GNU General
+\href{http://www.gnu.org/licenses/gpl.html}{Public License (GPL)}.
+
+\subsection{Bug fixes}
+
+In some cases SBMLsqueezer's context menu did not offer the full list of
+available and applicable kinetic equations for certain reactions.
+
+If the number of products was higher than the number of reactants a null pointer
+exception was thrown in the thermodynamically independent form of the
+convenience kinetics due to an incorrect access to the list of products of a
+reaction.
+
+In the thermodynamically independent convenience kinetics the root function was
+called with only one argument. This is actually not incorrect but earlier
+versions of \libSBML are unable to interpret such an implicit square root and
+require a 2 as the second argument.
+
+In the thermodynamically independent convenience kinetics the exponent of the
+anabol term and the catabol term were incorrect if the stoichiometry was not
+equal to one. In this case, a division of the exponent by 2 was missing.
+
+In the mass action kinetics a copy and paste error in the source code lead to
+incorrect pre-factors for activation and inhibition if both effects were
+assigned to the same reaction. Instead of receiving one activation function and
+one inhibition function there was the same activation twice.
+
+For several reasons null pointer exceptions could occur when trying to create
+\LaTeX{} code from a model.
+
+
+\section{Version 1.2}
+
+Release date: July 31\textsuperscript{st} 2009.
+
+\subsection{New features}
+
+SBMLsqueezer now automatically checks for updates. If a newer version of
+SBMLsqueezer is available online, the user is notified by a message window in
+the bottom right corner of the screen. Furthermore, the release notes of the
+most recent SBMLsqueezer version are shown to the user by clicking on ``show
+release notes''.
+
+In contrast to previous versions, SBMLsqueezer now indicates if a model already
+contains rate equations for all reactions or no reactions at all. In earlier
+versions SBMLsqueezer did not overwrite existing kinetic equations and did also
+not state why.
+
+SBMLsqueezer's complete internal data structure was improved: It has become much
+more efficient and simpler.
+
+\subsection{Improved Adaptation of SBMLsqueezer to CellDesigner 4.0.1}
+
+Due to the changes in CellDesigner, SBMLsqueezer only offered zeroth order mass
+action kinetics as available option to model transcription and translation
+processes. The reason for this was that the arrows for
+transcriptional/translational activation disappeared. These effects have now to
+be covered by trigger and physical stimulation. Unfortunately, CellDesigner maps
+the old arrows for transcriptional/translational activation to catalysis instead
+of ``trigger''. Therefore, we also have to cover the case of having a
+transcription or translation ``catalyzed'' by some stimulator. This has now been
+implemented and SBMLsqueezer therefore offers several kinetic rate equations for
+both processes. The same holds true for the ``batch'' mode of SBMLsqueezer:
+besides transcriptional/translational activators also all kinds of catalysts and
+activators/inhibitors are accepted for the Hill equation.
+
+We now apply the inhibition pre-factor from convenience kinetics also to
+reversible Michaelis-Menten kinetics with multiple inhibitors. In cases where
+the formulas of Michaelis-Menten and convenience kinetics are equal, only one of
+both is offered to the user:
+\begin{itemize}
+\item For reversible or irreversible uni-uni reactions without inhibition or
+      activation only the Michaelis-Menten equation is selectable and
+\item in the case of reversible uni-uni reactions with multiple inhibitors only
+      convenience kinetics can be applied.
+\item However, if the stoichiometric matrix of the reaction system does not have
+      a full column rank, the thermodynamically independen form of the
+      convenience kinetics can be selected as an alternative to the
+      Michaelis-Menten equation.
+\end{itemize}
+Additionally, the activation pre-factor is now also applied for the mixed-type
+inhibition of irreversible enzymes by mutually exclusive inhibitors
+(\href{identifiers.org/biomodels.sbo/SBO:0000275}{SBO:0000275}) if activators
+are assigned to the reaction.
+
+The new SBGN representation of transcription and translation uses the trigger
+symbol (for the gene or the RNA molecule, depending on the process) and a
+reaction from some source to RNA or from some source to a protein. SBMLsqueezer
+did in these cases not suggest the Hill equation as a possible rate law because
+it still required the translation/transcription arrows that are going to be
+deprecated. Since this version, SBMLsqueezer also produces the identical form of
+the Hill equation for the old style of transcription/translation reaction and
+the new SBGN compliant form.
+
+\subsection{Bug fixes}
+
+Local parameters could not be removed completely if not necessary (this happened
+only in SBMLsqueezer version 1.1 because SBMLsqueezer version 1.0 did not create
+or delete local parameters at all).
+
+In Michaelis-Menten kinetics activators were multiplied incorectly (only in the
+preview, not in the equation itself)
+
+The help browser could not be started in SBMLsqueezer version 1.1 because of a
+null pointer exception (an image could not be loaded correctly).
+
+Problems of the ``batch mode'':
+\begin{itemize}
+\item In some cases SBMLsqueezer did not show the correct SBO numbers (for 
+      ``Hill equation'' and ``Henri-Michaelis-Menten equation'').
+\item In the kinetics summary table SBMLsqueezer did not list the $k_G$
+      parameters of the thermodynamically independent convenience kinetics in
+      the column ``parameters''.
+\item Sometimes there was a problem with the equation preview.
+\end{itemize}
+
+
+\section{Version 1.2.1}
+
+Release date: August 7\textsuperscript{th} 2009.
+
+\subsection{New features}
+
+In the context menu, SBMLsqueezer now remembers the rate law when switching the
+reaction from reversible to irreversible and automatically selects the
+corresponding equation if available.
+
+\subsection{Bug fixes}
+
+In the Hill equation instead of inhibitors SBMLsqueezer accessed the list of
+activators to create an inhibition term (only in SBMLsqueezer 1.2).
+
+When trying to remove unnecessary parameters from the model, SBMLsqueezer 1.2
+deleted parameters, whose identifiers contain upper case letters, no matter if
+these occur in kinetic equations because of an incorrect String comparison.
+
+The thermodynamically independent convenience kinetics was not created correctly
+in SBMLsqueezer 1.2: the integer one was substracted in the denominator in cases
+where this was incorrect and the parameter kV was not multiplied with the
+formula.
+
+
+
+\section{Version 1.3}
+
+Release date: April 2\textsuperscript{nd} 2010.
+
+Parts of the content in these release notes have been taken from the Ph.D.
+thesis of \citealp{Draeger2011a}, where this section is much more elaborated.
+
+\subsection{New features}
+
+\subsubsection{A new and purely \Java-based \SBML data structure}
+
+SBMLsqueezer's data structure was completely changed: Earlier versions were
+based on String concatenation to create kinetic formulas with all participating
+species and parameters. Now SBMLsqueezer is based on an abstract syntax tree
+representation of the formula and also creates Parameter objects rather than
+simply their identifier.
+
+This new data structure is actually an almost complete \Java implementation of
+\SBML and has therefore become a separate project, \JSBML, available at
+\url{http://sourceforge.net/projects/jsbml}. On the \SBML homepage, you can find
+a separate mailing list about this project: \url{http://sbml.org/Forums}
+
+With \JSBML at hand, SBMLsqueezer does no longer manipulate CellDesigner's
+plug-in Objects directly. If you start SBMLsqueezer from CellDesigner's plug-in
+menu or its reaction context menu, SBMLsqueezer will copy all required parts of
+the model into \JSBML objects. Only this copy of the model is manipulated. By
+clicking on OK or Apply, all changes will be synchronized with CellDesigner's
+original data structures.
+Stand-Alone Mode
+
+SBMLsqueezer now also runs in a stand-alone mode. With the help of \libSBML,
+valid \SBML files can be read and copied into the \JSBML data objects. \JSBML now
+mirrors the complete definition of \SBML up to Level 2 Version 4. As in the
+CellDesigner plug-in mode, SBMLsqueezer only manipulates \JSBML objects. By
+clicking on save, changes are written into the \SBML file.
+
+Command-line mode: All features of SBMLsqueezer are now also available from the
+command line. This allows users to write shell or batch scripts that access
+SBMLsqueezer's functions.
+
+The \API of SBMLsqueezer has been simplified.
+There is now just one function, squeeze in the main class SBMLsqueezer that can
+be called to read in a model from a valid \SBML file and to write the result,
+i.e., an \SBML model including new KineticLaws, new Parameters, new or adapted
+UnitDefinitions, into the given out file. Before creating kinetic formulas for
+the model, the user probably wants to adjust SBMLsqueezer's configuration.
+To this end, the methods\texttt{set(CfgKey, <boolean|double|int|String>)} in class
+\texttt{SBMLsqueezer} allow the programmer to set any configuration key and value pair,
+similar to the command-line mode. Here we give a minimal example of how to use
+this new \API:
+\begin{lstlisting}[language=Java]
+public static void main(String[] args) {
+  // Initialize SBMLsqueezer with appropriate SBML readers/writers
+  SBMLsqueezer squeezer = new SBMLsqueezer(new LibSBMLReader(), new LibSBMLWriter());
+  // Configure SBMLsqueezer
+  squeezer.set(CfgKeys.OPT_ALL_REACTIONS_ARE_ENZYME_CATALYZED, true);
+  squeezer.set(CfgKeys.OPT_DEFAULT_COMPARTMENT_INITIAL_SIZE, 1.0);
+  squeezer.set(CfgKeys.POSSIBLE_ENZYME_RNA, true);
+  squeezer.set(CfgKeys.KINETICS_UNI_UNI_TYPE, MichaelisMenten.class.getName());
+  squeezer.set(CfgKeys.KINETICS_OTHER_ENZYME_REACTIONS, ConvenienceKinetics.class.getName());
+  try {
+    // Create kinetic equations, parameters, units etc. and save the result
+    // args contains infile and outfile path
+    squeezer.squeeze(args[0], args[1]);
+  } catch (Throwable e) {
+    e.printStackTrace();
+  }
+}
+\end{lstlisting}
+Since SBMLsqueezer still requires an installation of \libSBML on the user's
+system, which can sometimes become problematic, a more convenient way of using
+SBMLsqueezer has now been made available: the SBMLsqueezer web application does
+not require any local installation and is freely available at
+\url{http://webservices.cs.uni-tuebingen.de}. In this framework, workflows can
+be created in which SBMLsqueezer can directly be linked to the full version of
+\SBMLLaTeX. The full version of \SBMLLaTeX contains many additional features
+that are not included in SBMLsqueezer's version of \SBMLLaTeX. Hence, it is
+highly recommended to make use of the online version of \SBMLLaTeX.
+Configuration
+
+SBMLsqueezer now memorizes every setting and changed parameters from the
+Graphical User Interface (GUI) whether in CellDesigner plug-in or stand-alone
+mode. In the stand-alone case, SBMLsqueezer even memorizes given command-line
+arguments. These settings are read from a configuration file at the next start.
+This is especially convenient for open and save directories. At any time, the
+user can change all settings to the defaults by clicking the designated button
+in the preferences dialog.
+
+\subsubsection{Improved Systems Biology Ontology support}
+
+SBMLsqueezer is now fully based on the Systems Biology Ontology (SBO). The \JSBML
+copy of CellDesigner's plug-in data structures maps all CellDesigner-specific
+annotations to corresponding SBO terms. Afterwards these are mapped back. SBO
+term ``enzymatic catalyst''
+(\href{identifiers.org/biomodels.sbo/SBO:0000460}{SBO:0000460}) was created
+because it is required by SBMLsqueezer to distinguish enzymes and other
+catalysts, such as certain anorganic ions. SBMLsqueezer's stand-alone version
+interpretes SBO terms that can be found in the model and changes the annotation
+of ModifierSpeciesReferences from ``catalyst''
+(\href{identifiers.org/biomodels.sbo/SBO:0000013}{SBO:0000013}) to ``enzymatic
+catalyst'' if the SBO term of the corresponding Species is one of those
+belonging to the family of materials considered as enzymes (SBMLsqueezer still
+offers check boxes to indicate certain kinds of species as enzymes).
+
+Earlier versions of SBMLsqueezer indicated the SBO term identifiers of newly
+created kinetic equations if these were already defined in SBO. However, this
+was more or less just for information to the user and could neither be saved nor
+be considered during any other processes. This version of SBMLsqueezer is able
+to not only take SBO terms into account while creating rate laws, but can even
+save SBO terms in the resulting \SBML file. However, in CellDesigner plug-in
+mode, SBMLsqueezer is not yet able to save SBO term ids in CellDesigner data
+objects due to the missing functionality in its \API.
+
+SBMLsqueezer now contains an own parser to identify the correct SBO term ids and
+attributes that are required to annotate all newly created objects.
+
+Whenever possible, SBMLsqueezer annotates newly created objects, such as
+Parameters or UnitDefinitions, with SBO identifiers.
+MIRIAM Support
+
+In contrast to earlier versions, SBMLsqueezer now also interprets and uses
+MIRIAM tags. The new command-line and configuration key option
+\verb!OPT_IGNORE_THESE_SPECIES_WHEN_CREATING_LAWS! takes a list of
+comma-separated MIRIAM identifiers as value. Species annotated with
+\verb!BQB_IS! and the given MIRIAM resource are then ignored when creating rate
+equations. This is, for instance, useful if small molecules such as water take
+part in a reaction. The concentration of water can hardly be measured and it is
+assumed to occur abundantly within the cell. By default, the list of species
+whose influence is to be neglected when creating new kinetic equations contains
+the KEGG compound identifiers for the substances listed in
+\vref{tab:MIRIAMignoreList}.
+
+\subsubsection{New kinetic equations and extensibility}
+
+In earlier versions the inclusion of new kinetic equations into SBMLsqueezer was
+not an easy task. After writing a class that actually generates the new rate
+law, a rule had to be implemented of when to make this rate law available.
+Furthermore, the GUI had to be changed to include this new formula. Summarized,
+several changes in the program code were necessary to include additional rate
+laws.
+
+Now SBMLsqueezer is based on \Java reflection, i.e., initially SBMLsqueezer does
+not know any one of its available kinetic equations. These are all loaded when
+initializing SBMLsqueezer. Currently, twelve interfaces define the properties of
+all kinetic equations. The rules of when select which kind of rate equation only
+make use of the implemented interfaces. Hence, new kinetic equations can be
+incorporated into SBMLsqueezer simply by implementing designated interfaces.
+Since SBMLsqueezer is an open-source project, users can customize it easily and
+extend it with desired rate laws.
+
+Much effort was put into the extension of SBMLsqueezer with additional rate laws
+for gene-regulatory processes. Earlier versions of SBMLsqueezer only provided
+the Hill equation variant suggested by \citet{Hinze2007}. This equation has now
+been renamed to Hill-Hinze equation to highlight that it is actually a
+modification of the original rate law. Only in special cases this equation
+equals the traditional Hill equation (SBMLsqueezer will highlight these cases).
+Now nine additional rate equations were included:
+\begin{description}
+\item[Additive Model Linear] A generalized super class of all other additive rate laws for gene-regulatory processes.
+\item[Additive Model Non-Linear] defined in the paper ``The Net\emph{Gene}rator Algorithm] Reconstruction of Gene Regulatory Networks'' by \citealp*{Toepfer2007}
+\item[H-Systems] \citealp*{Spieth2006} ``Comparing Mathematical Models on the Problem of Network Inference''.
+\item[NetGenerator Linear Model] ``The Net\emph{Gene}rator Algorithm: Reconstruction of Gene Regulatory Networks'' by \citealp*{Toepfer2007}
+\item[NetGenerator Non-Linear Model] ``The Net\emph{Gene}rator Algorithm] Reconstruction of Gene Regulatory Networks'' by \citealp*{Toepfer2007}
+\item[S-Systems] \citet{Tournier2005}: ``Approximation of dynamical systems using S-systems theory: application to biological systems''
+\item[Hill-Radde equation] ``Modeling Non-Linear Dynamic Phenomena in Biochemical Networks`` by \citealp*{Radde2007}
+\item[Vohradsky] ``Neural network model of gene expression.'' of \citealp{Vu2007}
+\item[Weaver] ``Modeling regulatory networks with weight matrices'' by \citealp*{Weaver1999}
+\end{description}
+
+The following new generalized kinetic equations for metabolic reactions were
+also implemented in SBMLsqueezer, which are all defined by \citet{Liebermeister2010}:
+\begin{itemize}
+\item Common modular rate law (CM)
+\item Direct binding modular rate law (DM)
+\item Force-dependent modular rate law (FM)
+\item Power-law modular rate law (PM)
+\item Simultaneous binding modular rate law (SM).
+\end{itemize}
+Each one of these equations is only available in a reversible mode and the user
+must choose one of the three possible versions that determine the degree of
+thermodynamic correctnes. The weg version is the most complicated form but
+always thermodynamically correct. The hal version ensures thermodynamic
+correctness in most cases, whereas for the cat version thermodynamic properties
+cannot be guaranteed to be correct. The versions can be selected in the
+preferences dialog or provides as a command-line option.
+
+Finally, the generalized form of Hill's equation as proposed by \citet[in
+``Fundamentals of Enzyme Kinetics'', p. 314]{Cornish-Bowden2004} has been
+implemented and is now also available for metabolic reactions.
+
+If the corresponding flag is set, boundary conditions are also set for species
+that represent empty sets, i.e., degraded species, sources, or sinks in a
+reaction.
+Support and Assignment of Units and Unit Definitions
+
+For multy-compartment models concentration versus molecule counts matters.
+SBMLsqueezer now provides two different ways of ensuring unit correctness.
+First, each species can be brought to units of concentration. To this end,
+SBMLsqueezer interpretes the hasOnlySubstanceUnits attribute of each species.
+Depending on whether this is set to true, the species is divided by the size of
+the surrounding compartment. Otherwise the species already represents a
+concentration and nothing is done. Second, all species can be brought to
+molecule count units. This is again achieved with the help of the
+hasOnlySubstanceUnits attribute, but now SBMLsqueezer multiplies with the
+compartment size if this attribute is false.
+
+In contrast to earlier versions, SBMLsqueezer now equipps all newly created
+Parameter objects with units. To this end, SBMLsqueezer derives the correct
+units from the context. For instance, in the mass action kinetics the units of
+the catalytic constants depend on the order of the reaction and have therefore
+to be computed whenever such a rate law is created. Furthermore, SBMLsqueezer
+also to considers the hasOnlySubstanceUnits property of each species and the way
+in which the surrounding compartment comes into play to derive the units of
+parameters.
+
+To make models more realistic, SBMLsqueezer redefines the pre-defined \SBML unit
+definition substance from mol to mmol and volume from l to ml.
+
+If possible, SBMLsqueezer avoids creating new UnitDefinition objects. It first
+tries to find equivalent and already existing definitions in the model.
+Bug Fixes
+
+In the original paper of \citet{Hinze2007}, inhibition was expressed with 1 -
+product of all inhibition functions. Earlier versions of SBMLsqueezer created a
+product that run over all inhibitors with (1 - inhibition function) for each
+such function.
+
+In all gene-regulation kinetics, it is now assumed that degradation processes
+are distinct reactions that can be, e.g., modeled using a mass action rate law.
+Hence, no degradation terms can be found in gene-regulation kinetics anymore.
+
+The rate law corresponging to
+\href{identifiers.org/biomodels.sbo/SBO:0000266}{SBO:0000266} was not correct.
+Earlier versions of SBMLsqueezer produced the fraction $K_{\mathrm{M}js}/K_{\mathrm{ib}j}\cdot I$, but
+correct is $S\cdot\nicefrac{I}{K_{\mathrm{ib}j}}$ (see Equation 10 in the supplementary material ``Kinetic
+Laws''; the correct version of this equation can be found at
+\url{http://www.ebi.ac.uk/sbo/main/SBO:0000266}).
+
+In case of an explicit enzyme catalysis, erlier versions of SBMLsqueezer did not
+multiply the numerator of equation
+\href{identifiers.org/biomodels.sbo/SBO:0000273}{SBO:0000273} with the enzyme.
+Therfore, it always produced the Vmax version of the equation, but the parameter
+was called kcat.
+
+
+\section{Version 2.0}
+
+Many concepts that have been introduced with Version 1.3 have been revised and
+updated. The entire handling of user settings has been massively changed and now
+uses the concept of user preferences instead of configuration files. The source
+code has been cleand and refactored in many positions and lots of development
+time has been invested into with the library \JSBML.
+
+\subsection{New features}
+
+SBMLsqueezer can now be used in several different ways:
+\begin{itemize}
+\item As fully-featured stand-alone program without the need to install any
+      further software, based on the official \JSBML version  1.0$\upbeta$1
+\item As a stand-alone program based on a \libSBML back-end, which means that
+      real offline \SBML validation is possible.
+\item Irrespective of whether \JSBML or \libSBML is used as \SBML library, the
+      stand-alone version provides both, a graphical user interface as well as
+      a fully-featured command-line version. For large-scale rate law
+      generation, this command-line interface has already proven to be useful
+      (as part of the path2models project).
+\item SBMLsqueezer can be launched directly from the
+      \href{http://www.cogsys.cs.uni-tuebingen.de/software/SBMLsqueezer/}{project's website}
+      as a \JavaWebStart program without the need of any local installation.
+\item As a plug-in for CellDesigner 4.3
+\item As a Garuda gadget, as which it can communicate with further Garuda
+      gadgets
+\end{itemize}
+Hence, the usage of the program has been greatly simplified.
+
+SBMLsqueezer fully supports all Levels and Versions of \SBML up to the most
+recent specification Level 3 Version 1.
+
+A direct query wizard for SABIO-RK has been implemented and allows users to
+extract experimentally obtained rate laws from this database together with
+parameters, values, and units. The search engine provides several settings for
+experimental conditions.
+
+SBMLsqueezer includes now several JUnit test cases to check if the generated
+kinetic equations are correct.
+
+It includes now a full version of \SBMLLaTeX and can directly open PDF files
+that are generated to document the content of the model.
+
+The renderer for equations and formula has been changed and provides more
+capabilities. SBMLsqueezer windows and context menus are now zoomable and
+resizable.
+
+Improved user preferences menu and management for each individual \OS.
+
+The graphical user interface is bilingual (German and English), but models and
+their labels are only created in English for the sake of a better international
+re-usability.
+
+A new search function allows users to query the model data structure in the
+graphical user interface.
+
+Lots of effort has been put to better adapt SBMLsqueezer to individual
+platforms. The support for \MacOSX has been greatly improved, the program now
+provides many features of native apps for \MacOSX.
+
+The documentation of the \API has been improved.
+
+\subsection{Bug fixes}
+
+The communication between SBMLsqueezer and CellDesigner was very inefficient.
+The new plugin interface in \JSBML provides a much better performance.
+Errors in kinetic equations and units of parameters have been detected and
+solved:
+\begin{itemize}
+\item Sometimes SBMLsqueezer created invalid identifiers for newly introduced
+      units.
+\item The units of the association and dissociation constant in generalized mass
+      action kinetics could not be derived correctly if a catalyst interfered
+      with the reaction, because the units of the catalyst were not taken into
+      account.
+\item The units of the half saturation constant in the (generalized) Hill
+      equation were not correctly derived. The derivation of units of kinetic
+      parameters has been improved
+\end{itemize}  
+Several minor issues with the graphical user interface have been solved.
+
+\subsection{Known Issues}
+
+In \SBML models, it should be possible to evaluate all kinetic equations to
+extend of reaction units per time units. Usually, the extend of a reaction would
+be a variant of a substance unit. However, it has been recognized that some
+kinetic equations cannot under all conditions be evaluated to extend per time
+units. The reasons are often the structure of the definition of the rate law.
+Some equations that have been defined for gene-regulatory networks, for
+instance, give a purely phenomenological description of the system (e.g.,
+S- or H-systems). In other equations, it is assumed that the equilibrium constant
+is always dimensionless. If this is not the case, it cannot be guaranteed that
+SBMLsqueezer will create correct units for these equations (e.g., modular rate
+laws and convenience kinetics). It is therefore recommended to check the units
+of generated rate laws, even if in the vast majority of cases these will be
+correct. Please note that in this version the general unit handling has been
+extensively revised and improved and is in the vast majority of cases very
+reliable. SBMLsqueezer displays the derived units of equations, so that
+problematic equations can be easily identified.
