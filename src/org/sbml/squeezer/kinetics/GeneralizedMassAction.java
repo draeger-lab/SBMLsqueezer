@@ -451,16 +451,11 @@ InterfaceIrreversibleKinetics, InterfaceModulatedKinetics {
   
   /**
    * According to Liebermeister and Klipp, Dec. 2006, activation can be
-   * modeled with the formula
-   * 
-   * <pre>
-   * hA = A / (k + A),
-   * </pre>
-   * 
-   * where A is the activating species and k is some constant. If multiple
-   * activators take part in this reaction, on such equation is created for
-   * each activator and multiplied with all others. This method returns this
-   * formula for the given list of activators.
+   * modeled with the formula {@code hA = A / (k + A)}, where A is the
+   * activating species and k is some constant. If multiple activators take part
+   * in this reaction, on such equation is created for each activator and
+   * multiplied with all others. This method returns this formula for the given
+   * list of activators.
    * 
    * @param activators
    *            A list of activators
@@ -568,15 +563,10 @@ InterfaceIrreversibleKinetics, InterfaceModulatedKinetics {
   
   /**
    * According to Liebermeister and Klipp, Dec. 2006, inhibition can be
-   * modeled with the formula
-   * 
-   * <pre>
-   * hI = k/(k + I),
-   * </pre>
-   * 
-   * where I is the inhibiting species and k is some constant. In reactions
-   * infulenced by multiple inhibitors one hI equation is created for each
-   * inhibitor and multiplied with the others.
+   * modeled with the formula {@code hI = k/(k + I)}, where I is the inhibiting
+   * species and k is some constant. In reactions infulenced by multiple
+   * inhibitors one hI equation is created for each inhibitor and multiplied
+   * with the others.
    * 
    * @param modifiers
    *            A list of modifiers
