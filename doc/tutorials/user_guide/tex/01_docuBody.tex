@@ -371,33 +371,100 @@ Note that this feature does not apply for \CellDesigner plugin, because \CellDes
 
 \subsection{For an entire network}
 Please note: The reactions you want to equip with kinetic equations should be annotated with KEGG reaction ids.
-Click on the \SABIO symbol and the wizard will be started. On the first window you can select the reactions you want to equip with kinetic equations from \SABIO.
-Press Ctrl while clicking on these reactions and click on NEXT when finished.
-The KEGG id of a reaction is always included in the respective search, as the API searches for rate equations for several reactions simultaneously.
-On the next window you can add search terms that should apply for the rate equations of all reactions such as the organism by choosing from the provided terms and typing in the value of the term.
-You can remove a query field again by clicking on DELETE.
-Your search can be further restricted by changing the bounds of pH, temperature, etc. in the right panel.
-On the following window you see for which reactions matching entries have been found.
-A reaction is marked in green, if a matching rate equation has been found, yellow, if the found rate equations do not fit exactly to your model, and red, if no matching rate equation has been found.
-If you are satisfied with the results, you can click on NEXT.
-A summary of all necessary changes to the model for adding rate equations to the reactions marked in green, is displayed.
-If you now click on FINISH and confirm the changes afterwards, the rate equations will be added and the necessary changes will be applied to your model.
+
+\begin{figure}[htbp]
+\shadowimage[width=\textwidth]{SABIO_automatic_1}
+\caption{Starting the SABIO application. You have to click on the \SABIO symbol and the wizard will be started.}
+\label{fig:startAutomatic}
+\end{figure}
+
+\begin{figure}[htbp]
+\shadowimage[width=\textwidth]{SABIO_automatic_2}
+\caption{Selection of reation.On the first window you can select the reactions you want to equip with kinetic equations from \SABIO. 
+Press Ctrl while clicking on these reactions and click on NEXT when finished.}
+\label{fig:selectReations}
+\end{figure}
+
+\begin{figure}[htbp]
+\shadowimage[width=\textwidth]{SABIO_automatic_5}
+\caption{Selection of search terms. On the next window you can add search terms that should apply for the rate equations of all reactions 
+such as the organism by choosing from the provided terms and typing in the value of the term. The KEGG id of a reaction is always included 
+in the respective search, as the API searches for rate equations for several reactions simultaneously. Your search can be further restricted
+by changing the bounds of pH, temperature, etc. in the right panel.}
+\label{fig:searchTerms}
+\end{figure}
+
+\begin{figure}[htbp]
+\shadowimage[width=\textwidth]{SABIO_automatic_6}
+\caption{Removal of search terms. You can remove a query field again by clicking on DELETE.}
+\label{fig:removeSearchTerms}
+\end{figure}
+
+\begin{figure}[htbp]
+\shadowimage[width=\textwidth]{SABIO_automatic_8}
+\caption{Window with found kinetic equations. On the following window you see for which reactions matching entries have been found.
+A reaction is marked in green, if a matching rate equation has been found, yellow, if the found rate equations do not fit exactly to your 
+model, and red, if no matching rate equation has been found. If you are satisfied with the results, you can click on NEXT.}
+\label{fig:foundEquations}
+\end{figure}
+
+
+\begin{figure}[htbp]
+\shadowimage[width=\textwidth]{SABIO_automatic_9}
+\caption{Summary of necessary changes. A summary of all necessary changes to the model for adding rate equations to the reactions 
+marked in green, is displayed.If you now click on FINISH and confirm the changes afterwards, the rate equations will be added and 
+the necessary changes will be applied to your model.}
+\label{fig:changes}
+\end{figure}
+
+
+
 
 \subsection{For selected reations}
-Select a reaction and right-click on it. Then click on the \SABIO symbol and the wizard will be started.
-The reaction is shown again in the first window and you can just click on NEXT.
-A window for selecting search terms is shown afterwards.
-You can add search tearms such as the organism by choosing from the provided terms and typing in the value of the term.
-The search can be further restricted by changing the bounds of pH, temperature, etc. in the right panel.
-You can remove a query field by clicking on DELETE (like when adding kinetic laws to several reactions simultaneously).
-After you are satisfied with your choice of search terms, click on NEXT.
-The rate equations that match your search criteria are displayed then.
-You can select a reaction and click on NEXT or you can click on BACK and change your search criteria.
-If you click on NEXT, you can then choose how to match the species, compartments, etc., contained in the selected rate equation to the respective \SBML elements in your model.
-The necessary elements to import, such as function definitions contained in the rate equation to add, are also shown.
-If you now click on NEXT, a summary of all necessary changes to the model for adding the selected rate equation is displayed.
-Now click on FINISH  and confirm the changes afterwards.
-Then the rate equation will be added and the necessary changes will be applied to your model.
+\begin{figure}[htbp]
+\shadowimage[width=\textwidth]{SABIO_manual_1}
+\caption{Starting the SABIO application for a selected reaction. Select a reaction and right-click on it. Then click on the \SABIO symbol 
+and the wizard will be started. The reaction is shown again in the first window and you can just click on NEXT.}
+\label{fig:startManual}
+\end{figure}
+
+\begin{figure}[htbp]
+\shadowimage[width=\textwidth]{SABIO_manual_3}
+\caption{Selection of search terms. You can add search tearms such as the organism by choosing from the provided terms and typing in 
+the value of the term. The search can be further restricted by changing the bounds of pH, temperature, etc. in the right panel. 
+You can remove a query field by clicking on DELETE (like when adding kinetic laws to several reactions simultaneously).}
+\label{fig:searchTermsManual}
+\end{figure}
+
+\begin{figure}[htbp]
+\shadowimage[width=\textwidth]{SABIO_manual_7}
+\caption{Window with two search terms. Here a search for an organism and an enzymename has been specified and will be combined to a query when clicking on NEXT.}
+\label{fig:searchTermsQuery}
+\end{figure}
+
+\begin{figure}[htbp]
+\shadowimage[width=\textwidth]{SABIO_manual_8}
+\caption{Window with found kinetic equations. The rate equations that match your search criteria are displayed here.
+You can select a reaction and click on NEXT or you can click on BACK and change your search criteria.}
+\label{fig:foundEquationsManual}
+\end{figure}
+
+\begin{figure}[htbp]
+\shadowimage[width=\textwidth]{SABIO_manual_9}
+\caption{Window for matching elements in the equation to model elements. You can choose how to match the species, compartments, etc., contained in the selected rate 
+equation to the respective \SBML elements in your model. The necessary elements to import, such as function definitions contained in the rate equation to add, are also shown.}
+\label{fig:matching}
+\end{figure}
+
+\begin{figure}[htbp]
+\shadowimage[width=\textwidth]{SABIO_manual_10}
+\caption{Summary of necessary changes. A summary of all necessary changes to the model for adding the selected rate equation is displayed.
+Now click on FINISH and confirm the changes afterwards. Then the rate equation will be added and the necessary changes will be applied to your model.
+}
+\label{fig:changesManual}
+\end{figure}
+
+ 
 
 \chapter{Command-line arguments}
 \label{chap:CMD}
