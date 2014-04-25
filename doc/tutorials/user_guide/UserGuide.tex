@@ -15,19 +15,20 @@
 ]{scrreprt}
 
 \usepackage{UT}
+\usepackage{wrapfig}
+\usepackage{textcomp}
 \usepackage{cleveref}
 \usepackage{upgreek}
 \usepackage{nicefrac}
+\usepackage{menukeys} % typesets paths and menu access, keyboard characters.
 
 \usepackage{xspace}
 % booktabs is for toprule, bottomrule, etc. in tables.
 \usepackage{booktabs}
 \usepackage{multirow}
 \usepackage{array}   %stellt den Befehl \newcolumntype bereit
-\usepackage{hyperref} % Links im dokument
-%\usepackage[utf8]{inputenc} %unicode support
-\usepackage[T1]{fontenc}
 \usepackage[version=3]{mhchem}
+%\usepackage[utf8]{inputenc} %unicode support
 
 \usepackage[font=small,totoc]{idxlayout}
 
@@ -60,7 +61,8 @@
   pdfkeywords={kinetics} {rate law} {enzyme kinetics} {SBML} {equation generation} {automatic} {generalized mass action} {gmak} {Michaelis-Menten} {convenience kinetics} {SBMLsqueezer}
 }
 
-\graphicspath{{../../snapshot/}{img/}{img/SABIO-RK/}}
+\graphicspath{{../../snapshot/}{../../../resources/org/sbml/squeezer/resources/img/}{img/}{img/SABIO-RK/}}
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Gestaltung der Titelseite     %
@@ -70,23 +72,22 @@
 \patchcmd{\headrule}{\hrule}{\color{gold}\rule{\textwidth}}{}{}
 \newcolumntype{C}[1]{>{\centering\arraybackslash}m{#1}}
 \newcolumntype{L}[1]{>{\centering\arraybackslash}p{#1}}
-\newcommand{\SBMLLaTeX}{{\sffamily\upshape\raisebox{-.35ex}{S\hspace{-.425ex}BML}\hspace{-0.5ex}\begin{rotate}{-17.5}\raisebox{-.1ex}{2}\end{rotate}\hspace{1ex}\LaTeX}}
 
-\titlehead{\centering\includegraphics[width=0.75\textwidth]{img/UT_WBMW_mathnat_4C}\\
+\titlehead{\centering\includegraphics[width=0.75\textwidth]{UT_WBMW_mathnat_4C}\\
 \noindent\makebox[\linewidth]{\color{gold}\rule{\textwidth}{1pt}}}
 \subject{Users' Guide}
 \title{SBMLsqueezer~2}
 \subtitle{A context-based generator of kinetic equations}
 
-\author{Andreas Dr\"ager%
+\author{Andreas Dr\"ager$^{1,2}$%
 %\thanks{Corresponding author: \href{mailto:andreas.draeger@uni-tuebingen.de}{andreas.draegter@uni-tuebingen.de}}
 \and
-Roland Keller\and
+Roland Keller$^{1}$\and
 %Matthias Rall\and
-Johannes Eichner\and
-Andreas Zell}
+Johannes Eichner$^{1}$\and
+Andreas Zell$^{1}$}
 \date{\today}
-\publishers{\includegraphics[width=48px]{img/LOGO}\\[2cm]Center for Bioinformatics Tuebingen (ZBIT)\\University of California, San Diego}
+\publishers{\includegraphics[width=48px]{img/LOGO}\\[2cm]$^1$Center for Bioinformatics Tuebingen (ZBIT)\\$^2$University of California, San Diego}
 
 \makeindex
 
@@ -95,7 +96,6 @@ Andreas Zell}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{document}
-
 % 
 % 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -115,8 +115,7 @@ Andreas Zell}
 
 \cleardoublepage		% Erzeugt neue Leerseite. Muss ggf. auskommentiert werden.
 \pagenumbering{arabic}		% Ab hier mit arabischen Zahlen numerieren
-\input{tex/01_docuBody}
-
+%
 % 
 % 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -124,12 +123,12 @@ Andreas Zell}
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % 
 % 
-% \input{tex/01_docuBody}
+\input{tex/01_docuBody}
 
 
 % 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Das Literaturverzeichnis      %
+% Das Literaturverzeichnis und Anhang      %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \appendix
 \input{tex/Release_Notes.tex}
