@@ -4,6 +4,19 @@
 \newcommand{\codeIndexed}           [1]{\texttt{#1}\index{#1@\texttt{#1}}\xspace}
 \newcommand{\codeSubindexed}        [2]{\texttt{#1}\index{#2@\texttt{#2}!\texttt{#1}@\texttt{#1}}\xspace}
 
+\renewmenumacro{\menu}              [>]{roundedmenus}
+\renewmenumacro{\keys}              [+]{shadowedroundedkeys}
+\renewmenumacro{\directory}         [/]{pathswithfolder}
+%\changemenucolor{gray}{txt}{named}{blue}
+%\changemenucolor{gray}{br}{named}{gold}
+\newcommand{\file}                  [1]{\texttt{#1}}
+\newcommand{\wrapfigspace}          {-10pt}
+
+\newcommand{\TODO}                  [1]{\textcolor{red}{#1}}
+\newcommand{\numero}                {N\raisebox{.25em}{\relsize{-2}\underline{o}}\xspace}
+\newcommand{\itemcolor}[1]{% Update list item colour
+  \renewcommand{\makelabel}[1]{\color{#1}\hfil ##1}}
+
 % A
 \newcommand{\API}                   {\ac{API}\index{\acfi{API}}\xspace}
 %\newcommand{\Annotation}                {\codeSubindexed{Annotation}{annotations}}
@@ -16,6 +29,7 @@
 
 % G
 \newcommand{\Garuda}                {Garuda\index{Garuda}\xspace}
+\newcommand{\GUI}                   {\ac{GUI}\index{\acfi{GUI}}\xspace}
 
 % J
 \newcommand{\Java}                  {Java\texttrademark\index{Java\texttrademark}\xspace}
@@ -25,14 +39,20 @@
 \newcommand{\JVM}                   {\acf{JVM}\index{\acfi{JVM}}\xspace}
 \newcommand{\JSBML}                 {JSBML\index{JSBML}\xspace}
 
+% K
+\newcommand{\KEGG}                  {\ac{KEGG}\index{\acfi{KEGG}}\xspace}
+
 % L
-\newcommand{\LDLIBRARYPATH}         {\texttt{LD\_LIBRARY\_PATH}\index{Operating System!Unix!\texttt{LD\_LIBRARY\_PATH}}\xspace}
+\newcommand{\LDLIBRARYPATH}         {\texttt{LD\_LIBRARY\_PATH}\index{Operating System!Linux!\texttt{LD\_LIBRARY\_PATH}}\xspace}
 \newcommand{\libSBML}               {libSBML\index{libSBML}\xspace}
 \newcommand{\Linux}                 {Linux\index{Operating System!Linux}\xspace}
 
 % M
 \newcommand{\MacOSX}                {Mac~OS~X\index{Operating System!Mac OS X}\xspace}
-\newcommand{\MIRIAM}                {\ac{MIRIAM}\index{MIRIAM}\xspace}
+\newcommand{\MIRIAM}                {\ac{MIRIAM}\index{\acfi{MIRIAM}}\xspace}
+
+% N
+\newcommand{\NetGenerator}          {Net\emph{Gene}rator\index{Net\emph{Gene}rator}\xspace}
 
 % O
 \newcommand{\OS}                    {operating system\index{Operating System}\xspace}
@@ -46,12 +66,13 @@
 % S
 \newcommand{\SABIO}                 {\ac{SABIO-RK}\index{\acfi{SABIO-RK}}\xspace}
 \newcommand{\SBML}                  {\ac{SBML}\index{SBML}\xspace}
+\newcommand{\SBMLLaTeX}             {{\sffamily\upshape\raisebox{-.35ex}{S\hspace{-.425ex}BML}\hspace{-0.5ex}\begin{rotate}{-17.5}\raisebox{-.1ex}{2}\end{rotate}\hspace{1ex}\LaTeX}\index{SBML2LaTeX}\xspace}
 \newcommand{\SBO}                   {\ac{SBO}\index{SBO}\xspace}
 
 % U
-\newcommand{\UbuntuLinux}           {Ubuntu Linux\index{Operating System!Ubuntu Linux}\xspace}
+\newcommand{\UbuntuLinux}           {Ubuntu Linux\index{Operating System!Linux!Ubuntu}\xspace}
 \newcommand{\Unix}                  {Unix\index{Operating System!Unix}\xspace}
 
 % W
-\newcommand{\WindowsSeven}          {Windows~7\index{Operating System!MS Windows~7}\xspace}
+\newcommand{\WindowsSeven}          {Windows~7\index{Operating System!Windows!Windows~7}\xspace}
 \newcommand{\Windows}               {Microsoft Windows\index{Operating System!MS Windows}\xspace}

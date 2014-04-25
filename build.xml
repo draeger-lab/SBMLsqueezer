@@ -631,6 +631,7 @@
   	  <src path="${jsbml.dir}/extensions/render/src"/>
   	  <src path="${jsbml.dir}/extensions/req/src"/>
   	  <src path="${jsbml.dir}/extensions/spatial/src"/>
+  	  <!--<src path="${jsbml.dir}/examples/test/src"/>-->
   	  <!-- Resources -->
       <src path="${jsbml.dir}/core/resources"/>
       <src path="${jsbml.dir}/extensions/comp/resources"/>
@@ -813,7 +814,8 @@
       verbose="${verbose}"
     >
   	  <!-- Source -->
-  	  <src path="${jsbml.dir}/core/doc/SimpleCellDesignerPlugin"/>
+      <!--<src path="${jsbml.dir}/core/doc/SimpleCellDesignerPlugin"/>-->
+  	  <src path="${jsbml.dir}/modules/celldesigner/test"/>
   	  <src path="${jsbml.dir}/examples/test/src"/>
   	  <include name="org/sbml/jsbml/celldesigner/"/>
   	  <include name="org/sbml/jsbml/gui/"/>
@@ -821,6 +823,7 @@
   	
   	<jar
   	  compress="true"
+  	  duplicate="preserve"
   	  filesetmanifest="mergewithoutmain"
   	  index="true"
   	  indexMetaInf="true"
@@ -832,9 +835,9 @@
     >
   	  <manifest>
   	    <section name="${jsbml.name}">
-  	      <attribute name="Specification-Title" value="CellDesigner test plugin"/>
-  	      <attribute name="Specification-Version" value="1.0"/>
-  	      <attribute name="Implementation-Title" value="CellDesigner test"/>
+  	      <attribute name="Specification-Title"    value="CellDesigner test plugin"/>
+  	      <attribute name="Specification-Version"  value="1.0"/>
+  	      <attribute name="Implementation-Title"   value="CellDesigner test"/>
   	      <attribute name="Implementation-Version" value="Revision ${jsbml.revision} (Build ${DSTAMP}-${TSTAMP})"/>
   	    </section>
   	  </manifest>
@@ -963,7 +966,7 @@
         <include name="de/zbit/sbml/util/**.class"/>
         <include name="de/zbit/text/**.class"/>
         <include name="de/zbit/util/**.class"/>
-      	<include name="de/zbit/util/argparser/**.class"/>
+      	<!--<include name="de/zbit/util/argparser/**.class"/>-->
         <include name="de/zbit/util/logging/**.class"/>
         <include name="de/zbit/util/objectwrapper/**.class"/>
         <include name="de/zbit/util/prefs/**.class"/>
@@ -978,6 +981,7 @@
         <include name="de/zbit/sbml/locales/**.xml"/>
       </fileset>
       <zipfileset excludes="META-INF/*" src="${sysbio.dir}/lib/sysbio-osx-support.jar"/>
+      <zipfileset excludes="META-INF/*" src="${sysbio.dir}/lib/argparser.jar"/>
     </jar>
 
   </target>

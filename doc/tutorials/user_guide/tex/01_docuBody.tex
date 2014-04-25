@@ -20,15 +20,14 @@ respective reaction per time units.
 To give an example for the most common scenario, you can assume that the units
 of the rate law will simplify to a substance unit per time unit, for instance,
 mole per second.
-Other constalations, however, are possible, too.
+Other constellations, however, are possible, too.
 When using SBMLsqueezer you do not have to care much about units because the
 program does this for you.
 The program also annotates all created equations and parameters with appropriate
 terms from the \SBO\footnote{\url{http://www.ebi.ac.uk/sbo/main/}} and also
 with \MIRIAM-compliant\footnote{\url{http://co.mbine.org/standards/miriam}}
 controlled vocabulary terms (Minimal Information Required In the Annotation of
-Models), where appropriate \citep{Le2005, Novere2006b,
-Laible2007, Courtot2011}.
+Models), where appropriate \citep{Le2005, Novere2006b, Laible2007, Courtot2011}.
 
 The selection of the kinetic equations is done automatically by the program,
 where several settings allow users to influence the algorithm's choice.
@@ -62,11 +61,11 @@ You can run it as a stand-alone tool, or as a plug-in for the well-known program
 \citep{Funahashi2003, Funahashi2006, Funahashi2007a, Funahashi2008}.
 By default, the stand-alone version is based on the \JSBML backend 
 \citep{Draeger2011b}, but you can also use \libSBML \citep{Bornstein2008} as its
-\SBML backend instead if this library's more elaborated offline model validation
+\SBML back-end instead if this library's more elaborated off-line model validation
 matters.
 If you neither like to download SBMLsqueezer, nor to install any software on
 your local computer, you can even use SBMLsqueezer as a Galaxy-based
-webservice\footnote{Galaxy webservice available at \url{http://webservices.cs.uni-tuebingen.de/}},
+web-service\footnote{Galaxy web-service available at \url{http://webservices.cs.uni-tuebingen.de}},
 or launch it as a \JavaWebStart application directly from your web
 browser\footnote{You can use SBMLsqueezer as a \JavaWebStart application by
 clicking at \url{http://www.cogsys.cs.uni-tuebingen.de/software/SBMLsqueezer/downloads/SBMLsqueezer.jnlp}.}.
@@ -81,11 +80,11 @@ output can be forwarded to further programs, such as SBMLsimulator
 
 Finally, the command-line mode of SBMLsqueezer provides all capabilities of the
 program without any restriction.
-Furhtermore, the fully accessible application programming interface can be used
+Furthermore, the fully accessible application programming interface can be used
 to integrate SBMLsqueezer as an equation generating core into your end-user
 program.
 You can hence equip a large number of files with kinetic equations without the
-need to open each file in a graphical user interface.
+need to open each file in a \GUI.
 The usefulness of this approach has recently been demonstrated as part of the
 path2models project\footnote{\url{http://www.ebi.ac.uk/biomodels-main/path2models}},
 in which more than 142,000 \SBML models have been processed with SBMLsqueezer
@@ -101,7 +100,7 @@ easily copy the formulas into your scientific paper.
 This document is intended to guide you through installation and use of
 SBMLsqueeer by introducing its various interfaces to you. The next chapter
 describes how you can install and access SBMLsqueezer on your \OS.
-\vref{chap:GUI} introduces the graphical user interface of the stand-alone
+\vref{chap:GUI} introduces the \GUI of the stand-alone
 version of SBMLsqueezer to you and explains how to access all of its functions.
 If you are interested to run SBMLsqueezer in a batch or shell script, the
 command-line interface will be interesting for you, which is described in
@@ -129,7 +128,7 @@ To obtain a local copy of SBMLsqueezer, you can download it in form of a
 \url{http://www.cogsys.cs.uni-tuebingen.de/software/SBMLsqueezer/}.
 
 In the most common scenario, you might want to launch the program as a
-stand-alone tool and access its graphical user interface. To do so,
+stand-alone tool and access its \GUI. To do so,
 start SBMLsqueezer with a simple double click on the icon of the downloaded
 \JAR.
 Provided that a \JVM is installed on your system 
@@ -142,18 +141,18 @@ SBMLsqueezer can be be used in multiple ways, depending on your preferences:
 \begin{itemize}
   \item As a stand-alone tool
   \begin{itemize}
-    \item via its graphical user interface (see \vref{chap:GUI})
+    \item via its \GUI (see \vref{chap:GUI})
     \item via its command-line interface (see \vref{chap:CMD})
   \end{itemize}
         In both cases, you can choose between \JSBML or \libSBML as your backend
         for \SBML (see \vref{sec:StandAlone}).
   \item As a plug-in for \CellDesigner (see \vref{sec:CellDesignerInstall})
   \item As a gadget for \Garuda (see \vref{sec:GarudaInstall})
-  \item As an online program embedded in the Galaxy webservice environment
+  \item As an on-line program embedded in the Galaxy web-service environment
   \item As a \JavaWebStart application
   \item As a rate law core in an end-user application via its \API
 \end{itemize}
-Depending on how you like to use SBMLsqueezer, differnt requirements must be
+Depending on how you like to use SBMLsqueezer, different requirements must be
 fulfilled before launching the program for the first time.
 
 \subsection{Hardware}
@@ -185,13 +184,17 @@ See \vref{ch:faq} if you encounter any problems.
 Besides what is explained above, no further requirements are necessary if you
 like to use SBMLsqueezer as a stand-alone application.
 The program SBMLsqueezer does not have to be installed in order to be execuded, 
-just copy the \JAR of SBMLsqueezer to your prefered path on your harddisk
+just copy the \JAR of SBMLsqueezer to your preferred path on your hard-disk
 to launch the application.
-On \MacOSX, you may like to copy the \JAR into your \texttt{/Applications/}
+On \MacOSX, you may like to copy the \JAR into your
+%\directory{Macintosh\textvisiblespace HD/Applications/}
+\directory{Macintosh HD/Applications/}
 folder.
 On \Windows systems, the preferred position for the \JAR could be, for
-instance, \texttt{C:\textbackslash Program{\textvisiblespace}Files\textbackslash}.
-For \Linux, we propose to copy the \JAR to the \texttt{/opt/} folder.
+instance,
+%\directory{C:/Program\textvisiblespace Files/}
+\directory{C:/Program Files/}.
+For \Linux, we propose to copy the \JAR to the \directory{/opt/} folder.
 
 
 \subsubsection{Using the \JSBML backend}
@@ -199,7 +202,7 @@ For \Linux, we propose to copy the \JAR to the \texttt{/opt/} folder.
 No special actions are necessary if you like to use \JSBML, because this is the
 default and \JSBML is already included in the \JAR that you have downloaded.
 
-\subsubsection{Launching SBMLsqueezer with \libSBML as backend}
+\subsubsection{Launching SBMLsqueezer with \libSBML as back-end}
 
 Follow the installation instructions of the \Java binding for \libSBML for your
 platform, which you can find at the website of
@@ -210,7 +213,8 @@ binding.
 On the most \Unix and \Linux platforms, this variable is called
 \LDLIBRARYPATH.
 On \MacOSX, you should instead define the variable \DYLDLIBRARYPATH.
-Follow the instrcutions at \url{http://sbml.org/Software/libSBML/docs/cpp-api/libsbml-accessing.html#accessing-java}
+Follow the instructions at
+\href{http://sbml.org/Software/libSBML/docs/cpp-api/libsbml-accessing.html#accessing-java}{\url{http://sbml.org/Software/libSBML/docs/cpp-api/libsbml-accessing.html}}
 before launching SBMLsqueezer.
 On Windows you should add the directory to the \PATH environment in the Control Panel.
 The following script can help you to to run SBMLsqueezer on your \Unix platform:
@@ -244,22 +248,25 @@ In the example above the arguments for the \JVM define an initial heap space of
 \subsection{Plug-in for \CellDesigner}
 \label{sec:CellDesignerInstall}
 
-If you like to use SBMLsqueezer as a plugin for the popular graphical model
+If you like to use SBMLsqueezer as a plug-in for the popular graphical model
 editor \CellDesigner, you can do this by following these installation steps.
 \begin{enumerate}
   \item Download and install \CellDesigner from \url{http://celldesigner.org}.
   \item Depending on your \OS, \CellDesigner will be installed in different
         folders. Locate, where your copy of \CellDesigner is installed. In
-        \Windows it is usually \texttt{C:\textbackslash Program{\textvisiblespace}Files\textbackslash CellDesigner4.3}, in
-        \Linux you might find it in \texttt{/opt/CellDesigner4.3}, and in
+        \Windows it is usually
+        %\directory{C:/Program\textvisiblespace Files/CellDesigner4.3}
+        \directory{C:/Program Files/CellDesigner4.3}, in
+        \Linux you might find it in \directory{/opt/CellDesigner4.3}, and in
         \MacOSX \CellDesigner will be installed under
-        \texttt{/Applications/CellDesigner4.3}, where 4.3 is the version number
+        %\directory{Macintosh\textvisiblespace HD/Applications/CellDesigner4.3}
+        \directory{Macintosh HD/Applications/CellDesigner4.3}, where 4.3 is the version number
         with which SBMLsqueezer 2.0 has been tested.
-  \item Open the \texttt{plugin} folder in your installation of \CellDesigner and
-        copy the file \texttt{SBMLsqueezer\_v2.0\_incl-libs.jar} into this folder.
-  \item Open the \texttt{lib} folder in your installation of \CellDesigner and
+  \item Open the \directory{plugin} folder in your installation of \CellDesigner and
+        copy the file \file{SBMLsqueezer\_v2.0\_incl-libs.jar} into this folder.
+  \item Open the \directory{lib} folder in your installation of \CellDesigner and
         replace the \JSBML \JAR that is redistributed by \CellDesigner with
-        the \JAR \href{http://www.cogsys.cs.uni-tuebingen.de/software/SBMLsqueezer/downloads/jsbml-1.0-a1-with-dependencies.jar}{jsbml-1.0-a1-with-dependencies.jar}
+        the \JAR \href{http://www.cogsys.cs.uni-tuebingen.de/software/SBMLsqueezer/downloads/jsbml-1.0-a1-with-dependencies.jar}{\file{jsbml-1.0-a1-with-dependencies.jar}}
         that you can download at \url{http://www.cogsys.cs.uni-tuebingen.de/software/SBMLsqueezer/downloads/}.
         Make sure that the name of the new \JSBML file will be identical to the
         name of the \JSBML file distributed with \CellDesigner. Otherwise, you
@@ -267,7 +274,7 @@ editor \CellDesigner, you can do this by following these installation steps.
         is not difficult and can be done on each \OS, we prefer to avoid that
         for the sake of simplicity. Alternatively, you can also download \JSBML
         from the official sourceforge page. However, you must make sure that the
-        downloaded \JAR includes the package \texttt{org.sbml.jsbml.celldesigner}.
+        downloaded \JAR includes the package \directory{org.sbml.jsbml.celldesigner}.
         Without this package, SBMLsqueezer cannot be launched in \CellDesigner.
 \end{enumerate}
 
@@ -282,15 +289,15 @@ of how to install \Garuda.
 \section{Starting the application}
 \label{startingTheProgram}
 
-If you downloaded a ZIP-file, you need to unzip it before starting the
+If you downloaded a ZIP file, you need to unzip it before starting the
 application. In the simplest case, you can launch SBMLsqueezer just by double
-clicking on its application icon. This will launch the graphical user interface
+clicking on its application icon. This will launch the \GUI
 (see \vref{chap:GUI} for further details).
 
 Depending on your preference and your \OS, it might be helpful for
 you to write a short shell or bash scripts for starting the application.
-You might name this, for instance, \texttt{start.sh} for \Linux or \MacOSX, and
-\texttt{start.bat} for \Windows. Within those scripts you could specify several
+You might name this, for instance, \file{start.sh} for \Linux or \MacOSX, and
+\file{start.bat} for \Windows. Within those scripts you could specify several
 command-line options (see \vref{chap:CMD}) and hence customize the behavior of
 SBMLsqueezer. 
 
@@ -299,8 +306,8 @@ You can start the application on all {\OS}s by typing
 java -jar -Xms128m -Xmx1024m SBMLsqueezer.jar
 \end{lstlisting}
 on your command prompt. Please note that you might have to change
-\texttt{SBMLsqueezer.jar} for the real name of the \JAR, e.g.,
-\texttt{SBMLsqueezer\_v2.0\_incl-libs.jar}. In this example, a minimum of 128\,MB
+\file{SBMLsqueezer.jar} for the real name of the \JAR, e.g.,
+\file{SBMLsqueezer\_v2.0\_incl-libs.jar}. In this example, a minimum of 128\,MB
 and a maximum of 1024\,MB of memory will be available for the program. In most cases,
 SBMLsqueezer needs more than 128\,MB memory, so it might be convenient to create a
 shortcut and start the application with as much memory as available. If you
@@ -315,12 +322,235 @@ How much memory you actually need strongly depends on the size of your input dat
 \chapter{How to get started}
 \label{chap:GUI}
 
-TODO: Write some text.
+In this \namecref{chap:GUI} you will learn how the \GUI of the program
+SBMLsqueezer is designed and intended to work, how you can launch, configure,
+and use the program. 
 
 \section{General program features}
-\subsection{Open a model}
+
+The purpose of SBMLsqueezer is to assist you when creating kinetic equations for
+a biochemical network, whose structure is already defined.
+SBMLsqueezer can add missing information, such as undefined initial concentration values
+or set some reacting species that represent genes to the boundary of the reaction system.
+But its main purpose is the creation of rate laws, parameter objects, and their units.
+The integrated \SBMLLaTeX can create an exhaustive model report that highlights all
+model features.
+
+Depending on your preferences (see \vref{sec:GUIPrefs}) SBMLsqueezer can
+\begin{dinglist}{52}
+\itemcolor{blue}
+\item generate kinetic equations for all reactions in your model, or only for those
+  reactions that are currently lacking a reate law.
+  This gives you the option to replace existing rate laws with new ones.
+  Thereby, you can define a number of arbitrary chemicals (usually small molecules or
+  ions) that you like to exclude from the rate law generation process in order to keep
+  the generated equation simple.
+  The program offers you a large variety of generic and specific rate laws for several
+  standard cases and allows you to create all rate laws in a reversible manner if desired.
+\item detect reactive species, whose annotation indicates that these are genes.
+  Since usually the concentration or amount of genes does not change, SBMLsqueezer
+  offers you to set the boundary condition of these species to \texttt{true}.
+  This means that even if these species participate in reations, their amount or
+  concentration will always remain constant.
+\item assume that all reactions in your network are enzymatically catalyzed and hence
+  change the selection of rate laws. This means that even reactions without explicit
+  catalyst can be modeled with an enzymatic rate law. Hence, a simplified model structure
+  can be recognized by SBMLsqueezer and interpreted as a more complex structure.
+  For catalyzed reactions, you have the choice of a large variety of species types to
+  be interpreted as enzymes.
+\item define the units of all species and compartments if necessary and derive the
+  units for all newly created local and global parameters in order to ensure unit
+  consistency of the entire model. Thereby you can choose if species should be brought
+  to amount or concentration units. This influences if in rate equations division by
+  the compartment sizes or multiplication with the compartment will be performed where
+  this is necessary.
+\item check the model for global and local parameters as well as unit definitions
+  that are never used and addressed. SBMLsqueezer can automatically remove these from
+  the model (model cleaning).
+\item import experimentally determined rate equations from \SABIO and include them into
+  your model. To this end, it offers you several options to make the lookup of rate laws
+  as precise as possible and to narrow down the database entries as much as possible.
+\item equip your model with default values where no values are defined. For instance,
+  if it was forgotten to define the spatial dimensions or the size of a compartment,
+  SBMLsqueezer will insert a default value for you. The same is also done for species
+  and all newly created (local) parameters.
+\item summarize all features of the model in an exhaustive \LaTeX-based model report.
+  To this end, SBMLsqueezer brings with it a full version of the model documentation
+  tool \SBMLLaTeX including all of its options.
+\end{dinglist}
+In the following, we will describe how you can benefit from the features of SBMLsqueezer
+and how to customize the program.
+
 \subsection{Starting the application}
+
+\begin{wrapfigure}{O}{.9cm}
+\vspace{\wrapfigspace}
+\includegraphics[width=.8cm]{icons/jar_icon}
+\end{wrapfigure}
+Launch SBMLsqueezer by double-clicking at the \Java icon in a file browser of
+your \OS, which might look like the image next to this text.
+You can also start SBMLsqueezer from the command line.
+How to do that is described in \vref{sec:Program_usage}.
+
+\subsection{Open a model}
+
+\begin{wrapfigure}{O}{.9cm}
+\vspace{\wrapfigspace}
+\includegraphics[width=16px]{icons/folder_64}
+\end{wrapfigure}
+The simplest way to open an \SBML file is to click at \menu{File > Open} in the
+menu bar, or at the folder icon (see the icon next to this text) in the tool bar.
+If you prefer keystroke combinations, you can use \keys{\cmd + O} on \MacOSX or
+\keys{\ctrlwin + O} on \Windows and \Linux computers.
+The \GUI can open multiple \SBML files in parallel.
+SBMLsqueezer arranges these \SBML documents in tabs.
+
+When starting SBMLsqueezer from the command line, you can directly pass a model
+file to it, which will then be opened in the \GUI. To this
+end, use the option \texttt{--sbml-in-file=<File>}, where \texttt{<File>} is the
+absolute or relative path to the \SBML file you want to open (see
+\vref{sec:IO_options}).
+Note, however, that the command line option allows you to specify just one file
+to open.
+If you like to open further files, you need to do this in the \GUI.
+
+SBMLsqueezer remembers up to ten files you have already worked with.
+Once you have opened one or more models, these are accessible in the menu bar,
+where you can click at \menu{File > Recent files}.
+This sub-menu will display the names of the files and their absolute path as tool-tip.
+You can open one of these files by just clicking on its entry in the menu, or
+you can apply one of the keystroke combinations \keys{\Altmac + 0} to \keys{\Altmac + 9}
+on \MacOSX or \keys{\Altwin + 0} to \keys{\Altwin + 9} on \Linux and \Windows.
+Here, the number keys are used to sort the previously opened models according to
+when you last accessed the file.
+The most recently opened file will always have number 0 and the model number 9
+is the model that was opened a longer time ago.
+Note that this order will change as soon as you open one model from this list
+or any other model.
+
 \subsection{Adjusting the preferences}
+\label{sec:GUIPrefs}
+The program SBMLsqueezer offers a large number of options to configure how
+kinetic equations are generated.
+All options described in this section can also be applied using SBMLsqueezer's
+command-line interface (see \vref{chap:CMD} for details).
+This means that you can already upon launching the program define with which
+options it should be initialized.
+Your configuration can always be set back to the default options if desired.
+SBMLsqueezer stores its configuration in the system's preferences of your \OS.
+This means that when launching the program for the next time, you can directly
+continue with your previous configuration.
+Furthermore, there are no configuration files generated by SBMLsqueezer in
+addition to those maintained by your \OS.
+Hence, SBMLsqueezer integrates well into your working environment.
+\begin{SCfigure}
+\shadowimage[width=.5\textwidth]{prefs/Basic_configuration}
+\caption{Basic configuration.
+All preferences that you can manipulate in this
+tab corresponds to the command line options described in
+\vref{sec:Basic_configuration}. You can specify if already existing rate laws
+should be replaced with newly generated rate equations, if a search in \SABIO
+should be performed and many more.
+Taking small molecules and ions into account often lead to complex kinetic equations.
+SBMLsqueezer offers you to give a list of \KEGG identifiers for those reactive
+species that should be ignored when creating rate laws (see \vref{tab:MIRIAMignoreList}).
+For cases in which values are missing in the
+model, SBMLsqueezer will insert default values, which you can specify in this
+tab. Furthermore, you can decide how SBMLsqueezer should ensure unit consistency,
+by either bringing all species to amount units, or to concentration units.
+Finally, for situations, in which the role of reaciton modifiers is unclear, you
+can here select those types of species that should be considered enzymes.}
+\label{fig:Basic_configuration}
+\end{SCfigure}
+
+\begin{SCfigure}
+\shadowimage[width=.5\textwidth]{prefs/Rate_law_selection}
+\caption{Rate law selection.
+It has been observed that irreversible rate laws are
+often too restrictive and cannot capture the dynamics of complex reaction systems.
+For this reason, SBMLsqueezer can create all kinetic equations in a reversible manner
+and will then also update the property \emph{reversible} in affected reactions.
+Depending on this setting, you will be able to select default types of irreversible
+rate laws.
+The other sections of this tab allow you to select which type ofrate law should
+be primarily selected when generating equations for an entire network in one single
+step.
+If you create equations for individual reactions only, as shown in \vref{fig:Rate_law_selection},
+these settings do not have an effect.  
+For more information about your choices in this tab, see also the description of
+its corresponding command-line options in \vref{sec:Rate_law_selection}.}
+\label{fig:Rate_law_selection}
+\end{SCfigure}
+\begin{wrapfigure}{O}{.9cm}
+\vspace{\wrapfigspace}
+\includegraphics[width=16px]{icons/settings_64}
+\end{wrapfigure}
+We will now take a closer look at the options and describe what you can influence
+and which choices the program offers to you.
+In order to configure your preferences, you can click at the tool icon in the
+tool-bar (see the icon next to this text), or select the corresponding entry in the menu bar.
+Under \Windows and \Linux, you can access the preferences menu under
+\menu{Edit > Preferences}, whereas
+under \MacOSX, these can be found under \menu{SBMLsqueezer > Preferences\dots}.
+\MacOSX also gives you the option to access the preferences menu with the keystroke
+combination \keys{\cmd + {$,$}}.
+\begin{SCfigure}
+\shadowimage[width=.5\textwidth]{prefs/SABIO-RK_search_options}
+\caption{\SABIO search options.
+The options in this tab correspond to the command-line options that are described
+in \vref{sec:SABIO_search_options}.
+You can specify general features of the reaction for which you want to look up
+appropriate rate laws in \SABIO, such as the pathway, in which the reaction
+occurs, the tissue, in which it was observed, even the cellular location.
+Of course, you can also restrict your search to an organism of choice.}
+\label{fig:SABIO-RK_search_options}
+\end{SCfigure}
+\begin{SCfigure}
+\shadowimage[width=.5\textwidth]{prefs/SABIO-RK_search_preferences}
+\caption{\SABIO search preferences.
+All preferences in this tab can also be changed through the command line.
+See \vref{sec:SABIO_search_preferences} for details.
+Here you can define more fine-grained search search properties for looking up
+kinetic equations in \SABIO, such as the minimal and maximal temperature and
+pH value, under which the reaction proceeds, the currentness of the entry in
+\SABIO, and several boolean switches that influence which type of database entry
+can be considered.
+These features are mainly important when extracting rate laws for all reactions
+in the network in a bulk.
+When you search for kinetics of individual reactions, you may want to also apply
+more appropriate settings for just this reaction.}
+\label{fig:SABIO-RK_search_preferences}
+\end{SCfigure}
+
+\begin{SCfigure}
+\shadowimage[width=.5\textwidth]{prefs/LaTeX_Options}
+\caption{\LaTeX{} options.
+All options in this tab are also available as command-line options
+(see \vref{sec:LaTeX_Options}).
+You can specify where your \LaTeX compiler is located in your \OS and what
+to include into the model report.
+This tab also gives you several style options that influence how the
+the generated document will look like.
+As a new feature, it now also supports the Layout extension for \SBML.
+You can here decide if a figure of your network should be generated and
+included into the report.}
+\label{fig:LaTeX_Options}
+\end{SCfigure}
+On the bottom panel of the preferences dialog you can see the four buttons
+\keys{Cancel}, \keys{Defaults}, \keys{Apply}, and \keys{OK} as this is displayed in
+\vrefrange{fig:Basic_configuration}{fig:LaTeX_Options}.
+The \keys{Cancel} button has the same effect as a click at the close button on the
+top of the window or hitting the \keys{\escwin} key: all of your changes will be
+disregarded and the window will be closed.
+The \keys{Defaults} button restores the standard settings of SBMLsqueezer.
+With \keys{Apply} you can persistently save your current settings.
+The \keys{OK} button is a combination of \keys{Apply} and close, i.e., it makes your
+settings persistent and closes the window.
+Hitting the \keys{\return} key has the same effect as clicking at the \keys{OK} button.
+Note that the dialog is structured with multiple tabs. When clicking at
+\keys{Defaults} the preferences in all tabs will be restored, even if those are not
+active at the time when you hit that button.
+
 \subsection{View the results}
 \subsection{Equation generation one by one}
 \begin{figure}[htbp]
@@ -331,7 +561,7 @@ Here SBMLsqueezer analyzes the current reaction according to various properties
 and displays a selection of suitable rate laws that, of which you can select
 the most appropriate one. The equation preview, where you can zoom in and out
 of the rendered formula, helps you to choose a rate law. If a corresponding
-\SBO entry can be found for a rate law, a tooltip will be displayed with further
+\SBO entry can be found for a rate law, a tool-tip will be displayed with further
 information about this equation.
 You can also decide if the reversibility of the reaction should be changed.
 This would also alter the list of applicable kinetic equations.
@@ -340,7 +570,7 @@ parameters should be locally attached to the kinetic law object or globally to
 the model influences the internal structure of the model, but not its behavior.
 Just note, that there are some parameters, which cannot be stored locally because
 they represent recurrent properties of some reactive species and are needed
-accross several rate laws (e.g., energy constants).}
+across several rate laws (e.g., energy constants).}
 \label{fig:RateLawDialog}
 \end{figure}
 
@@ -348,13 +578,13 @@ accross several rate laws (e.g., energy constants).}
 \begin{figure}[htbp]
 \shadowimage[width=\textwidth]{Screenshot_4}
 \caption{Generating kinetic equations in one single step with the kinetic law wizard.
-This screenshot shows the Kinetic Law Wizard (here shown with the user interface
+This screen-shot shows the Kinetic Law Wizard (here shown with the user interface
 under \MacOSX). When launched either via the tool bar by clicking at the lemon
 icon or the menu bar in the menu (Edit | Squeeze), this wizard allows you to
 generate kinetic equations for all reactions in the active model. Various options
 allow you to customize how this is done. The most important options can be used
 to decide if already existing rate laws should either be kept or overwritten,
-if all reactions can be modeled in a reversible maner or as currently
+if all reactions can be modeled in a reversible manner or as currently
 defined in the model.}
 \label{fig:KineticLawWizard}
 \end{figure}
@@ -365,55 +595,67 @@ defined in the model.}
 \section{\emph{De-novo} creation of kinetic equations}
 \subsection{For an entire network}
 \subsection{For selected reactions}
-\section{Extraction of rate laws from \SABIO}
+\section{Extraction of rate laws from SABIO-RK}
 
-Note that this feature does not apply for \CellDesigner plugin, because \CellDesigner brings already with it its own \SABIO interface.
+Note that this feature does not apply for \CellDesigner plug-in,
+because \CellDesigner brings already with it its own \SABIO interface.
 
 \subsection{For an entire network}
-Please note: The reactions you want to equip with kinetic equations should be annotated with KEGG reaction ids.
+Please note: The reactions you want to equip with kinetic equations should be annotated with \KEGG reaction ids.
 
 \begin{figure}[htbp]
 \shadowimage[width=\textwidth]{SABIO_automatic_1}
-\caption{Starting the SABIO application. You have to click on the \SABIO symbol and the wizard will be started.}
+\caption{Starting the \SABIO application.
+You have to click on the \SABIO symbol and the wizard will be started.}
 \label{fig:startAutomatic}
 \end{figure}
 
 \begin{figure}[htbp]
 \shadowimage[width=\textwidth]{SABIO_automatic_2}
-\caption{Selection of reation.On the first window you can select the reactions you want to equip with kinetic equations from \SABIO. 
-Press Ctrl while clicking on these reactions and click on NEXT when finished.}
+\caption{Selection of reaction.
+On the first window you can select the reactions you want to equip with kinetic equations from \SABIO. 
+Press CTRL%\keys{\ctrl}
+while clicking on these reactions and click on \keys{Next} when finished.}
 \label{fig:selectReations}
 \end{figure}
 
 \begin{figure}[htbp]
 \shadowimage[width=\textwidth]{SABIO_automatic_5}
-\caption{Selection of search terms. On the next window you can add search terms that should apply for the rate equations of all reactions 
-such as the organism by choosing from the provided terms and typing in the value of the term. The KEGG id of a reaction is always included 
-in the respective search, as the API searches for rate equations for several reactions simultaneously. Your search can be further restricted
-by changing the bounds of pH, temperature, etc. in the right panel.}
+\caption{Selection of search terms. On the next window you can add search terms
+that should apply for the rate equations of all reactions such as the organism
+by choosing from the provided terms and typing in the value of the term.
+The \KEGG id of a reaction is always included in the respective search,
+because the \API simultaneously searches for rate equations for several reactions.
+Your search can be further restricted by changing the bounds of pH, temperature,
+etc. in the right panel.}
 \label{fig:searchTerms}
 \end{figure}
 
 \begin{figure}[htbp]
 \shadowimage[width=\textwidth]{SABIO_automatic_6}
-\caption{Removal of search terms. You can remove a query field again by clicking on DELETE.}
+\caption{Removal of search terms.
+You can remove a query field again by clicking on \keys{Delete}.}
 \label{fig:removeSearchTerms}
 \end{figure}
 
 \begin{figure}[htbp]
 \shadowimage[width=\textwidth]{SABIO_automatic_8}
-\caption{Window with found kinetic equations. On the following window you see for which reactions matching entries have been found.
-A reaction is marked in green, if a matching rate equation has been found, yellow, if the found rate equations do not fit exactly to your 
-model, and red, if no matching rate equation has been found. If you are satisfied with the results, you can click on NEXT.}
+\caption{Window with found kinetic equations.
+On the following window you see for which reactions matching entries have been found.
+A reaction is marked in green, if a matching rate equation has been found, yellow,
+if the found rate equations do not fit exactly to your model, and \textcolor{red}{red}, if no matching
+rate equation has been found. If you are satisfied with the results, you can click on \keys{Next}.}
 \label{fig:foundEquations}
 \end{figure}
 
 
 \begin{figure}[htbp]
 \shadowimage[width=\textwidth]{SABIO_automatic_9}
-\caption{Summary of necessary changes. A summary of all necessary changes to the model for adding rate equations to the reactions 
-marked in green, is displayed.If you now click on FINISH and confirm the changes afterwards, the rate equations will be added and 
-the necessary changes will be applied to your model.}
+\caption{Summary of necessary changes.
+A summary of all necessary changes to the model for adding rate equations to the
+reactions marked in green, is displayed.
+If you now click on \keys{Finish} and confirm the changes afterwards, the rate
+equations will be added and the necessary changes will be applied to your model.}
 \label{fig:changes}
 \end{figure}
 
@@ -423,44 +665,51 @@ the necessary changes will be applied to your model.}
 \subsection{For selected reations}
 \begin{figure}[htbp]
 \shadowimage[width=\textwidth]{SABIO_manual_1}
-\caption{Starting the SABIO application for a selected reaction. Select a reaction and right-click on it. Then click on the \SABIO symbol 
-and the wizard will be started. The reaction is shown again in the first window and you can just click on NEXT.}
+\caption{Starting the \SABIO application for a selected reaction.
+Select a reaction and right-click on it.
+Then click on the \SABIO symbol and the wizard will be started.
+The reaction is shown again in the first window and you can just click on \keys{Next}.}
 \label{fig:startManual}
 \end{figure}
-
 \begin{figure}[htbp]
 \shadowimage[width=\textwidth]{SABIO_manual_3}
-\caption{Selection of search terms. You can add search tearms such as the organism by choosing from the provided terms and typing in 
-the value of the term. The search can be further restricted by changing the bounds of pH, temperature, etc. in the right panel. 
-You can remove a query field by clicking on DELETE (like when adding kinetic laws to several reactions simultaneously).}
+\caption{Selection of search terms.
+You can add search terms such as the organism by choosing from the provided terms and
+typing in the value of the term. The search can be further restricted by changing the
+bounds of pH, temperature, etc. in the right panel. 
+You can remove a query field by clicking on \keys{Delete}
+(just as when adding kinetic laws to several reactions simultaneously).}
 \label{fig:searchTermsManual}
 \end{figure}
-
 \begin{figure}[htbp]
 \shadowimage[width=\textwidth]{SABIO_manual_7}
-\caption{Window with two search terms. Here a search for an organism and an enzymename has been specified and will be combined to a query when clicking on NEXT.}
+\caption{Window with two search terms.
+Here a search for an organism and an enzyme name has been specified and will be
+combined to a query when clicking on \keys{Next}.}
 \label{fig:searchTermsQuery}
 \end{figure}
-
 \begin{figure}[htbp]
 \shadowimage[width=\textwidth]{SABIO_manual_8}
-\caption{Window with found kinetic equations. The rate equations that match your search criteria are displayed here.
-You can select a reaction and click on NEXT or you can click on BACK and change your search criteria.}
+\caption{Window with found kinetic equations.
+The rate equations that match your search criteria are displayed here.
+You can select a reaction and click on \keys{Next} or you can click on \keys{Back}
+and change your search criteria.}
 \label{fig:foundEquationsManual}
 \end{figure}
-
 \begin{figure}[htbp]
 \shadowimage[width=\textwidth]{SABIO_manual_9}
-\caption{Window for matching elements in the equation to model elements. You can choose how to match the species, compartments, etc., contained in the selected rate 
-equation to the respective \SBML elements in your model. The necessary elements to import, such as function definitions contained in the rate equation to add, are also shown.}
+\caption{Window for matching elements in the equation to model elements.
+You can choose how to match the species, compartments, etc., contained in the selected rate 
+equation to the respective \SBML elements in your model. The necessary elements to import,
+such as function definitions contained in the rate equation to add, are also shown.}
 \label{fig:matching}
 \end{figure}
-
 \begin{figure}[htbp]
 \shadowimage[width=\textwidth]{SABIO_manual_10}
-\caption{Summary of necessary changes. A summary of all necessary changes to the model for adding the selected rate equation is displayed.
-Now click on FINISH and confirm the changes afterwards. Then the rate equation will be added and the necessary changes will be applied to your model.
-}
+\caption{Summary of necessary changes.
+A summary of all necessary changes to the model for adding the selected rate equation is displayed.
+Now click on \keys{Finish} and confirm the changes afterwards. Then the rate equation will be
+added and the necessary changes will be applied to your model.}
 \label{fig:changesManual}
 \end{figure}
 
@@ -472,12 +721,12 @@ Now click on FINISH and confirm the changes afterwards. Then the rate equation w
 
 All functions of the program SBMLsqueezer are also available as command-line
 arguments. SBMLsqueezer is therefore fully functional even if you do not use
-its graphical user interface.
+its \GUI.
 This can be useful if you like to generate kinetic equations, units, and
 parameter objects for a large number of \SBML files in a loop or in a more
 complex schedule.
 To benefit from this functionality, just open a command line window on your
-\OS, e.g., excecute the \texttt{cmd.exe} in \Windows or open a terminal window
+\OS, e.g., execute the \file{cmd.exe} in \Windows or open a terminal window
 in \Unix (incl. \Linux and \MacOSX).
 
 It should also be noted that the command line options impact the graphical user
@@ -485,21 +734,21 @@ interface. It is hence possible to use command-line options in order to launch
 SBMLsqueezer with a pre-defined configuration.
 
 \section{Program usage}
-
+\label{sec:Program_usage}
 To launch the program from the command line, type
 \begin{lstlisting}[language=bash,numbers=none]
 java -jar SBMLsqueezer_v2.0.jar org.sbml.squeezer.SBMLsqueezer [options]
 \end{lstlisting}
-Under \Windows, you might use the command \texttt{javaw} instead of
+Under \Windows, you might use the command \file{javaw} instead of
 \texttt{java}. Note that for future versions of SBMLsqueezer the name of the
 \JAR could change, because it includes the version number.
 Use the following program parameters to lists all available options of
 SBMLsqueezer: \texttt{--help, -?}.
-The subsequent sections describ all available options of SBMLsqueezer
+The subsequent sections describe all available options of SBMLsqueezer
 version~2.0. 
 
 \section{Input/output options}
-
+\label{sec:IO_options}
 \begin{description}
 \item[--sbml-in-file{[} |={]}<File>]
   Specifies the \SBML input file.
@@ -517,10 +766,11 @@ version~2.0.
 \end{description}
 
 \section{Basic configuration}
+\label{sec:Basic_configuration}
 With the options introduced in this section, you can specify which assumptions
 SBMLsqueezer should make when values or information are missing, i.e., if the 
 model is lacking more information than just kinetic equations. You can also
-specify how to interprete the model and when error messages should be displayed.
+specify how to interpret the model and when error messages should be displayed.
 
 \subsection{General Options}
 The behavior of SBMLsqueezer can be specified by the following options, for
@@ -576,9 +826,9 @@ certain circumstances.
   If \texttt{true} (default), \SBML warnings are displayed. These warnings are
   mainly the result of a syntactical model check and do not give much
   information about the semantic correctness of your model.
-  Since the SBML library performs this check, SBMLsqueezer cannot influence the
+  Since the \SBML library performs this check, SBMLsqueezer cannot influence the
   content of the syntax check Note that this option only works properly if you
-  use \libSBML as your \SBML backend, because \JSBML does not provide a full
+  use \libSBML as your \SBML back-end, because \JSBML does not provide a full
   validity check for \SBML models.
   Default value: \texttt{true}
 
@@ -601,7 +851,7 @@ account when creating rate equations.
   A simultaneous collision of a high number of reactants just by
   chance is very unlikely. Usually, these reactions proceed in
   a sequence of separate steps, each involving only very few molecules.
-  Here you can specifiy the maximal number of reactants so that
+  Here you can specify the maximal number of reactants so that
   the reaction is still considered plausible. By default this
   value is set to three. Note that this option is only available if
   you decide that this kind of warning should be displayed.
@@ -647,7 +897,7 @@ account when creating rate equations.
   given compound identifiers when creating rate laws for reactions
   that involve these species. For instance, water or single protons
   can often be ignored when creating rate equations, hence simplifying
-  the resulting rate equations. Preselected are the KEGG compound
+  the resulting rate equations. Preselected are the \KEGG compound
   identifiers for several ions and small molecules, including water and
   protons. See \vref{tab:MIRIAMignoreList} for details.
   Default value: \texttt{C00001,} \texttt{C00038,} \texttt{C00070,}
@@ -664,8 +914,8 @@ of species SBMLsqueezer should interprete as an enzyme when acting as a
 catalytic modifier of a reaction.
 \begin{description}
 \item[--possible-enzyme-antisense-rna{[} |={]}<Boolean>]
-  If \texttt{true}, antisense \RNA molecules are treated as enzymes when
-  catalyzing a reaction. If \texttt{false} (default) antisense \RNA molecule
+  If \texttt{true}, anti-sense \RNA molecules are treated as enzymes when
+  catalyzing a reaction. If \texttt{false} (default) anti-sense \RNA molecule
   catalyzed reactions are not considered to be enzyme-catalyzed
   reactions.
   Default value: \texttt{false}
@@ -685,7 +935,7 @@ catalytic modifier of a reaction.
 \item[--possible-enzyme-macromolecule{[} |={]}<Boolean>]
   If this options is selected, species that are annotated as macromolecules
   are treated as enzymes when catalyzing a reaction. Otherwise,
-  macormolecule-catalyzed reactions are not considered enzyme
+  macromolecule-catalyzed reactions are not considered enzyme
   reactions. If a modifier of a reaction that is annotated as
   an enzymatic catalyst refers to a macromolecule but this option
   is not active, SBMLsqueezer will reduce the modifier to a simple
@@ -754,7 +1004,7 @@ into the generated rate laws. Here you can specify how to do that.
 \end{description}
 
 \section{Rate law selection}
-
+\label{sec:Rate_law_selection}
 The options in this group allow you to define the rate laws with highest
 priority when generating kinetic equations in one single step for an entire
 network.
@@ -786,7 +1036,7 @@ Use either one of both.
   Default value: \texttt{false}
 
 \item[--treat-reactions-reversible-as-given{[} |={]}<Boolean>]
-  If checked, the information about reversiblity will be left unchanged.
+  If checked, the information about reversibility will be left unchanged.
   Default value: \texttt{true}
 \end{description}
 
@@ -801,12 +1051,12 @@ Use either one of both.
   \begin{itemize}
   \item\texttt{org.sbml.squeezer.kinetics.AdditiveModelLinear} (linear additive model, general form),
   \item\texttt{org.sbml.squeezer.kinetics.AdditiveModelNonLinear} (non-linear additive model, general form),
-  \item\texttt{org.sbml.squeezer.kinetics.NetGeneratorLinear} (linear additive model, NetGenerator form),
+  \item\texttt{org.sbml.squeezer.kinetics.NetGeneratorLinear} (linear additive model, \NetGenerator form),
   \item\texttt{org.sbml.squeezer.kinetics.HillEquation} (generalized Hill equation),
   \item\texttt{org.sbml.squeezer.kinetics.HillHinzeEquation} (Hill-Hinze equation), 
   \item\texttt{org.sbml.squeezer.kinetics.HillRaddeEquation} (Hill-Radde equation),
   \item\texttt{org.sbml.squeezer.kinetics.HSystem} (H-system equation by \citealp{Spieth2006}),
-  \item\texttt{org.sbml.squeezer.kinetics.NetGeneratorNonLinear} (non-linear additive model, NetGenerator form),
+  \item\texttt{org.sbml.squeezer.kinetics.NetGeneratorNonLinear} (non-linear additive model, \NetGenerator form),
   \item\texttt{org.sbml.squeezer.kinetics.SSystem} (S-System-based kinetic),
   \item\texttt{org.sbml.squeezer.kinetics.Vohradsky} (Non-linear additive model by \citealp*{Vu2007}), and
   \item\texttt{org.sbml.squeezer.kinetics.Weaver} (non-linear additive model by \citealp{Weaver1999}).
@@ -822,8 +1072,8 @@ Use either one of both.
   \item\texttt{org.sbml.squeezer.kinetics.HillHinzeEquation} (Hill-Hinze equation), 
   \item\texttt{org.sbml.squeezer.kinetics.HillRaddeEquation} (Hill-Radde equation),
   \item\texttt{org.sbml.squeezer.kinetics.HSystem} (H-system equation by \citealp{Spieth2006}),
-  \item\texttt{org.sbml.squeezer.kinetics.NetGeneratorLinear} (linear additive model, NetGenerator form),
-  \item\texttt{org.sbml.squeezer.kinetics.NetGeneratorNonLinear} (non-linear additive model, NetGenerator form),
+  \item\texttt{org.sbml.squeezer.kinetics.NetGeneratorLinear} (linear additive model, \NetGenerator form),
+  \item\texttt{org.sbml.squeezer.kinetics.NetGeneratorNonLinear} (non-linear additive model, \NetGenerator form),
   \item\texttt{org.sbml.squeezer.kinetics.SSystem} (S-System-based kinetic),
   \item\texttt{org.sbml.squeezer.kinetics.Vohradsky} (Non-linear additive model by \citealp*{Vu2007}),
   \item\texttt{org.sbml.squeezer.kinetics.Weaver} (non-linear additive model by \citealp{Weaver1999}),
@@ -841,8 +1091,8 @@ Use either one of both.
   \item\texttt{org.sbml.squeezer.kinetics.HillHinzeEquation} (Hill-Hinze equation),
   \item\texttt{org.sbml.squeezer.kinetics.HillRaddeEquation} (Hill-Radde equation),
   \item\texttt{org.sbml.squeezer.kinetics.HSystem} (Hill-Radde equation),
-  \item\texttt{org.sbml.squeezer.kinetics.NetGeneratorLinear} (linear additive model, NetGenerator form),
-  \item\texttt{org.sbml.squeezer.kinetics.NetGeneratorNonLinear} (non-linear additive model, NetGenerator form),
+  \item\texttt{org.sbml.squeezer.kinetics.NetGeneratorLinear} (linear additive model, \NetGenerator form),
+  \item\texttt{org.sbml.squeezer.kinetics.NetGeneratorNonLinear} (non-linear additive model, \NetGenerator form),
   \item\texttt{org.sbml.squeezer.kinetics.SSystem} (S-System-based kinetic),
   \item\texttt{org.sbml.squeezer.kinetics.Vohradsky} (Non-linear additive model by \citealp*{Vu2007}),
   \item\texttt{org.sbml.squeezer.kinetics.Weaver} (non-linear additive model by \citealp{Weaver1999}),
@@ -926,7 +1176,7 @@ Use either one of both.
   Default value: \texttt{org.sbml.squeezer.kinetics.RandomOrderMechanism}
 
 \item[--kinetics-reversible-arbitrary-enzyme-reactions{[} |={]}<Class>]
-  Arbitrary reversible enzyme reactions
+  Arbitrary reversible enzyme reactions.
   All possible values for type \texttt{<Class>} are:
   \begin{itemize}
   \item\texttt{org.sbml.squeezer.kinetics.CommonModularRateLaw} (common modular rate law, CM),
@@ -1004,11 +1254,34 @@ Use either one of both.
   \texttt{org.sbml.squeezer.kinetics.IrrevNonModulatedNonInteractingEnzymes}
 \end{description}
 
-\section{\SABIO search preferences}
+\section{SABIO-RK search options}
+\label{sec:SABIO_search_options}
 
 For querying the content of the \SABIO database for experimentally determined
 kinetic equations, SBMLsqueezer provides a large set of options in order to
 customize your search.
+
+\subsection{General options}
+
+With these options you can define key options to restrict the results of
+your search for reaction kinetics in \SABIO.
+\begin{description}
+\item[--pathway{[} |={]}<String>]
+  Define the pathway for which the kinetics are to be determined.
+
+\item[--tissue{[} |={]}<String>]
+  Define the tissue for which the kinetics are to be determined.
+
+\item[--cellular-location{[} |={]}<String>]
+  Define the cellular location for which the kinetics are to be
+  determined.
+
+\item[--organism{[} |={]}<String>]
+  Define the organism for which the kinetics are to be determined.
+\end{description}
+
+\section{SABIO-RK search preferences}
+\label{sec:SABIO_search_preferences}
 
 \subsection{General properties}
 \begin{description}
@@ -1044,12 +1317,12 @@ customize your search.
 \subsection{Temperature}
 \begin{description}
 \item[--lowest-temperature-value{[} |={]}<Double>]
-  The lowest possible temperature for entries (in $^\circ$C).
-  Arguments must fit into the range {[-271.15, 1000]}.
+  The lowest possible temperature for entries (in \textcelsius).
+  Arguments must fit into the range {[}-271.15, 1000{]}.
   Default value: \texttt{-10.0}
 
 \item[--highest-temperature-value{[} |={]}<Double>]
-  The highest possible temperature for entries (in $^\circ$C).
+  The highest possible temperature for entries (in \textcelsius).
   Arguments must fit into the range {[}-271.15, 1000{]}.
   Default value: \texttt{115.0}
 \end{description}
@@ -1075,24 +1348,8 @@ customize your search.
   Default value: \texttt{Wed Oct 15 00:00:00 PDT 2008}
 \end{description}
 
-\section{\SABIO search options}
-\subsection{General options}
-\begin{description}
-\item[--pathway{[} |={]}<String>]
-  Define the pathway for which the kinetics are to be determined.
 
-\item[--tissue{[} |={]}<String>]
-  Define the tissue for which the kinetics are to be determined.
-
-\item[--cellular-location{[} |={]}<String>]
-  Define the cellular location for which the kinetics are to be
-  determined.
-
-\item[--organism{[} |={]}<String>]
-  Define the organism for which the kinetics are to be determined.
-\end{description}
-
-\section{Options for the graphical user interface}
+\section{Options for the \GUI}
 
 The options in this group allow you to influence the behavior of the graphical
 user interface. This means that you can directly launch SBMLsqueezer with your
@@ -1129,6 +1386,7 @@ preferred configuration.
 \end{description}
 
 \section{LaTeX Options}
+\label{sec:LaTeX_Options}
 
 The program SBMLsqueezer brings with it a full version of the latest development
 release of \SBMLLaTeX. Hence, all options provided by this report generator for
@@ -1425,6 +1683,7 @@ biochemical reactions from relevant text books
 \citep{Segel1993, Heinrich1996, Bisswanger2000, Cornish-Bowden2004}.
 Here, we give a short overview of all equations that are currently implemented
 in SBMLsqueezer, ordered by the categories metabolic or gene-regulatory.
+For a detailed description of all rate laws, see \citealp{Draeger2011a}.
 However, the actual algorithm that suggests applicable rate laws is more complex
 and considers several features of the reaction.
 It can therefore happen that SBMLsqueezer suggests multiple different rate
@@ -1469,12 +1728,12 @@ equations for the same reaction.
   \item Linear additive network models
     \begin{itemize}
       \item General form
-      \item NetGenerator form \citep{Toepfer2007}
+      \item \NetGenerator form \citep{Toepfer2007}
     \end{itemize}
   \item Non-linear additive network models
     \begin{itemize}
       \item General form
-      \item NetGenerator form \citep{Toepfer2007}
+      \item \NetGenerator form \citep{Toepfer2007}
       \item Vohradsk{\'y}'s equation \citep{Vu2007}
       \item Weaver's equation \citep{Weaver1999}
     \end{itemize}
@@ -1484,14 +1743,14 @@ equations for the same reaction.
 
 \begin{table}[htb]
 \centering
-\caption[KEGG identifiers of small molecules and ions]{KEGG identifiers of
+\caption[\KEGG identifiers of small molecules and ions]{\KEGG identifiers of
 small molecules and ions. This table gives the default list of all small
 molecules and ions that are ignored by SBMLsqueezer when creating kinetic
 equations. This list was created according to \citet{Blum2009}.}
 \label{tab:MIRIAMignoreList}
 \begin{tabular}{lll}
 \toprule
-Chemical formula & Common name & KEGG identifier \\
+Chemical formula & Common name & \KEGG identifier \\
 \midrule
 \ce{H2O} & Water &
 \href{http://identifiers.org/kegg.compound/C00001}{\texttt{C00001}}\\

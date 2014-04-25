@@ -33,7 +33,6 @@ import jp.sbi.celldesigner.plugin.PluginModel;
 import org.sbml.jsbml.SBO;
 import org.sbml.jsbml.celldesigner.AbstractCellDesignerPlugin;
 import org.sbml.jsbml.celldesigner.PluginSBMLReader;
-import org.sbml.jsbml.celldesigner.PluginSBMLWriter;
 import org.sbml.squeezer.SBMLsqueezer;
 import org.sbml.squeezer.gui.SBMLsqueezerUI;
 
@@ -72,15 +71,11 @@ public class Plugin extends AbstractCellDesignerPlugin {
   public Plugin() {
     super();
     try {
-      
-      // Initialize CellDesigner/JSBML communication interface
-      PluginSBMLReader reader = new PluginSBMLReader(
-        SBO.getPossibleEnzymes(SBMLsqueezer.getPossibleEnzymeTypes()));
-      PluginSBMLWriter writer = new PluginSBMLWriter(this);
-      
       // Launch SBMLsqueezer
       SBMLsqueezer.setSABIORKEnabled(false);
-      sbmlSqueezer = new SBMLsqueezer<PluginModel>(reader, writer);
+      PluginSBMLReader reader = getReader();
+      reader.setPossibleEnzymes(SBO.getPossibleEnzymes(SBMLsqueezer.getPossibleEnzymeTypes()));
+      sbmlSqueezer = new SBMLsqueezer<PluginModel>(reader, getWriter());
       sbmlSqueezer.checkForUpdate();
       
       // Initializing all necessary SysBio and SBMLsqueezer images

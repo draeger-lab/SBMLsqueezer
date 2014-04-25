@@ -70,17 +70,17 @@
   <entry key="IGNORE_THESE_SPECIES_WHEN_CREATING_LAWS_TOOLTIP">Allows the user to ignore species that are annotated with the given compound identifiers when creating rate laws for reactions that involve these species. For instance, water or single protons can often be ignored when creating rate equations, hence simplifying the resulting rate equations. Preselected are the KEGG compound identifiers for several ions and small molecules, including water and protons.</entry>
 
   <entry key="MAX_NUMBER_OF_REACTANTS">Maximum number of reactants</entry>
-  <entry key="MAX_NUMBER_OF_REACTANTS_TOOLTIP">A simultaneous collision of a high number of reactants just by chance is very unlikely. Usually, these reactions proceed in a sequence of separate steps, each involving only very few molecules. Here you can specifiy the maximal number of reactants so that the reaction is still considered plausible. By default this value is set to 3. Note that this option is only available if you decide that this kind of warning should be displayed.</entry>
+  <entry key="MAX_NUMBER_OF_REACTANTS_TOOLTIP">A simultaneous collision of a high number of reactants just by chance is very unlikely. Usually, these reactions proceed in a sequence of separate steps, each involving only very few molecules. Here you can specify the maximal number of reactants so that the reaction is still considered plausible. By default this value is set to 3. Note that this option is only available if you decide that this kind of warning should be displayed.</entry>
   <entry key="NEW_PARAMETERS_GLOBAL">Add all new parameters globally</entry>
   <entry key="NEW_PARAMETERS_GLOBAL_TOOLTIP">If true (default), all parameters are stored globally for the whole model. Otherwise the majority of parameters is stored locally for the respective kinetic equation they belong to. Note that some parameters represent global properties of the entire model and should therefore be always stored in the global list of prameters. In this way, these parameters are valid within the entire model.</entry>
   <entry key="POSSIBLE_ENZYME_ANTISENSE_RNA">asRNA</entry>
-  <entry key="POSSIBLE_ENZYME_ANTISENSE_RNA_TOOLTIP">If true, antisense RNA molecules are treated as enzymes when catalyzing a reaction. If false (default) antisense RNA molecule catalyzed reactions are not considered to be enzyme-catalyzed reactions.</entry>
+  <entry key="POSSIBLE_ENZYME_ANTISENSE_RNA_TOOLTIP">If true, anti-sense RNA molecules are treated as enzymes when catalyzing a reaction. If false (default) anti-sense RNA molecule catalyzed reactions are not considered to be enzyme-catalyzed reactions.</entry>
   <entry key="POSSIBLE_ENZYME_COMPLEX">Complex</entry>
   <entry key="POSSIBLE_ENZYME_COMPLEX_TOOLTIP">If checked (default), complex molecules are treated as enzymes when catalyzing a reaction. Otherwise, complex-catalyzed reactions are not considered to be enzyme reactions.</entry>
   <entry key="POSSIBLE_ENZYME_GENERIC">Generic protein</entry>
   <entry key="POSSIBLE_ENZYME_GENERIC_TOOLTIP">If true (default), generic proteins are treated as enzymes when catalyzing a reaction. Otherwise, generic protein-catalyzed reactions are not considered to be enzyme reactions.</entry>
   <entry key="POSSIBLE_ENZYME_MACROMOLECULE">Macromolecule</entry>
-  <entry key="POSSIBLE_ENZYME_MACROMOLECULE_TOOLTIP">If this options is selected, species that are annotated as macromolecules are treated as enzymes when catalyzing a reaction. Otherwise, macormolecule-catalyzed reactions are not considered enzyme reactions. If a modifier of a reaction that is annotated as an enzymatic catalyst refers to a macromolecule but this option is not active, SBMLsqueezer will reduce the modifier to a simple catalyst.</entry>
+  <entry key="POSSIBLE_ENZYME_MACROMOLECULE_TOOLTIP">If this options is selected, species that are annotated as macromolecules are treated as enzymes when catalyzing a reaction. Otherwise, macromolecule-catalyzed reactions are not considered enzyme reactions. If a modifier of a reaction that is annotated as an enzymatic catalyst refers to a macromolecule but this option is not active, SBMLsqueezer will reduce the modifier to a simple catalyst.</entry>
   <entry key="POSSIBLE_ENZYME_RECEPTOR">Receptor</entry>
   <entry key="POSSIBLE_ENZYME_RECEPTOR_TOOLTIP">If true, receptors are treated as enzymes when catalyzing a reaction. If false (default), receptor-catalyzed reactions are not considered to be enzyme reactions.</entry>
   <entry key="POSSIBLE_ENZYME_RNA">RNA</entry>
@@ -122,7 +122,7 @@
   <entry key="TREAT_ALL_REACTIONS_REVERSIBLE">Model all reactions in a reversible manner</entry>
   <entry key="TREAT_ALL_REACTIONS_REVERSIBLE_TOOLTIP">If true, all reactions are set to reversible before creating new kinetic equations. Otherwise the information given by the SBML file will be left unchanged.</entry>
   <entry key="TREAT_REACTIONS_REVERSIBLE_AS_GIVEN">Use information from SBML</entry>
-  <entry key="TREAT_REACTIONS_REVERSIBLE_AS_GIVEN_TOOLTIP">If checked, the information about reversiblity will be left unchanged.</entry>
+  <entry key="TREAT_REACTIONS_REVERSIBLE_AS_GIVEN_TOOLTIP">If checked, the information about reversibility will be left unchanged.</entry>
   <entry key="TYPE_STANDARD_VERSION">Choose version of modular rate laws</entry>
   <entry key="TYPE_STANDARD_VERSION_TOOLTIP">This option declares the version of the modular rate laws and can attain the three different values cat, hal and weg as described in the publications of Liebermeister et al. 2010. This option can only be accessed if all reactions are modeled reversibly.</entry>
 
