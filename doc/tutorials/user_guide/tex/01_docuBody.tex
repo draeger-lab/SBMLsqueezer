@@ -4,7 +4,8 @@
 The program SBMLsqueezer is a versatile tool for the assembly and assignment of
 complex kinetic equations of reactions and processes in biochemical networks
 \citep{Draeger2008, Draeger2010a, Draeger2011a}.
-A list of currently implemented rate laws can be found in \vref{chap:RateLaws}.
+A list of currently implemented rate laws that can be used for the \emph{de-novo}
+creation of kinetic laws can be found in \vref{chap:RateLaws}.
 
 The data format understood by SBMLsqueezer is the
 \SBML\footnote{\url{http://sbml.org}} in all of its levels and
@@ -12,10 +13,10 @@ versions \citep{Hucka2001, Hucka2003, M.Hucka03012003, Hucka2007, Hucka2008,
 Hucka2010a, Finney2003, Finney2006}.
 When using \SBML Level~1 (not recommended), all generated equations are stored
 in form of infix formula strings. For all other versions of \SBML, the generated
-equations are stored in form of MathML \citep{Buswell1999} expressions.
+equations are stored in form of \MathML \citep{Buswell1999} expressions.
 
 Kinetic equations contain a set of parameters, whose units must be derived to
-ensure that the overal equation can be interpreted in units of the extent of the
+ensure that the overall equation can be interpreted in units of the extent of the
 respective reaction per time units.
 To give an example for the most common scenario, you can assume that the units
 of the rate law will simplify to a substance unit per time unit, for instance,
@@ -23,11 +24,15 @@ mole per second.
 Other constellations, however, are possible, too.
 When using SBMLsqueezer you do not have to care much about units because the
 program does this for you.
+Since Level~3, the \MathML subset understood by \SBML has been extended and also supports
+units for actual numbers (integers or real values, which are not parameter values in this sense).
+When using a model in this more recent format, SBMLsqueezer will also assign units
+to numbers if these occur in equations.
+
 The program also annotates all created equations and parameters with appropriate
-terms from the \SBO\footnote{\url{http://www.ebi.ac.uk/sbo/main/}} and also
+terms from the \SBO\footnote{\url{http://www.ebi.ac.uk/sbo/main/}} (\acl{SBO}) and also
 with \MIRIAM-compliant\footnote{\url{http://co.mbine.org/standards/miriam}}
-controlled vocabulary terms (Minimal Information Required In the Annotation of
-Models), where appropriate \citep{Le2005, Novere2006b, Laible2007, Courtot2011}.
+controlled vocabulary terms (\acl{MIRIAM}), where appropriate \citep{Le2005, Novere2006b, Laible2007, Courtot2011}.
 
 The selection of the kinetic equations is done automatically by the program,
 where several settings allow users to influence the algorithm's choice.
@@ -44,14 +49,14 @@ reactions from a larger model and equip these with kinetic equations, or rate
 equations can be created in one go for the entire model.
 Thereby, already existing equations can either be kept or overwritten, depending
 on your choice.
-You can influence and change all choices of the program, even in the one-go-mode.
+You can influence and change all choices of the program, even in the single-step-mode.
 
 If you are connected to the internet, you can also use SBMLsqueezer to extract
 experimentally determined kinetic equations from the rate law database \SABIO
 \citep{Wittig2006, Rojas2007, Krebs2007, Wittig2012}.
 To this end, SBMLsqueezer provides several settings, such as the organism,
 temperature, or pH value under which the reaction's rate was determined. Again,
-you can extract equations from \SABIO for an entire network in one go, or
+you can extract equations from \SABIO for an entire network in one single step, or
 individually select reactions of interest.
 
 The program itself can be customized and used in several ways. It remembers your
@@ -65,7 +70,7 @@ By default, the stand-alone version is based on the \JSBML backend
 matters.
 If you neither like to download SBMLsqueezer, nor to install any software on
 your local computer, you can even use SBMLsqueezer as a Galaxy-based
-web-service\footnote{Galaxy web-service available at \url{http://webservices.cs.uni-tuebingen.de}},
+web-service\footnote{Galaxy web-service available at \url{http://webservices.cs.uni-tuebingen.de}} \citet{Goecks2010},
 or launch it as a \JavaWebStart application directly from your web
 browser\footnote{You can use SBMLsqueezer as a \JavaWebStart application by
 clicking at \url{http://www.cogsys.cs.uni-tuebingen.de/software/SBMLsqueezer/downloads/SBMLsqueezer.jnlp}.}.
@@ -124,8 +129,7 @@ the mailing list,
 \chapter{Installation}
 
 To obtain a local copy of SBMLsqueezer, you can download it in form of a 
-\JAR from the website
-\url{http://www.cogsys.cs.uni-tuebingen.de/software/SBMLsqueezer/}.
+\JAR from the project's website\footnote{Project website of SBMLsqueezer: \url{http://www.cogsys.cs.uni-tuebingen.de/software/SBMLsqueezer/}}.
 
 In the most common scenario, you might want to launch the program as a
 stand-alone tool and access its \GUI. To do so,
@@ -148,7 +152,7 @@ SBMLsqueezer can be be used in multiple ways, depending on your preferences:
         for \SBML (see \vref{sec:StandAlone}).
   \item As a plug-in for \CellDesigner (see \vref{sec:CellDesignerInstall})
   \item As a gadget for \Garuda (see \vref{sec:GarudaInstall})
-  \item As an on-line program embedded in the Galaxy web-service environment
+  \item As an on-line program embedded in the Galaxy web-service environment \citet{Goecks2010}
   \item As a \JavaWebStart application
   \item As a rate law core in an end-user application via its \API
 \end{itemize}
@@ -174,7 +178,8 @@ SBMLsqueezer has successfully been tested with
 \begin{itemize}
   \item Microsoft \WindowsSeven Professional (64~bit),
   \item Microsoft \WindowsSeven Professional (SP1, 64~bit),
-  \item \MacOSX (versions 10.8.2 through 10.9.2), and \UbuntuLinux (version 12.04, 64~bit).
+  \item \MacOSX (versions 10.8.2 through 10.9.2), and
+  \item \UbuntuLinux (version 12.04, 64~bit).
 \end{itemize}
 See \vref{ch:faq} if you encounter any problems.
 
@@ -183,8 +188,8 @@ See \vref{ch:faq} if you encounter any problems.
 
 Besides what is explained above, no further requirements are necessary if you
 like to use SBMLsqueezer as a stand-alone application.
-The program SBMLsqueezer does not have to be installed in order to be execuded, 
-just copy the \JAR of SBMLsqueezer to your preferred path on your hard-disk
+The program SBMLsqueezer does not have to be installed in order to be executed.
+Just copy the \JAR of SBMLsqueezer to your preferred path on your hard-disk
 to launch the application.
 On \MacOSX, you may like to copy the \JAR into your
 %\directory{Macintosh\textvisiblespace HD/Applications/}
@@ -203,7 +208,7 @@ No special actions are necessary if you like to use \JSBML, because this is the
 default and \JSBML is already included in the \JAR that you have downloaded.
 
 \subsubsection{Launching SBMLsqueezer with \libSBML as back-end}
-
+\label{sec:UsingLibSBML}
 Follow the installation instructions of the \Java binding for \libSBML for your
 platform, which you can find at the website of
 \libSBML\footnote{\url{http://sbml.org/Software/libSBML}}.
@@ -213,15 +218,14 @@ binding.
 On the most \Unix and \Linux platforms, this variable is called
 \LDLIBRARYPATH.
 On \MacOSX, you should instead define the variable \DYLDLIBRARYPATH.
-Follow the instructions at
-\href{http://sbml.org/Software/libSBML/docs/cpp-api/libsbml-accessing.html#accessing-java}{\url{http://sbml.org/Software/libSBML/docs/cpp-api/libsbml-accessing.html}}
+Follow the instructions at libSBML's website\footnote{For information about how to execute a libSBML-based Java application, see the section about Java at \href{http://sbml.org/Software/libSBML/docs/cpp-api/libsbml-accessing.html}{\url{http://sbml.org/Software/libSBML/docs/cpp-api/libsbml-accessing.html}}} %#accessing-java
 before launching SBMLsqueezer.
 On Windows you should add the directory to the \PATH environment in the Control Panel.
 The following script can help you to to run SBMLsqueezer on your \Unix platform:
 \begin{lstlisting}[language=bash]
 VM_ARGS="-Xms32M -Xmx512M -Djava.library.path="
 
-# The following lines depend on your system's configuration; 
+# The following lines depend on your system's configuration;
 # so here is just an example:
 VM_ARGS="${VM_ARGS}\
 /usr/lib/jvm/java-6-sun/jre/lib/i386/client:\
@@ -244,39 +248,43 @@ java ${VM_ARGS} -cp ${CLASS_PATH} ${MAIN_CLASS} --try-loading-libsbml=true\
 \end{lstlisting}
 In the example above the arguments for the \JVM define an initial heap space of
 32~MB (\texttt{-Xms32M}) and a maximal heap size of 512~MB (\texttt{-Xmx512M}).
+For more information about the program usage from the command line see \vref{sec:Program_usage}.
 
 \subsection{Plug-in for \CellDesigner}
 \label{sec:CellDesignerInstall}
 
 If you like to use SBMLsqueezer as a plug-in for the popular graphical model
-editor \CellDesigner, you can do this by following these installation steps.
+editor \CellDesigner, you can do this by following four installation steps:
 \begin{enumerate}
-  \item Download and install \CellDesigner from \url{http://celldesigner.org}.
-  \item Depending on your \OS, \CellDesigner will be installed in different
-        folders. Locate, where your copy of \CellDesigner is installed. In
-        \Windows it is usually
-        %\directory{C:/Program\textvisiblespace Files/CellDesigner4.3}
-        \directory{C:/Program Files/CellDesigner4.3}, in
-        \Linux you might find it in \directory{/opt/CellDesigner4.3}, and in
-        \MacOSX \CellDesigner will be installed under
-        %\directory{Macintosh\textvisiblespace HD/Applications/CellDesigner4.3}
-        \directory{Macintosh HD/Applications/CellDesigner4.3}, where 4.3 is the version number
-        with which SBMLsqueezer 2.0 has been tested.
+  \item Download and install \CellDesigner from the project's website\footnote{\url{http://celldesigner.org}}.
+  \item Locate, where your copy of \CellDesigner is installed. 
   \item Open the \directory{plugin} folder in your installation of \CellDesigner and
         copy the file \file{SBMLsqueezer\_v2.0\_incl-libs.jar} into this folder.
   \item Open the \directory{lib} folder in your installation of \CellDesigner and
         replace the \JSBML \JAR that is redistributed by \CellDesigner with
-        the \JAR \href{http://www.cogsys.cs.uni-tuebingen.de/software/SBMLsqueezer/downloads/jsbml-1.0-a1-with-dependencies.jar}{\file{jsbml-1.0-a1-with-dependencies.jar}}
+        the \JAR \href{http://www.cogsys.cs.uni-tuebingen.de/software/SBMLsqueezer/downloads/jsbml-1.0-a1-with-dependencies.jar}{\url{jsbml-1.0-a1-with-dependencies.jar}}
         that you can download at \url{http://www.cogsys.cs.uni-tuebingen.de/software/SBMLsqueezer/downloads/}.
-        Make sure that the name of the new \JSBML file will be identical to the
-        name of the \JSBML file distributed with \CellDesigner. Otherwise, you
-        will have to change some start script of \CellDesigner. Even though this
-        is not difficult and can be done on each \OS, we prefer to avoid that
-        for the sake of simplicity. Alternatively, you can also download \JSBML
-        from the official sourceforge page. However, you must make sure that the
-        downloaded \JAR includes the package \directory{org.sbml.jsbml.celldesigner}.
-        Without this package, SBMLsqueezer cannot be launched in \CellDesigner.
 \end{enumerate}
+Some more information about this installation procedure:
+Depending on your \OS, \CellDesigner will be installed in different folders.
+In \Windows it is usually
+%\directory{C:/Program\textvisiblespace Files/CellDesigner4.3}
+\directory{C:/Program Files/CellDesigner4.3}.
+In \Linux you might find it in \directory{/opt/CellDesigner4.3}, and in \MacOSX \CellDesigner will be installed under
+%\directory{Macintosh\textvisiblespace HD/Applications/CellDesigner4.3}
+\directory{Macintosh HD/Applications/CellDesigner4.3}, where 4.3 is the version number with which SBMLsqueezer 2.0 has been tested.
+Note that the version numbers 4.3 and 2.0 of \CellDesigner and SBMLsqueezer might change in the future, but the procedure will remain the same.
+
+When replacing \CellDesigner's version of \JSBML with the one downloaded from SBMLsqueezer's homepage, 
+make sure that the name of the new \JSBML file will be identical to the name of the \JSBML file distributed with \CellDesigner.
+Otherwise, you will have to change some start script of \CellDesigner.
+Even though this is not difficult and can be done on each \OS, we prefer to avoid that for the sake of simplicity.
+Alternatively, you can also download \JSBML from the official sourceforge page.
+However, you must make sure that the downloaded \JAR includes the package \directory{org.sbml.jsbml.celldesigner}.
+Without this package, SBMLsqueezer cannot be launched in \CellDesigner.
+Another possible solution is to checkout the development trunk of \JSBML and run the \ant script by yourself, thus building the latest version of \JSBML.
+If you like to go this way, please read the documentation about \JSBML\footnote{\url{http://sbml.org/Software/JSBML/docs}} first.
+
 
 
 \subsection{Integration into \Garuda}
@@ -286,38 +294,7 @@ When downloading \Garuda, a functioning copy of SBMLsqueezer will be included.
 Hence, no special installation steps are required. Just follow the instructions
 of how to install \Garuda.
 
-\section{Starting the application}
-\label{startingTheProgram}
 
-If you downloaded a ZIP file, you need to unzip it before starting the
-application. In the simplest case, you can launch SBMLsqueezer just by double
-clicking on its application icon. This will launch the \GUI
-(see \vref{chap:GUI} for further details).
-
-Depending on your preference and your \OS, it might be helpful for
-you to write a short shell or bash scripts for starting the application.
-You might name this, for instance, \file{start.sh} for \Linux or \MacOSX, and
-\file{start.bat} for \Windows. Within those scripts you could specify several
-command-line options (see \vref{chap:CMD}) and hence customize the behavior of
-SBMLsqueezer. 
-
-You can start the application on all {\OS}s by typing
-\begin{lstlisting}[language=bash,numbers=none]
-java -jar -Xms128m -Xmx1024m SBMLsqueezer.jar
-\end{lstlisting}
-on your command prompt. Please note that you might have to change
-\file{SBMLsqueezer.jar} for the real name of the \JAR, e.g.,
-\file{SBMLsqueezer\_v2.0\_incl-libs.jar}. In this example, a minimum of 128\,MB
-and a maximum of 1024\,MB of memory will be available for the program. In most cases,
-SBMLsqueezer needs more than 128\,MB memory, so it might be convenient to create a
-shortcut and start the application with as much memory as available. If you
-have 2\,GB RAM, for example, you might want to start the application with the
-following command:
-\begin{lstlisting}[language=bash,numbers=none]
-java -Xms128m -Xmx1400M -jar SBMLsqueezer.jar
-\end{lstlisting}
-How much memory you actually need strongly depends on the size of your input datasets.
-%
 
 \chapter{How to get started}
 \label{chap:GUI}
@@ -359,14 +336,14 @@ Depending on your preferences (see \vref{sec:GUIPrefs}) SBMLsqueezer can
   For catalyzed reactions, you have the choice of a large variety of species types to
   be interpreted as enzymes.
 \item define the units of all species and compartments if necessary and derive the
-  units for all newly created local and global parameters in order to ensure unit
+  units for all newly created local and global parameters and numbers in order to ensure unit
   consistency of the entire model. Thereby you can choose if species should be brought
   to amount or concentration units. This influences if in rate equations division by
   the compartment sizes or multiplication with the compartment will be performed where
   this is necessary.
 \item check the model for global and local parameters as well as unit definitions
   that are never used and addressed. SBMLsqueezer can automatically remove these from
-  the model (model cleaning).
+  the model, i.e., perform \emph{model cleaning}.
 \item import experimentally determined rate equations from \SABIO and include them into
   your model. To this end, it offers you several options to make the lookup of rate laws
   as precise as possible and to narrow down the database entries as much as possible.
@@ -381,55 +358,61 @@ Depending on your preferences (see \vref{sec:GUIPrefs}) SBMLsqueezer can
 In the following, we will describe how you can benefit from the features of SBMLsqueezer
 and how to customize the program.
 
-\subsection{Starting the application}
+\section{Starting the application}
+\label{startingTheProgram}
 
 \begin{wrapfigure}{O}{.9cm}
 \vspace{\wrapfigspace}
 \includegraphics[width=.8cm]{icons/jar_icon}
 \end{wrapfigure}
+If you downloaded a ZIP file, you need to unzip it before starting the application.
 Launch SBMLsqueezer by double-clicking at the \Java icon in a file browser of
 your \OS, which might look like the image next to this text.
-You can also start SBMLsqueezer from the command line.
-How to do that is described in \vref{sec:Program_usage}.
+This will start the \GUI (see \vref{chap:GUI} for further details).
 
-\subsection{Open a model}
+You can also start SBMLsqueezer from the command line.
+Depending on your preference and your \OS, it might be helpful for
+you to write a short shell or bash scripts for starting the application.
+You might name this, for instance, \file{start.sh} for \Linux or \MacOSX, and
+\file{start.bat} for \Windows. Within those scripts you could specify several
+command-line options (see \vref{chap:CMD}) and hence customize the behavior of SBMLsqueezer.
+How to do that is described in \vref{sec:Program_usage}.
+If you are using \libSBML as your \SBML parsing engine, writing such a script is highly recommended.
+You can find a sample script for this purpose in \vref{sec:UsingLibSBML}.
+
+If you are using SBMLsqueezer as a plug-in for \CellDesigner, just open a model that you like to edit.
+You can then launch all functions of SBMLsqueezer by clicking at one of the options within the menu
+\menu{Plugin > SBMLsqueezer 2.0} in \CellDesigner.
 
 \begin{wrapfigure}{O}{.9cm}
-\vspace{\wrapfigspace}
-\includegraphics[width=16px]{icons/folder_64}
+%\vspace{\wrapfigspace}
+\includegraphics[width=.8cm]{img/LOGO}
 \end{wrapfigure}
-The simplest way to open an \SBML file is to click at \menu{File > Open} in the
-menu bar, or at the folder icon (see the icon next to this text) in the tool bar.
-If you prefer keystroke combinations, you can use \keys{\cmd + O} on \MacOSX or
-\keys{\ctrlwin + O} on \Windows and \Linux computers.
-The \GUI can open multiple \SBML files in parallel.
-SBMLsqueezer arranges these \SBML documents in tabs.
-
-When starting SBMLsqueezer from the command line, you can directly pass a model
-file to it, which will then be opened in the \GUI. To this
-end, use the option \texttt{--sbml-in-file=<File>}, where \texttt{<File>} is the
-absolute or relative path to the \SBML file you want to open (see
-\vref{sec:IO_options}).
-Note, however, that the command line option allows you to specify just one file
-to open.
-If you like to open further files, you need to do this in the \GUI.
-
-SBMLsqueezer remembers up to ten files you have already worked with.
-Once you have opened one or more models, these are accessible in the menu bar,
-where you can click at \menu{File > Recent files}.
-This sub-menu will display the names of the files and their absolute path as tool-tip.
-You can open one of these files by just clicking on its entry in the menu, or
-you can apply one of the keystroke combinations \keys{\Altmac + 0} to \keys{\Altmac + 9}
-on \MacOSX or \keys{\Altwin + 0} to \keys{\Altwin + 9} on \Linux and \Windows.
-Here, the number keys are used to sort the previously opened models according to
-when you last accessed the file.
-The most recently opened file will always have number 0 and the model number 9
-is the model that was opened a longer time ago.
-Note that this order will change as soon as you open one model from this list
-or any other model.
+To start SBMLsqueezer in \Garuda, simply double-click at SBMLsqueezer's program icon (see the symbol that is printed next to this text).
+Alternatively, you can also launch SBMLsqueezer there by sending an \SBML file to it from any other \Garuda gadget.
+For more information about that, see the documentation of \Garuda.
 
 \subsection{Adjusting the preferences}
 \label{sec:GUIPrefs}
+\begin{SCfigure}
+\shadowimage[width=.5\textwidth]{prefs/Basic_configuration}
+\caption{Basic configuration.
+All preferences that you can manipulate in this
+tab corresponds to the command line options described in
+\vref{sec:Basic_configuration}. You can specify if already existing rate laws
+should be replaced with newly generated rate equations, if a search in SABIO-RK
+should be performed and many more.
+Taking small molecules and ions into account often lead to complex kinetic equations.
+SBMLsqueezer offers you to give a list of KEGG identifiers for those reactive
+species that should be ignored when creating rate laws (see \vref{tab:MIRIAMignoreList}).
+For cases in which values are missing in the
+model, SBMLsqueezer will insert default values, which you can specify in this
+tab. Furthermore, you can decide how SBMLsqueezer should ensure unit consistency,
+by either bringing all species to amount units, or to concentration units.
+Finally, for situations, in which the role of reaction modifiers is unclear, you
+can here select those types of species that should be considered enzymes.}
+\label{fig:Basic_Configuration}
+\end{SCfigure}
 The program SBMLsqueezer offers a large number of options to configure how
 kinetic equations are generated.
 All options described in this section can also be applied using SBMLsqueezer's
@@ -443,25 +426,6 @@ continue with your previous configuration.
 Furthermore, there are no configuration files generated by SBMLsqueezer in
 addition to those maintained by your \OS.
 Hence, SBMLsqueezer integrates well into your working environment.
-\begin{SCfigure}
-\shadowimage[width=.5\textwidth]{prefs/Basic_configuration}
-\caption{Basic configuration.
-All preferences that you can manipulate in this
-tab corresponds to the command line options described in
-\vref{sec:Basic_configuration}. You can specify if already existing rate laws
-should be replaced with newly generated rate equations, if a search in \SABIO
-should be performed and many more.
-Taking small molecules and ions into account often lead to complex kinetic equations.
-SBMLsqueezer offers you to give a list of \KEGG identifiers for those reactive
-species that should be ignored when creating rate laws (see \vref{tab:MIRIAMignoreList}).
-For cases in which values are missing in the
-model, SBMLsqueezer will insert default values, which you can specify in this
-tab. Furthermore, you can decide how SBMLsqueezer should ensure unit consistency,
-by either bringing all species to amount units, or to concentration units.
-Finally, for situations, in which the role of reaciton modifiers is unclear, you
-can here select those types of species that should be considered enzymes.}
-\label{fig:Basic_configuration}
-\end{SCfigure}
 
 \begin{SCfigure}
 \shadowimage[width=.5\textwidth]{prefs/Rate_law_selection}
@@ -538,7 +502,7 @@ included into the report.}
 \end{SCfigure}
 On the bottom panel of the preferences dialog you can see the four buttons
 \keys{Cancel}, \keys{Defaults}, \keys{Apply}, and \keys{OK} as this is displayed in
-\vrefrange{fig:Basic_configuration}{fig:LaTeX_Options}.
+\vrefrange{fig:Basic_Configuration}{fig:LaTeX_Options}.
 The \keys{Cancel} button has the same effect as a click at the close button on the
 top of the window or hitting the \keys{\escwin} key: all of your changes will be
 disregarded and the window will be closed.
@@ -551,7 +515,50 @@ Note that the dialog is structured with multiple tabs. When clicking at
 \keys{Defaults} the preferences in all tabs will be restored, even if those are not
 active at the time when you hit that button.
 
-\subsection{View the results}
+
+\subsection{Open a model}
+
+\begin{wrapfigure}{O}{.9cm}
+\vspace{\wrapfigspace}
+\includegraphics[width=16px]{icons/folder_64}
+\end{wrapfigure}
+The simplest way to open an \SBML file is to click at \menu{File > Open} in the
+menu bar, or at the folder icon (see the icon next to this text) in the tool bar.
+If you prefer keystroke combinations, you can use \keys{\cmd + O} on \MacOSX or
+\keys{\ctrlwin + O} on \Windows and \Linux computers.
+The \GUI can open multiple \SBML files in parallel.
+SBMLsqueezer arranges these \SBML documents in tabs.
+Furthermore, you can also open one ore multiple models in SBMLsqueezer via drag and drop, i.e., just select one or multiple \SBML files in an arbitrary file browser of your \OS and drag these into SBMLsqueezer's \GUI.
+
+When starting SBMLsqueezer from the command line, you can directly pass a model
+file to it, which will then be opened in the \GUI. To this
+end, use the option \texttt{--sbml-in-file=<File>}, where \texttt{<File>} is the
+absolute or relative path to the \SBML file you want to open (see
+\vref{sec:IO_options}).
+Note, however, that the command line option allows you to specify just one file
+to open.
+If you like to open further files, you need to do this in the \GUI.
+
+SBMLsqueezer remembers up to ten files you have already worked with.
+Once you have opened one or more models, these are accessible in the menu bar,
+where you can click at \menu{File > Recent files}.
+This sub-menu will display the names of the files and their absolute path as tool-tip.
+You can open one of these files by just clicking on its entry in the menu, or
+you can apply one of the keystroke combinations \keys{\Altmac + 0} to \keys{\Altmac + 9}
+on \MacOSX or \keys{\Altwin + 0} to \keys{\Altwin + 9} on \Linux and \Windows.
+Here, the number keys are used to sort the previously opened models according to
+when you last accessed the file.
+The most recently opened file will always have number 0 and the model number 9
+is the model that was opened a longer time ago.
+Note that this order will change as soon as you open one model from this list
+or any other model.
+
+If you are working with \CellDesigner, open the model with this program's menu item or keystroke combination.
+When launching the SBMLsqueezer as \CellDesigner plug-in, it will always use the currently selected model.
+This means that, in case that you are working with multiple models in \CellDesigner, this model will be passed to SBMLsqueezer, whose tab is currently selected.
+
+In \Garuda, SBMLsqueezer can receive files from other gadgets and will open these whenever this is requested.
+
 \subsection{Equation generation one by one}
 \begin{figure}[htbp]
 \shadowimage[width=\textwidth]{Screenshot_2}
@@ -588,6 +595,8 @@ if all reactions can be modeled in a reversible manner or as currently
 defined in the model.}
 \label{fig:KineticLawWizard}
 \end{figure}
+
+\subsection{View the results}
 
 
 \chapter{Example use cases}
@@ -735,6 +744,24 @@ SBMLsqueezer with a pre-defined configuration.
 
 \section{Program usage}
 \label{sec:Program_usage}
+
+You can start the application on all {\OS}s by typing
+\begin{lstlisting}[language=bash,numbers=none]
+java -jar -Xms128m -Xmx1024m SBMLsqueezer.jar
+\end{lstlisting}
+on your command prompt. Please note that you might have to change
+\file{SBMLsqueezer.jar} for the real name of the \JAR, e.g.,
+\file{SBMLsqueezer\_v2.0\_incl-libs.jar}. In this example, a minimum of 128\,MB
+and a maximum of 1024\,MB of memory will be available for the program. In most cases,
+SBMLsqueezer needs more than 128\,MB memory, so it might be convenient to create a
+shortcut and start the application with as much memory as available. If you
+have 2\,GB RAM, for example, you might want to start the application with the
+following command:
+\begin{lstlisting}[language=bash,numbers=none]
+java -Xms128m -Xmx1400M -jar SBMLsqueezer.jar
+\end{lstlisting}
+How much memory you actually need strongly depends on the size of your input datasets.
+
 To launch the program from the command line, type
 \begin{lstlisting}[language=bash,numbers=none]
 java -jar SBMLsqueezer_v2.0.jar org.sbml.squeezer.SBMLsqueezer [options]
@@ -1919,3 +1946,7 @@ Adrian Schr\"oder,
 Jochen Supper,
 Dieudonn\'e M. Wouamba,
 Michael J. Ziller
+
+\section{Collaborators and partners}
+
+The authors are grateful to the \SABIO team, in particular Martin Golebiewski and Wolfgang M\"uller from the Heidelberg Insitute of Technology (HITS).
