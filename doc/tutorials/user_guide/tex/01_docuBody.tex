@@ -560,9 +560,10 @@ This means that, in case that you are working with multiple models in \CellDesig
 In \Garuda, SBMLsqueezer can receive files from other gadgets and will open these whenever this is requested.
 
 \subsection{Equation generation one by one}
+You can add a kinetic equation to each reaction separately (see figure \ref{fig:RateLawDialog} for details). This enables you to select the type of rate law that seems appropriate for you.
 \begin{figure}[htbp]
 \shadowimage[width=\textwidth]{Screenshot_2}
-\caption{Generating kinetic a equation for a single reaction. This dialog can
+\caption{Generating a kinetic equation for a single reaction. This dialog can
 be opened by right-clicking on an individual reaction in your active model.
 Here SBMLsqueezer analyzes the current reaction according to various properties
 and displays a selection of suitable rate laws that, of which you can select
@@ -582,6 +583,7 @@ across several rate laws (e.g., energy constants).}
 \end{figure}
 
 \subsection{Generate kinetic equations in a single step}
+The alternative to adding rate laws to each reaction separately is the generation of kinetic equations for all reactions in one step (for details see figure \ref{fig:KineticLawWizard}). 
 \begin{figure}[htbp]
 \shadowimage[width=\textwidth]{Screenshot_4}
 \caption{Generating kinetic equations in one single step with the kinetic law wizard.
@@ -597,20 +599,40 @@ defined in the model.}
 \end{figure}
 
 \subsection{View the results}
+The tree on the left of the SBMLsqueezer window enables you to view the generated kinetic equations. You just have to expand "Reactions" and afterwards the desired reaction. Then you can click on "Kinetic Law" and the rate equation is displayed on the right in detail.
 
 
 \chapter{Example use cases}
 
 \section{\emph{De-novo} creation of kinetic equations}
 \subsection{For an entire network}
+Starting from the screen in figure \ref{fig:KineticLawWizard} you have to click on \keys{Next}. On the next screen you see a table with the reactions and the suggested type of rate equation for each reaction (figure \ref{fig:suggestedEquations}). You can change a suggested rate law, if you are not satisfied with it (see figure \ref{fig:changeEquation}).
+
+\begin{figure}[htbp]
+\shadowimage[width=\textwidth]{Screenshot_5}
+\caption{Table with suggested rate equation types.
+This table is displayed, when you start from the screen in figure \ref{fig:KineticLawWizard} and click on \keys{Next}. The table shows which type of rate equation SBMLsqueezer suggests to generate for each reaction as well as a preview of the respective formula. You can add the rate laws to the model by clicking on \keys{Finish}.}
+\label{fig:suggestedEquations}
+\end{figure}
+
+\begin{figure}[htbp]
+\shadowimage[width=\textwidth]{Screenshot_6}
+\caption{Choosing an alternative rate law.
+If you are not satisfied with a rate law type suggested by SBMLsqueezer, you can click on the respective row in the table in figure \ref{fig:suggestedEquations}. Then this window is displayed which lets you choose another type of rate law.}
+\label{fig:changeEquation}
+\end{figure}
+
 \subsection{For selected reactions}
+You can generate a rate law for a specific reaction by right-clicking on it. Then a window appears, which lets you choose the type of rate law (see figure \ref{fig:RateLawDialog} for details).
+
+
 \section{Extraction of rate laws from SABIO-RK}
 
 Note that this feature does not apply for \CellDesigner plug-in,
 because \CellDesigner brings already with it its own \SABIO interface.
 
 \subsection{For an entire network}
-Please note: The reactions you want to equip with kinetic equations should be annotated with \KEGG reaction ids.
+Figures \ref{fig:startAutomatic} to \ref{fig:changes} show how you can add kinetic equations from SABIO-RK to an several reactions simultaneously. Please note: The reactions you want to equip with kinetic equations should be annotated with \KEGG reaction ids.
 
 \begin{figure}[htbp]
 \shadowimage[width=\textwidth]{SABIO_automatic_1}
@@ -671,7 +693,9 @@ equations will be added and the necessary changes will be applied to your model.
 
 
 
-\subsection{For selected reations}
+\subsection{For a selected reaction}
+As an alternative you can add kinetic equations from SABIO-RK to a selected reaction separately. This is shown in Figures \ref{fig:startManual} to \ref{fig:changesManual}.
+ 
 \begin{figure}[htbp]
 \shadowimage[width=\textwidth]{SABIO_manual_1}
 \caption{Starting the \SABIO application for a selected reaction.
