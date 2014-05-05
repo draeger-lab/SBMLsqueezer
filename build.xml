@@ -662,6 +662,7 @@
   	  debug="${debug}"
   	  deprecation="${deprecation}"
   	  destdir="${jsbml.dir}/bin"
+  	  fork="true"
   	  includeantruntime="false"
   	  listfiles="yes"
   	  memoryMaximumSize="512M"
@@ -688,6 +689,7 @@
   	  debug="${debug}"
   	  deprecation="${deprecation}"
   	  destdir="${jsbml.dir}/bin"
+  	  fork="true"
   	  includeantruntime="false"
   	  listfiles="yes"
   	  memoryMaximumSize="512M"
@@ -834,7 +836,7 @@
   	  update="true"
     >
   	  <manifest>
-  	    <section name="${jsbml.name}">
+  	    <section name="CellDesigner Plugin">
   	      <attribute name="Specification-Title"    value="CellDesigner test plugin"/>
   	      <attribute name="Specification-Version"  value="1.0"/>
   	      <attribute name="Implementation-Title"   value="CellDesigner test"/>
