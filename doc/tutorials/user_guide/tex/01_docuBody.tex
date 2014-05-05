@@ -400,7 +400,7 @@ For more information about that, see the documentation of \Garuda.
 All preferences that you can manipulate in this
 tab corresponds to the command line options described in
 \vref{sec:Basic_configuration}. You can specify if already existing rate laws
-should be replaced with newly generated rate equations, if a search in SABIO-RK
+should be replaced with newly generated rate equations, if a search in \SABIO
 should be performed and many more.
 Taking small molecules and ions into account often lead to complex kinetic equations.
 SBMLsqueezer offers you to give a list of KEGG identifiers for those reactive
@@ -436,7 +436,7 @@ For this reason, SBMLsqueezer can create all kinetic equations in a reversible m
 and will then also update the property \emph{reversible} in affected reactions.
 Depending on this setting, you will be able to select default types of irreversible
 rate laws.
-The other sections of this tab allow you to select which type ofrate law should
+The other sections of this tab allow you to select which type of rate law should
 be primarily selected when generating equations for an entire network in one single
 step.
 If you create equations for individual reactions only, as shown in \vref{fig:Rate_law_selection},
@@ -455,8 +455,7 @@ In order to configure your preferences, you can click at the tool icon in the
 tool-bar (see the icon next to this text), or select the corresponding entry in the menu bar.
 Under \Windows and \Linux, you can access the preferences menu under
 \menu{Edit > Preferences}, whereas
-under \MacOSX, these can be found under \menu{SBMLsqueezer > Preferences\dots}.
-\MacOSX also gives you the option to access the preferences menu with the keystroke
+under \MacOSX, these can be found under \menu{SBMLsqueezer > Preferences\dots} or by using the keystroke
 combination \keys{\cmd + {$,$}}.
 \begin{SCfigure}
 \shadowimage[width=.5\textwidth]{prefs/SABIO-RK_search_options}
@@ -491,11 +490,12 @@ more appropriate settings for just this reaction.}
 \caption{\LaTeX{} options.
 All options in this tab are also available as command-line options
 (see \vref{sec:LaTeX_Options}).
-You can specify where your \LaTeX compiler is located in your \OS and what
+You can specify where your \LaTeX{} compiler is located in your \OS and what
 to include into the model report.
 This tab also gives you several style options that influence how the
 the generated document will look like.
-As a new feature, it now also supports the Layout extension for \SBML.
+As a new feature, it now also supports the Layout extension for \SBML
+\citep{Gauges2006}.
 You can here decide if a figure of your network should be generated and
 included into the report.}
 \label{fig:LaTeX_Options}
@@ -560,12 +560,35 @@ This means that, in case that you are working with multiple models in \CellDesig
 In \Garuda, SBMLsqueezer can receive files from other gadgets and will open these whenever this is requested.
 
 \subsection{Equation generation one by one}
-You can add a kinetic equation to each reaction separately (see figure \ref{fig:RateLawDialog} for details). This enables you to select the type of rate law that seems appropriate for you.
-\begin{figure}[htbp]
+\label{sec:EquationsOneByOne}
+
+You can add a kinetic equation to individual reactions.
+To this end, SBMLsqueezer provides a specialized context menu and dialog window, which enable you to select the type of rate law that seems appropriate for your purposes.
+This dialog window is available whenever when using SBMLsqueezer as a plug-in for \CellDesigner or in the stand-alone version (also in the \Garuda version).
+In all cases, the same dialog window will appear, which offers you a selection of appropriate rate laws for the particular reaction and gives you the opportunity to choose between those, or to discard the dialog.
+No change will be performed to your model when canceling the dialog (either by pushing \keys{\escwin} or by clicking at \keys{Cancel}.
+
+In case that you are working with \CellDesigner, right-click at the reaction of interest as this is displayed in \vref{fig:ReactionContextMenu} and select the menu item \menu{Squeeze kinetic law}.
+When using SBMLsqueezer as a stand-alone program, you can generate kinetic equations for a selected reaction by right-clicking at the reaction of interest.
+An example is given in \vref{fig:RateLawDialog}.
+\begin{SCfigure}
+\includegraphics[width=.6\textwidth]{CellDesigner/reaction_context_menu.png}
+\caption{Reaction context menu in CellDesigner.
+After installing SBMLsqueezer as a plug-in, its functionality will be incorporated into \CellDesigner's reaction context menu.
+If you right-click at an arbitrary reaction, it allows you to create a kinetic equation for this reaction, or to generate a \LaTeX{} model report that only involves the details relevant for the selected reaction.}
+\label{fig:ReactionContextMenu}
+\end{SCfigure}
+\begin{figure}[b!]
 \shadowimage[width=\textwidth]{Screenshot_2}
-\caption{Generating a kinetic equation for a single reaction. This dialog can
-be opened by right-clicking on an individual reaction in your active model.
-Here SBMLsqueezer analyzes the current reaction according to various properties
+\caption{Generating a kinetic equation for a single reaction.
+This dialog can be opened by right-clicking on an individual reaction in your active model.
+%The equation preview displays how the rate law will look like, where zooming in and out can give you a better %overview.
+The directionality of the reaction and the enzyme property can be altered.
+%In most cases you can also decide if the reaction should be considered an enzyme reaction or not.
+Both options possibly influence the selection of rate laws.}
+\label{fig:RateLawDialog}
+\end{figure}
+SBMLsqueezer analyzes the currently selected reaction according to various properties
 and displays a selection of suitable rate laws that, of which you can select
 the most appropriate one. The equation preview, where you can zoom in and out
 of the rendered formula, helps you to choose a rate law. If a corresponding
@@ -578,61 +601,101 @@ parameters should be locally attached to the kinetic law object or globally to
 the model influences the internal structure of the model, but not its behavior.
 Just note, that there are some parameters, which cannot be stored locally because
 they represent recurrent properties of some reactive species and are needed
-across several rate laws (e.g., energy constants).}
-\label{fig:RateLawDialog}
-\end{figure}
+across several rate laws (e.g., energy constants).
 
 \subsection{Generate kinetic equations in a single step}
-The alternative to adding rate laws to each reaction separately is the generation of kinetic equations for all reactions in one step (for details see figure \ref{fig:KineticLawWizard}). 
-\begin{figure}[htbp]
+
+SBMLsqueezer can create rate laws for all reactions in one single step without the need of further human interaction or manual selection of rate laws for any reaction.
+This option can, for instance, be very useful if you are working with a large model and want to create a first draft of a kinetic system, or if you are interested to apply the same type of approximative rate law to each reaction.
+To see how to use this program feature, have a look at \vref{fig:KineticLawWizard}.
+
+\begin{wrapfigure}{O}{.9cm}
+\vspace{\wrapfigspace}
+\includegraphics[width=16px]{SBMLsqueezerLogo_16}
+\end{wrapfigure}
+Just like in the case of the reaction context menu (described in \vref{sec:EquationsOneByOne}), the same kinetics wizard can be used in stand-alone mode and when working with the \CellDesigner plug-in version of SBMLsqueezer.
+Various options allow you to customize how this is done.
+The most important options can be used to decide if already existing rate laws should either be kept or overwritten, if all reactions can be modeled in a reversible manner or as currently defined in the model.
+In the \CellDesigner plug-in version, just click at \menu{Plugin > SBMLsqueezer 2.0 > Squeeze kinetic laws} to launch the kinetics wizard.
+In the stand-alone version, you can either right-click at the model in the \SBML tree, the lemon icon in the tool bar (see the symbol next to this text), or \menu{Edit > Squeeze} in the menu bar.
+
+The usage of the kinetics wizard is identical, irrespective of how you launched it.
+You can see how this wizard looks like in \vref{fig:KineticLawWizard}.
+You can always discard all your changes by either clicking at the \keys{Cancel} button or by hitting the \keys{\escwin} key.
+The \keys{Help} button opens a browser window that gives you more information about SBMLsqueezer.
+If you click at \keys{Show options}, the preference dialog will be displayed, which is described in \vref{sec:GUIPrefs}.
+In this way, SBMLsqueezer gives you the option to make sure that the selection of kinetic equations for all distinguished cases will be done as if you pick those individually.
+\begin{SCfigure}
+\includegraphics[width=.6\textwidth]{CellDesigner/plugin_menu}
+\caption{Launching SBMLsqueezer in \CellDesigner.
+The \menu{Plugin > SBMLsqueezer 2.0} gives you access to nearly all functions of the program.
+You can launch the kinetics wizard, adjust your preferences, export a \LaTeX{} report, open a help browser, or just look at how SBMLsqueezer internally represents \CellDesigner's data structure.}
+\label{fig:PluginMenu}
+\end{SCfigure}
+\begin{figure}[b!]
 \shadowimage[width=\textwidth]{Screenshot_4}
 \caption{Generating kinetic equations in one single step with the kinetic law wizard.
 This screen-shot shows the Kinetic Law Wizard (here shown with the user interface
-under \MacOSX). When launched either via the tool bar by clicking at the lemon
-icon or the menu bar in the menu (Edit | Squeeze), this wizard allows you to
-generate kinetic equations for all reactions in the active model. Various options
-allow you to customize how this is done. The most important options can be used
-to decide if already existing rate laws should either be kept or overwritten,
-if all reactions can be modeled in a reversible manner or as currently
-defined in the model.}
+under \MacOSX). When launched, this wizard allows you to generate kinetic equations for all reactions in the active model.}
 \label{fig:KineticLawWizard}
 \end{figure}
 
+When you hit the \keys{Next} button, kinetic equations will be created according to your settings and displayed in a summary table (see \vref{fig:wizard_results_table}).
+You can change individual rate laws by double-clicking or right-clicking at a specific entry in this table.
+A pop-up window will then appear asking you to choose an alternative rate law.
+When applying the change, the selection will be updated.
+When you hit the button \keys{Finish}, the created rate equations, units, and parameter objects will be incorporated into your original model.
+\begin{figure}
+\shadowimage[width=\textwidth]{wizard_results_table}
+\caption{Results of the kinetics wizard displayed in a table.
+In this example two rows are highlighted in \textcolor{red}{red}.
+The reason is that these reactions involve an unrealistically high number of reactant molecules, or are reversible with a high number of products, respectively.
+SBMLsqueezer displays these warnings to indicate that the generated rate law might neglect several intermediate steps.
+In this table, you can review all generated rate law.
+Note that these will not be transfered to your original model before you hit the \keys{Finish} button.
+You can alter each rate law by double- or right-clicking at an entry in the column ``Kinetic Law," or hit the \keys{Back} button and change your preferences for the rate law selection.
+You can already generate a \LaTeX{} report about the changed model (hit the button \keys{Export changes}), which can help you to make your decision if you want to apply or discard your changes.}
+\label{fig:wizard_results_table}
+\end{figure}
+
 \subsection{View the results}
-The tree on the left of the SBMLsqueezer window enables you to view the generated kinetic equations. You just have to expand "Reactions" and afterwards the desired reaction. Then you can click on "Kinetic Law" and the rate equation is displayed on the right in detail.
+
+The tree on the left of the SBMLsqueezer window enables you to view the generated kinetic equations.
+You just have to expand ``Reactions" and afterwards the desired reaction.
+Then you can click on ``Kinetic Law" and the rate equation is displayed on the right in detail.
 
 
 \chapter{Example use cases}
 
 \section{\emph{De-novo} creation of kinetic equations}
 \subsection{For an entire network}
-Starting from the screen in figure \ref{fig:KineticLawWizard} you have to click on \keys{Next}. On the next screen you see a table with the reactions and the suggested type of rate equation for each reaction (figure \ref{fig:suggestedEquations}). You can change a suggested rate law, if you are not satisfied with it (see figure \ref{fig:changeEquation}).
+Starting from the screen in \vref{fig:KineticLawWizard} you have to click on \keys{Next}. On the next screen you see a table with the reactions and the suggested type of rate equation for each reaction (\vref{fig:suggestedEquations}). You can change a suggested rate law, if you are not satisfied with it (see \vref{fig:changeEquation}).
 
 \begin{figure}[htbp]
 \shadowimage[width=\textwidth]{Screenshot_5}
 \caption{Table with suggested rate equation types.
-This table is displayed, when you start from the screen in figure \ref{fig:KineticLawWizard} and click on \keys{Next}. The table shows which type of rate equation SBMLsqueezer suggests to generate for each reaction as well as a preview of the respective formula. You can add the rate laws to the model by clicking on \keys{Finish}.}
+This table is displayed, when you start from the screen in \vref{fig:KineticLawWizard} and click on \keys{Next}. The table shows which type of rate equation SBMLsqueezer suggests to generate for each reaction as well as a preview of the respective formula. You can add the rate laws to the model by clicking on \keys{Finish}.}
 \label{fig:suggestedEquations}
 \end{figure}
 
-\begin{figure}[htbp]
-\shadowimage[width=\textwidth]{Screenshot_6}
+\begin{SCfigure}
+\shadowimage[width=.6\textwidth]{Screenshot_6}
 \caption{Choosing an alternative rate law.
-If you are not satisfied with a rate law type suggested by SBMLsqueezer, you can click on the respective row in the table in figure \ref{fig:suggestedEquations}. Then this window is displayed which lets you choose another type of rate law.}
+If you are not satisfied with a rate law type suggested by SBMLsqueezer, you can click on the respective row in the table in \vref{fig:suggestedEquations}. Then this window is displayed which lets you choose another type of rate law.}
 \label{fig:changeEquation}
-\end{figure}
+\end{SCfigure}
 
 \subsection{For selected reactions}
-You can generate a rate law for a specific reaction by right-clicking on it. Then a window appears, which lets you choose the type of rate law (see figure \ref{fig:RateLawDialog} for details).
+You can generate a rate law for a specific reaction by right-clicking on it. Then a window appears, which lets you choose the type of rate law (see \vref{fig:RateLawDialog} for details).
 
 
-\section{Extraction of rate laws from SABIO-RK}
+\section{Extraction of rate laws from \SABIO}
 
 Note that this feature does not apply for \CellDesigner plug-in,
 because \CellDesigner brings already with it its own \SABIO interface.
 
 \subsection{For an entire network}
-Figures \ref{fig:startAutomatic} to \ref{fig:changes} show how you can add kinetic equations from SABIO-RK to an several reactions simultaneously. Please note: The reactions you want to equip with kinetic equations should be annotated with \KEGG reaction ids.
+\vrefrange{fig:startAutomatic}{fig:changes} show how you can add kinetic equations from \SABIO to an several reactions simultaneously. Please note: The reactions you want to equip with kinetic equations should be annotated with \KEGG reaction ids.
 
 \begin{figure}[htbp]
 \shadowimage[width=\textwidth]{SABIO_automatic_1}
@@ -694,7 +757,7 @@ equations will be added and the necessary changes will be applied to your model.
 
 
 \subsection{For a selected reaction}
-As an alternative you can add kinetic equations from SABIO-RK to a selected reaction separately. This is shown in Figures \ref{fig:startManual} to \ref{fig:changesManual}.
+As an alternative you can add kinetic equations from \SABIO to a selected reaction separately. This is shown in \vrefrange{fig:startManual}{fig:changesManual}.
  
 \begin{figure}[htbp]
 \shadowimage[width=\textwidth]{SABIO_manual_1}
@@ -1305,7 +1368,7 @@ Use either one of both.
   \texttt{org.sbml.squeezer.kinetics.IrrevNonModulatedNonInteractingEnzymes}
 \end{description}
 
-\section{SABIO-RK search options}
+\section{\SABIO search options}
 \label{sec:SABIO_search_options}
 
 For querying the content of the \SABIO database for experimentally determined
@@ -1331,7 +1394,7 @@ your search for reaction kinetics in \SABIO.
   Define the organism for which the kinetics are to be determined.
 \end{description}
 
-\section{SABIO-RK search preferences}
+\section{\SABIO search preferences}
 \label{sec:SABIO_search_preferences}
 
 \subsection{General properties}
