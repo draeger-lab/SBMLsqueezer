@@ -22,6 +22,8 @@
 \usepackage{nicefrac}
 \usepackage{menukeys} % typesets paths and menu access, keyboard characters.
 
+\usepackage{tocloft} % nice table of contents additions
+
 \usepackage{xspace}
 % booktabs is for toprule, bottomrule, etc. in tables.
 \usepackage{booktabs}
@@ -93,6 +95,17 @@ $^1$Center for Bioinformatics Tuebingen (ZBIT), University of Tuebingen, T\"ubin
 $^2$Systems Biology Research Group, University of California, San Diego, La Jolla, CA, USA
 \end{normalsize}}
 
+
+\makeatletter
+\newcommand\mytoc{%
+    \tableofcontents
+    \section*{Figures}%
+    \@starttoc{lof}%
+    \bigskip
+    \section*{Tables}%
+    \@starttoc{lot}}
+\makeatother
+
 \makeindex
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -113,11 +126,12 @@ $^2$Systems Biology Research Group, University of California, San Diego, La Joll
 \end{abstract}
 %
 \setcounter{tocdepth}{1}
-\tableofcontents		% Inhaltsverzeichnis
+%\tableofcontents		% Inhaltsverzeichnis
+\mytoc
 % \listoffigures
 % \listoftables
 
-%\cleardoublepage		% Erzeugt neue Leerseite. Muss ggf. auskommentiert werden.
+\cleardoublepage		% Erzeugt neue Leerseite. Muss ggf. auskommentiert werden.
 \pagenumbering{arabic}		% Ab hier mit arabischen Zahlen numerieren
 %
 % 

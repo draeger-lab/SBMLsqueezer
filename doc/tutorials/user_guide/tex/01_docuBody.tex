@@ -396,7 +396,7 @@ For more information about that, see the documentation of \Garuda.
 \label{sec:GUIPrefs}
 \begin{SCfigure}
 \shadowimage[width=.5\textwidth]{prefs/Basic_configuration}
-\caption{Basic configuration.
+\caption[Basic configuration]{Basic configuration.
 All preferences that you can manipulate in this
 tab corresponds to the command line options described in
 \vref{sec:Basic_configuration}. You can specify if already existing rate laws
@@ -429,7 +429,7 @@ Hence, SBMLsqueezer integrates well into your working environment.
 
 \begin{SCfigure}
 \shadowimage[width=.5\textwidth]{prefs/Rate_law_selection}
-\caption{Rate law selection.
+\caption[Rate law selection]{Rate law selection.
 It has been observed that irreversible rate laws are
 often too restrictive and cannot capture the dynamics of complex reaction systems.
 For this reason, SBMLsqueezer can create all kinetic equations in a reversible manner
@@ -459,7 +459,7 @@ under \MacOSX, these can be found under \menu{SBMLsqueezer > Preferences\dots} o
 combination \keys{\cmd + {$,$}}.
 \begin{SCfigure}
 \shadowimage[width=.5\textwidth]{prefs/SABIO-RK_search_options}
-\caption{\SABIO search options.
+\caption[\SABIO search options]{\SABIO search options.
 The options in this tab correspond to the command-line options that are described
 in \vref{sec:SABIO_search_options}.
 You can specify general features of the reaction for which you want to look up
@@ -470,7 +470,7 @@ Of course, you can also restrict your search to an organism of choice.}
 \end{SCfigure}
 \begin{SCfigure}
 \shadowimage[width=.5\textwidth]{prefs/SABIO-RK_search_preferences}
-\caption{\SABIO search preferences.
+\caption[\SABIO search preferences]{\SABIO search preferences.
 All preferences in this tab can also be changed through the command line.
 See \vref{sec:SABIO_search_preferences} for details.
 Here you can define more fine-grained search search properties for looking up
@@ -487,7 +487,7 @@ more appropriate settings for just this reaction.}
 
 \begin{SCfigure}
 \shadowimage[width=.5\textwidth]{prefs/LaTeX_Options}
-\caption{\LaTeX{} options.
+\caption[\LaTeX{} options]{\LaTeX{} options.
 All options in this tab are also available as command-line options
 (see \vref{sec:LaTeX_Options}).
 You can specify where your \LaTeX{} compiler is located in your \OS and what
@@ -573,14 +573,14 @@ When using SBMLsqueezer as a stand-alone program, you can generate kinetic equat
 An example is given in \vref{fig:RateLawDialog}.
 \begin{SCfigure}
 \includegraphics[width=.6\textwidth]{CellDesigner/reaction_context_menu.png}
-\caption{Reaction context menu in CellDesigner.
+\caption[Reaction context menu in \CellDesigner]{Reaction context menu in \CellDesigner.
 After installing SBMLsqueezer as a plug-in, its functionality will be incorporated into \CellDesigner's reaction context menu.
 If you right-click at an arbitrary reaction, it allows you to create a kinetic equation for this reaction, or to generate a \LaTeX{} model report that only involves the details relevant for the selected reaction.}
 \label{fig:ReactionContextMenu}
 \end{SCfigure}
 \begin{figure}[b!]
 \shadowimage[width=\textwidth]{Screenshot_2}
-\caption{Generating a kinetic equation for a single reaction.
+\caption[Generating a kinetic equation for a single reaction]{Generating a kinetic equation for a single reaction.
 This dialog can be opened by right-clicking on an individual reaction in your active model.
 %The equation preview displays how the rate law will look like, where zooming in and out can give you a better %overview.
 The directionality of the reaction and the enzyme property can be altered.
@@ -627,14 +627,14 @@ If you click at \keys{Show options}, the preference dialog will be displayed, wh
 In this way, SBMLsqueezer gives you the option to make sure that the selection of kinetic equations for all distinguished cases will be done as if you pick those individually.
 \begin{SCfigure}
 \includegraphics[width=.6\textwidth]{CellDesigner/plugin_menu}
-\caption{Launching SBMLsqueezer in \CellDesigner.
+\caption[Launching SBMLsqueezer in \CellDesigner]{Launching SBMLsqueezer in \CellDesigner.
 The \menu{Plugin > SBMLsqueezer 2.0} gives you access to nearly all functions of the program.
 You can launch the kinetics wizard, adjust your preferences, export a \LaTeX{} report, open a help browser, or just look at how SBMLsqueezer internally represents \CellDesigner's data structure.}
 \label{fig:PluginMenu}
 \end{SCfigure}
 \begin{figure}[b!]
 \shadowimage[width=\textwidth]{Screenshot_4}
-\caption{Generating kinetic equations in one single step with the kinetic law wizard.
+\caption[Generating kinetic equations in one single step with the kinetic law wizard]{Generating kinetic equations in one single step with the kinetic law wizard.
 This screen-shot shows the Kinetic Law Wizard (here shown with the user interface
 under \MacOSX). When launched, this wizard allows you to generate kinetic equations for all reactions in the active model.}
 \label{fig:KineticLawWizard}
@@ -647,7 +647,7 @@ When applying the change, the selection will be updated.
 When you hit the button \keys{Finish}, the created rate equations, units, and parameter objects will be incorporated into your original model.
 \begin{figure}
 \shadowimage[width=\textwidth]{wizard_results_table}
-\caption{Results of the kinetics wizard displayed in a table.
+\caption[Results of the kinetics wizard displayed in a table]{Results of the kinetics wizard displayed in a table.
 In this example two rows are highlighted in \textcolor{red}{red}.
 The reason is that these reactions involve an unrealistically high number of reactant molecules, or are reversible with a high number of products, respectively.
 SBMLsqueezer displays these warnings to indicate that the generated rate law might neglect several intermediate steps.
@@ -673,14 +673,14 @@ Starting from the screen in \vref{fig:KineticLawWizard} you have to click on \ke
 
 \begin{figure}[htbp]
 \shadowimage[width=\textwidth]{Screenshot_5}
-\caption{Table with suggested rate equation types.
+\caption[Table with suggested rate equation types]{Table with suggested rate equation types.
 This table is displayed, when you start from the screen in \vref{fig:KineticLawWizard} and click on \keys{Next}. The table shows which type of rate equation SBMLsqueezer suggests to generate for each reaction as well as a preview of the respective formula. You can add the rate laws to the model by clicking on \keys{Finish}.}
 \label{fig:suggestedEquations}
 \end{figure}
 
 \begin{SCfigure}
 \shadowimage[width=.6\textwidth]{Screenshot_6}
-\caption{Choosing an alternative rate law.
+\caption[Choosing an alternative rate law]{Choosing an alternative rate law.
 If you are not satisfied with a rate law type suggested by SBMLsqueezer, you can click on the respective row in the table in \vref{fig:suggestedEquations}. Then this window is displayed which lets you choose another type of rate law.}
 \label{fig:changeEquation}
 \end{SCfigure}
@@ -699,14 +699,14 @@ because \CellDesigner brings already with it its own \SABIO interface.
 
 \begin{figure}[htbp]
 \shadowimage[width=\textwidth]{SABIO_automatic_1}
-\caption{Starting the \SABIO application.
+\caption[Starting the \SABIO application]{Starting the \SABIO application.
 You have to click on the \SABIO symbol and the wizard will be started.}
 \label{fig:startAutomatic}
 \end{figure}
 
 \begin{figure}[htbp]
 \shadowimage[width=\textwidth]{SABIO_automatic_2}
-\caption{Selection of reaction.
+\caption[Selection of reaction]{Selection of reaction.
 On the first window you can select the reactions you want to equip with kinetic equations from \SABIO. 
 Press CTRL%\keys{\ctrl}
 while clicking on these reactions and click on \keys{Next} when finished.}
@@ -715,7 +715,8 @@ while clicking on these reactions and click on \keys{Next} when finished.}
 
 \begin{figure}[htbp]
 \shadowimage[width=\textwidth]{SABIO_automatic_5}
-\caption{Selection of search terms. On the next window you can add search terms
+\caption[Selection of search terms]{Selection of search terms.
+On the next window you can add search terms
 that should apply for the rate equations of all reactions such as the organism
 by choosing from the provided terms and typing in the value of the term.
 The \KEGG id of a reaction is always included in the respective search,
@@ -727,14 +728,14 @@ etc. in the right panel.}
 
 \begin{figure}[htbp]
 \shadowimage[width=\textwidth]{SABIO_automatic_6}
-\caption{Removal of search terms.
+\caption[Removal of search terms]{Removal of search terms.
 You can remove a query field again by clicking on \keys{Delete}.}
 \label{fig:removeSearchTerms}
 \end{figure}
 
 \begin{figure}[htbp]
 \shadowimage[width=\textwidth]{SABIO_automatic_8}
-\caption{Window with found kinetic equations.
+\caption[Window with found kinetic equations]{Window with found kinetic equations.
 On the following window you see for which reactions matching entries have been found.
 A reaction is marked in green, if a matching rate equation has been found, yellow,
 if the found rate equations do not fit exactly to your model, and \textcolor{red}{red}, if no matching
@@ -745,7 +746,7 @@ rate equation has been found. If you are satisfied with the results, you can cli
 
 \begin{figure}[htbp]
 \shadowimage[width=\textwidth]{SABIO_automatic_9}
-\caption{Summary of necessary changes.
+\caption[Summary of necessary changes]{Summary of necessary changes.
 A summary of all necessary changes to the model for adding rate equations to the
 reactions marked in green, is displayed.
 If you now click on \keys{Finish} and confirm the changes afterwards, the rate
@@ -761,7 +762,7 @@ As an alternative you can add kinetic equations from \SABIO to a selected reacti
  
 \begin{figure}[htbp]
 \shadowimage[width=\textwidth]{SABIO_manual_1}
-\caption{Starting the \SABIO application for a selected reaction.
+\caption[Starting the \SABIO application for a selected reaction]{Starting the \SABIO application for a selected reaction.
 Select a reaction and right-click on it.
 Then click on the \SABIO symbol and the wizard will be started.
 The reaction is shown again in the first window and you can just click on \keys{Next}.}
@@ -769,7 +770,7 @@ The reaction is shown again in the first window and you can just click on \keys{
 \end{figure}
 \begin{figure}[htbp]
 \shadowimage[width=\textwidth]{SABIO_manual_3}
-\caption{Selection of search terms.
+\caption[Selection of search terms]{Selection of search terms.
 You can add search terms such as the organism by choosing from the provided terms and
 typing in the value of the term. The search can be further restricted by changing the
 bounds of pH, temperature, etc. in the right panel. 
@@ -779,14 +780,14 @@ You can remove a query field by clicking on \keys{Delete}
 \end{figure}
 \begin{figure}[htbp]
 \shadowimage[width=\textwidth]{SABIO_manual_7}
-\caption{Window with two search terms.
+\caption[Window with two search terms]{Window with two search terms.
 Here a search for an organism and an enzyme name has been specified and will be
 combined to a query when clicking on \keys{Next}.}
 \label{fig:searchTermsQuery}
 \end{figure}
 \begin{figure}[htbp]
 \shadowimage[width=\textwidth]{SABIO_manual_8}
-\caption{Window with found kinetic equations.
+\caption[Window with found kinetic equations]{Window with found kinetic equations.
 The rate equations that match your search criteria are displayed here.
 You can select a reaction and click on \keys{Next} or you can click on \keys{Back}
 and change your search criteria.}
@@ -794,7 +795,7 @@ and change your search criteria.}
 \end{figure}
 \begin{figure}[htbp]
 \shadowimage[width=\textwidth]{SABIO_manual_9}
-\caption{Window for matching elements in the equation to model elements.
+\caption[Window for matching elements in the equation to model elements]{Window for matching elements in the equation to model elements.
 You can choose how to match the species, compartments, etc., contained in the selected rate 
 equation to the respective \SBML elements in your model. The necessary elements to import,
 such as function definitions contained in the rate equation to add, are also shown.}
@@ -802,7 +803,7 @@ such as function definitions contained in the rate equation to add, are also sho
 \end{figure}
 \begin{figure}[htbp]
 \shadowimage[width=\textwidth]{SABIO_manual_10}
-\caption{Summary of necessary changes.
+\caption[Summary of necessary changes]{Summary of necessary changes.
 A summary of all necessary changes to the model for adding the selected rate equation is displayed.
 Now click on \keys{Finish} and confirm the changes afterwards. Then the rate equation will be
 added and the necessary changes will be applied to your model.}
@@ -1857,8 +1858,8 @@ equations for the same reaction.
 
 \begin{table}[htb]
 \centering
-\caption[\KEGG identifiers of small molecules and ions]{\KEGG identifiers of
-small molecules and ions. This table gives the default list of all small
+\caption[\acs{KEGG} identifiers of small molecules and ions]{\KEGG identifiers of small molecules and ions.
+This table gives the default list of all small
 molecules and ions that are ignored by SBMLsqueezer when creating kinetic
 equations. This list was created according to \citet{Blum2009}.}
 \label{tab:MIRIAMignoreList}
