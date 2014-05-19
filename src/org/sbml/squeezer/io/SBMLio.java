@@ -109,30 +109,8 @@ ChangeListener {
   @Override
   public Model convertModel(T model) throws SBMLException {
     try {
-      T origModel;
-      Model convertedModel = null;
-      File file = null;
-      convertedModel = reader.convertModel(model);
-      if (model instanceof String) {
-        file = new File(model.toString());
-        if (!file.exists() || !file.isFile() || !file.canRead()) {
-          file = null;
-        }
-        origModel = reader.getOriginalModel();
-      } else {
-        origModel = model;
-      }
-      convertedModel.putUserObject(LINK_TO_LIBSBML, origModel);
-      openedModel = convertedModel;
-      SBMLDocument doc = convertedModel.getSBMLDocument();
-      if (doc == null) {
-        doc = new SBMLDocument(convertedModel.getLevel(), convertedModel.getVersion());
-        doc.setModel(convertedModel);
-      }
-      openedDocument = new OpenedFile<SBMLDocument>(file, convertedModel.getSBMLDocument());
-      openedDocument.getDocument().addTreeNodeChangeListener(new SBMLfileChangeListener(openedDocument));
-      listOfOpenedFiles.add(openedDocument);
-      selectedModel = listOfOpenedFiles.size() - 1;
+      Model convertedModel = reader.convertModel(model);
+      setCurrentModel(null, convertedModel, null);
       return convertedModel;
     } catch (Exception exc) {
       // exc.fillInStackTrace();
@@ -145,12 +123,36 @@ ChangeListener {
     }
   }
   
+  /**
+   * 
+   * @param file
+   * @param model
+   * @param origModel
+   */
+  private void setCurrentModel(File file, Model model, T origModel) {
+    openedModel = model;
+    if (origModel != null) {
+      model.putUserObject(LINK_TO_LIBSBML, origModel);
+    }
+    SBMLDocument doc = model.getSBMLDocument();
+    if (doc == null) {
+      doc = new SBMLDocument(model.getLevel(), model.getVersion());
+      doc.setModel(model);
+    }
+    openedDocument = new OpenedFile<SBMLDocument>(file, model.getSBMLDocument());
+    openedDocument.getDocument().addTreeNodeChangeListener(new SBMLfileChangeListener(openedDocument));
+    listOfOpenedFiles.add(openedDocument);
+    selectedModel = listOfOpenedFiles.size() - 1;
+  }
+  
   /* (non-Javadoc)
    * @see org.sbml.jsbml.SBMLInputConverter#convertSBMLDocument(java.io.File)
    */
   @Override
   public SBMLDocument convertSBMLDocument(File sbmlFile) throws Exception {
-    return reader.convertSBMLDocument(sbmlFile);
+    SBMLDocument doc = reader.convertSBMLDocument(sbmlFile);
+    setCurrentModel(sbmlFile, doc.getModel(), null);
+    return doc;
   }
   
   /* (non-Javadoc)
@@ -158,7 +160,9 @@ ChangeListener {
    */
   @Override
   public SBMLDocument convertSBMLDocument(String fileName) throws Exception {
-    return reader.convertSBMLDocument(fileName);
+    SBMLDocument doc = reader.convertSBMLDocument(fileName);
+    setCurrentModel(new File(fileName), doc.getModel(), null);
+    return doc;
   }
   
   /**
