@@ -443,7 +443,14 @@ public class SBMLsqueezer<T> extends Launcher {
     long time = System.currentTimeMillis();
     logger.info(MESSAGES.getString("READING_SBML_FILE"));
     try {
-      model = getSBMLIO().convertModel((T) sbmlSource);
+      SBMLio<T> sbmlio = getSBMLIO();
+      if (sbmlSource instanceof File) {
+        model = sbmlio.convertSBMLDocument((File) sbmlSource).getModel();
+      } else if (sbmlSource instanceof String) {
+        model = sbmlio.convertSBMLDocument(sbmlSource.toString()).getModel();
+      } else {
+        model = sbmlio.convertModel((T) sbmlSource);
+      }
       logger.info(MessageFormat.format(MESSAGES.getString("DONE_IN_MS"), (System.currentTimeMillis() - time)));
     } catch (Exception exc) {
       logger.log(Level.WARNING, String.format(WARNINGS.getString("CANT_READ_MODEL"), getMessage(exc)));
