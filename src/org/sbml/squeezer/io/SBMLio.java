@@ -94,6 +94,8 @@ ChangeListener {
   
   /**
    * 
+   * @param sbmlReader
+   * @param sbmlWriter
    */
   public SBMLio(SBMLInputConverter<T> sbmlReader, SBMLOutputConverter<T> sbmlWriter) {
     this.reader = sbmlReader;
