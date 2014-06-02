@@ -1,6 +1,37 @@
 % This file was created with JabRef 2.9.2.
 % Encoding: UTF8
 
+@ARTICLE{Arnold2011,
+  author = {Arnold, Anne and Nikoloski, Zoran},
+  title = {A quantitative comparison of Calvin-Benson cycle models},
+  journal = {Trends Plant Sci},
+  year = {2011},
+  volume = {16},
+  pages = {676--683},
+  number = {12},
+  month = dec,
+  abstract = {The Calvin-Benson cycle (CBC) provides the precursors for biomass
+	synthesis necessary for plant growth. The dynamic behavior and yield
+	of the CBC depend on the environmental conditions and regulation
+	of the cellular state. Accurate quantitative models hold the promise
+	of identifying the key determinants of the tightly regulated CBC
+	function and their effects on the responses in future climates. We
+	provide an integrative analysis of the largest compendium of existing
+	models for photosynthetic processes. Based on the proposed ranking,
+	our framework facilitates the discovery of best-performing models
+	with regard to metabolomics data and of candidates for metabolic
+	engineering.},
+  doi = {10.1016/j.tplants.2011.09.004},
+  institution = {Institute of Biochemistry and Biology, University of Potsdam, 14476
+	Potsdam, Germany.},
+  keywords = {Metabolomics; Photosynthesis; Plants, growth /&/ development/metabolism},
+  language = {eng},
+  medline-pst = {ppublish},
+  pii = {S1360-1385(11)00195-6},
+  pmid = {22001849},
+  url = {http://dx.doi.org/10.1016/j.tplants.2011.09.004}
+}
+
 @ARTICLE{Buechel2013,
   author = {B{\"u}chel, Finja and Rodriguez, Nicolas and Swainston, Neil and
 	Wrzodek, Clemens and Czauderna, Tobias and Keller, Roland and Mittag,
@@ -239,6 +270,96 @@
   pii = {msb201177},
   pmid = {22027554},
   url = {http://dx.doi.org/10.1038/msb.2011.77}
+}
+
+@INPROCEEDINGS{Draeger2007b,
+  author = {Dr{\"a}ger, Andreas and Kronfeld, Marcel and Supper, Jochen and Planatscher,
+	Hannes and Magnus, J{\o}rgen Barsett and Oldiges, Marco and Zell,
+	Andreas},
+  title = {{Benchmarking Evolutionary Algorithms on Convenience Kinetics Models
+	of the Valine and Leucine Biosynthesis in \emph{C.~glutamicum}}},
+  booktitle = {2007 IEEE Congress on Evolutionary Computation},
+  year = {2007},
+  editor = {Srinivasan, Dipti and Wang, Lipo},
+  pages = {896--903},
+  address = {Singapore},
+  month = {25-28 September},
+  organization = {IEEE Computational Intelligence Society},
+  publisher = {IEEE Press},
+  abstract = {An important problem in systems biology is parameter estimation for
+	biochemical system models. Our work concentrates on the metabolic
+	subnetwork of the valine and leucine biosynthesis in Corynebacterium
+	glutamicum, an anaerobic actinobacterium of high biotechnological
+	importance. Using data of an in vivo experiment measuring 13 metabolites
+	during a glucose stimulus-response experiment we investigate the
+	performance of various Evolutionary Algorithms on the parameter inference
+	problem in biochemical modeling. Due to the inconclusive information
+	on the reversibility of the reactions in the pathway, we develop
+	both a reversible and an irreversible differential equation model
+	based on the recent convenience kinetics approach. As the reversible
+	model allows better approximation on the whole, we use it to analyze
+	the impact of different settings on four especially promising EAs.
+	We show that Particle Swarm Optimization as well as Differential
+	Evolution are useful methods for parameter estimation on convenience
+	kinetics models outperforming Genetic Algorithm and Evolution Strategy
+	approaches and nearly reaching the quality of independent spline
+	approximations on the raw data.},
+  isbn = {1-4244-1340-0},
+  keywords = {systems biology, mathematical modeling, benchmark, evolutionary algorithms,
+	valine and leucine biosynthesis, Corynebacterium glutamicum, convenience
+	kinetics}
+}
+
+@ARTICLE{Draeger2009a,
+  author = {Dr{\"a}ger, Andreas and Kronfeld, Marcel and Ziller, Michael Johannes
+	and Supper, Jochen and Planatscher, Hannes and Magnus, J{\o}rgen
+	Barsett and Oldiges, Marco and Kohlbacher, Oliver and Zell, Andreas},
+  title = {{Modeling metabolic networks in \emph{C.~glutamicum}: a comparison
+	of rate laws in combination with various parameter optimization strategies}},
+  journal = {BMC Syst Biol},
+  year = {2009},
+  volume = {3},
+  pages = {5},
+  month = {January},
+  abstract = {Background: To understand the dynamic behavior of cellular systems,
+	mathematical modeling is often necessary and comprises three steps:
+	(1) experimental measurement of participating molecules, (2) assignment
+	of rate laws to each reaction, and (3) parameter calibration with
+	respect to the measurements. In each of these steps the modeler is
+	confronted with a plethora of alternative approaches, e. g., the
+	selection of approximative rate laws in step two as specific equations
+	are often unknown, or the choice of an estimation procedure with
+	its specific settings in step three. This overall process with its
+	numerous choices and the mutual influence between them makes it hard
+	to single out the best modeling approach for a given problem.
+	
+	Results: We investigate the modeling process using multiple kinetic
+	equations together with various parameter optimization methods for
+	a well-characterized example network, the biosynthesis of valine
+	and leucine in C. glutamicum. For this purpose, we derive seven dynamic
+	models based on generalized mass action, Michaelis-Menten and convenience
+	kinetics as well as the stochastic Langevin equation. In addition,
+	we introduce two modeling approaches for feedback inhibition to the
+	mass action kinetics. The parameters of each model are estimated
+	using eight optimization strategies. To determine the most promising
+	modeling approaches together with the best optimization algorithms,
+	we carry out a two-step benchmark: (1) coarse-grained comparison
+	of the algorithms on all models and (2) fine-grained tuning of the
+	best optimization algorithms and models. To analyze the space of
+	the best parameters found for each model, we apply clustering, variance,
+	and correlation analysis.
+	
+	Conclusions: A mixed model based on the convenience rate law and the
+	Michaelis-Menten equation, in which all reactions are assumed to
+	be reversible, is the most suitable deterministic modeling approach
+	followed by a reversible generalized mass action kinetics model.
+	A Langevin model is advisable to take stochastic effects into account.
+	To estimate the model parameters, three algorithms are particularly
+	useful: For first attempts the settings-free Tribes algorithm yields
+	valuable results. Particle swarm optimization and differential evolution
+	provide significantly better results with appropriate settings.},
+  doi = {10.1186/1752-0509-3-5},
+  url = {http://www.biomedcentral.com/1752-0509/3/5}
 }
 
 @PHDTHESIS{Draeger2011a,
@@ -1727,6 +1848,41 @@
   pii = {gkr1046},
   pmid = {22102587},
   url = {http://dx.doi.org/10.1093/nar/gkr1046}
+}
+
+@ARTICLE{Wolf2000,
+  author = {Wolf, Jana and Passarge, Jutta and Somsen, Oscar J. G. and Snoep,
+	Jacky L. and Heinrich, Reinhart and Westerhoff, Hans V.},
+  title = {Transduction of intracellular and intercellular dynamics in yeast
+	glycolytic oscillations},
+  journal = {Biophys J},
+  year = {2000},
+  volume = {78},
+  pages = {1145--1153},
+  number = {3},
+  month = mar,
+  abstract = {Under certain well-defined conditions, a population of yeast cells
+	exhibits glycolytic oscillations that synchronize through intercellular
+	acetaldehyde. This implies that the dynamic phenomenon of the oscillation
+	propagates within and between cells. We here develop a method to
+	establish by which route dynamics propagate through a biological
+	reaction network. Application of the method to yeast demonstrates
+	how the oscillations and the synchronization signal can be transduced.
+	That transduction is not so much through the backbone of glycolysis,
+	as via the Gibbs energy and redox coenzyme couples (ATP/ADP, and
+	NADH/NAD), and via both intra- and intercellular acetaldehyde.},
+  doi = {10.1016/S0006-3495(00)76672-0},
+  institution = {Humboldt University, Institute of Biology, Theoretical Biophysics,
+	Invalidenstrasse 42, D-10115 Berlin, Germany.},
+  keywords = {Acetaldehyde, metabolism; Adenosine Diphosphate, metabolism; Adenosine
+	Triphosphate, metabolism; Glycolysis; Kinetics; Models, Chemical;
+	NAD, metabolism; Oscillometry; Oxidation-Reduction; Saccharomyces
+	cerevisiae, metabolism},
+  language = {eng},
+  medline-pst = {ppublish},
+  pii = {S0006-3495(00)76672-0},
+  pmid = {10692304},
+  url = {http://dx.doi.org/10.1016/S0006-3495(00)76672-0}
 }
 
 @ARTICLE{Wrzodek2013,
