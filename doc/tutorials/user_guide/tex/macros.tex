@@ -12,7 +12,7 @@
 \newcommand{\file}                  [1]{\texttt{#1}}
 \newcommand{\wrapfigspace}          {-10pt}
 
-\newcommand{\TODO}                  [1]{\textcolor{red}{#1}}
+\newcommand{\TODO}                  [1]{\pdfcomment{#1}} %\textcolor{red}{#1}}
 \newcommand{\numero}                {N\raisebox{.25em}{\relsize{-2}\underline{o}}\xspace}
 \newcommand{\itemcolor}[1]{% Update list item colour
   \renewcommand{\makelabel}[1]{\color{#1}\hfil ##1}}
@@ -34,7 +34,7 @@
 
 % E
 \newcommand{\English}               {English\index{Language pack!English}\xspace}
-\newcommand{\Eclipse}               {Eclipse\index{IDE!Eclipse}\xspace}
+\newcommand{\Eclipse}               {Eclipse\index{Eclipse}\xspace}
 
 % G
 \newcommand{\Galaxy}                {Galaxy\index{Galaxy}\xspace}
@@ -78,7 +78,7 @@
 \newcommand{\OS}                    {operating system\index{Operating System}\xspace}
 
 % P
-\newcommand{\PATH}                  {\texttt{PATH}\index{Operating System!MS Windows!\texttt{PATH}}\xspace}
+\newcommand{\PATH}                  {\texttt{PATH}\index{Operating System!Microsoft Windows!\texttt{PATH}}\xspace}
 \newcommand{\pathmodels}            {path2models\index{Path to models project}\xspace}
 \newcommand{\PDF}                   {\ac{PDF}\index{\acfi{PDF}}\xspace}
 
@@ -92,15 +92,16 @@
 \newcommand{\SBMLLaTeXs}            {{\sffamily\upshape\raisebox{-.35ex}{S\hspace{-.425ex}BML}\hspace{-0.5ex}\begin{rotate}{-17.5}\raisebox{-.1ex}{2}\end{rotate}\hspace{1ex}\LaTeX}}
 \newcommand{\SBMLLaTeX}             {\SBMLLaTeXs\index{SBML2LaTeX@{SBML2\LaTeX}}\xspace}
 \newcommand{\SBMLsimulator}         {SBMLsimulator\index{SBMLsimulator}\xspace}
-\newcommand{\SBO}                   {\ac{SBO}\index{SBO}\xspace}
+\newcommand{\SBO}                   {\ac{SBO}\index{\acfi{SBO}}\xspace}
 
 % U
 \newcommand{\UbuntuLinux}           {Ubuntu Linux\index{Operating System!Linux!Ubuntu}\xspace}
 \newcommand{\Unix}                  {Unix\index{Operating System!Unix}\xspace}
 
 % W
-\newcommand{\WindowsSeven}          {Windows~7\index{Operating System!Windows!Windows~7}\xspace}
-\newcommand{\Windows}               {Microsoft Windows\index{Operating System!MS Windows}\xspace}
+\newcommand{\WindowsSeven}          {Windows~7\index{Operating System!Microsoft Windows!Windows~7}\xspace}
+\newcommand{\Windows}               {Microsoft Windows\index{Operating System!Microsoft Windows}\xspace}
 
 % X
 \newcommand{\XHTML}                 {\ac{XHTML}\index{\acfi{XHTML}}\xspace}
+\newcommand{\XML}                   {\ac{XML}\index{\acfi{XML}}\xspace}

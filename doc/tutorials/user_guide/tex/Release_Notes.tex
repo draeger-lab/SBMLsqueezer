@@ -310,7 +310,7 @@ attributes that are required to annotate all newly created objects.
 Whenever possible, SBMLsqueezer annotates newly created objects, such as
 \texttt{Parameter}s or \texttt{UnitDefinition}s, with \SBO identifiers.
 
-\paragraph{\MIRIAM Support}
+\subsubsection{\MIRIAM Support}
 
 In contrast to earlier versions, SBMLsqueezer now also interprets and uses
 \MIRIAM tags. The new command-line and configuration key option
@@ -502,7 +502,7 @@ The communication between SBMLsqueezer and \CellDesigner was very inefficient.
 The new plug-in interface in \JSBML provides a much better performance.
 Errors in kinetic equations and units of parameters have been detected and
 solved:
-\begin{itemize}
+\begin{dinglist}{54}
 \item Sometimes SBMLsqueezer created invalid identifiers for newly introduced
       units.
 \item The units of the association and dissociation constant in generalized mass
@@ -512,7 +512,7 @@ solved:
 \item The units of the half saturation constant in the (generalized) Hill
       equation were not correctly derived. The derivation of units of kinetic
       parameters has been improved
-\end{itemize}  
+\end{dinglist}  
 Several minor issues with the graphical user interface have been solved.
 
 \subsection{Known Issues}
