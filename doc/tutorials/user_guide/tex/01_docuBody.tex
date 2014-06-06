@@ -742,7 +742,7 @@ For more information about the command-line options for \SABIO see \vref{chap:CM
 Furthermore, you can also directly use SBMLsqueezer's \API to benefit from this functionality. \Cref{sec:API} provides an elaborated description of how to use this feature.
 
 \subsection{Rate laws from \SABIO for an entire network}
-
+\label{sec:SABIOautomatic}
 \begin{SCfigure}
 \includegraphics[width=.45\textwidth]{SABIO_automatic_1compact1}
 \caption[Starting the \SABIO wizard]{Starting the \SABIO wizard.
@@ -755,12 +755,11 @@ Alternatively, you can also click at \menu{Edit > SABIO-RK}.}
 \begin{SCfigure}
 \shadowimage[width=.54\textwidth]{SABIO_automatic_2}
 \caption[Selection of reactions in the \SABIO wizard]{Selection of reactions in the \SABIO wizard.
-On the first window you can select which reactions you want to equip with kinetic equations from \SABIO. 
-In order to select multiple reactions in the table hold the \keys{\ctrlwin} key pressed while clicking on the desired reactions.
+On the first window you can select which reactions you want to equip with kinetic equations from \SABIO. It is possible to directly select the reactions with some property (such as reactions not yet containing a kinetic law or fast reactions).
+Furthermore, you can select the desired reactions by holding the \keys{\ctrlwin} key pressed while clicking on the desired reactions.
 You can abort the wizard by either clicking at the \keys{Cancel} button or by hitting the \keys{\escwin} key.
 When finished click on the button \keys{Next}.
-\TODO{Warum ist das Menu oben aufgeklappt und was kann man da einstellen? Das ist hier nicht erklaert!}}
-\label{fig:selectReations}
+\label{fig:selectReations}}
 \end{SCfigure}
 \begin{SCfigure}
 \shadowimage[width=.54\textwidth]{SABIO_automatic_5}
@@ -780,8 +779,7 @@ You can remove a query field again by clicking on the check box button in the ri
 When you are done with selecting appropriate search terms, click button \keys{Next} to see the results of your query. \Cref{fig:foundEquations} displays an example who this overview can look like.
 The \keys{Back} button allows you to return to the selection of reactions as displayed in \vref{fig:selectReations}.
 As before, you can abort the dialog by either hitting the key \keys{\escwin} or by clicking at the \keys{Cancel} button.
-\TODO{Auch hier sind die Tabellenspalten so unguenstig zusammengerutscht, dass man den Inhalt nicht erkennen kann.}}
-\label{fig:removeSearchTerms}
+\label{fig:removeSearchTerms}}
 \end{SCfigure}
 \begin{figure}
 \shadowimage[width=\textwidth]{SABIO_automatic_8compact}
@@ -789,7 +787,8 @@ As before, you can abort the dialog by either hitting the key \keys{\escwin} or 
 The next window lists all reactions whose background color has the following meaning:
 A reaction is marked in \colorbox{LimeGreen}{green} if a matching rate equation has been found,
 \colorbox{Goldenrod}{yellow} if the found rate equations do not exactly fit to your model, and
-\colorbox{red}{red} if no matching rate equation has been found.
+\colorbox{red}{red} if no matching rate equation has been found. 
+A found rate equation exactly fits to your model, if there is a straightforward matching of all elements (species, compartments, etc.) contained in the equation to respective \SBML elements in your model.
 If you are satisfied with the results, click \keys{Next}.}
 \label{fig:foundEquations}
 \end{figure}
@@ -806,7 +805,7 @@ If you confirm, the rate equations will be transferred to your model and all cha
 To this end, SBMLsqueezer provides a wizard that guides you through the selection of relevant reactions (\vref{fig:selectReations}) and provides several options to restrict the search in \SABIO (\vref{fig:searchTerms}).
 The user interface of this wizard is similar to the database web interface provided by \SABIO\footnote{\url{http://sabio.h-its.org}}.
 To ensure that entries for the reactions of interest can be found in \SABIO, it is important to annotate these reactions with identifiers from the \KEGG database using the \MIRIAM registry.
-The \KEGG identifier of a reaction is always included in the respective search, \pdfmarkupcomment[author={Andreas Dr\"ager}, color={yellow}]{because the $\backslash$API simultaneously searches for rate equations for several reactions.}{Unklar.}
+The \KEGG identifier of a reaction is then always included in the respective search in order to avoid adding kinetic laws referring to other reactions.
 You can further restrict your search by changing the bounds of pH, temperature, etc. in the right panel (see \vref{fig:searchTerms}).
 
 \subsection{\SABIO for a selected reaction}
@@ -848,30 +847,28 @@ How to do this is shown in \vrefrange{fig:startManual}{fig:changesManual}.
 You should first select the reaction, for which you want to obtain a rate law from \SABIO (\vref{fig:startManual}).
 All subsequent steps of the procedure are essentially the same as when obtaining rate laws from \SABIO for all reactions in a single step.
 The only difference is that the \SABIO wizard will be launched for one selected reaction of interest only instead of having all reactions in the model.
-We here use biomodel \numero~206 from \BioModels \citep{Li2010a, Wolf2000} as an example network.
-\TODO{Hier muss auch erklaert werden, warum ein Matching mit den Modellelementen noetig ist, wie dies in \vref{fig:matching} dargestellt wird. Warum braucht man sich darum nicht zu kuemmern, wenn man fuer alle Reaktionen kinetische Gleichungen aus SABIO holt, warum aber ist es hier noetig, was passiert hierbei?}
+We here use biomodel \numero~206 from \BioModels \citep{Li2010a, Wolf2000} as an example network. 
 \begin{figure}[t!]
 \shadowimage[width=\textwidth]{SABIO_manual_8}
 \caption[Window with found kinetic equations]{Window with found kinetic equations.
 The rate equations that match your search criteria are displayed here.
 You can select a reaction and click on \keys{Next}, which will bring you to \vref{fig:matching}.
 Alternatively, you can click on \keys{Back} and change your search criteria (see \vref{fig:searchTermsQuery}).
-\TODO{Hier wird der Platz fuer die Tabellenspalten ebenfalls nicht ausgenutzt.}}
-\label{fig:foundEquationsManual}
+\label{fig:foundEquationsManual}}
 \end{figure}
 \begin{SCfigure}
 \shadowimage[width=.54\textwidth]{SABIO_manual_9compact}
 \caption[Window for matching elements in the equation to model elements]{Window for matching elements in the equation to model elements.
-You can choose how to match the species, compartments, etc., contained in the selected rate 
-equation to the respective \SBML elements in your model. The necessary elements to import,
-such as function definitions contained in the rate equation to add, are also shown.}
+If kinetic laws are added to an entire network simultaneously, a straightforward matching of all elements (e.g., the species) contained in each rate equation to \SBML elements in your model will be necessary. 
+In contrast to that, if you only add a rate law to one reaction at a time, the application presents you a suggestion for the matching and enables you to change it, if desired. 
+The necessary elements to import, such as function definitions contained in the rate equation to add, are also shown in this window.}
 \label{fig:matching}
 \end{SCfigure}
 \begin{SCfigure}
 \shadowimage[width=.54\textwidth]{SABIO_manual_10compact}
 \caption[Summary of necessary changes]{Summary of necessary changes.
 A summary of all necessary changes to the model for adding the selected rate equation is displayed.
-Now click on \keys{Finish} and confirm the changes afterwards. \TODO{Was soll das immer mit dem \emph{afterwards}? Muss man denn nachdem auf \emph{Finish} geklickt wurde, noch einmal etwas anklicken? Was kommt denn dann fuer ein Dialog? Oder ist mit dem Klick auf \emph{Finish alles erledigt}? Dann muesste aber der Text dies auch klar beschreiben.} Then the rate equation will be
+Now click on \keys{Finish} and afterwards a dialog pops up asking you to confirm the changes. After this confirmation the rate equation will be
 added and the necessary changes will be applied to your model.}
 \label{fig:changesManual}
 \end{SCfigure}
@@ -1120,8 +1117,11 @@ This type of rate equation can be applied to reversible as well as to irreversib
 \lstinputlisting[caption={Assignment of a kinetic law to a reaction via the \acs{API} of SBMLsqueezer 2}, label={lst:SBMLsqueezer2API1}, firstline={47}, lastline={76}]{../../../examples/src/org/sbml/squeezer/test/SqueezeReaction.java}
 
 \subsection{Querying \SABIO and merging the results into a local \SBML document}
-
-\TODO{How can the SABIO-RK interface be utilized via the API?}.
+The console mode of \SABIO is implemented in the class \texttt{ConsoleWizard} located in the package \texttt{org.sbml.squeezer.sabiork.wizard.console}. 
+The following example shows how to start a query for the reactions in the model.
+ The search can either comprise all reactions or just the reactions, to which a kinetic law has not been added yet. All search terms that can be applied to the model are listed at the beginning.
+ The \KEGG identifier of a reaction is automatically added to the search terms (compare \vref{sec:SABIOautomatic}). A found kinetic law is added to some reaction, if all contained elements can be matched to \SBML elements in your model.
+\lstinputlisting[caption={\SABIO query for the reactions of a model}, label={lst:SBMLsqueezer2API1}, firstline={96}, lastline={138}]{../../../test/org/sbml/squeezer/test/sabiork/SABIORKApplication.java}
 
 
 

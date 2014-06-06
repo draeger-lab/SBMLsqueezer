@@ -22,6 +22,7 @@
  * ---------------------------------------------------------------------
  */
 package org.sbml.squeezer.test.sabiork;
+
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Dialog.ModalityType;
@@ -38,106 +39,102 @@ import org.sbml.jsbml.SBMLReader;
 import org.sbml.jsbml.SBMLWriter;
 import org.sbml.squeezer.sabiork.wizard.SABIORKWizard;
 
-
 /**
  * @author Matthias Rall
  * @version $Rev$
  * @since 2.0
  */
 public class SABIORKApplication {
-  
-  /**
-   * Reads the SBML Document
-   * @param f the file
-   * @return doc the SBMLDocument
-   */
-  public static SBMLDocument readSBMLDocument(File f) {
-    SBMLDocument sbmlDocument = null;
-    try {
-      sbmlDocument = SBMLReader.read(f);
-    } catch (XMLStreamException e) {
-      e.printStackTrace();
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-    return sbmlDocument;
-  }
-  
-  /**
-   * Writes the SBMLDocument to a file
-   * @param sbmlDocument
-   * @param f the file
-   */
-  public static void writeSBMLDocument(SBMLDocument sbmlDocument, File f) {
-    try {
-      SBMLWriter.write(sbmlDocument, f, ' ', (short) 4);
-    } catch (SBMLException e) {
-      e.printStackTrace();
-    } catch (XMLStreamException e) {
-      e.printStackTrace();
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-  }
-  
-  /**
-   * Runs the wizard
-   * @param input the input file
-   * @param output the output file
-   */
-  public static void runGUI(final File input, final File output) {
-    final JFrame frame = new JFrame("SBMLsqueezer");
-    frame.setLayout(new BorderLayout());
-    frame.setMinimumSize(new Dimension(300, 300));
-    
-    JButton buttonWizard = new JButton("Open SABIO-RK Wizard");
-    buttonWizard.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        SBMLDocument result = SABIORKWizard.getResultGUI(frame, ModalityType.APPLICATION_MODAL, readSBMLDocument(input), true).getSBMLDocument();
-        writeSBMLDocument(result, output);
-      }
-    });
-    
-    frame.add(buttonWizard, BorderLayout.NORTH);
-    frame.setVisible(true);
-  }
-  
-  /**
-   * Runs the console application
-   * @param input the input file
-   * @param output the output file
-   */
-  public static void runConsole(File input, File output) {
-    String pathway = null;
-    String tissue = null;
-    String organism = null;
-    String cellularLocation = null;
-    Boolean isWildtype = true;
-    Boolean isMutant = true;
-    Boolean isRecombinant = false;
-    Boolean hasKineticData = true;
-    Double lowerpHValue = 7.9;
-    Double upperpHValue = 14.0;
-    Double lowerTemperature = -10.0;
-    Double upperTemperature = 115.0;
-    Boolean isDirectSubmission = true;
-    Boolean isJournal = true;
-    Boolean isEntriesInsertedSince = false;
-    String dateSubmitted = "15/10/2008";
-    
-    SBMLDocument doc = readSBMLDocument(input);
-    SABIORKWizard.getResultConsole(doc, true, pathway, tissue, organism, cellularLocation, isWildtype, isMutant, isRecombinant, hasKineticData, lowerpHValue, upperpHValue, lowerTemperature, upperTemperature, isDirectSubmission, isJournal, isEntriesInsertedSince, dateSubmitted);
-    writeSBMLDocument(doc, output);
-  }
-  
-  /**
-   * 
-   * @param args
-   */
-  public static void main(String[] args) {
-    SABIORKApplication.runGUI(new File(args[0]), new File(args[1]));
-    //runConsole(new File(args[0]), new File(args[1]));
-  }
-  
+
+	
+
+	/**
+	 * Runs the wizard
+	 * 
+	 * @param input
+	 *            the input file
+	 * @param output
+	 *            the output file
+	 */
+	public static void runGUI(final File input, final File output) {
+		final JFrame frame = new JFrame("SBMLsqueezer");
+		frame.setLayout(new BorderLayout());
+		frame.setMinimumSize(new Dimension(300, 300));
+
+		JButton buttonWizard = new JButton("Open SABIO-RK Wizard");
+		buttonWizard.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				SBMLDocument result = null;
+				try {
+					result = SABIORKWizard.getResultGUI(frame,
+							ModalityType.APPLICATION_MODAL,
+							SBMLReader.read(input), true).getSBMLDocument();
+				} catch (XMLStreamException e1) {
+					e1.printStackTrace();
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+				try {
+					if(result != null) {
+					 SBMLWriter.write(result, output, ' ', ( short ) 2);
+					}
+				} catch (SBMLException e1) {
+					e1.printStackTrace();
+				} catch (XMLStreamException e1) {
+					e1.printStackTrace();
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+			}
+		});
+
+		frame.add(buttonWizard, BorderLayout.NORTH);
+		frame.setVisible(true);
+	}
+
+	/**
+	 * Reads a given SBMLDocument and runs the console mode. 
+	 * The reactions are searched by their KEGG term and additional search terms.
+	 * 
+	 * @param args
+	 *            absolute or relative paths to two SBML files (input and
+	 *            output)
+	 */
+	public static void main(String[] args) throws Throwable{
+		// The different search terms can be set here (null means that the term
+		// is not used).
+		String pathway = null;
+		String tissue = null;
+		String organism = null;
+		String cellularLocation = null;
+		Boolean isWildtype = true;
+		Boolean isMutant = true;
+		Boolean isRecombinant = false;
+		Boolean hasKineticData = true;
+		Double lowerpHValue = 7.9;
+		Double upperpHValue = 14.0;
+		Double lowerTemperature = -10.0;
+		Double upperTemperature = 115.0;
+		Boolean isDirectSubmission = true;
+		Boolean isJournal = true;
+		Boolean isEntriesInsertedSince = false;
+		String dateSubmitted = "15/10/2008";
+
+		boolean overwriteExistingRateLaws = true;
+		
+		// Read the SBMLDocument
+		SBMLDocument doc = SBMLReader.read(new File(args[0]));
+
+		// Run the console mode
+		SABIORKWizard.getResultConsole(doc, overwriteExistingRateLaws, pathway, tissue, organism,
+				cellularLocation, isWildtype, isMutant, isRecombinant,
+				hasKineticData, lowerpHValue, upperpHValue, lowerTemperature,
+				upperTemperature, isDirectSubmission, isJournal,
+				isEntriesInsertedSince, dateSubmitted);
+
+		// Save the changed document
+		SBMLWriter.write(doc, new File(args[1]), ' ', ( short ) 2);
+	}
+
 }
