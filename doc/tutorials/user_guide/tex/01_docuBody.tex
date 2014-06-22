@@ -84,7 +84,7 @@ also be used as a gadget within this powerful framework for systems biology
 to create your models, such as \KEGGtranslator \citep{Wrzodek2011, Wrzodek2013}
 can directly be piped as the input to SBMLsqueezer. Furthermore, SBMLsqueezer's
 output can be forwarded to further programs, such as \SBMLsimulator
-\citep{Keller2013} for further analysis.
+\citep{Keller2013, Keller2014} for further analysis.
 
 Finally, the command-line mode of SBMLsqueezer provides all capabilities of the
 program without any restriction.
@@ -781,14 +781,10 @@ The \keys{Back} button allows you to return to the selection of reactions as dis
 As before, you can abort the dialog by either hitting the key \keys{\escwin} or by clicking at the \keys{Cancel} button.
 \label{fig:removeSearchTerms}}
 \end{SCfigure}
-\begin{figure}
+\begin{figure}[h!]
 \shadowimage[width=\textwidth]{SABIO_automatic_8compact}
 \caption[Window with found kinetic equations]{Window with found kinetic equations.
-The next window lists all reactions whose background color has the following meaning:
-A reaction is marked in \colorbox{LimeGreen}{green} if a matching rate equation has been found,
-\colorbox{Goldenrod}{yellow} if the found rate equations do not exactly fit to your model, and
-\colorbox{red}{red} if no matching rate equation has been found. 
-A found rate equation exactly fits to your model, if there is a straightforward matching of all elements (species, compartments, etc.) contained in the equation to respective \SBML elements in your model.
+A reaction is highlighted in \colorbox{LimeGreen}{green} if a matching rate equation was found, \colorbox{Goldenrod}{yellow} if the found equations do not exactly fit to your model (there is no straightforward matching of all elements in the equation to elements in your model), and \colorbox{red}{red} if no matching rate equation was found.
 If you are satisfied with the results, click \keys{Next}.}
 \label{fig:foundEquations}
 \end{figure}
@@ -898,9 +894,9 @@ When expanding that tree and clicking at individual components, the program enab
 Just have to expand ``Reactions" and afterwards the desired reaction.
 Then you can click on ``Kinetic law" and the rate equation is displayed on the right in detail.
 A convenient search function at the bottom of the window helps you to quickly find reactions and other model components of interest.
-\begin{figure}[b!]
+\begin{figure}[t!]
 \shadowimage[width=\textwidth]{Screenshot_7}
-\caption[Viewing SBMLsqeezer's results]{Viewing SBMLsqeezer's results.
+\caption[Viewing SBMLsqueezer's results]{Viewing SBMLsqueezer's results.
 SBMLsqueezer provides a two-part view that displays the details of the model's structure.
 On the left you can see the hierarchical \SBML data structure.
 By clicking on selected elements within this tree, details about the element will be displayed on the right.
@@ -928,7 +924,7 @@ SBMLsqueezer will notify you when it is connected to \Garuda by displaying a mes
 You do not have to do anything in SBMLsqueezer when you want to receive a file from another gadget.
 The program will be automatically notified as soon as it receives the file and will directly open it in a new tab, so that you can work with the file as if you have just regularly opened it within the application.
 
-It might, for instance, be an interesting idea to create a draft for a dynamic model directly based on information from the \KEGG database using \KEGGtranslator \citep{Wrzodek2011, Wrzodek2013} and to pass the model to SBMLsqueezer in order to assign kinetic equations. This model can then be forwarded to the application \SBMLsimulator \citep{Keller2013} that can be used to estimate the parameter values within the newly created kinetic laws, given that reference data are available.
+It might, for instance, be an interesting idea to create a draft for a dynamic model directly based on information from the \KEGG database using \KEGGtranslator \citep{Wrzodek2011, Wrzodek2013} and to pass the model to SBMLsqueezer in order to assign kinetic equations. This model can then be forwarded to the application \SBMLsimulator \citep{Keller2013, Keller2014} that can be used to estimate the parameter values within the newly created kinetic laws, given that reference data are available.
 A similar approach has been suggested for the generation of draft genome-scale metabolic models \citep{Buechel2013}.
 
 \begin{wrapfigure}{O}{.9cm}
@@ -1117,13 +1113,19 @@ This type of rate equation can be applied to reversible as well as to irreversib
 \lstinputlisting[caption={Assignment of a kinetic law to a reaction via the \acs{API} of SBMLsqueezer 2}, label={lst:SBMLsqueezer2API1}, firstline={47}, lastline={76}]{../../../examples/src/org/sbml/squeezer/test/SqueezeReaction.java}
 
 \subsection{Querying \SABIO and merging the results into a local \SBML document}
-The console mode of \SABIO is implemented in the class \texttt{ConsoleWizard} located in the package \texttt{org.sbml.squeezer.sabiork.wizard.console}. 
-The following example shows how to start a query for the reactions in the model.
- The search can either comprise all reactions or just the reactions, to which a kinetic law has not been added yet. All search terms that can be applied to the model are listed at the beginning.
- The \KEGG identifier of a reaction is automatically added to the search terms (compare \vref{sec:SABIOautomatic}). A found kinetic law is added to some reaction, if all contained elements can be matched to \SBML elements in your model.
-\lstinputlisting[caption={\SABIO query for the reactions of a model}, label={lst:SBMLsqueezer2API1}, firstline={96}, lastline={138}]{../../../test/org/sbml/squeezer/test/sabiork/SABIORKApplication.java}
 
+The command-line mode for the interface to \SABIO is implemented in the class \texttt{ConsoleWizard}.
+This class is located in the package \texttt{org.sbml.squeezer.sabiork.wizard.console}. 
+The following example shows how to query for rate equations in \SABIO by using SBMLsqueezer's \API.
+The search can either comprise all reactions or just the reactions in a model.
+All search terms that can be applied to the model are listed at the beginning of the source-code example.
+The \KEGG identifier of a reaction is automatically added to the search terms (compare \vref{sec:SABIOautomatic}).
+A found kinetic law is added to a reaction if all contained elements can be matched to \SBML elements in thes model.
+\lstinputlisting[caption={\SABIO query for the reactions of a model}, label={lst:SBMLsqueezer2API1}, firstline={102}, lastline={143}]{../../../examples/src/org/sbml/squeezer/test/SABIORKApplication.java}
 
+You can also launch the graphical user interface of the \SABIO wizard by using SBMLsqueezer's \API.
+The following source-code example demonstrates how to do so:
+\lstinputlisting[caption={Calling the \SABIO wizard}, label={lst:SBMLsqueezer2API1}, firstline={52}, lastline={100}]{../../../examples/src/org/sbml/squeezer/test/SABIORKApplication.java}
 
 
 %\chapter{Example use cases}
