@@ -42,6 +42,9 @@
 \input{tex/macros.tex}
 \input{tex/hyphenation.tex}
 
+\crefname{lstlisting}{listing}{listings}
+\Crefname{lstlisting}{Listing}{Listings}
+
 \hypersetup{
 %  bookmarks={true},
   bookmarksopen={true},
@@ -104,10 +107,10 @@ $^2$Systems Biology Research Group, University of California, San Diego, La Joll
     \tableofcontents
     \section*{Figures}%
     \@starttoc{lof}%
-    \smallskip %\bigskip
+    \bigskip % \smallskip
     \section*{Tables}%
     \@starttoc{lot}
-    \smallskip %\bigskip
+    \bigskip % \smallskip
     \section*{Listings}%
     \@starttoc{lol}
 }

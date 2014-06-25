@@ -144,7 +144,7 @@ public interface OptionsGeneral extends KeyProvider {
       "OVERWRITE_EXISTING_RATE_LAWS",
       Boolean.class,
       OPTIONS_BUNDLE,
-      Boolean.valueOf(true));
+      Boolean.valueOf(false));
   
   /**
    * Allows the user to ignore species that are annotated with the given
@@ -158,8 +158,7 @@ public interface OptionsGeneral extends KeyProvider {
       "IGNORE_THESE_SPECIES_WHEN_CREATING_LAWS",
       String.class,
       OPTIONS_BUNDLE,
-      "C00001,C00038,C00070,C00076,C00080,C00175,C00238,C00282,C00291,C01327,C01528,C14818,C14819"
-      );
+      "C00001,C00038,C00070,C00076,C00080,C00175,C00238,C00282,C00291,C01327,C01528,C14818,C14819");
   
   /**
    * If {@code true} parameters and units that are never referenced by any element of
