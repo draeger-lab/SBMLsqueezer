@@ -52,10 +52,8 @@ public class SABIORKApplication {
   /**
    * Runs the wizard
    * 
-   * @param input
-   *            the input file
-   * @param output
-   *            the output file
+   * @param input  the input file
+   * @param output the output file
    */
   public static void runGUI(final File input, final File output) {
     try {
