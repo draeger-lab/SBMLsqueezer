@@ -46,7 +46,7 @@ controlled vocabulary terms (\acl{MIRIAM}), where appropriate \citep{Le2005, Nov
 The selection of the kinetic equations is done automatically by the program,
 where several settings allow users to influence the algorithm's choice.
 In many cases, SBMLsqueezer suggests multiple equations for the same process,
-from which the user can choose as desired one.
+from which the user can choose as desired.
 This behavior of the program is important to ensure that only appropriate
 equations can be selected at any time.
 
@@ -60,7 +60,7 @@ Thereby, already existing equations can either be kept or overwritten, depending
 on your choice.
 You can influence and change all choices of the program, even in the single-step-mode.
 
-If you are connected to the internet, you can also use SBMLsqueezer to extract
+If you are connected to the Internet, you can also use SBMLsqueezer to extract
 experimentally determined kinetic equations from the rate law database
 \SABIO\footnote{You can access \SABIO at \url{http://sabio.h-its.org}.}
 \citep{Wittig2006, Rojas2007, Krebs2007, Wittig2012}.
@@ -81,7 +81,7 @@ matters.
 
 If you neither like to download SBMLsqueezer, nor to install any software on
 your local computer, you can even use SBMLsqueezer as a Galaxy-based
-web-service\footnote{Galaxy web-service available at \url{http://webservices.cs.uni-tuebingen.de}.} \citet{Goecks2010}.
+web service\footnote{Galaxy web service available at \url{http://webservices.cs.uni-tuebingen.de}.} \citet{Goecks2010}.
 This webservice runs on the servers of the University of Tuebingen and therefore do not require any local installation.
 In this setting, you can benefit from Galaxy's capability to easily combine SBMLsqueezer with other programs in a more complex workflow. You can, for instance, convert a \BioPAX file to \SBML using the also included program \BioPAXSBML \citep{Buechel2012a} and populate the model with kinetic equations afterwards.
 Another option would be to launch it as a \JavaWebStart application directly from your web
@@ -216,18 +216,18 @@ SBMLsqueezer can be be used in multiple ways, depending on your preferences:
         for \SBML (see \vref{sec:StandAlone}).
   \item As a plug-in for \CellDesigner (see \vref{sec:CellDesignerInstall})
   \item As a gadget for \Garuda (see \vref{sec:GarudaInstall})
-  \item As an on-line program embedded in the Galaxy web-service environment \citet{Goecks2010}
+  \item As an on-line program embedded in the Galaxy web service environment \citet{Goecks2010}
   \item As a \JavaWebStart application
   \item As a rate law core in an end-user application via its \API
 \end{itemize}
 Depending on how you like to use SBMLsqueezer, different requirements must be
 fulfilled before launching the program for the first time.
 
-Note that the extraction of kinetic equations from \SABIO requires an active internet connection.
+Note that the extraction of kinetic equations from \SABIO requires an active Internet connection.
 For this program features, the security settings of your \OS must also allow SBMLsqueezer to establish a connection to this on-line database.
 
 When launching SBMLsqueezer, it will connect to the program homepage in order to check if a newer version of the program is available.
-This feature can also only be used if an internet connection is available and if your \OS allows SBMLsqueezer to establish such a connection.
+This feature can also only be used if an Internet connection is available and if your \OS allows SBMLsqueezer to establish such a connection.
 Note that no further information is transmitted.
 SBMLsqueezer only compares the version number of the local program with the version number of the latest release.
 If you do not want to use this feature, you can switch it off.
@@ -236,7 +236,7 @@ See \vref{chap:CMD} for instructions how to do so.
 \subsection{Hardware}
 
 With at least 1\,GB main memory, you should be able to perform most tasks without any problem. For large models, you should have at least 2\,GB of main memory.
-An active internet connection is required for some program features, but not mandatory to run the program. %accessing the \SABIO database and to automatically obtain update information for SBMLsqueezer.
+An active Internet connection is required for some program features, but not mandatory to run the program. %accessing the \SABIO database and to automatically obtain update information for SBMLsqueezer.
 
 \subsection{Software}\label{sec:SoftwareRequirements}
 
@@ -380,7 +380,7 @@ In order to use SBMLsqueezer as an on-line program, it is necessary to install a
 See the documentation of Galaxy web services\footnote{\url{http://galaxyproject.org}} \citep{Goecks2010}, on which the on-line version of SBMLsqueezer is based, for precise software requirements.
 
 When using the on-line version, no specific installation of SBMLsqueezer is necessary.
-Note, however, that an active internet connection is essential in order to use SBMLsqueezer as an on-line program.
+Note, however, that an active Internet connection is essential in order to use SBMLsqueezer as an on-line program.
 Just use your regular web browser and go to \url{http://webservices.cs.uni-tuebingen.de} to use the program.
 See \vref{sec:SBMLsqueezer_online_version} for further information.
 
@@ -450,7 +450,7 @@ in this tab correspond to the command line options described in
 should be replaced with newly generated rate equations, if a search in \SABIO
 should be performed etc. %and many more.
 Taking small molecules and ions into account often lead to complex kinetic equations.
-SBMLsqueezer offers you to give a list of KEGG identifiers for those reactive
+SBMLsqueezer offers you to give a list of \KEGG \acp{ID} for those reactive
 species that should be ignored when creating rate laws (see \vref{tab:MIRIAMignoreList}).
 For cases in which values are missing in the
 model, SBMLsqueezer will insert default values, which you can specify in this
@@ -649,7 +649,7 @@ In case that you are working with \CellDesigner \citep{Funahashi2003, Funahashi2
 When using SBMLsqueezer as a stand-alone program, you can generate kinetic equations for a selected reaction by right-clicking on the reaction of interest.
 An example is given in \vref{fig:RateLawDialog}.
 SBMLsqueezer analyzes the currently selected reaction according to various properties
-and displays a selection of suitable rate laws that, of which you can select
+and displays a selection of suitable rate laws, of which you can select
 the most appropriate one.
 
 The equation preview, where you can zoom in and out of the rendered formula, helps you to choose a rate law. If a corresponding \SBO entry can be found for a rate law, a tool-tip will be displayed with further information about this equation.
@@ -696,8 +696,9 @@ You can launch the kinetics wizard, adjust your preferences, export a \LaTeX{} r
 \begin{figure}[b!]
 \shadowimage[width=\textwidth]{Screenshot_4}
 \caption[Generating kinetic equations in one single step with the kinetic law wizard]{Generating kinetic equations in one single step with the kinetic law wizard.
-This screen-shot shows the Kinetic Law Wizard (here shown with the user interface
-under \MacOSX). When launched, this wizard allows you to generate kinetic equations for all reactions in the active model. From this wizard, you can directly access and alter all program options, see the on-line help, and go back and forth between all steps through which the wizard will guide you.}
+This screen-shot shows the Kinetic Law Wizard (here shown under \MacOSX).
+When launched, this wizard allows you to generate kinetic equations for all reactions in the active model.
+From this wizard, you can directly access and alter all program options, see the on-line help, and go back and forth between all steps through which the wizard will guide you.}
 \label{fig:KineticLawWizard}
 \end{figure}
 \begin{figure}[t!]
@@ -740,7 +741,7 @@ Instead of deriving kinetic equations \emph{de novo} for your model, you can als
 To this end, SBMLsqueezer compares the reactions of interest to reaction signatures in this on-line database and allows you to select the most appropriate reactions or to restrict your search by using several parameters, such as pH, temperature etc.
 Note that this feature does not apply for the \CellDesigner plug-in variant,
 because \CellDesigner brings already with it its own \SABIO interface, which you can use directly in \CellDesigner.
-Furthermore, this feature requires an active internet connection and can therefore not be used in an off-line mode.
+Furthermore, this feature requires an active Internet connection and can therefore not be used in an off-line mode.
 
 This section describes how to use the \GUI to extract information from \SABIO.
 You can also do this on the command line, which allows for batch processing of multiple \SBML files as this has been done by \citet{Buechel2013}.
@@ -790,7 +791,7 @@ As before, you can abort the dialog by either hitting the key \keys{\escwin} or 
 \end{SCfigure}
 \begin{figure}[b!]
 \shadowimage[width=\textwidth]{SABIO_automatic_8compact}
-\caption[Window with found kinetic equations for all reactions]{Window with found kinetic equations.
+\caption[Window with kinetic equations found for all reactions]{Window with found kinetic equations.
 A reaction is highlighted in \colorbox{LimeGreen}{green} if a matching rate equation was found, \colorbox{Goldenrod}{yellow} if the found equations do not exactly fit to your model (there is no straightforward matching of all elements in the equation to elements in your model), and \colorbox{red}{red} if no matching rate equation was found.
 If you are satisfied with the results, click \keys{Next}.}
 \label{fig:foundEquations}
@@ -807,8 +808,8 @@ If you confirm, the rate equations will be transferred to your model and all cha
 \Crefrange{fig:startAutomatic}{fig:changes} show how you can add kinetic equations from \SABIO to several reactions at once.
 As an example model we pick biomodel \numero~206 from \BioModels \citep{Li2010a, Wolf2000}.
 A wizard guides you through the selection of relevant reactions (\vref{fig:selectReations}) and provides several options to restrict the search in \SABIO (\vref{fig:searchTerms}), whose interface is similar to the database front end of \SABIO\footnote{\url{http://sabio.h-its.org}}.
-To ensure that entries for the reactions of interest can be found in \SABIO, it is important to annotate these reactions with identifiers from the \KEGG database using the \MIRIAM registry.
-The \KEGG reaction identifier is then always included in the respective search in order to avoid adding kinetic laws referring to other reactions.
+To ensure that entries for the reactions of interest can be found in \SABIO, it is important to annotate these reactions with \acp{ID} from the \KEGG database using the \MIRIAM registry.
+The \KEGG reaction \ac{ID} is then always included in the respective search in order to avoid adding kinetic laws referring to other reactions.
 To further restrict your search, change the bounds of pH, temperature, etc. in the right panel (see \vref{fig:searchTerms}).
 
 \subsection{\SABIO for a selected reaction}
@@ -817,7 +818,7 @@ To further restrict your search, change the bounds of pH, temperature, etc. in t
 \shadowimage[width=\textwidth]{SABIO_manual_1compact}
 \caption[Starting the \SABIO application for a selected reaction]{Starting the \SABIO application for a selected reaction.
 To find a reaction of interest, you can use the search function at the bottom of the \SBML tree.
-Just click on the text field and type a part of the reaction's name or identifier.
+Just click on the text field and type a part of the reaction's name or \ac{ID}.
 The tree will be updated while you type and reduced to elements that contain the text you are typing.
 Alternatively, you can just scroll to the entry of interest.
 Once you have found a reaction of interest, right-click on it.
@@ -854,7 +855,7 @@ All subsequent steps of the procedure are essentially the same as described befo
 The only difference is that the \SABIO wizard will be launched for one selected reaction of interest only instead of having all reactions in the model.
 \begin{figure}[t!]
 \shadowimage[width=\textwidth]{SABIO_manual_8}
-\caption[Window with found kinetic equations for a single reaction]{Window with found kinetic equations for a single reaction.
+\caption[Window with kinetic equations found for a single reaction]{Window with kinetic equations found for a single reaction.
 The rate equations that match your search criteria are displayed here.
 You can select a reaction and click on \keys{Next}, which will bring you to \vref{fig:matching}.
 Alternatively, you can click on \keys{Back} and change your search criteria (see \vref{fig:searchTermsQuery}).
@@ -886,7 +887,7 @@ After this confirmation the rate equation will be transferred and these changes 
 \end{wrapfigure}
 When using the stand-alone version of SBMLsqueezer, you can see a tree representation of the \SBML document you are working with on the left-hand side of the \GUI.
 \Cref{fig:Viewing_Results} displays how biomodel \numero~390 from \BioModels \citep{Li2010a} looks like after SBMLsqueezer has modified one reaction's rate law.
-The program notifies if an \SBML document has been modified by one of its function.
+The program recognizes if an \SBML document has been modified by one of its function.
 You can see this because the title bar of the program will change, and the save actions in tool-bar and menu-bar will become active.
 In \Windows and \Linux an asterisk will be added to the file name in the title bar.
 In \MacOSX, the red ``close" button on the top-left most corner of the program will no longer display a cross, but a circle (you can see this in \vref{fig:Viewing_Results}).
@@ -955,7 +956,7 @@ If the model in the selected tab has been modified and not yet saved, SBMLsqueez
 \section{Using SBMLsqueezer as an on-line program}
 \label{sec:SBMLsqueezer_online_version}
 
-SBMLsqueezer can also be used via the Galaxy web-service facility \citep{Goecks2010} of the University of Tuebingen\footnote{\url{http://webservices.cs.uni-tuebingen.de}\label{fn:Webservices}}.
+SBMLsqueezer can also be used via the Galaxy web service facility \citep{Goecks2010} of the University of Tuebingen\footnote{\url{http://webservices.cs.uni-tuebingen.de}\label{fn:Webservices}}.
 Since the user interface of this variant greatly differs from all other use-case scenarios, we here give a description of options and functions of the web interface.
 
 In order to use the on-line version of SBMLsqueezer, open a browser of your choice.
@@ -985,7 +986,7 @@ Scroll down to see all available options.
 At the bottom of this page, there is also a descriptive text explaining how to proceed.
 Each option has descriptive text as well.
 The on-line version presents all options of the program just as the stand-alone version.
-You can therefore go back in this tutorial and look-up the meaning of individual options either in \vref{sec:GUIPrefs} about the graphical user interface of the stand-alone version or in \vref{chap:CMD} where the command-line options are described.
+You can therefore go back in this tutorial and look-up the meaning of individual options either in \vref{sec:GUIPrefs} about the \GUI of the stand-alone version or in \vref{chap:CMD} where the command-line options are described.
 When you scroll down, you can see that this on-line program also offers you to obtain rate laws from \SABIO.
 Just one option group is missing, namely \SBMLLaTeX.
 The reason is because the Galaxy framework of the University of Tuebingen provides \SBMLLaTeX as a separate on-line program \citep{Draeger2009b}.
@@ -1109,20 +1110,20 @@ There are a few particularly important classes for the \emph{de-novo} creation o
   \item[KineticLawGenerator] This class contains the actual algorithms to build a rate law and to synchronize changes between models.
   \item[ParameterFactory]
     Here all (local) parameters are generated.
-    The implementation follows the factory pattern, but it requires an instance of the model for which the parameters are created because of numerous dependencies between objects and identifiers.
+    The implementation follows the factory pattern, but it requires an instance of the model for which the parameters are created because of numerous dependencies between objects and \acp{ID}.
     It uses the unit factory (see below) to derive the units of new parameters.
     This class also annotates all newly created parameter objects with \SBO terms.
   \item[SubmodelController]
     SBMLsqueezer never modifies the original model data structure.
     Internally, this controller creates a minimal copy of the model, only comprising those reactions with dependent model components (required species, compartments, parameters, units etc.) that are needed to work with the currently selected set of reactions.
-    In the graphical user interface, the user can typically select one or all reactions of a model.
+    In the \GUI, the user can typically select one or all reactions of a model.
     This class is more powerful, as it could potentially generate a sub-model for an arbitrary set of reactions with all required other components of the model.
     It hence generates a restricted clone of the model.
   \item[ReactionType]
     This class determines the base type of a given reaction and contains the algorithms that select appropriate rate laws or the most suitable rate law.
     It also removes substances from the reaction if these belong to the group of substances from the ignore list (see  \vref{tab:MIRIAMignoreList}).
   \item[UnitFactory]
-    This factory class generates unit definition objects and identifiers for unit definitions, which are to be assigned to parameters and numbers in kinetic expressions.
+    This factory class generates unit definition objects and \acp{ID} for unit definitions, which are to be assigned to parameters and numbers in kinetic expressions.
 \end{description}
 \renewcommand{\descriptionlabel}[1]{\textcolor{black}{\textbf{#1}}}
 With these classes at hand, new kinetic equations can be created for arbitrary reactions.
@@ -1137,11 +1138,11 @@ This class is located in the package \texttt{org.sbml.squeezer.sabiork.wizard.co
 The following example shows how to query for rate equations in \SABIO by using SBMLsqueezer's \API.
 The search can either comprise all reactions or just the reactions in a model.
 All search terms that can be applied to the model are listed at the beginning of the source-code example.
-The \KEGG identifier of a reaction is automatically added to the search terms (compare \vref{sec:SABIOautomatic}).
+The \KEGG \ac{ID} of a reaction is automatically added to the search terms (compare \vref{sec:SABIOautomatic}).
 A found kinetic law is added to a reaction if all contained elements can be matched to \SBML elements in the model.
 \lstinputlisting[caption={\SABIO query for the reactions of a model}, label={lst:SBMLsqueezer2API3}, firstline={100}, lastline={141}]{../../../examples/src/org/sbml/squeezer/test/SABIORKApplication.java}
 
-You can also launch the graphical user interface of the \SABIO wizard by using SBMLsqueezer's \API.
+You can also launch the \GUI of the \SABIO wizard by using SBMLsqueezer's \API.
 The following source-code example demonstrates how to do so.
 \lstinputlisting[caption={Calling the \SABIO wizard}, label={lst:SBMLsqueezer2API4}, firstline={52}, lastline={98}]{../../../examples/src/org/sbml/squeezer/test/SABIORKApplication.java}
 
@@ -1314,7 +1315,7 @@ certain circumstances.
   mainly the result of a syntactical model check and do not give much
   information about the semantic correctness of your model.
   Since the \SBML library performs this check, SBMLsqueezer cannot influence the
-  content of the syntax check Note that this option only works properly if you
+  content of the syntax check. Note that this option only works properly if you
   use \libSBML as your \SBML back-end, because \JSBML does not provide a full
   validity check for \SBML models.
   Default value: \texttt{true}
@@ -1322,7 +1323,7 @@ certain circumstances.
 \item[--read-from-sabio-rk{[} |={]}<Boolean>]
   This option lets the user choose whether to search for experimentally
   obtained rate laws in the reaction kinetics database \SABIO. Note that
-  performing this search requires an active internet connection.
+  performing this search requires an active Internet connection.
   Default value: \texttt{true}
 \end{description}
 
@@ -1379,11 +1380,11 @@ account when creating rate equations.
 
 \item[--ignore-these-species-when-creating-laws{[} |={]}<String>]
   This option allows the user to ignore species that are annotated with the
-  given compound identifiers when creating rate laws for reactions
+  given compound \acp{ID} when creating rate laws for reactions
   that involve these species. For instance, water or single protons
   can often be ignored when creating rate equations, hence simplifying
   the resulting rate equations. Preselected are the \KEGG compound
-  identifiers for several ions and small molecules, including water and
+  \acp{ID} for several ions and small molecules, including water and
   protons. See \vref{tab:MIRIAMignoreList} for details.
   Default value: \texttt{C00001,} \texttt{C00038,} \texttt{C00070,}
   \texttt{C00076,} \texttt{C00080,} \texttt{C00175,} \texttt{C00238,}
@@ -1834,11 +1835,10 @@ your search for reaction kinetics in \SABIO.
 \end{description}
 
 
-\subsection{Options for the \GUI}
+\subsection{Options for the \aclu{GUI}}
 
-The options in this group allow you to influence the behavior of the graphical
-user interface. This means that you can directly launch SBMLsqueezer with your
-preferred configuration.
+The options in this group allow you to influence the behavior of the \GUI.
+This means that you can directly launch SBMLsqueezer with your preferred configuration.
 %\subsubsection{Additional options}
 \begin{description}
 \item[--check-for-updates{[} |={]}<Boolean>]
@@ -1846,8 +1846,7 @@ preferred configuration.
   at start-up.
   Default value: \texttt{true}
 
-\item[--gui] If this option is given, the program will display its graphical
-  user interface.
+\item[--gui] If this option is given, the program will display its \GUI.
   Default value: \texttt{false}
 
 \item[--log-level{[} |={]}<String>]
@@ -1894,7 +1893,7 @@ and the corresponding publication \citep{Draeger2009b}.
 \item[--check-consistency]
   If \texttt{true}, the automatic model consistency check is performed and
   the results are written in the appendix of the model report file.
-  Note that this might require an active internet connection.
+  Note that this might require an active Internet connection.
   Default value: \texttt{false}
 
 \item[--miriam-annotation{[} |={]}<Boolean>]
@@ -1939,7 +1938,7 @@ and the corresponding publication \citep{Draeger2009b}.
 
 \item[--print-names-if-available]
   If selected, the names of \SBML elements (\texttt{NamedSBase}) are displayed
-  instead of their identifiers. This can only be done if the element
+  instead of their \acp{ID}. This can only be done if the element
   has a name.
   Default value: \texttt{false}
 
@@ -1950,12 +1949,12 @@ and the corresponding publication \citep{Draeger2009b}.
 
 \item[--typewriter{[} |={]}<Boolean>]
   This option decides whether a typewriter font should be applied
-  to highlight \SBML identifiers. This is particularly important
+  to highlight \SBML \acp{ID}. This is particularly important
   when these occur in mathematical equations.
   Default value: \texttt{true}
 
 \item[--reactants-overview-table]
-  If \texttt{true}, the details (identifier and name) of all reactants,
+  If \texttt{true}, the details (\ac{ID} and name) of all reactants,
   modifiers and products participating in a reaction are listed
   in one table. By default a separate table is created for each
   one of the three participant groups including its \SBO term.
@@ -2002,7 +2001,7 @@ and the corresponding publication \citep{Draeger2009b}.
   Default value: \texttt{mathptmx}
 
 \item[--font-typewriter{[} |={]}<String>]
-  Select a typewriter font that can be used for identifiers if
+  Select a typewriter font that can be used for \acp{ID} if
   option 'TYPEWRITER' is selected. URLs and other resources are
   also marked with this font.
   All possible values for type \texttt{<String>} are:
@@ -2230,14 +2229,14 @@ equations for the same reaction.
 
 \begin{table}[htb]
 \centering
-\caption[\acs{KEGG} identifiers of small molecules and ions]{\KEGG identifiers of small molecules and ions.
+\caption[\acs{KEGG} \acp{ID} of small molecules and ions]{\KEGG \acp{ID} of small molecules and ions.
 This table gives the default list of all small
 molecules and ions that are ignored by SBMLsqueezer when creating kinetic
 equations. This list was created according to \citet{Blum2009}.}
 \label{tab:MIRIAMignoreList}
 \begin{tabular}{lll}
 \toprule
-Chemical formula & Common name & \KEGG identifier \\
+Chemical formula & Common name & \KEGG \ac{ID} \\
 \midrule
 \ce{H2O} & Water &
 \href{http://identifiers.org/kegg.compound/C00001}{\texttt{C00001}}\\
@@ -2292,9 +2291,9 @@ start the application with additional memory. If possible, you should give the
 application 2\,GB of main memory. A minimum of 1\,GB main memory should be
 available to the application.\newline
 
-\noindent \textbf{Is an internet connection required to run SBMLsqueezer?}\newline
+\noindent \textbf{Is an Internet connection required to run SBMLsqueezer?}\newline
 The vast majority of SBMLsqueezer's functions run in off-line mode.
-Features that require an active internet connection are the on-line check for updates, the extraction of rate laws from the on-line database \SABIO, and following external links within on-line help.
+Features that require an active Internet connection are the on-line check for updates, the extraction of rate laws from the on-line database \SABIO, and following external links within on-line help.
 \newline
 
 \noindent \textbf{Where can I obtain the latest version?}\newline
