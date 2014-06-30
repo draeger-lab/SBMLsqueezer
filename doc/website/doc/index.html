@@ -1,0 +1,384 @@
+<!DOCTYPE html
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<!-- <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> -->
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<!-- 
+	This website is powered by TYPO3 - inspiring people to share!
+	TYPO3 is a free open source Content Management Framework initially created by Kasper Skaarhoj and licensed under GNU/GPL.
+	TYPO3 is copyright 1998-2008 of Kasper Skaarhoj. Extensions are copyright of their respective owners.
+	Information and contribution at http://typo3.com/ and http://typo3.org/
+--><!--HEAD-->
+    <meta name="description"        content="SBMLsqueezer - Supplementary Material: Tutorial and detailed information about supported rate laws.">
+    <meta name="keywords"           content="SBMLsqueezer, Supplementary Material, Tutorial, User's guide, Manual, Kinetics, Rate Laws, Support">
+    <meta name="author"             content="Andreas Dr&auml;ger, andreas.draeger@uni-tuebingen.de">
+    <meta name="DC.Publisher"       content="Andreas Dr&auml;ger, andreas.draeger@uni-tuebingen.de">
+    <meta name="DC.Date"            content="2008-05-05:13+04:00">
+    <meta name="DC.Language"        content="en">
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+    <meta name="robots"             content="noindex">
+    <meta name="revisit-after"      content="30 days">
+        <style type="text/css">
+            <!--
+            .menu {
+                text-align: center;
+                margin: auto;
+                /*background-color: #cccccc;*/
+                background: url(img/button.png) repeat-x;
+                padding-top: 5px;
+                padding-bottom: 5px;
+                border: 1px solid #eeeeee;
+                -moz-border-radius: 4px 4px 4px 4px;
+                border-bottom: 0px solid #ffffff;
+            }
+        .menu a {
+            text-decoration: none;
+            color: 333333;
+        }
+        .menu a:hover {
+            text-decoration: underline;
+        }
+        -->
+            </style>
+    <TITLE>SBMLsqueezer: Documentation</TITLE>
+    
+<!--/HEAD-->
+	<link rel="shortcut icon" href="/favicon.ico" />
+	<link rel="icon" href="/favicon.ico" />
+
+	<link rel="stylesheet" type="text/css" href="/style_cd_2010/cd_typo3/css/cal_styles.css" />
+	<link rel="stylesheet" type="text/css" href="/style_cd_2010/cd_typo3/css/contact.css" />
+	<link rel="stylesheet" type="text/css" href="/style_cd_2010/cd_typo3/css/menus.css" />
+	<link rel="stylesheet" type="text/css" href="/style_cd_2010/cd_typo3/css/structure.css" />
+	<link rel="stylesheet" type="text/css" href="/style_cd_2010/cd_typo3/css/tok_betriebszustand_styles.css" />
+	<link rel="stylesheet" type="text/css" href="/style_cd_2010/cd_typo3/css/tt_news_styles.css" />
+	<link rel="stylesheet" type="text/css" href="/style_cd_2010/cd_typo3/css/typo.css" />
+	<link rel="stylesheet" type="text/css" href="/style_cd_2010/cd_typo3/css/formated-tables.css" />
+	<link rel="stylesheet" type="text/css" href="/style_cd_2010/cd_typo3/css/misc.css" />
+
+<title>University of T&uuml;bingen: Documentation</title>
+	<title>Aktuell</title>
+	<meta name="generator" content="STOWS" />
+	<!-- <script type="text/javascript" src="typo3temp/javascript_a708894199.js"></script>-->
+
+</head>
+<body class=" template-index.html" dir="ltr">
+
+<!--NEW HEADER-->
+<div id="outer">
+<div id="top">
+      <div id="uni-t-logo">
+        <a href="http://www.uni-tuebingen.de/" target="_top"><img src=
+        "/fileadmin/pics/logo-uni-tuebingen.png" width="260" height="100" border="0" alt=
+        "Logo Universit&auml;t T&uuml;bingen" title=
+        "Logo Universit&auml;t T&uuml;bingen" /></a><a href=
+        "http://www.uni-tuebingen.de//index.php?id=11065&amp;L=" target="_top"><img src=
+        "/images/mnf-cs-logo.gif" width="460" height="90" border="0"
+        alt="Logo" title="Logo" /></a>
+      </div>
+
+      <div id="wrapper-header-right">
+        <div id="languages">
+          <span class="language"><a href=
+          "en/faculties/mathematisch-naturwissenschaftliche-fakultaet.html" title=
+          "Englische Version"></a></span>
+        </div>
+
+        <div id="search">
+          <form action="http://www.google.com/cse" id="af3bcd69fb21a9b916e4ced3efb19b3b1"
+          name="af3bcd69fb21a9b916e4ced3efb19b3b1" enctype="multipart/form-data" method=
+          "get">
+            <div style="display:none;">
+              <input type="hidden" name="cx" value=
+              "017452130158815283935:qd8588vefb4" /><input type="hidden" name="ie" value=
+              "UTF-8" />
+            </div><input type="text" name="q" size="20" value="Suche" class="searchinput"
+            onfocus="if(this.value=='Suche'){this.value=''}" /><input type="image" name=
+            "sa" src="/fileadmin/pics/pfeil_rot.gif" alt="Suche" title="Suche" id=
+            "search-arrow" />
+          </form>
+        </div>
+
+          <div class="wrapper-fontsize_uniaz_login">
+			
+<!-- hier waren die komischen fontsizes -->
+		
+          <img src="/fileadmin/pics/schriftgrad_strich.png" alt="" title="" width="26"
+          border="0" height="32" style="float:left; margin-top:10px;" />
+
+           <div class="uniaz-login">
+            <a href="http://uni-tuebingen.de/index.php?id=343" class="uniaz">Uni A-Z</a>
+          </div>
+      </div><!-- ende #wrapper-header-right-->
+    </div>
+
+    <div class="cleanup"></div>
+
+   <div class="cleanup"></div>
+   <div id="banner"><img src="/images/Header_vers1.jpg" width="900" height="100" border="0" alt="Bildleiste" title="Bildleiste" /></div>
+   <div id="red-banner"></div>
+
+  <!--<NOBR>  <img src="http://www.cogsys.cs.uni-tuebingen.de/newstyle/uploads/media/banner-aktuell.jpg" /><img src="http://www.cogsys.cs.uni-tuebingen.de/newstyle/uploads/media/banner-aktuell.jpg" /> </NOBR>-->
+
+    <div class="cleanup"></div>
+
+    <ul id="mainmenu" class="mainmenu4">
+
+      <li class="mainmenuitem"><a href="/welcome_e.html" onfocus="blurLink(this);">CS-Home</a></li>
+      <li class="mainmenuitem"><a href="/lehrstuhl/welcome_e.html" onfocus="blurLink(this);">Chair</a></li>
+      <li class="mainmenuitem"><a href="/mitarb/welcome_e.html" onfocus="blurLink(this);">Staff</a></li>
+      <li class="mainmenuitem"><a href="/forschung/welcome_e.html" onfocus="blurLink(this);">Research Projects</a></li>
+      <li class="mainmenuitem"><a href="/software/welcome_e.html" onfocus="blurLink(this);">Software</a></li>
+      <li class="mainmenuitem"><a href="/publikationen/publications_welcome.html" onfocus="blurLink(this);">Publications</a></li>
+      <li class="mainmenuitem"><a href="/lehre/ss14/welcome.html" onfocus="blurLink(this);">Teaching</a></li>
+      <li class="mainmenuitem"><a href="/diplomarbeiten/welcome.html" onfocus="blurLink(this);">Theses</a></li>
+      <li class="mainmenuitem"><a href="/stellen/welcome.html" onfocus="blurLink(this);">Vacancies</a></li>
+      <li class="mainmenuitem"><a href="/anreise/welcome.html" onfocus="blurLink(this);">Address</a></li>
+
+    </ul>
+
+    <div class="cleanup"></div>
+
+    <div id="breadcrumb">
+      <a href="http://www.uni-tuebingen.de/landingpage.html" onfocus="blurLink(this);">Home</a> &gt; 
+      <a href="http://www.uni-tuebingen.de/fakultaeten.html" onfocus="blurLink(this);">Fakult&auml;ten</a> &gt;
+      <a href="http://www.mnf.uni-tuebingen.de" onfocus="blurLink(this);">Mathematisch-Naturwissenschaftliche Fakult&auml;t</a> &gt; 
+      <a href="http://www.wsi.uni-tuebingen.de/fachbereich/wilhelm-schickard-institut-fuer-informatik.html" onfocus="blurLink(this);">Fachbereich Informatik</a> &gt;
+      <a href="http://www.cogsys.cs.uni-tuebingen.de" onfocus="blurLink(this);">Cognitive Systems</a>
+  </div> <!-- breadcrump -->
+
+    <hr id="headersep-gold" />
+  <div id="mid">	
+    <div id="submenu">
+	  
+     <div class="submenuheader">
+      <a href="http://www.cogsys.cs.uni-tuebingen.de" onfocus=     "blurLink(this);">Cognitive Systems</a>
+     </div>
+      <div class="sub1menuitem"><a href="../../../lehrstuhl/welcome_e.html" onfocus="blurLink(this);"><!--noindex--> About the Chair<!--/noindex--></a></div>
+      <div class="sub1menuitem"><a href="../../../mitarb/welcome_e.html" onfocus="blurLink(this);"><!--noindex--> Staff<!--/noindex--></a></div>
+      <div class="sub1menuitem"><a href="../../../forschung/welcome_e.html" onfocus="blurLink(this);"><!--noindex--> Research Projects<!--/noindex--></a></div>
+       <div class="sub1menuitem"><a href="../../welcome_e.html" onfocus="blurLink(this);"><!--noindex--> Software<!--/noindex--></a></div>
+ 	  <div class="sub2menuitem"><a href="../../MARCARDataTools/welcome_e.html" onfocus="blurLink(this);"><!--noindex--> MARCAR DataTools<!--/noindex--></a></div>
+ 	  <div class="sub2menuitem"><a href="../../RPPApipe/welcome_e.html" onfocus="blurLink(this);"><!--noindex--> RPPApipe<!--/noindex--></a></div>
+ 	  <div class="sub2menuitem"><a href="../../GWASPathwayIdentifier/index.htm" onfocus="blurLink(this);"><!--noindex--> GWAS Pathway Identifier<!--/noindex--></a></div>
+ 	  <div class="sub2menuitem"><a href="../../TFpredict/welcome_e.html" onfocus="blurLink(this);"><!--noindex--> TFpredict<!--/noindex--></a></div>
+ 	  <div class="sub2menuitem"><a href="../../SABINE/welcome_e.html" onfocus="blurLink(this);"><!--noindex--> SABINE<!--/noindex--></a></div>
+ 	  <div class="sub2menuitem"><a href="../../MACLEAPS/index.htm" onfocus="blurLink(this);"><!--noindex--> MACLEAPS<!--/noindex--></a></div>
+ 	  <div class="sub2menuitem"><a href="../../BioPAX2SBML/welcome_e.html" onfocus="blurLink(this);"><!--noindex--> BioPAX2SBML<!--/noindex--></a></div>
+ 	  <div class="sub2menuitem"><a href="../../InCroMAP/index.htm" onfocus="blurLink(this);"><!--noindex--> InCroMAP<!--/noindex--></a></div>
+ 	  <div class="sub2menuitem"><a href="../../SBMLsimulator/index.html" onfocus="blurLink(this);"><!--noindex--> SBMLsimulator<!--/noindex--></a></div>
+ 	  <div class="sub2menuitem"><a href="../../KEGGtranslator/index.htm" onfocus="blurLink(this);"><!--noindex--> KEGGtranslator<!--/noindex--></a></div>
+ 	  <div class="sub2menuitem"><a href="http://sbml.org/Software/JSBML" onfocus="blurLink(this);"><!--noindex--> JSBML<!--/noindex--></a></div>
+	<div class="sub2menuitem"><a href="../index.htm" onfocus="blurLink(this);"><!--noindex-->SBMLsqueezer<!--/noindex--></a></div>
+ 	  <div class="sub3menuitem"><a href="../screenshots/index.htm" onfocus="blurLink(this);"><!--noindex-->Screenshots<!--/noindex--> </a></div>
+ 	  <div class="sub3menuitem"><a href="../downloads/index.htm" onfocus="blurLink(this);"><!--noindex-->Download<!--/noindex--> </a></div>
+ 	  <div class="asub3menuitem"><a href="index.htm" onfocus="blurLink(this);"><!--noindex-->Documentation<!--/noindex--> </a></div>
+ 	  <div class="sub3menuitem"><a href="../quicktour/index.htm" onfocus="blurLink(this);"><!--noindex-->Quick Tour<!--/noindex--> </a></div>
+ 	  <div class="sub3menuitem"><a href="api/index.htm" onfocus="blurLink(this);"><!--noindex-->Abstract Programming Interface<!--/noindex--> </a></div>
+ 	  <div class="sub3menuitem"><a href="../license.htm" onfocus="blurLink(this);"><!--noindex-->License<!--/noindex--> </a></div>
+ 	  <div class="sub3menuitem"><a href="../acknowledgements.htm" onfocus="blurLink(this);"><!--noindex-->Acknowledgements<!--/noindex--> </a></div>
+ 	  <div class="sub2menuitem"><a href="../../SBML2LaTeX/index.html" onfocus="blurLink(this);"><!--noindex--> SBML2LaTeX<!--/noindex--></a></div>
+ 	  <div class="sub2menuitem"><a href="../../ProDGe/index.htm" onfocus="blurLink(this);"><!--noindex--> ProDGe<!--/noindex--></a></div>
+ 	  <div class="sub2menuitem"><a href="../../ModuleMaster/welcome_e.html" onfocus="blurLink(this);"><!--noindex--> ModuleMaster<!--/noindex--></a></div>
+ 	  <div class="sub2menuitem"><a href="../../JCell/index.html" onfocus="blurLink(this);"><!--noindex--> JCell<!--/noindex--></a></div>
+ 	  <div class="sub2menuitem"><a href="http://jcompoundmapper.sourceforge.net/" onfocus="blurLink(this);"><!--noindex--> JCompoundMapper<!--/noindex--></a></div>
+ 	  <div class="sub2menuitem"><a href="../../EDISA/welcome_e.html" onfocus="blurLink(this);"><!--noindex--> EDISA<!--/noindex--></a></div>
+ 	  <div class="sub2menuitem"><a href="../../4DFAP/welcome_e.html" onfocus="blurLink(this);"><!--noindex--> 4D Flexible Atom-Pair Kernel<!--/noindex--></a></div>
+ 	  <div class="sub2menuitem"><a href="../../joelib/index.html" onfocus="blurLink(this);"><!--noindex--> JOELib<!--/noindex--></a></div>
+ 	  <div class="sub2menuitem"><a href="../../OAKernels/welcome_e.html" onfocus="blurLink(this);"><!--noindex--> OAKernels<!--/noindex--></a></div>
+ 	  <div class="sub2menuitem"><a href="../../bluedesc/welcome_e.html" onfocus="blurLink(this);"><!--noindex--> BlueDesc<!--/noindex--></a></div>
+ 	  <div class="sub2menuitem"><a href="../../EvA2/index.html" onfocus="blurLink(this);"><!--noindex--> EvA2<!--/noindex--></a></div>
+ 	  <div class="sub2menuitem"><a href="../../snns/welcome_e.html" onfocus="blurLink(this);"><!--noindex--> SNNS<!--/noindex--></a></div>
+ 	  <div class="sub2menuitem"><a href="../../JavaNNS/welcome_e.html" onfocus="blurLink(this);"><!--noindex--> JavaNNS<!--/noindex--></a></div>
+ 	  <div class="sub2menuitem"><a href="../../occmapping/welcome_e.html" onfocus="blurLink(this);"><!--noindex--> Robust Occupancy Mapping<!--/noindex--></a></div>
+ 	  <div class="sub2menuitem"><a href="../../sparsestereo/welcome_e.html" onfocus="blurLink(this);"><!--noindex--> exFAST / HPSSM<!--/noindex--></a></div>
+ 	  <div class="sub2menuitem"><a href="../../scpsolver/welcome_e.html" onfocus="blurLink(this);"><!--noindex--> SCP Solver<!--/noindex--></a></div>
+ 	  <div class="sub2menuitem"><a href="../../stows/welcome_e.html" onfocus="blurLink(this);"><!--noindex--> STOWS<!--/noindex--></a></div>
+      <div class="sub1menuitem"><a href="../../../publikationen/publications_welcome.html" onfocus="blurLink(this);"><!--noindex--> Publications<!--/noindex--></a></div>
+      <div class="sub1menuitem"><a href="../../../lehre/ss14/welcome.html" onfocus="blurLink(this);"><!--noindex--> Teaching<!--/noindex--></a></div>
+      <div class="sub1menuitem"><a href="../../../diplomarbeiten/welcome.html" onfocus="blurLink(this);"><!--noindex--> Theses<!--/noindex--></a></div>
+      <div class="sub1menuitem"><a href="../../../stellen/welcome.html" onfocus="blurLink(this);"><!--noindex--> Vacancies<!--/noindex--></a></div>
+      <div class="sub1menuitem"><a href="../../../anreise/welcome_e.html" onfocus="blurLink(this);"><!--noindex--> Address/Directions<!--/noindex--></a></div>
+      <div class="sub1menuitem"><a href="../../../links/welcome_e.html" onfocus="blurLink(this);"><!--noindex--> External Links<!--/noindex--></a></div>
+      <div class="sub1menuitem"><a href="../../../local/welcome.html" onfocus="blurLink(this);"><!--noindex--> Internal Pages<!--/noindex--></a></div>
+      <div class="sub1menuitem"><a href="http://www.informatik.uni-tuebingen.de" onfocus="blurLink(this);"><!--noindex--> Computer Science Dept.<!--/noindex--></a></div>
+      <div class="sub1menuitem"><a href="http://www.uni-tuebingen.de" onfocus="blurLink(this);"><!--noindex--> University of T&uuml;bingen<!--/noindex--></a></div>
+	 
+     &nbsp;
+    </div> <!-- submenu -->
+    
+
+<div id="content" class="content-width"><!--BODY-->
+        <a name="head" border="0"/>
+    <table align="center" border="0" cellpadding="0" cellspacing="0" width="98%">
+        <tbody><tr>
+            <td class="menu" width="14%"><a href="#head">Documentation</a></td>
+            <td class="menu" width="14%"><a href="../downloads/index.html#head">Downloads</a></td>
+            <td class="menu" width="14%"><a href="../acknowledgments.html#head">Acknowledgments</a></td>
+            <td class="menu" width="14%"><a href="http://www.gnu.org/licenses/gpl-3.0-standalone.html" target="_blank">License</a></td>
+        </tr>
+        </tbody></table>
+    <p>&nbsp;</p>
+    
+    <p style="margin:auto; text-align:center;">
+    <br/><a href="../index.html#head" border="0"><img src="../img/logo_medium.png" border="0" title="SBMLsqueezer" alt="SBMLsqueezer"></a><br/>
+        <b style="color:#A51E37;font-family:sans-serif;">Generating kinetic equations for biochemical networks</b><br/><br/>
+        </p><br/>
+
+
+
+<h1>Documentation</h1>
+
+<h2>Main program features</h2>
+<table border="0"
+  <tr>
+    <td>
+      <img src="../img/Screenshot_2.png" alt="SBMLsqueezer reaction context menu" title="SBMLsqueezer reaction context menu" border="0" style="float:left; margin-top:0px; margin-bottom:10px; box-shadow: 5px 5px 5px #222;"/>
+      <br/></br>
+      <b>Figure 1 | </b>SBMLsqueezer reaction context menu
+    </td><td>
+<ul>
+  <li>Generates kinetic equations for all reactions in your model, or only for those
+reactions that are currently lacking a rate law with a large variety of generic and specific rate laws for several
+standard cases</li>
+  <li>Allows you to create all rate laws in a reversible manner.</li>
+  <li>Can detect reactive species, whose annotation indicates that these are genes.</li>
+  <li>Can assume that all reactions in your network are enzymatically catalyzed and hence
+change the selection of rate laws.</li>
+  <li>Defines the units of all species and compartments if necessary and derive the
+units for all newly created local and global parameters and numbers in order to ensure unit
+consistency of the entire model.</li>
+  <li>Can check the model for global and local parameters as well as unit definitions
+that are never used and addressed. SBMLsqueezer can automatically remove these from
+the model.</li>
+  <li>Imports experimentally determined rate equations from <a href="http://sabio.villa-bosch.de" target="_blank">SABIO-RK</a> and include them into
+your model.</li>
+  <li>Equips your model with default values where no values are defined.</li>
+  <li>Summarizes all features of the model in an exhaustive LaTeX-based model report.</li>
+</ul>
+    </td>
+  </tr>
+</table>
+
+<h2>Users' guide and kinetic laws</h2>
+<p>
+Requirements: Acrobat Reader (available from <a href="http://www.adobe.com" target="_blank">Adobe</a>).
+</p>
+
+<p align="center">
+<table width='100%' border='0' cellpadding='7' cellspacing='2'>
+    <tr class='tableHead'>
+        <th valign="top" width="200">Document (pdf)</th>
+        <th valign="top" width="200">Size</th>
+        <th valign="top" width="200">Version</th>
+    </tr>
+    <tr class='tableRow1st'>
+        <td valign="top" width="200"><a href="http://vg08.met.vgwort.de/na/d4b8e9ae1bed423884cea07e52756b43?l=http://www.cogsys.cs.uni-tuebingen.de/software/SBMLsqueezer/doc/SBMLsqueezerUsersGuide.pdf">SBMLsqueezer 2 Users' Guide</a></td>
+        <td valign="top" width="200">4.2 MB</td>
+        <td valign="top" width="200">2014-06-30</td>
+    </tr>
+    <tr class='tableRow2nd'>
+        <td valign="top" width="200"><a href="http://vg08.met.vgwort.de/na/83a1b26b8b22412dacbce13703f523e1?l=http://www.cogsys.cs.uni-tuebingen.de/software/SBMLsqueezer/doc/KineticLaws2.pdf">Revised Kinetic Laws</a></td>
+        <td valign="top" width="200">729 K</td>
+        <td valign="top" width="200">2010-03-31</td>
+    </tr>
+    <tr class='tableRow1st'>
+        <td valign="top" width="200"><a href="http://vg08.met.vgwort.de/na/45bad7bc6232453db73f28c701c4b738?l=http://www.cogsys.cs.uni-tuebingen.de/software/SBMLsqueezer/doc/Tutorial.pdf">User Guide</a></td>
+        <td valign="top" width="200">960 K</td>
+        <td valign="top" width="200">2008-04-28</td>
+    </tr>
+    <tr class='tableRow2nd'>
+        <td valign="top" width="200"><a href="http://vg08.met.vgwort.de/na/5c631cb521294d6a93aad6d0cdc1c70b?l=http://www.cogsys.cs.uni-tuebingen.de/software/SBMLsqueezer/doc/KineticLaws.pdf">Kinetic Laws</a></td>
+        <td valign="top" width="200">375 K</td>
+        <td valign="top" width="200">2008-04-28</td>
+    </tr>
+</table>
+</p>
+
+
+<h1>Aplication Programming Interface Documentation</h1>
+
+For software developers, the source code of SBMLsqueezer is freely available (see
+the <a href=../downloads/index.html">download</a> section). Here
+    we also offer the documentation of all methods and classes of all versions of
+    SBMLsqueezer. Have a lot of fun when programing applications using SBMLsqueezer.
+    <ul>
+    <li><a href="api/SBMLsqueezer2.0/index.html">SBMLsqueezer version 2.0</a></li>
+    <li><a href="api/SBMLsqueezer1.3/index.html">SBMLsqueezer version 1.3</a></li>
+    <li><a href="api/SBMLsqueezer1.2.1/index.html">SBMLsqueezer version 1.2.1</a></li>
+    <li><a href="api/SBMLsqueezer1.2/index.html">SBMLsqueezer version 1.2</a></li>
+    <li><a href="api/SBMLsqueezer1.1/index.html">SBMLsqueezer version 1.1</a></li>
+    <li><a href="api/SBMLsqueezer1.0/index.html">SBMLsqueezer version 1.0</a></li>
+    </ul>
+    
+<h1>Publications</h1>
+
+<!--#include virtual="/cgi-bin/bibtex-filter.pl?project=SBMLsqueezer" -->
+
+
+<h2>Posters and diploma theses</h2>
+
+<ul>
+<li><a href="http://vg08.met.vgwort.de/na/7e9224fd19d648c2b92f388520329751?l=http://www.cogsys.cs.uni-tuebingen.de/software/SBMLsqueezer/publications/DiplomarbeitNHassis.pdf">Nadine Hassis (2007)</a>: Automatische Generierung kinetischer Gleichungen aus St&ouml;chiometrien, Diplomarbeit, Univers&auml;t T&uuml;bingen</li>
+  <li><a href="http://vg08.met.vgwort.de/na/0b36965b80bc4f66a9547ad630ee8f93?l=http://www.cogsys.cs.uni-tuebingen.de/software/SBMLsqueezer/publications/SBMLsqueezerA0.pdf">Andreas Dr&auml;ger, Nadine Hassis, Jochen Supper, Adrian Schr&ouml;der, Andreas Zell (2007)</a>: SBMLsqueezer: a CellDesigner plug-in to generate kinetic rate equations for biochemical networks, poster (HepatoSys conference).</li>
+</ul>
+    
+    
+<h1>Archive</h1>
+
+See the <a href="archive/index.html">documentation archive</a> for more information about older versions of SBMLsqueezer.
+
+<p></p>
+<h3 align="center">This project is promoted by:</h3>
+<p></p>
+<table style="text-align:center;" border="0" cellpadding="10" cellspacing="10" width="95%" align="center">
+<tbody>
+<tr>
+<td width="2%"><a href="http://ec.europa.eu/research/mariecurieactions/" target="_blank"><b>European Commission</b></a></td>
+<td width="2%"><a href="http://systemsbiology.ucsd.edu" target="_blank"><b>Systems Biology Research Group</b></a></td>
+<td width="2%"><a href="http://www.bmbf.de" target="_blank"><b>BMBF</b></a></td>
+<td width="2%"><a href="http://www.virtual-liver.de" target="_blank"><b>Virtual Liver</b></a></td>
+</tr>
+<tr>
+<td width="2%">
+<a href="http://ec.europa.eu/research/mariecurieactions/" target="_blank"><img src="../img/thumb_eu.png" title="Marie Curie IOF" alt="Marie Curie IOF" align="top" border="0"></a>
+</td>
+<td width="2%">
+<a href="http://systemsbiology.ucsd.edu" target="_blank"><img src="../img/ucsd_small.png" title="Systems Biology Research Group" alt="Systems Biology Research Group" align="top" border="0"></a>
+</td>
+<td width="2%">
+<a href="http://www.bmbf.de" target="_blank"><img src="../img/BMBF_Logo_en.png" title="Federal Ministry for Education and Research" alt="Federal Ministry for Education and Research" align="top" border="0"></a>
+</td>
+<td width="2%">
+<a href="http://www.virtual-liver.de" target="_blank"><img src="../img/VLN_left_small.png" title="Virtual Liver Network" alt="Virtual Liver Network" align="top" border="0"></a>
+</td>
+</tr>
+</tbody>
+</table>
+<p></p>
+
+<img src="http://vg05.met.vgwort.de/na/36a18ad5e5864f818d89d05fb4f436d5" width="1" height="1" alt=""/>
+
+<!--/BODY-->
+
+    </div> <!-- body -->
+
+  </div>
+  <div class="cleanup"></div>
+  <div id="footer">
+	
+	<div id="footer-left">
+				<!-- <a href="./index.php?id=167&amp;L=">Anmelden</a> -->
+	</div>
+	<div id="footer-right">
+		Last changes: <!--#config timefmt="%d.%m.%Y, %H:%M %Z" --><!--#echo var="LAST_MODIFIED" --> &nbsp;&#124;&nbsp;&copy; 2001-2014&nbsp;&#124;&nbsp;University of T&uuml;bingen&nbsp;&#124;&nbsp;<a href="/impressum.html">Impressum</a>
+			</div>
+	
+	<div class="cleanup"></div>
+	
+</div>
+</div>
+</body>
+</html>
