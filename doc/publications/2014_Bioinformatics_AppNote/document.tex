@@ -123,22 +123,24 @@ The reconstruction of genome-scale networks has been recognized as a highly labo
 However, for the creation of dynamic network simulations, the formulation of such a structural network is just the first step.
 For each reaction within the network, a specific kinetic equation, a so-called rate law, needs to be derived.
 These rate laws typically contain parameters, such as Michaelis constants, or even plain numbers, which are not always intended to be dimensionless quantities.
-Reactive species in these models might cross compartments through transport reactions.
-Hence, their reaction space might change and consequently their molarity with the volume differences of each compartment.
+Reactive species in these models may cross compartments through transport reactions.
+Hence, their reaction space may change and consequently their molarity with the volume differences of each compartment.
 Ensuring unit consistency for the entire network requires careful consideration.
 When a model is finally used as the basis for technical applications, inconsistent units could compromise 
 therapeutic procedures or even endanger health and safety of patients.
 
-Manually deriving both, kinetic equation and all units, brings several problems with it, because it
+Manually deriving both, kinetic equations and all units, brings several problems with it, because it
 a) is highly error-prone, % opens the door for mistakes and errors
-b) very time-consuming \citep{Draeger2010},
+b) very time-consuming, and
 c) cannot be applied in large-scale or automated approaches.
-Efforts, such as the path2models project \citep{Buechel2013} might not have been possible without the availability of automated approaches for rate law assignment.
-Complex try-and-evaluate cycles, in which the most suitable rate law for a certain reaction needs to be identified in a repeated simulation runs, also require such a method \citep{Draeger2011}.
-
 For these reasons, %it has been recognized that 
 automatic procedures are required for the assembly of rate laws.
-Programs, such as COPASI \citep{Hoops2006}, CellDesigner \citep{Funahashi2003}, the MASS-Toolbox (\url{http://opencobra.github.io/MASS-Toolbox/}), and Cellerator \citep{Shapiro2002}, provide pre-defined lists of kinetic equations and also allow the user modify these rate laws or to even create customized equations.
+Programs, such as
+COPASI \citep{Hoops2006}, 
+CellDesigner \citep{Funahashi2007}, %\citep{Funahashi2003},
+the MASS-Toolbox (\url{http://opencobra.github.io/MASS-Toolbox/}), and 
+Cellerator \citep{Shapiro2002}, 
+provide pre-defined lists of kinetic equations and also allow the user to modify these rate laws or to even create customized equations.
 CellDesigner~4.3 %has only two pre-defined rate laws but 
 provides a dialog that assists the user to obtain rate laws from the kinetics database SABIO-RK \citep{Wittig2012}.
 The MASS-Toolbox focuses on the creation of elementary rate laws and automatically derives pseudo-elementary rate constants with their units.
@@ -157,16 +159,24 @@ In contrast, SBMLsqueezer applies several criteria to automatically select appro
 % of various types.
 The user can influence these criteria %for this selection
 and choose which rate law to apply.
-The aims of this approach are 1) to ensure that only applicable rate laws can be selected and hence to ensure the consistency of the model, 2) to reduce required human interaction to a minimum.
+The aims of this approach are
+a) to ensure that only applicable rate laws can be selected and thus the consistency of the model, and
+b) to reduce the required human interaction to a minimum.
 SBMLsqueezer is intended to be useful for modeling not only metabolic networks but also signal transduction processes and gene-regulatory mechanisms.
 
 
-\vspace{-1cm}
+\vspace{-.6cm}
 \section{Results}
 
 Originally, SBMLsqueezer has been developed as a plug-in for CellDesigner \citep{Draeger2008}.
-It was then extended to a libSBML-based stand-alone program \citep{Draeger2010}.
-Version~2 of the program can be used as a) on-line program, b) stand-alone tool via graphical user interface or command-line, c) plug-in for CellDesigner, d) Garuda gadget, e) through its application programing interface in complex work-flows and algorithms.
+It was then extended to a %libSBML-based
+stand-alone tool \citep{Draeger2010}.
+SBMLsqueezer~2 can be used as
+a) on-line program,
+b) stand-alone tool via graphical user interface or command-line,
+c) plug-in for CellDesigner,
+d) Garuda gadget, and
+e) through its API in complex workflows and algorithms.
 
 The vast majority of biochemical reactions can be categorized into a limited number of classes.
 SBMLsqueezer takes several features of the reaction into account in order to discriminate these classes.
@@ -178,9 +188,9 @@ It should be noted that for some levels and versions of SBML numbers cannot be a
 
 Access to SABIO-RK is similar to the interface in CellDesigner and the on-line database service \citep{Funahashi2007}.
 This feature uses the annotation of the reaction and its components to identify the best match in SABIO-RK.
-When successful, rate laws, parameters, units, and annotations will be transfered from SABIO-RK to the local model.
-
-Rate laws generation and extraction from SABIO-RK can be performed for individual reactions or for the entire model in a single step.
+When successful, rate laws, parameters, units, and annotations will be transferred from SABIO-RK to the local model.
+%
+Rate law generation and extraction from SABIO-RK can be performed for individual reactions or for the entire model in a single step.
 Optionally, SBMLsqueezer can remove unused variables and units from the model (cleaning) and update annotations where required.
 The content of models can be summarized in a comprehensive human-readable PDF report.
 
@@ -191,12 +201,12 @@ The content of models can be summarized in a comprehensive human-readable PDF re
 \vspace{-.45cm}
 \end{figure}
 
-\vspace{-.45cm}
+\vspace{-.3cm}
 \begin{methods}
 \section{Implementation}
 SBMLsqueezer is based on the data format SBML \citep{Hucka2004}.
 It is entirely implemented in Java\texttrademark{} and runs on every platform, for which a JVM is available.
-Reading and writing of SBML files is done using JSBML \citep{Draeger2011b}, which also acts as the internal data structure.
+Reading and writing of SBML files is done with JSBML \citep{Draeger2011b}, which also acts as the internal data structure.
 SBMLsqueezer can also be launched using a libSBML \citep{Bornstein2008} back-end.
 The on-line program version is based on the command-line interface of the stand-alone tool, which is wrapped in a Galaxy \citep{Goecks2010} framework.
 For writing model reports, SBMLsqueezer contains a development release of \SBMLLaTeX{} \citep{Draeger2009a}.
@@ -204,7 +214,7 @@ The Garuda gadget \citep{Ghosh2011} is implemented based on the back-end API for
 The CellDesigner plug-in uses the communication interface between CellDesigner's plug-in API and JSBML.
 Changes made by SBMLsqueezer are synchronized with CellDesigner through a change listener interface.
 SBMLsqueezer determines the type of reaction by interpreting SBO and MIRIAM annotations \citep{Courtot2011} of all components as well as the number and kind of reaction participants.
-\textcolor{red}{Access to SABIO-RK \citep{Wittig2012} requires an active Internet connection and is implemented via\ldots}
+Access to SABIO-RK \citep{Wittig2012} requires an active Internet connection and is implemented via a Java\texttrademark{} URL connection.
 %SBMLsqueezer~2 has been internationalized and comes with language packs for German and English, and partially Chinese.
 \end{methods}
 
@@ -214,38 +224,49 @@ SBMLsqueezer determines the type of reaction by interpreting SBO and MIRIAM anno
 %     as it may ignore the figures.
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\vspace{-.01cm}
 \section{Conclusion}
 
-SBMLsqueezer has been continuously developed since 2006.
-With version~2 a mature and stable application has been released, which can be applied in diverse ways.
-SBMLsqueezer can therefore easily be integrated into versatile work-flows and complex procedures.
-The Users' Guide (see project web-site) provides detailed information about how to exploit SBMLsqueezer's API, all command-line options as well as several details and sample use-cases.
+%SBMLsqueezer has been continuously developed since 2006.
+With SBMLsqueezer~2 a mature and stable application has been released, which can be applied in diverse ways.
+It can easily be integrated into versatile workflows and complex procedures.
+The Users' Guide at the project web-site
+% provides detailed information about 
+explains in detail
+how to exploit all program functions 
+%SBMLsqueezer's API, all command-line options as well as 
+and provides several sample use-cases.
 
-\vspace{-.25cm}
+%Efforts, such as the path2models project \citep{Buechel2013} were not possible without the availability of automated approaches for rate law assignment.
+The path2models project \citep{Buechel2013} has demonstrated the usefulness of automated rate law assignment.
+%Complex try-and-evaluate cycles, in which the most suitable rate law for a certain reaction needs to be identified in repeated simulation runs, also require such a method \citep{Draeger2011}.
+Based on this program, complex try-and-evaluate cycles, in which the most suitable rate law for a certain reaction needs to be identified in repeated simulation runs as proposed by \citet{Draeger2011} now become possible.
+
+\vspace{-.3cm}
 \section*{Acknowledgments}
 
-The authors are grateful to Meike Aichele, Hannes Borch, Alexander D\"orr, Martin Golebiewski, Nadine Hassis, Marcel Kronfeld, Oliver Kohlbacher, Wolfgang M\"uller, Sarah R.~M\"uller vom Hagen, Sebastian Nagel, Leif J.~Pallesen, Alexander Peltzer, Julianus Pfeuffer, Sandra Saliger, Simon Sch\"afer, Adrian Schr\"oder, Jochen Supper,
-Dieudonn\'e M.~Wouamba, Shaowu Yang, Michael J.~Ziller.
-
+The authors are grateful to Meike Aichele, Hannes Borch, Alexander D\"orr, Martin Golebiewski, Nadine Hassis, Marcel Kronfeld, Oliver Kohlbacher, Wolfgang M\"uller, Sarah R.~M\"uller vom Hagen, Sebastian Nagel, Leif J.~Pallesen, Alexander Peltzer, Julianus Pfeuffer, Sandra Saliger, Simon Sch\"afer, Adrian Schr\"oder, Jochen Supper, Dieudonn\'e M.~Wouamba, Shaowu Yang, Michael J.~Ziller.
+%The authors are grateful to M.~Aichele, H.~Borch, A.~D\"orr, M. Golebiewski, N.~Hassis, M.~Kronfeld, O.~Kohlbacher, W.~M\"uller, S. R. M\"uller vom Hagen, S.~Nagel, L.~J.~Pallesen, A.~Peltzer, J. Pfeuffer, S.~Saliger, S.~Sch\"afer, A.~Schr\"oder, J.~Supper, D. M. Wouamba, S. Yang, and M.~J.~Ziller.
+\vspace{-.05cm}
 \paragraph{Funding\textcolon}
 Thanks to the Federal Ministry of Education and Research (BMBF, Germany) for funding the
-Virtual Liver Network (grant number 0315756) and to the European Commission for granting 
+Virtual Liver Network (grant number 0315756) and to %the European Commission for granting 
 a Marie Curie International Outgoing Fellowship
 within the EU 7\textsuperscript{th} Framework Program for Research and Technological Development
 (project AMBiCon, 332020) to AD.
-
+\vspace{-.05cm}
 \paragraph{Conflict of Interest\textcolon} none declared.
 
-\vspace{-.25cm}
+\vspace{-.5cm}
 %\bibliographystyle{natbib}
 %\bibliography{document}
 
 \begin{thebibliography}{}
-
+\newcommand{\Bioinformatics}{Bioinformatics}
 \bibitem[Bornstein {\em et~al.}(2008)Bornstein {\em et~al.}]{Bornstein2008}
 Bornstein {\em et~al.} (2008).
 \newblock {LibSBML: an API library for SBML}.
-\newblock {\em Bioinformatics\/}, {\bf 24}(6), 880--881.
+\newblock {\em \Bioinformatics\/}, {\bf 24}(6), 880--881.
 
 \bibitem[B{\"u}chel {\em et~al.}(2013)B{\"u}chel {\em et~al.}]{Buechel2013}
 B{\"u}chel {\em et~al.} (2013).
@@ -278,7 +299,7 @@ Dr{\"a}ger {\em et~al.} (2009a).
 \bibitem[Dr{\"a}ger {\em et~al.}(2009b)Dr{\"a}ger {\em et~al.}]{Draeger2009b}
 Dr{\"a}ger {\em et~al.} (2009b).
 \newblock {SBML2\LaTeX: Conversion of SBML files into human-readable reports}.
-\newblock {\em Bioinformatics\/}, {\bf 25}(11), 1455--1456.
+\newblock {\em \Bioinformatics\/}, {\bf 25}(11), 1455--1456.
 
 \bibitem[Dr{\"a}ger {\em et~al.}(2010)Dr{\"a}ger {\em et~al.}]{Draeger2010}
 Dr{\"a}ger {\em et~al.} (2010).
@@ -289,13 +310,13 @@ Dr{\"a}ger {\em et~al.} (2010).
 \bibitem[Dr{\"a}ger {\em et~al.}(2011)Dr{\"a}ger {\em et~al.}]{Draeger2011b}
 Dr{\"a}ger {\em et~al.} (2011).
 \newblock {JSBML: a flexible Java library for working with SBML}.
-\newblock {\em Bioinformatics\/}, {\bf 27}(15), 2167--2168.
+\newblock {\em \Bioinformatics\/}, {\bf 27}(15), 2167--2168.
 
-\bibitem[Funahashi {\em et~al.}(2003)Funahashi {\em et~al.}]{Funahashi2003}
-Funahashi {\em et~al.} (2003).
-\newblock {CellDesigner: a process diagram editor for gene-regulatory and
-  biochemical networks}.
-\newblock {\em BioSilico\/}, {\bf 1}(5), 159--162.
+%\bibitem[Funahashi {\em et~al.}(2003)Funahashi {\em et~al.}]{Funahashi2003}
+%Funahashi {\em et~al.} (2003).
+%\newblock {CellDesigner: a process diagram editor for gene-regulatory and
+%  biochemical networks}.
+%\newblock {\em BioSilico\/}, {\bf 1}(5), 159--162.
 
 \bibitem[Funahashi {\em et~al.}(2007)Funahashi {\em et~al.}]{Funahashi2007}
 Funahashi {\em et~al.} (2007).
@@ -316,7 +337,7 @@ Goecks {\em et~al.} (2010).
 \bibitem[Hoops {\em et~al.}(2006)Hoops {\em et~al.}]{Hoops2006}
 Hoops {\em et~al.} (2006).
 \newblock {COPASI--a COmplex PAthway SImulator}.
-\newblock {\em Bioinformatics\/}, {\bf 22}(24), 3067--3074.
+\newblock {\em \Bioinformatics\/}, {\bf 22}(24), 3067--3074.
 
 \bibitem[Hucka {\em et~al.}(2004)Hucka {\em et~al.}]{Hucka2004}
 Hucka {\em et~al.} (2004).
@@ -328,13 +349,13 @@ Hucka {\em et~al.} (2004).
 \bibitem[Krumsiek {\em et~al.}(2010)Krumsiek {\em et~al.}]{Krumsiek2010}
 Krumsiek {\em et~al.} (2010).
 \newblock Odefy--from discrete to continuous models.
-\newblock {\em BMC Bioinformatics\/}, {\bf 11}, 233.
+\newblock {\em BMC \Bioinformatics\/}, {\bf 11}, 233.
 
 \bibitem[Shapiro {\em et~al.}(2002)Shapiro {\em et~al.}]{Shapiro2002}
 Shapiro {\em et~al.} (2002).
 \newblock Cellerator: extending a computer algebra system to include
   biochemical arrows for signal transduction simulations.
-\newblock {\em Bioinformatics\/}, {\bf 19}(5), 677--678.
+\newblock {\em \Bioinformatics\/}, {\bf 19}(5), 677--678.
 
 \bibitem[Thiele and Palsson(2010)Thiele and Palsson]{Thiele2010}
 Thiele, I. and Palsson, B.~{\O}. (2010).
@@ -345,7 +366,7 @@ Thiele, I. and Palsson, B.~{\O}. (2010).
 \bibitem[Weber {\em et~al.}(2013)Weber {\em et~al.}]{Weber2013}
 Weber {\em et~al.} (2013).
 \newblock Inference of dynamical gene-regulatory networks based on
-  time-resolved multi-stimuli multi-experiment data applying netgenerator v2.0.
+  time-resolved multi-stimuli multi-experiment data applying Net\emph{Gene}rator v2.0.
 \newblock {\em BMC Syst Biol\/}, {\bf 7}(1), 1.
 
 \bibitem[Wittig {\em et~al.}(2012)Wittig {\em et~al.}]{Wittig2012}
