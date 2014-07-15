@@ -100,7 +100,7 @@ In order to simulate the dynamics of quantitative models, kinetic equations need
 The manual assignment of these equations is not practicable for large numbers of reactions.
 Complex test-and-evaluation cycles require automated methods for rate law assignment.
 %\section{Results:}
-The program SBMLsqueezer is a generator for kinetic equations, parameters, and units.
+The program SBMLsqueezer~2 is a generator for kinetic equations, parameters, and units.
 It distinguishes between multiple types of reactions and selects only suitable rate laws.
 The user can influence all choices made by the program in order to assign the desired type of rate law to each reaction.
 Experimentally derived rate laws can be obtained through a connection to the kinetics database SABIO-RK.
@@ -152,20 +152,20 @@ Odefy \citep{Krumsiek2010} converts discrete Boolean networks into quantitative 
 %CellDesigner has a dialog available that assists the user to obtain rate laws from the kinetics database SABIO-RK \citep{Wittig2012}.
 %Cellerator \citep{Shapiro2002} facilitates equation generation by providing build-in functions for a set of rate laws, which the user can apply to reactions.
 
-%SBMLsqueezer has been implemented with the aim to simplify the difficult %and highly error-prone
+%SBMLsqueezer~2 has been implemented with the aim to simplify the difficult %and highly error-prone
 %process of rate law assignment.
 %The number of pre-defined rate laws is large and covers several aspects of research in systems biology.
-In contrast, SBMLsqueezer applies several criteria to automatically select appropriate equations for each reaction.
+In contrast, SBMLsqueezer~2 applies several criteria to automatically select appropriate equations for each reaction.
 % of various types.
 The user can influence these criteria %for this selection
 and choose which rate law to apply.
 The aims of this approach are
 a) to ensure that only applicable rate laws can be selected and thus the consistency of the model, and
 b) to reduce the required human interaction to a minimum.
-SBMLsqueezer is intended to be useful for modeling not only metabolic networks but also signal transduction processes and gene-regulatory mechanisms.
+SBMLsqueezer~2 is intended to be useful for modeling not only metabolic networks but also signal transduction processes and gene-regulatory mechanisms.
 
 
-\vspace{-.6cm}
+\vspace{-.1cm}
 \section{Results}
 
 Originally, SBMLsqueezer has been developed as a plug-in for CellDesigner \citep{Draeger2008}.
@@ -179,42 +179,43 @@ d) Garuda gadget, and
 e) through its API in complex workflows and algorithms.
 
 The vast majority of biochemical reactions can be categorized into a limited number of classes.
-SBMLsqueezer takes several features of the reaction into account in order to discriminate these classes.
+SBMLsqueezer~2 takes several features of the reaction into account in order to discriminate these classes.
 For each class it either determines all kinds of principally applicable rate laws, or the most suitable rate law.
 The user can influence how rate laws are picked.
 An equation preview assists the user to make this decision.
 The program equips all newly generated parameters with units in order to ensure consistency.
 It should be noted that for some levels and versions of SBML numbers cannot be associated with units and that some rate laws can under certain conditions not be evaluated to reaction extend per time units.
 
-Access to SABIO-RK is similar to the interface in CellDesigner and the on-line database service \citep{Funahashi2007}.
-This feature uses the annotation of the reaction and its components to identify the best match in SABIO-RK.
+The dialog for access to SABIO-RK is similar to %the interface in CellDesigner and 
+the on-line database service and %\citep{Funahashi2007}.
+%This feature 
+uses the annotation of the reaction and its components to identify the best match in SABIO-RK.
 When successful, rate laws, parameters, units, and annotations will be transferred from SABIO-RK to the local model.
 %
 Rate law generation and extraction from SABIO-RK can be performed for individual reactions or for the entire model in a single step.
-Optionally, SBMLsqueezer can remove unused variables and units from the model (cleaning) and update annotations where required.
+Optionally, SBMLsqueezer~2 can remove unused variables and units from the model (cleaning) and update annotations where required.
 The content of models can be summarized in a comprehensive human-readable PDF report.
 
 \begin{figure}
-\centering{\includegraphics[width=.48\textwidth]{Screenshot_4.png}}
-\caption[Graphical user interface of SBMLsqueezer]{Graphical user interface of SBMLsqueezer.%\vspace{-.75cm}
-}\label{fig:SBMLsqueezer}
-\vspace{-.45cm}
+\centering{\includegraphics[width=.48\textwidth]{Screenshot_2.png}}
+\caption[Reaction context dialog of SBMLsqueezer~2]{Reaction context dialog of SBMLsqueezer~2.}\label{fig:SBMLsqueezer}
+\vspace{-.2cm}
 \end{figure}
 
-\vspace{-.3cm}
+\vspace{-.1cm}
 \begin{methods}
 \section{Implementation}
-SBMLsqueezer is based on the data format SBML \citep{Hucka2004}.
+SBMLsqueezer~2 is based on the data format SBML \citep{Hucka2004}.
 It is entirely implemented in Java\texttrademark{} and runs on every platform, for which a JVM is available.
 Reading and writing of SBML files is done with JSBML \citep{Draeger2011b}, which also acts as the internal data structure.
-SBMLsqueezer can also be launched using a libSBML \citep{Bornstein2008} back-end.
+SBMLsqueezer~2 can also be launched using a libSBML \citep{Bornstein2008} back-end.
 The on-line program version is based on the command-line interface of the stand-alone tool, which is wrapped in a Galaxy \citep{Goecks2010} framework.
-For writing model reports, SBMLsqueezer contains a development release of \SBMLLaTeX{} \citep{Draeger2009a}.
+For writing model reports, SBMLsqueezer~2 contains a development release of \SBMLLaTeX{} \citep{Draeger2009}.
 The Garuda gadget \citep{Ghosh2011} is implemented based on the back-end API for Java\texttrademark.
 The CellDesigner plug-in uses the communication interface between CellDesigner's plug-in API and JSBML.
-Changes made by SBMLsqueezer are synchronized with CellDesigner through a change listener interface.
-SBMLsqueezer determines the type of reaction by interpreting SBO and MIRIAM annotations \citep{Courtot2011} of all components as well as the number and kind of reaction participants.
-Access to SABIO-RK \citep{Wittig2012} requires an active Internet connection and is implemented via a Java\texttrademark{} URL connection.
+Changes made by SBMLsqueezer~2 are synchronized with CellDesigner through a change listener interface.
+SBMLsqueezer~2 determines the type of reaction by interpreting SBO and MIRIAM annotations \citep{Courtot2011} of all components as well as the number and kind of reaction participants.
+Access to SABIO-RK \citep{Wittig2012} requires an active Internet connection and uses the RESTFUL API provided by SABIO-RK through a Java\texttrademark{} URL connection.
 %SBMLsqueezer~2 has been internationalized and comes with language packs for German and English, and partially Chinese.
 \end{methods}
 
@@ -234,30 +235,34 @@ The Users' Guide at the project web-site
 % provides detailed information about 
 explains in detail
 how to exploit all program functions 
-%SBMLsqueezer's API, all command-line options as well as 
+%SBMLsqueezer~2's API, all command-line options as well as 
 and provides several sample use-cases.
 
 %Efforts, such as the path2models project \citep{Buechel2013} were not possible without the availability of automated approaches for rate law assignment.
 The path2models project \citep{Buechel2013} has demonstrated the usefulness of automated rate law assignment.
 %Complex try-and-evaluate cycles, in which the most suitable rate law for a certain reaction needs to be identified in repeated simulation runs, also require such a method \citep{Draeger2011}.
-Based on this program, complex try-and-evaluate cycles, in which the most suitable rate law for a certain reaction needs to be identified in repeated simulation runs as proposed by \citet{Draeger2011} now become possible.
+Based on SBMLsqueezer~2
+%this program, 
+complex try-and-evaluate cycles, in which the most suitable rate law for a certain reaction needs to be identified in repeated simulation runs \citep{Draeger2011} now become possible.
 
-\vspace{-.3cm}
+\vspace{-.1cm}
 \section*{Acknowledgments}
 
 The authors are grateful to Meike Aichele, Hannes Borch, Alexander D\"orr, Martin Golebiewski, Nadine Hassis, Marcel Kronfeld, Oliver Kohlbacher, Wolfgang M\"uller, Sarah R.~M\"uller vom Hagen, Sebastian Nagel, Leif J.~Pallesen, Alexander Peltzer, Julianus Pfeuffer, Sandra Saliger, Simon Sch\"afer, Adrian Schr\"oder, Jochen Supper, Dieudonn\'e M.~Wouamba, Shaowu Yang, Michael J.~Ziller.
 %The authors are grateful to M.~Aichele, H.~Borch, A.~D\"orr, M. Golebiewski, N.~Hassis, M.~Kronfeld, O.~Kohlbacher, W.~M\"uller, S. R. M\"uller vom Hagen, S.~Nagel, L.~J.~Pallesen, A.~Peltzer, J. Pfeuffer, S.~Saliger, S.~Sch\"afer, A.~Schr\"oder, J.~Supper, D. M. Wouamba, S. Yang, and M.~J.~Ziller.
-\vspace{-.05cm}
+
+%\vspace{-.05cm}
 \paragraph{Funding\textcolon}
 Thanks to the Federal Ministry of Education and Research (BMBF, Germany) for funding the
 Virtual Liver Network (grant number 0315756) and to %the European Commission for granting 
-a Marie Curie International Outgoing Fellowship
-within the EU 7\textsuperscript{th} Framework Program for Research and Technological Development
-(project AMBiCon, 332020) to AD.
-\vspace{-.05cm}
+the 7\textsuperscript{th} EU Framework Program for Research and Technological Development
+for AD's Marie Curie International Outgoing Fellowship
+(project AMBiCon, 332020).
+
+%\vspace{-.05cm}
 \paragraph{Conflict of Interest\textcolon} none declared.
 
-\vspace{-.5cm}
+\vspace{-.2cm}
 %\bibliographystyle{natbib}
 %\bibliography{document}
 
@@ -290,14 +295,14 @@ Dr{\"a}ger, {\em et~al.} (2008).
   equations for biochemical networks}.
 \newblock {\em BMC Syst Biol\/}, {\bf 2}(1), 39.
 
-\bibitem[Dr{\"a}ger {\em et~al.}(2009a)Dr{\"a}ger {\em et~al.}]{Draeger2009a}
-Dr{\"a}ger {\em et~al.} (2009a).
-\newblock {Modeling metabolic networks in \emph{C.~glutamicum}: a comparison of
-  rate laws in combination with various parameter optimization strategies}.
-\newblock {\em BMC Syst Biol\/}, {\bf 3}, 5.
+%\bibitem[Dr{\"a}ger {\em et~al.}(2009a)Dr{\"a}ger {\em et~al.}]{Draeger2009a}
+%Dr{\"a}ger {\em et~al.} (2009a).
+%\newblock {Modeling metabolic networks in \emph{C.~glutamicum}: a comparison of
+%  rate laws in combination with various parameter optimization strategies}.
+%\newblock {\em BMC Syst Biol\/}, {\bf 3}, 5.
 
-\bibitem[Dr{\"a}ger {\em et~al.}(2009b)Dr{\"a}ger {\em et~al.}]{Draeger2009b}
-Dr{\"a}ger {\em et~al.} (2009b).
+\bibitem[Dr{\"a}ger {\em et~al.}(2009)Dr{\"a}ger {\em et~al.}]{Draeger2009}
+Dr{\"a}ger {\em et~al.} (2009).
 \newblock {SBML2\LaTeX: Conversion of SBML files into human-readable reports}.
 \newblock {\em \Bioinformatics\/}, {\bf 25}(11), 1455--1456.
 
