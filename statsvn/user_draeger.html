@@ -1,0 +1,2147 @@
+<?xml version="1.0"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>StatSVN - /trunk Developers: draeger</title>
+ <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"/>
+    <meta name="Generator" content="StatSVN 0.7.0"/>
+<link rel="stylesheet" href="objectlab-statcvs.css" type="text/css"/>
+<script type="text/javascript" charset="utf-8" src="http://bit.ly/javascript-api.js?version=latest&#38;login=statsvn&#38;apiKey=R_2c362b417d0517c27876cbaca1bb68cc"></script>
+<script type="text/javascript" charset="utf-8">
+   // wait until page is loaded to call API
+   var redir_url;
+   var short_url;
+   BitlyCB.myShortenCallback = function(data) {
+      // this is how to get a result of shortening a single url
+      var result;
+      short_url=null;
+      for (var r in data.results) {
+         result = data.results[r];
+         result['longUrl'] = r;
+         short_url = result['shortUrl'];
+         break;
+      }
+      if (short_url==null) // bit.ly failed
+      document.location=redir_url;
+      else
+      redirToTwitter();
+   };
+   function shortenTweet(url) {
+      if (short_url == null || redir_url!=url) {
+      redir_url = url;
+      BitlyClient.shorten(document.location, 'BitlyCB.myShortenCallback');
+      }
+      else
+      redirToTwitter();
+      return false;
+   }
+   function redirToTwitter() { 
+      // replace {0} which is visible as %7B0} in the link
+      document.location = redir_url.replace('%7B0}', short_url);
+   }
+</script>
+  </head>
+
+<body>
+
+<h1>/trunk Developers: draeger</h1>
+<div id="parentlink">&#171; <a href="index.html">Development Statistics for /trunk</a> &#171; <a href="developers.html">Developers</a></div>
+<dl class="attributes">
+    <dt>Login name:</dt>
+    <dd>draeger</dd>
+    <dt>Total Commits:</dt>
+    <dd>6.093 (70,1%)</dd>
+    <dt>Lines of Code:</dt>
+    <dd>367.047 (50,2%)</dd>
+    <dt>Most Recent Commit:</dt>
+    <dd><span class="date">2014-03-12 14:08</span></dd>
+    <dt>Tweet this:</dt>
+    <dd><a onclick="return shortenTweet(this.href);" href="http://twitter.com/home?status=draeger%20contributed%20367.047%20(50%2C2%25)%20lines%20to%20%2Ftrunk%20%7B0}%20most%20recent%20commit%202014-03-12%20stats%20by%20StatSVN%20http%3A%2F%2Fstatsvn.org"><img style="border:0px" alt="Tweet this" src="tweet-this.png"/></a></dd>
+</dl>
+
+<div class="section">
+<h2>Activity by Clock Time</h2>
+<p class="chart"><img src="activity_time_draeger.png" alt="Activity by Hour of Day for draeger" width="800" height="500" /></p><p class="chart"><img src="activity_day_draeger.png" alt="Activity by Day of Week for draeger" width="800" height="500" /></p></div>
+<div class="section">
+<h2>Activity in Directories</h2>
+  <table  rules="groups" summary="Overview of this author's activities in different directories">
+    <colgroup align="left"/>
+    <colgroup align="right"/>
+    <colgroup align="right"/>
+    <colgroup align="right"/>
+    <thead>
+      <tr>
+        <th>Directory</th>
+        <th>Changes</th>
+        <th>Lines of Code</th>
+        <th>Lines per Change</th>
+      </tr>
+    </thead>
+    <tfoot>
+      <tr>
+        <th>Totals</th>
+        <td>6093 (100.0%)</td>
+        <td>367047 (100.0%)</td>
+        <td>60.2</td>
+      </tr>
+    </tfoot>
+    <tbody>
+      <tr  class="odd">
+        <th><a href="dir_src_org_sbml_squeezer_gui.html" class="directory">src/org/sbml/squeezer/gui/</a></th>
+        <td>889 (14.6%)</td>
+        <td>33188 (9.0%)</td>
+        <td>37.3</td>
+      </tr>
+      <tr  class="even">
+        <th><a href="dir_files_SBMLsqueezerProbleme.html" class="directory">files/SBMLsqueezerProbleme/</a></th>
+        <td>3 (0.0%)</td>
+        <td>27114 (7.4%)</td>
+        <td>9038.0</td>
+      </tr>
+      <tr  class="odd">
+        <th><a href="dir_files_tests.html" class="directory">files/tests/</a></th>
+        <td>52 (0.9%)</td>
+        <td>27034 (7.4%)</td>
+        <td>519.8</td>
+      </tr>
+      <tr  class="even">
+        <th><a href="dir_doc_tutorials_user_guide_img.html" class="directory">doc/tutorials/user_guide/img/</a></th>
+        <td>8 (0.1%)</td>
+        <td>26290 (7.2%)</td>
+        <td>3286.2</td>
+      </tr>
+      <tr  class="odd">
+        <th><a href="dir_src_org_sbml_squeezer.html" class="directory">src/org/sbml/squeezer/</a></th>
+        <td>503 (8.3%)</td>
+        <td>23521 (6.4%)</td>
+        <td>46.7</td>
+      </tr>
+      <tr  class="even">
+        <th><a href="dir_src_org_sbml_squeezer_kinetics.html" class="directory">src/org/sbml/squeezer/kinetics/</a></th>
+        <td>1205 (19.8%)</td>
+        <td>23071 (6.3%)</td>
+        <td>19.1</td>
+      </tr>
+      <tr  class="odd">
+        <th><a href="dir_lib.html" class="directory">lib/</a></th>
+        <td>179 (2.9%)</td>
+        <td>18599 (5.1%)</td>
+        <td>103.9</td>
+      </tr>
+      <tr  class="even">
+        <th><a href="dir_src_org_sbml_jsbml.html" class="directory">src/org/sbml/jsbml/</a></th>
+        <td>149 (2.4%)</td>
+        <td>13333 (3.6%)</td>
+        <td>89.4</td>
+      </tr>
+      <tr  class="odd">
+        <th><a href="dir_doc_tutorials_kinetic_laws_img.html" class="directory">doc/tutorials/kinetic_laws/img/</a></th>
+        <td>2 (0.0%)</td>
+        <td>13145 (3.6%)</td>
+        <td>6572.5</td>
+      </tr>
+      <tr  class="even">
+        <th><a href="dir_src_org_sbml_jlibsbml.html" class="directory">src/org/sbml/jlibsbml/</a></th>
+        <td>132 (2.2%)</td>
+        <td>13017 (3.5%)</td>
+        <td>98.6</td>
+      </tr>
+      <tr  class="odd">
+        <th><a href="dir_doc_index-files.html" class="directory">doc/index-files/</a></th>
+        <td>161 (2.6%)</td>
+        <td>12513 (3.4%)</td>
+        <td>77.7</td>
+      </tr>
+      <tr  class="even">
+        <th><a href="dir_src_org_sbml.html" class="directory">src/org/sbml/</a></th>
+        <td>274 (4.5%)</td>
+        <td>11562 (3.2%)</td>
+        <td>42.1</td>
+      </tr>
+      <tr  class="odd">
+        <th><a href="dir_resources_org_sbml_squeezer_resources_img.html" class="directory">resources/org/sbml/squeezer/resources/img/</a></th>
+        <td>151 (2.5%)</td>
+        <td>10697 (2.9%)</td>
+        <td>70.8</td>
+      </tr>
+      <tr  class="even">
+        <th><a href="dir_src_org_sbml_squeezer_io.html" class="directory">src/org/sbml/squeezer/io/</a></th>
+        <td>283 (4.6%)</td>
+        <td>9214 (2.5%)</td>
+        <td>32.5</td>
+      </tr>
+      <tr  class="odd">
+        <th><a href="dir_doc.html" class="directory">doc/</a></th>
+        <td>75 (1.2%)</td>
+        <td>8446 (2.3%)</td>
+        <td>112.6</td>
+      </tr>
+      <tr  class="even">
+        <th><a href="dir_src_org_sbml_squeezer_math.html" class="directory">src/org/sbml/squeezer/math/</a></th>
+        <td>125 (2.1%)</td>
+        <td>6946 (1.9%)</td>
+        <td>55.5</td>
+      </tr>
+      <tr  class="odd">
+        <th><a href="dir_src_org_sbml_squeezer_standalone.html" class="directory">src/org/sbml/squeezer/standalone/</a></th>
+        <td>74 (1.2%)</td>
+        <td>5619 (1.5%)</td>
+        <td>75.9</td>
+      </tr>
+      <tr  class="even">
+        <th><a href="dir_src_org_sbml_squeezer_sabiork_wizard_gui.html" class="directory">src/org/sbml/squeezer/sabiork/wizard/gui/</a></th>
+        <td>207 (3.4%)</td>
+        <td>5458 (1.5%)</td>
+        <td>26.3</td>
+      </tr>
+      <tr  class="odd">
+        <th><a href="dir_src_org_sbml_squeezer_util.html" class="directory">src/org/sbml/squeezer/util/</a></th>
+        <td>69 (1.1%)</td>
+        <td>4669 (1.3%)</td>
+        <td>67.6</td>
+      </tr>
+      <tr  class="even">
+        <th><a href="dir_src_org_sbml_squeezer_plugin.html" class="directory">src/org/sbml/squeezer/plugin/</a></th>
+        <td>78 (1.3%)</td>
+        <td>4619 (1.3%)</td>
+        <td>59.2</td>
+      </tr>
+      <tr  class="odd">
+        <th><a href="dir_resources_tests.html" class="directory">resources/tests/</a></th>
+        <td>11 (0.2%)</td>
+        <td>4161 (1.1%)</td>
+        <td>378.2</td>
+      </tr>
+      <tr  class="even">
+        <th><a href="dir.html" class="directory">/</a></th>
+        <td>82 (1.3%)</td>
+        <td>4027 (1.1%)</td>
+        <td>49.1</td>
+      </tr>
+      <tr  class="odd">
+        <th><a href="dir_test_org_sbml_squeezer_test_cases.html" class="directory">test/org/sbml/squeezer/test/cases/</a></th>
+        <td>117 (1.9%)</td>
+        <td>3583 (1.0%)</td>
+        <td>30.6</td>
+      </tr>
+      <tr  class="even">
+        <th><a href="dir_src_org_sbml_simulator_gui.html" class="directory">src/org/sbml/simulator/gui/</a></th>
+        <td>12 (0.2%)</td>
+        <td>3483 (0.9%)</td>
+        <td>290.2</td>
+      </tr>
+      <tr  class="odd">
+        <th><a href="dir_src_org_sbml_squeezer_resources_cfg.html" class="directory">src/org/sbml/squeezer/resources/cfg/</a></th>
+        <td>37 (0.6%)</td>
+        <td>3148 (0.9%)</td>
+        <td>85.0</td>
+      </tr>
+      <tr  class="even">
+        <th><a href="dir_dist.html" class="directory">dist/</a></th>
+        <td>46 (0.8%)</td>
+        <td>2990 (0.8%)</td>
+        <td>65.0</td>
+      </tr>
+      <tr  class="odd">
+        <th><a href="dir_src_org_sbmlsqueezer_kinetics.html" class="directory">src/org/sbmlsqueezer/kinetics/</a></th>
+        <td>72 (1.2%)</td>
+        <td>2892 (0.8%)</td>
+        <td>40.1</td>
+      </tr>
+      <tr  class="even">
+        <th><a href="dir_Licenses.html" class="directory">Licenses/</a></th>
+        <td>26 (0.4%)</td>
+        <td>2593 (0.7%)</td>
+        <td>99.7</td>
+      </tr>
+      <tr  class="odd">
+        <th><a href="dir_doc_tutorials_user_guide.html" class="directory">doc/tutorials/user_guide/</a></th>
+        <td>10 (0.2%)</td>
+        <td>2379 (0.6%)</td>
+        <td>237.9</td>
+      </tr>
+      <tr  class="even">
+        <th><a href="dir_src_org_biojava_ontology.html" class="directory">src/org/biojava/ontology/</a></th>
+        <td>41 (0.7%)</td>
+        <td>2270 (0.6%)</td>
+        <td>55.3</td>
+      </tr>
+      <tr  class="odd">
+        <th><a href="dir_resources_org_sbml_squeezer_resources_cfg.html" class="directory">resources/org/sbml/squeezer/resources/cfg/</a></th>
+        <td>16 (0.3%)</td>
+        <td>2248 (0.6%)</td>
+        <td>140.5</td>
+      </tr>
+      <tr  class="even">
+        <th><a href="dir_src_org_biojava_utils.html" class="directory">src/org/biojava/utils/</a></th>
+        <td>31 (0.5%)</td>
+        <td>2208 (0.6%)</td>
+        <td>71.2</td>
+      </tr>
+      <tr  class="odd">
+        <th><a href="dir_files.html" class="directory">files/</a></th>
+        <td>9 (0.1%)</td>
+        <td>2147 (0.6%)</td>
+        <td>238.5</td>
+      </tr>
+      <tr  class="even">
+        <th><a href="dir_doc_tutorials_user_guide_tex.html" class="directory">doc/tutorials/user_guide/tex/</a></th>
+        <td>17 (0.3%)</td>
+        <td>2076 (0.6%)</td>
+        <td>122.1</td>
+      </tr>
+      <tr  class="odd">
+        <th><a href="dir_examples_src_org_sbml_squeezer_test.html" class="directory">examples/src/org/sbml/squeezer/test/</a></th>
+        <td>20 (0.3%)</td>
+        <td>1913 (0.5%)</td>
+        <td>95.6</td>
+      </tr>
+      <tr  class="even">
+        <th><a href="dir_src_de_zbit_gui_cfg.html" class="directory">src/de/zbit/gui/cfg/</a></th>
+        <td>19 (0.3%)</td>
+        <td>1905 (0.5%)</td>
+        <td>100.2</td>
+      </tr>
+      <tr  class="odd">
+        <th><a href="dir_src_de_zbit_gui_prefs.html" class="directory">src/de/zbit/gui/prefs/</a></th>
+        <td>19 (0.3%)</td>
+        <td>1505 (0.4%)</td>
+        <td>79.2</td>
+      </tr>
+      <tr  class="even">
+        <th><a href="dir_src_org_sbml_squeezer_gui_wizard.html" class="directory">src/org/sbml/squeezer/gui/wizard/</a></th>
+        <td>73 (1.2%)</td>
+        <td>1487 (0.4%)</td>
+        <td>20.3</td>
+      </tr>
+      <tr  class="odd">
+        <th><a href="dir_src_org_biojava_bio.html" class="directory">src/org/biojava/bio/</a></th>
+        <td>22 (0.4%)</td>
+        <td>1440 (0.4%)</td>
+        <td>65.4</td>
+      </tr>
+      <tr  class="even">
+        <th><a href="dir_licenses_lib-licenses.html" class="directory">licenses/lib-licenses/</a></th>
+        <td>6 (0.1%)</td>
+        <td>1387 (0.4%)</td>
+        <td>231.1</td>
+      </tr>
+      <tr  class="odd">
+        <th><a href="dir_src_org_sbml_squeezer_sabiork_wizard_model.html" class="directory">src/org/sbml/squeezer/sabiork/wizard/model/</a></th>
+        <td>30 (0.5%)</td>
+        <td>1343 (0.4%)</td>
+        <td>44.7</td>
+      </tr>
+      <tr  class="even">
+        <th><a href="dir_src_org_sbml_squeezer_sabiork.html" class="directory">src/org/sbml/squeezer/sabiork/</a></th>
+        <td>29 (0.5%)</td>
+        <td>1210 (0.3%)</td>
+        <td>41.7</td>
+      </tr>
+      <tr  class="odd">
+        <th><a href="dir_test_org_sbml_squeezer_test.html" class="directory">test/org/sbml/squeezer/test/</a></th>
+        <td>70 (1.1%)</td>
+        <td>1187 (0.3%)</td>
+        <td>16.9</td>
+      </tr>
+      <tr  class="even">
+        <th><a href="dir_modules_celldesigner_src_org_sbml_squeezer_celldesigner.html" class="directory">modules/celldesigner/src/org/sbml/squeezer/celldesigner/</a></th>
+        <td>29 (0.5%)</td>
+        <td>1166 (0.3%)</td>
+        <td>40.2</td>
+      </tr>
+      <tr  class="odd">
+        <th><a href="dir_lib_garuda.html" class="directory">lib/garuda/</a></th>
+        <td>8 (0.1%)</td>
+        <td>1109 (0.3%)</td>
+        <td>138.6</td>
+      </tr>
+      <tr  class="even">
+        <th><a href="dir_resources_org_sbml_squeezer_resources_html.html" class="directory">resources/org/sbml/squeezer/resources/html/</a></th>
+        <td>39 (0.6%)</td>
+        <td>1097 (0.3%)</td>
+        <td>28.1</td>
+      </tr>
+      <tr  class="odd">
+        <th><a href="dir_src_org_biojava_ontology_obo.html" class="directory">src/org/biojava/ontology/obo/</a></th>
+        <td>6 (0.1%)</td>
+        <td>929 (0.3%)</td>
+        <td>154.8</td>
+      </tr>
+      <tr  class="even">
+        <th><a href="dir_src_org_sbml_squeezer_rmi.html" class="directory">src/org/sbml/squeezer/rmi/</a></th>
+        <td>10 (0.2%)</td>
+        <td>892 (0.2%)</td>
+        <td>89.2</td>
+      </tr>
+      <tr  class="odd">
+        <th><a href="dir_src_org_sbmlsqueezer_gui.html" class="directory">src/org/sbmlsqueezer/gui/</a></th>
+        <td>54 (0.9%)</td>
+        <td>813 (0.2%)</td>
+        <td>15.0</td>
+      </tr>
+      <tr  class="even">
+        <th><a href="dir_resources_org_sbml_squeezer_gui_locales.html" class="directory">resources/org/sbml/squeezer/gui/locales/</a></th>
+        <td>49 (0.8%)</td>
+        <td>793 (0.2%)</td>
+        <td>16.1</td>
+      </tr>
+      <tr  class="odd">
+        <th><a href="dir_src.html" class="directory">src/</a></th>
+        <td>9 (0.1%)</td>
+        <td>744 (0.2%)</td>
+        <td>82.6</td>
+      </tr>
+      <tr  class="even">
+        <th><a href="dir_licenses.html" class="directory">licenses/</a></th>
+        <td>16 (0.3%)</td>
+        <td>735 (0.2%)</td>
+        <td>45.9</td>
+      </tr>
+      <tr  class="odd">
+        <th><a href="dir_lib_atp.html" class="directory">lib/atp/</a></th>
+        <td>32 (0.5%)</td>
+        <td>560 (0.2%)</td>
+        <td>17.5</td>
+      </tr>
+      <tr  class="even">
+        <th><a href="dir_src_org_sbmlsqueezer_sbml.html" class="directory">src/org/sbmlsqueezer/sbml/</a></th>
+        <td>20 (0.3%)</td>
+        <td>492 (0.1%)</td>
+        <td>24.6</td>
+      </tr>
+      <tr  class="odd">
+        <th><a href="dir_src_org_sbml_squeezer_sabiork_wizard_console.html" class="directory">src/org/sbml/squeezer/sabiork/wizard/console/</a></th>
+        <td>19 (0.3%)</td>
+        <td>399 (0.1%)</td>
+        <td>21.0</td>
+      </tr>
+      <tr  class="even">
+        <th><a href="dir_src_org_sbml_optimizer.html" class="directory">src/org/sbml/optimizer/</a></th>
+        <td>3 (0.0%)</td>
+        <td>384 (0.1%)</td>
+        <td>128.0</td>
+      </tr>
+      <tr  class="odd">
+        <th><a href="dir_src_org_sbml_squeezer_gui_table.html" class="directory">src/org/sbml/squeezer/gui/table/</a></th>
+        <td>42 (0.7%)</td>
+        <td>370 (0.1%)</td>
+        <td>8.8</td>
+      </tr>
+      <tr  class="even">
+        <th><a href="dir_src_org_sbml_squeezer_resources_html.html" class="directory">src/org/sbml/squeezer/resources/html/</a></th>
+        <td>23 (0.4%)</td>
+        <td>321 (0.1%)</td>
+        <td>13.9</td>
+      </tr>
+      <tr  class="odd">
+        <th><a href="dir_src_org_biojava_ontology_io.html" class="directory">src/org/biojava/ontology/io/</a></th>
+        <td>4 (0.1%)</td>
+        <td>293 (0.1%)</td>
+        <td>73.2</td>
+      </tr>
+      <tr  class="even">
+        <th><a href="dir_.settings.html" class="directory">.settings/</a></th>
+        <td>3 (0.0%)</td>
+        <td>292 (0.1%)</td>
+        <td>97.3</td>
+      </tr>
+      <tr  class="odd">
+        <th><a href="dir_test_org_sbml_squeezer_test_sabiork.html" class="directory">test/org/sbml/squeezer/test/sabiork/</a></th>
+        <td>11 (0.2%)</td>
+        <td>280 (0.1%)</td>
+        <td>25.4</td>
+      </tr>
+      <tr  class="even">
+        <th><a href="dir_doc_tutorials_kinetic_laws.html" class="directory">doc/tutorials/kinetic_laws/</a></th>
+        <td>2 (0.0%)</td>
+        <td>273 (0.1%)</td>
+        <td>136.5</td>
+      </tr>
+      <tr  class="odd">
+        <th><a href="dir_src_org_sbml_squeezer_sabiork_util.html" class="directory">src/org/sbml/squeezer/sabiork/util/</a></th>
+        <td>25 (0.4%)</td>
+        <td>272 (0.1%)</td>
+        <td>10.8</td>
+      </tr>
+      <tr  class="even">
+        <th><a href="dir_src_org_biojava_utils_cache.html" class="directory">src/org/biojava/utils/cache/</a></th>
+        <td>4 (0.1%)</td>
+        <td>270 (0.1%)</td>
+        <td>67.5</td>
+      </tr>
+      <tr  class="odd">
+        <th><a href="dir_modules_celldesigner_test_org_sbml_squeezer_celldesigner.html" class="directory">modules/celldesigner/test/org/sbml/squeezer/celldesigner/</a></th>
+        <td>3 (0.0%)</td>
+        <td>264 (0.1%)</td>
+        <td>88.0</td>
+      </tr>
+      <tr  class="even">
+        <th><a href="dir_doc_api.html" class="directory">doc/api/</a></th>
+        <td>1 (0.0%)</td>
+        <td>229 (0.1%)</td>
+        <td>229.0</td>
+      </tr>
+      <tr  class="odd">
+        <th><a href="dir_resources_org_sbml_squeezer_sabiork_wizard_model.html" class="directory">resources/org/sbml/squeezer/sabiork/wizard/model/</a></th>
+        <td>4 (0.1%)</td>
+        <td>220 (0.1%)</td>
+        <td>55.0</td>
+      </tr>
+      <tr  class="even">
+        <th><a href="dir_src_org_sbml_io.html" class="directory">src/org/sbml/io/</a></th>
+        <td>10 (0.2%)</td>
+        <td>206 (0.1%)</td>
+        <td>20.6</td>
+      </tr>
+      <tr  class="odd">
+        <th><a href="dir_src_org_sbmlsqueezer_resources_html.html" class="directory">src/org/sbmlsqueezer/resources/html/</a></th>
+        <td>13 (0.2%)</td>
+        <td>202 (0.1%)</td>
+        <td>15.5</td>
+      </tr>
+      <tr  class="even">
+        <th><a href="dir_src_org_sbmlsqueezer_io.html" class="directory">src/org/sbmlsqueezer/io/</a></th>
+        <td>15 (0.2%)</td>
+        <td>191 (0.1%)</td>
+        <td>12.7</td>
+      </tr>
+      <tr  class="odd">
+        <th><a href="dir_test_org_sbml_squeezer_math.html" class="directory">test/org/sbml/squeezer/math/</a></th>
+        <td>11 (0.2%)</td>
+        <td>182 (0.0%)</td>
+        <td>16.5</td>
+      </tr>
+      <tr  class="even">
+        <th><a href="dir_test_org_sbml_squeezer_test_gui.html" class="directory">test/org/sbml/squeezer/test/gui/</a></th>
+        <td>15 (0.2%)</td>
+        <td>158 (0.0%)</td>
+        <td>10.5</td>
+      </tr>
+      <tr  class="odd">
+        <th><a href="dir_test_org_sbml_squeezer_test_math.html" class="directory">test/org/sbml/squeezer/test/math/</a></th>
+        <td>21 (0.3%)</td>
+        <td>156 (0.0%)</td>
+        <td>7.4</td>
+      </tr>
+      <tr  class="even">
+        <th><a href="dir_src_org_sbml_squeezer_resources.html" class="directory">src/org/sbml/squeezer/resources/</a></th>
+        <td>24 (0.4%)</td>
+        <td>135 (0.0%)</td>
+        <td>5.6</td>
+      </tr>
+      <tr  class="odd">
+        <th><a href="dir_test_org_sbml_squeezer_test_data.html" class="directory">test/org/sbml/squeezer/test/data/</a></th>
+        <td>11 (0.2%)</td>
+        <td>132 (0.0%)</td>
+        <td>12.0</td>
+      </tr>
+      <tr  class="even">
+        <th><a href="dir_src_org_sbml_squeezer_sabiork_wizard.html" class="directory">src/org/sbml/squeezer/sabiork/wizard/</a></th>
+        <td>14 (0.2%)</td>
+        <td>129 (0.0%)</td>
+        <td>9.2</td>
+      </tr>
+      <tr  class="odd">
+        <th><a href="dir_doc_tutorials_kinetic_laws_tex.html" class="directory">doc/tutorials/kinetic_laws/tex/</a></th>
+        <td>2 (0.0%)</td>
+        <td>129 (0.0%)</td>
+        <td>64.5</td>
+      </tr>
+      <tr  class="even">
+        <th><a href="dir_src_org_biojava_bio_seq_io.html" class="directory">src/org/biojava/bio/seq/io/</a></th>
+        <td>3 (0.0%)</td>
+        <td>126 (0.0%)</td>
+        <td>42.0</td>
+      </tr>
+      <tr  class="odd">
+        <th><a href="dir_src_org_sbmlsqueezer_resources_txt.html" class="directory">src/org/sbmlsqueezer/resources/txt/</a></th>
+        <td>3 (0.0%)</td>
+        <td>119 (0.0%)</td>
+        <td>39.6</td>
+      </tr>
+      <tr  class="even">
+        <th><a href="dir_test_org_sbml_squeezer_gui.html" class="directory">test/org/sbml/squeezer/gui/</a></th>
+        <td>2 (0.0%)</td>
+        <td>110 (0.0%)</td>
+        <td>55.0</td>
+      </tr>
+      <tr  class="odd">
+        <th><a href="dir_src_org_sbmlsqueezer_gui_table.html" class="directory">src/org/sbmlsqueezer/gui/table/</a></th>
+        <td>6 (0.1%)</td>
+        <td>79 (0.0%)</td>
+        <td>13.1</td>
+      </tr>
+      <tr  class="even">
+        <th><a href="dir_modules_celldesigner_resources_org_sbml_squeezer_celldesigner.html" class="directory">modules/celldesigner/resources/org/sbml/squeezer/celldesigner/</a></th>
+        <td>3 (0.0%)</td>
+        <td>74 (0.0%)</td>
+        <td>24.6</td>
+      </tr>
+      <tr  class="odd">
+        <th><a href="dir_resources_org_sbml_squeezer_gui_img.html" class="directory">resources/org/sbml/squeezer/gui/img/</a></th>
+        <td>7 (0.1%)</td>
+        <td>31 (0.0%)</td>
+        <td>4.4</td>
+      </tr>
+      <tr  class="even">
+        <th><a href="dir_src_org_sbml_squeezer_resources_txt.html" class="directory">src/org/sbml/squeezer/resources/txt/</a></th>
+        <td>4 (0.1%)</td>
+        <td>24 (0.0%)</td>
+        <td>6.0</td>
+      </tr>
+      <tr  class="odd">
+        <th><a href="dir_src_cz_kebrt_html2latex.html" class="directory">src/cz/kebrt/html2latex/</a></th>
+        <td>12 (0.2%)</td>
+        <td>12 (0.0%)</td>
+        <td>1.0</td>
+      </tr>
+      <tr  class="even">
+        <th><a href="dir_src_org_sbml_squeezer_resources_img.html" class="directory">src/org/sbml/squeezer/resources/img/</a></th>
+        <td>20 (0.3%)</td>
+        <td>7 (0.0%)</td>
+        <td>0.3</td>
+      </tr>
+      <tr  class="odd">
+        <th><a href="dir_resources_org_sbml_squeezer_sabiork_wizard_gui.html" class="directory">resources/org/sbml/squeezer/sabiork/wizard/gui/</a></th>
+        <td>5 (0.1%)</td>
+        <td>3 (0.0%)</td>
+        <td>0.6</td>
+      </tr>
+      <tr  class="even">
+        <th><a href="dir_resources_images.html" class="directory">resources/images/</a></th>
+        <td>4 (0.1%)</td>
+        <td>2 (0.0%)</td>
+        <td>0.5</td>
+      </tr>
+      <tr  class="odd">
+        <th><a href="dir_dist_SBMLsqueezer_snapshots.html" class="directory">dist/SBMLsqueezer/snapshots/</a></th>
+        <td>4 (0.1%)</td>
+        <td>2 (0.0%)</td>
+        <td>0.5</td>
+      </tr>
+      <tr  class="even">
+        <th><a href="dir_dist_SBMLsqueezer_icons.html" class="directory">dist/SBMLsqueezer/icons/</a></th>
+        <td>2 (0.0%)</td>
+        <td>2 (0.0%)</td>
+        <td>1.0</td>
+      </tr>
+      <tr  class="odd">
+        <th><a href="dir_src_org_sbmlsqueezer_resources_img.html" class="directory">src/org/sbmlsqueezer/resources/img/</a></th>
+        <td>3 (0.0%)</td>
+        <td>1 (0.0%)</td>
+        <td>0.3</td>
+      </tr>
+      <tr  class="even">
+        <th><a href="dir_modules_celldesigner.html" class="directory">modules/celldesigner/</a></th>
+        <td>1 (0.0%)</td>
+        <td>1 (0.0%)</td>
+        <td>1.0</td>
+      </tr>
+      <tr  class="odd">
+        <th><a href="dir_src_org_smblsqueezer_converter.html" class="directory">src/org/smblsqueezer/converter/</a></th>
+        <td>1 (0.0%)</td>
+        <td>0 (0.0%)</td>
+        <td>0.0</td>
+      </tr>
+      <tr  class="even">
+        <th><a href="dir_src_org_smbl_squeezer_converter.html" class="directory">src/org/smbl/squeezer/converter/</a></th>
+        <td>3 (0.0%)</td>
+        <td>0 (0.0%)</td>
+        <td>0.0</td>
+      </tr>
+      <tr  class="odd">
+        <th><a href="dir_src_org_sbmlsqueezer_resources.html" class="directory">src/org/sbmlsqueezer/resources/</a></th>
+        <td>3 (0.0%)</td>
+        <td>0 (0.0%)</td>
+        <td>0.0</td>
+      </tr>
+      <tr  class="even">
+        <th><a href="dir_src_org_sbmlsqueezer_math.html" class="directory">src/org/sbmlsqueezer/math/</a></th>
+        <td>2 (0.0%)</td>
+        <td>0 (0.0%)</td>
+        <td>0.0</td>
+      </tr>
+      <tr  class="odd">
+        <th><a href="dir_src_org_sbml_squeezer_math_jama.html" class="directory">src/org/sbml/squeezer/math/jama/</a></th>
+        <td>7 (0.1%)</td>
+        <td>0 (0.0%)</td>
+        <td>0.0</td>
+      </tr>
+      <tr  class="even">
+        <th><a href="dir_resources.html" class="directory">resources/</a></th>
+        <td>2 (0.0%)</td>
+        <td>0 (0.0%)</td>
+        <td>0.0</td>
+      </tr>
+      <tr  class="odd">
+        <th><a href="dir_modules_celldesigner_lib.html" class="directory">modules/celldesigner/lib/</a></th>
+        <td>2 (0.0%)</td>
+        <td>0 (0.0%)</td>
+        <td>0.0</td>
+      </tr>
+      <tr  class="even">
+        <th><a href="dir_lib_jsbml-old.html" class="directory">lib/jsbml-old/</a></th>
+        <td>3 (0.0%)</td>
+        <td>0 (0.0%)</td>
+        <td>0.0</td>
+      </tr>
+      <tr  class="odd">
+        <th><a href="dir_files_images.html" class="directory">files/images/</a></th>
+        <td>1 (0.0%)</td>
+        <td>0 (0.0%)</td>
+        <td>0.0</td>
+      </tr>
+      <tr  class="even">
+        <th><a href="dir_files_Hiwi-Arbeitszeit.html" class="directory">files/Hiwi-Arbeitszeit/</a></th>
+        <td>1 (0.0%)</td>
+        <td>0 (0.0%)</td>
+        <td>0.0</td>
+      </tr>
+      <tr  class="odd">
+        <th><a href="dir_doc_org.html" class="directory">doc/org/</a></th>
+        <td>1 (0.0%)</td>
+        <td>0 (0.0%)</td>
+        <td>0.0</td>
+      </tr>
+      <tr  class="even">
+        <th><a href="dir_doc_logo.html" class="directory">doc/logo/</a></th>
+        <td>2 (0.0%)</td>
+        <td>0 (0.0%)</td>
+        <td>0.0</td>
+      </tr>
+    </tbody>
+  </table>
+
+<p class="chart"><img src="directory_sizes_draeger.png" alt="Activity of draeger" width="800" height="500" /></p></div>
+<div class="section">
+<h2>Most Recent Commits</h2>
+<dl class="commitlist">
+  <dt><a name="20"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2014-03-12 14:08</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">1088</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Solved error in CellDesigner.
+    </p>
+    <p class="commitdetails"><strong>2</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>modules/celldesigner/src/org/sbml/squeezer/celldesigner</strong>:
+        PluginWorker.java&#160;<span class="change">(+2&#160;-1)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="19"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2014-03-03 15:57</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">1085</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Many changes because of the new GARUDA version.<br />
+<br />
+The CellDesigner plugin version does no longer offer settings for SABIO-RK.
+    </p>
+    <p class="commitdetails"><strong>705</strong> lines of code changed in <span class="files">10 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        build.xml&#160;<span class="change">(+51&#160;-2)</span>
+      </li>
+      <li>
+        <strong>dist</strong>:
+        gadget_config.xml&#160;<span class="change">(+46&#160;-5)</span>,
+        keystore&#160;<span class="change">(changed)</span>
+      </li>
+      <li>
+        <strong>lib</strong>:
+        SysBio.jar&#160;<span class="change">(changed)</span>,
+        jsbml-1.0-a1-with-dependencies.jar&#160;<span class="change">(changed)</span>
+      </li>
+      <li>
+        <strong>lib/garuda</strong>:
+        GarudaBackend.jar&#160;<span class="new">(new&#160;554)</span>,
+        garuda-csr.jar&#160;<span class="change">(changed)</span>
+      </li>
+      <li>
+        <strong>modules/celldesigner/src/org/sbml/squeezer/celldesigner</strong>:
+        Plugin.java&#160;<span class="change">(+5&#160;-3)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer</strong>:
+        SBMLsqueezer.java&#160;<span class="change">(+32&#160;-9)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/gui</strong>:
+        SBMLsqueezerUI.java&#160;<span class="change">(+17&#160;-6)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="18"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2014-02-22 16:54</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">1082</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Updated Java-Doc and code style and added missing override tags.
+    </p>
+    <p class="commitdetails"><strong>2964</strong> lines of code changed in <span class="files">110 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>examples/src/org/sbml/squeezer/test</strong>:
+        MiniSBML.java&#160;<span class="change">(+48&#160;-18)</span>,
+        OptionPanelTest.java&#160;<span class="change">(+10&#160;-11)</span>,
+        SqueezertestFunctions.java&#160;<span class="change">(+375&#160;-374)</span>,
+        TestCasesAnalyst.java&#160;<span class="change">(+225&#160;-225)</span>,
+        TestFolder.java&#160;<span class="change">(+132&#160;-132)</span>,
+        TraverseFolder.java&#160;<span class="change">(+31&#160;-31)</span>,
+        package-info.java&#160;<span class="change">(+2&#160;-1)</span>
+      </li>
+      <li>
+        <strong>modules/celldesigner/src/org/sbml/squeezer/celldesigner</strong>:
+        package-info.java&#160;<span class="change">(+2&#160;-1)</span>
+      </li>
+      <li>
+        <strong>modules/celldesigner/test/org/sbml/squeezer/celldesigner</strong>:
+        PluginTest.java&#160;<span class="change">(+133&#160;-111)</span>
+      </li>
+      <li>
+        <strong>resources/org/sbml/squeezer/gui/locales</strong>:
+        package-info.java&#160;<span class="change">(+2&#160;-1)</span>
+      </li>
+      <li>
+        <strong>resources/org/sbml/squeezer/resources/html</strong>:
+        package-info.java&#160;<span class="change">(+2&#160;-1)</span>
+      </li>
+      <li>
+        <strong>resources/org/sbml/squeezer/resources/img</strong>:
+        package-info.java&#160;<span class="change">(+2&#160;-1)</span>
+      </li>
+      <li>
+        <strong>resources/org/sbml/squeezer/sabiork/wizard/model</strong>:
+        Configuration.properties&#160;<span class="change">(+2&#160;-1)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer</strong>:
+        ConsistencyReportBuilder.java&#160;<span class="change">(+8)</span>,
+        OptionsGeneral.java&#160;<span class="change">(+1&#160;-1)</span>,
+        SubmodelController.java&#160;<span class="change">(+1&#160;-1)</span>,
+        UnitConsistencyType.java&#160;<span class="change">(+1&#160;-1)</span>,
+        package-info.java&#160;<span class="change">(+3&#160;-3)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/gui</strong>:
+        KineticLawGeneratorWorker.java&#160;<span class="change">(+1&#160;-1)</span>,
+        KineticLawTable.java&#160;<span class="change">(+1&#160;-1)</span>,
+        LaTeXRenderer.java&#160;<span class="change">(+1&#160;-1)</span>,
+        package-info.java&#160;<span class="change">(+1)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/gui/wizard</strong>:
+        KineticLawSelectionEquationPanel.java&#160;<span class="change">(+1&#160;-2)</span>,
+        KineticLawSelectionEquationPanelDescriptor.java&#160;<span class="change">(+1&#160;-2)</span>,
+        KineticLawSelectionEquationProgressPanelDescriptor.java&#160;<span class="change">(+1&#160;-1)</span>,
+        KineticLawSelectionOptionPanel.java&#160;<span class="change">(+1&#160;-1)</span>,
+        KineticLawSelectionOptionPanelDescriptor.java&#160;<span class="change">(+1&#160;-1)</span>,
+        KineticLawSelectionWizard.java&#160;<span class="change">(+1&#160;-2)</span>,
+        package-info.java&#160;<span class="change">(+2&#160;-1)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/io</strong>:
+        IOOptions.java&#160;<span class="change">(+1&#160;-1)</span>,
+        SBMLio.java&#160;<span class="change">(+1&#160;-1)</span>,
+        SqSBMLReader.java&#160;<span class="change">(+1&#160;-1)</span>,
+        SqSBMLWriter.java&#160;<span class="change">(+1&#160;-1)</span>,
+        package-info.java&#160;<span class="change">(+1)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/kinetics</strong>:
+        OptionsRateLaws.java&#160;<span class="change">(+1&#160;-1)</span>,
+        TypeStandardVersion.java&#160;<span class="change">(+1&#160;-1)</span>,
+        package-info.java&#160;<span class="change">(+3&#160;-1)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/math</strong>:
+        package-info.java&#160;<span class="change">(+1)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/resources</strong>:
+        package-info.java&#160;<span class="change">(+1)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/sabiork</strong>:
+        AutomaticSearch.java&#160;<span class="change">(+1)</span>,
+        SABIORK.java&#160;<span class="change">(+629&#160;-628)</span>,
+        SABIORKOptions.java&#160;<span class="change">(+1)</span>,
+        SABIORKPreferences.java&#160;<span class="change">(+165&#160;-164)</span>,
+        package-info.java&#160;<span class="change">(+1)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/sabiork/util</strong>:
+        WebServiceConnectException.java&#160;<span class="change">(+1)</span>,
+        WebServiceResponseException.java&#160;<span class="change">(+1)</span>,
+        XMLParser.java&#160;<span class="change">(+1)</span>,
+        package-info.java&#160;<span class="change">(+1)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/sabiork/wizard</strong>:
+        SABIORKWizard.java&#160;<span class="change">(+1)</span>,
+        package-info.java&#160;<span class="change">(+1)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/sabiork/wizard/console</strong>:
+        ConsoleWizard.java&#160;<span class="change">(+1)</span>,
+        SearchAResult.java&#160;<span class="change">(+76&#160;-75)</span>,
+        package-info.java&#160;<span class="change">(+1)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/sabiork/wizard/gui</strong>:
+        Card.java&#160;<span class="change">(+1)</span>,
+        CardMatching.java&#160;<span class="change">(+1)</span>,
+        CardMethod.java&#160;<span class="change">(+1)</span>,
+        CardReactionsA.java&#160;<span class="change">(+1)</span>,
+        CardReactionsM.java&#160;<span class="change">(+2&#160;-1)</span>,
+        CardSearchA.java&#160;<span class="change">(+1)</span>,
+        CardSearchM.java&#160;<span class="change">(+1)</span>,
+        CardSearchResultsA.java&#160;<span class="change">(+1)</span>,
+        CardSearchResultsM.java&#160;<span class="change">(+1)</span>,
+        CardSummaryA.java&#160;<span class="change">(+1)</span>,
+        CardSummaryM.java&#160;<span class="change">(+1)</span>,
+        ComboBoxModelCaptions.java&#160;<span class="change">(+1)</span>,
+        ComboBoxModelConstraints.java&#160;<span class="change">(+1)</span>,
+        ComboBoxModelReactionFilters.java&#160;<span class="change">(+1)</span>,
+        ComboBoxModelSearchItems.java&#160;<span class="change">(+1)</span>,
+        JComboBoxInterval.java&#160;<span class="change">(+1)</span>,
+        JComboBoxSearchField.java&#160;<span class="change">(+1)</span>,
+        JComponentEtchedLine.java&#160;<span class="change">(+1)</span>,
+        JDialogWizard.java&#160;<span class="change">(+1)</span>,
+        JPanelFilterOptions.java&#160;<span class="change">(+1)</span>,
+        TableCellRendererBooleans.java&#160;<span class="change">(+1)</span>,
+        TableCellRendererColorGradient.java&#160;<span class="change">(+1)</span>,
+        TableCellRendererReactions.java&#160;<span class="change">(+1)</span>,
+        TableCellRendererSearchAResults.java&#160;<span class="change">(+1)</span>,
+        TableCellRendererTemperature.java&#160;<span class="change">(+1)</span>,
+        TableCellRendererpHValues.java&#160;<span class="change">(+1)</span>,
+        TableModelReactions.java&#160;<span class="change">(+1)</span>,
+        TableModelSearchAResults.java&#160;<span class="change">(+1)</span>,
+        TableModelSearchMResults.java&#160;<span class="change">(+1)</span>,
+        TableModelSearchTerms.java&#160;<span class="change">(+1)</span>,
+        package-info.java&#160;<span class="change">(+1)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/sabiork/wizard/model</strong>:
+        KineticLawImporter.java&#160;<span class="change">(+1)</span>,
+        WizardModel.java&#160;<span class="change">(+1)</span>,
+        WizardProperties.java&#160;<span class="change">(+1)</span>,
+        package-info.java&#160;<span class="change">(+1)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/util</strong>:
+        Bundles.java&#160;<span class="change">(+1&#160;-1)</span>,
+        ConnectToSABIORK.java&#160;<span class="change">(+6)</span>,
+        ModelChangeListener.java&#160;<span class="change">(+1&#160;-1)</span>,
+        ProgressAdapter.java&#160;<span class="change">(+2&#160;-2)</span>,
+        package-info.java&#160;<span class="change">(+1)</span>
+      </li>
+      <li>
+        <strong>test/org/sbml/squeezer/test/cases</strong>:
+        BiBiKineticsTest.java&#160;<span class="change">(+106&#160;-106)</span>,
+        BiUniKineticsTest.java&#160;<span class="change">(+314&#160;-314)</span>,
+        GeneRegulatoryKineticsTest.java&#160;<span class="change">(+1&#160;-2)</span>,
+        GeneralizedMassActionTest.java&#160;<span class="change">(+222&#160;-224)</span>,
+        KineticsTest.java&#160;<span class="change">(+4&#160;-2)</span>,
+        ReversibleKinetics.java&#160;<span class="change">(+1&#160;-2)</span>,
+        SqueezerTests.java&#160;<span class="change">(+25&#160;-1)</span>,
+        UniUniKineticsTest.java&#160;<span class="change">(+1&#160;-1)</span>,
+        ZeroProductsTest.java&#160;<span class="change">(+4&#160;-2)</span>,
+        ZeroReactantsTest.java&#160;<span class="change">(+4&#160;-2)</span>,
+        package-info.java&#160;<span class="change">(+4&#160;-1)</span>
+      </li>
+      <li>
+        <strong>test/org/sbml/squeezer/test/data</strong>:
+        package-info.java&#160;<span class="change">(+2&#160;-1)</span>
+      </li>
+      <li>
+        <strong>test/org/sbml/squeezer/test/gui</strong>:
+        ModelDialog.java&#160;<span class="change">(+73&#160;-73)</span>,
+        package-info.java&#160;<span class="change">(+2&#160;-1)</span>
+      </li>
+      <li>
+        <strong>test/org/sbml/squeezer/test/sabiork</strong>:
+        SABIORKApplication.java&#160;<span class="change">(+100&#160;-98)</span>,
+        SABIORKTest.java&#160;<span class="change">(+143&#160;-143)</span>,
+        XMLParserTest.java&#160;<span class="change">(+26&#160;-26)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="17"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2014-02-22 08:15</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">1081</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Updated libraries JSBML and SysBio, fixed a small bug in the build script for building SysBio, and updated all classes to Java 1.6 (adde missing override tags).
+    </p>
+    <p class="commitdetails"><strong>8312</strong> lines of code changed in <span class="files">86 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        build.xml&#160;<span class="change">(+1&#160;-5)</span>
+      </li>
+      <li>
+        <strong>lib</strong>:
+        SysBio.jar&#160;<span class="change">(changed)</span>,
+        jsbml-1.0-a1-with-dependencies.jar&#160;<span class="change">(changed)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer</strong>:
+        ModificationException.java&#160;<span class="change">(+45&#160;-45)</span>,
+        OptionsGeneral.java&#160;<span class="change">(+1&#160;-1)</span>,
+        ParameterFactory.java&#160;<span class="change">(+2)</span>,
+        RateLawNotApplicableException.java&#160;<span class="change">(+39&#160;-39)</span>,
+        ReactionType.java&#160;<span class="change">(+1&#160;-1)</span>,
+        SBMLsqueezer.java&#160;<span class="change">(+2&#160;-2)</span>,
+        SubmodelController.java&#160;<span class="change">(+11&#160;-11)</span>,
+        UnitConsistencyType.java&#160;<span class="change">(+13&#160;-9)</span>,
+        UnitFactory.java&#160;<span class="change">(+3)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/gui</strong>:
+        KineticLawGeneratorWorker.java&#160;<span class="change">(+43&#160;-39)</span>,
+        KineticLawSelectionDialog.java&#160;<span class="change">(+2&#160;-2)</span>,
+        KineticLawSelectionPanel.java&#160;<span class="change">(+542&#160;-540)</span>,
+        KineticLawTable.java&#160;<span class="change">(+16&#160;-8)</span>,
+        KineticLawTableCellRenderer.java&#160;<span class="change">(+48&#160;-47)</span>,
+        KineticLawTableModel.java&#160;<span class="change">(+227&#160;-223)</span>,
+        KineticLawWindowAdapter.java&#160;<span class="change">(+2&#160;-1)</span>,
+        SBMLsqueezerUI.java&#160;<span class="change">(+9)</span>,
+        package-info.java&#160;<span class="change">(+2&#160;-3)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/gui/wizard</strong>:
+        KineticLawSelectionEquationPanel.java&#160;<span class="change">(+4&#160;-4)</span>,
+        KineticLawSelectionEquationPanelDescriptor.java&#160;<span class="change">(+90&#160;-90)</span>,
+        KineticLawSelectionEquationProgressPanelDescriptor.java&#160;<span class="change">(+6&#160;-3)</span>,
+        KineticLawSelectionOptionPanel.java&#160;<span class="change">(+136&#160;-136)</span>,
+        KineticLawSelectionOptionPanelDescriptor.java&#160;<span class="change">(+63&#160;-64)</span>,
+        KineticLawSelectionWizard.java&#160;<span class="change">(+88&#160;-88)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/io</strong>:
+        IOOptions.java&#160;<span class="change">(+31&#160;-31)</span>,
+        SqSBMLWriter.java&#160;<span class="change">(+1&#160;-1)</span>,
+        package-info.java&#160;<span class="change">(+2&#160;-3)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/kinetics</strong>:
+        OptionsRateLaws.java&#160;<span class="change">(+274&#160;-274)</span>,
+        PowerLawModularRateLaw.java&#160;<span class="change">(+1&#160;-1)</span>,
+        TypeStandardVersion.java&#160;<span class="change">(+16&#160;-16)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/math</strong>:
+        GaussianRank.java&#160;<span class="change">(+156&#160;-149)</span>,
+        package-info.java&#160;<span class="change">(+2&#160;-3)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/resources</strong>:
+        package-info.java&#160;<span class="change">(+2&#160;-3)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/sabiork</strong>:
+        AutomaticSearch.java&#160;<span class="change">(+247&#160;-247)</span>,
+        SABIORK.java&#160;<span class="change">(+1&#160;-1)</span>,
+        SABIORKOptions.java&#160;<span class="change">(+34&#160;-32)</span>,
+        package-info.java&#160;<span class="change">(+2&#160;-1)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/sabiork/util</strong>:
+        WebServiceConnectException.java&#160;<span class="change">(+39&#160;-39)</span>,
+        WebServiceResponseException.java&#160;<span class="change">(+58&#160;-58)</span>,
+        XMLParser.java&#160;<span class="change">(+73&#160;-73)</span>,
+        package-info.java&#160;<span class="change">(+2&#160;-1)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/sabiork/wizard</strong>:
+        SABIORKWizard.java&#160;<span class="change">(+86&#160;-87)</span>,
+        package-info.java&#160;<span class="change">(+2&#160;-1)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/sabiork/wizard/console</strong>:
+        ConsoleWizard.java&#160;<span class="change">(+261&#160;-261)</span>,
+        package-info.java&#160;<span class="change">(+2&#160;-1)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/sabiork/wizard/gui</strong>:
+        CardMethod.java&#160;<span class="change">(+106&#160;-104)</span>,
+        CardReactionsA.java&#160;<span class="change">(+178&#160;-173)</span>,
+        CardReactionsM.java&#160;<span class="change">(+1)</span>,
+        CardSearchA.java&#160;<span class="change">(+210&#160;-201)</span>,
+        CardSearchM.java&#160;<span class="change">(+229&#160;-220)</span>,
+        CardSearchResultsA.java&#160;<span class="change">(+354&#160;-344)</span>,
+        CardSearchResultsM.java&#160;<span class="change">(+446&#160;-433)</span>,
+        CardSummaryA.java&#160;<span class="change">(+75&#160;-72)</span>,
+        CardSummaryM.java&#160;<span class="change">(+69&#160;-66)</span>,
+        ComboBoxModelCaptions.java&#160;<span class="change">(+152&#160;-146)</span>,
+        ComboBoxModelConstraints.java&#160;<span class="change">(+40&#160;-40)</span>,
+        ComboBoxModelReactionFilters.java&#160;<span class="change">(+68&#160;-68)</span>,
+        ComboBoxModelSearchItems.java&#160;<span class="change">(+118&#160;-114)</span>,
+        JComboBoxInterval.java&#160;<span class="change">(+72&#160;-72)</span>,
+        JComboBoxSearchField.java&#160;<span class="change">(+197&#160;-192)</span>,
+        JComponentEtchedLine.java&#160;<span class="change">(+16&#160;-16)</span>,
+        JDialogWizard.java&#160;<span class="change">(+483&#160;-477)</span>,
+        JPanelFilterOptions.java&#160;<span class="change">(+84&#160;-84)</span>,
+        TableCellRendererBooleans.java&#160;<span class="change">(+26&#160;-25)</span>,
+        TableCellRendererColorGradient.java&#160;<span class="change">(+48&#160;-48)</span>,
+        TableCellRendererReactions.java&#160;<span class="change">(+26&#160;-25)</span>,
+        TableCellRendererSearchAResults.java&#160;<span class="change">(+54&#160;-54)</span>,
+        TableCellRendererTemperature.java&#160;<span class="change">(+70&#160;-70)</span>,
+        TableCellRendererpHValues.java&#160;<span class="change">(+63&#160;-63)</span>,
+        TableModelReactions.java&#160;<span class="change">(+123&#160;-120)</span>,
+        TableModelSearchAResults.java&#160;<span class="change">(+259&#160;-253)</span>,
+        TableModelSearchMResults.java&#160;<span class="change">(+156&#160;-150)</span>,
+        TableModelSearchTerms.java&#160;<span class="change">(+241&#160;-241)</span>,
+        package-info.java&#160;<span class="change">(+2&#160;-1)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/sabiork/wizard/model</strong>:
+        KineticLawImporter.java&#160;<span class="change">(+766&#160;-766)</span>,
+        WizardModel.java&#160;<span class="change">(+371&#160;-370)</span>,
+        WizardProperties.java&#160;<span class="change">(+55&#160;-55)</span>,
+        package-info.java&#160;<span class="change">(+2&#160;-1)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/util</strong>:
+        Bundles.java&#160;<span class="change">(+31&#160;-28)</span>,
+        ConnectToSABIORK.java&#160;<span class="change">(+240&#160;-239)</span>,
+        ModelChangeListener.java&#160;<span class="change">(+40&#160;-41)</span>,
+        ProgressAdapter.java&#160;<span class="change">(+151&#160;-151)</span>,
+        package-info.java&#160;<span class="change">(+2&#160;-2)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="16"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2014-02-20 23:30</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">1080</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Updated image for 2014.
+    </p>
+    <p class="commitdetails"><strong>367</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>resources/org/sbml/squeezer/resources/img</strong>:
+        ICON_LOGO_SMALL.png&#160;<span class="change">(+367&#160;-270)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="15"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2014-02-17 22:53</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">1079</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Updated JSBML and SysBio and changed classes because now the ProgressListener also can send messages along with the current progress state.
+    </p>
+    <p class="commitdetails"><strong>10</strong> lines of code changed in <span class="files">4 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>lib</strong>:
+        SysBio.jar&#160;<span class="change">(changed)</span>,
+        jsbml-1.0-a1-with-dependencies.jar&#160;<span class="change">(changed)</span>
+      </li>
+      <li>
+        <strong>modules/celldesigner/src/org/sbml/squeezer/celldesigner</strong>:
+        PluginWorker.java&#160;<span class="change">(+5&#160;-2)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/gui</strong>:
+        SBMLsqueezerUI.java&#160;<span class="change">(+5&#160;-2)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="14"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2014-02-16 22:21</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">1078</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+SBMLsqueezer runs now again as plugin for CellDesigner and also based on libSBML and JSBML. Many improvements have been made:<br />
+<br />
+* The build script has been revised to compile the modules of JSBML for CellDesigner and libSBML separately.<br />
+* The SysBio library has been updated and also a new version of JSBML has been incorporated.<br />
+* Several bugs have been fixed.
+    </p>
+    <p class="commitdetails"><strong>10402</strong> lines of code changed in <span class="files">27 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        build.xml&#160;<span class="change">(+161&#160;-22)</span>
+      </li>
+      <li>
+        <strong>lib</strong>:
+        SBML2LaTeX_v1.0_slim.jar&#160;<span class="new">(new&#160;4753)</span>,
+        SBML2LaTeX_v1.0alpha.jar&#160;<span class="del">(del)</span>,
+        SysBio.jar&#160;<span class="change">(changed)</span>,
+        jsbml-1.0-a1-with-dependencies.jar&#160;<span class="change">(changed)</span>,
+        libsbmlj-5.9.0.jar&#160;<span class="new">(new&#160;2857)</span>
+      </li>
+      <li>
+        <strong>modules/celldesigner/resources/org/sbml/squeezer/celldesigner</strong>:
+        Messages.xml&#160;<span class="change">(+12&#160;-3)</span>
+      </li>
+      <li>
+        <strong>modules/celldesigner/src/org/sbml/squeezer/celldesigner</strong>:
+        ConsoleHandler.java&#160;<span class="del">(del)</span>,
+        Mode.java&#160;<span class="new">(new&#160;116)</span>,
+        Plugin.java&#160;<span class="change">(+107&#160;-323)</span>,
+        PluginAction.java&#160;<span class="change">(+67&#160;-60)</span>,
+        PluginWorker.java&#160;<span class="new">(new&#160;220)</span>
+      </li>
+      <li>
+        <strong>resources/org/sbml/squeezer/gui/locales</strong>:
+        Messages.xml&#160;<span class="change">(+2)</span>,
+        Messages_de.xml&#160;<span class="change">(+2)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer</strong>:
+        ConsistencyReportBuilder.java&#160;<span class="change">(+3&#160;-3)</span>,
+        OptionsGeneral.java&#160;<span class="change">(+328&#160;-328)</span>,
+        SBMLsqueezer.java&#160;<span class="change">(+32&#160;-33)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/gui</strong>:
+        KineticLawSelectionDialog.java&#160;<span class="change">(+87&#160;-87)</span>,
+        KineticLawWindowAdapter.java&#160;<span class="change">(+18&#160;-13)</span>,
+        SBMLsqueezerUI.java&#160;<span class="change">(+129&#160;-63)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/gui/wizard</strong>:
+        KineticLawSelectionEquationPanel.java&#160;<span class="change">(+390&#160;-386)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/io</strong>:
+        SBMLio.java&#160;<span class="change">(+235&#160;-265)</span>,
+        SqSBMLReader.java&#160;<span class="change">(+20&#160;-5)</span>,
+        SqSBMLWriter.java&#160;<span class="change">(+48&#160;-46)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/sabiork/wizard/gui</strong>:
+        Card.java&#160;<span class="change">(+64&#160;-64)</span>,
+        CardMatching.java&#160;<span class="change">(+578&#160;-569)</span>,
+        CardReactionsM.java&#160;<span class="change">(+173&#160;-167)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="13"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2014-01-09 15:30</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">1077</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Updated license headers to 2014.
+    </p>
+    <p class="commitdetails"><strong>203</strong> lines of code changed in <span class="files">178 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        NEWS.txt&#160;<span class="change">(+1&#160;-1)</span>
+      </li>
+      <li>
+        <strong>examples/src/org/sbml/squeezer/test</strong>:
+        OptionPanelTest.java&#160;<span class="change">(+1&#160;-1)</span>,
+        SqueezertestFunctions.java&#160;<span class="change">(+1&#160;-1)</span>,
+        TestCasesAnalyst.java&#160;<span class="change">(+1&#160;-1)</span>,
+        TestFolder.java&#160;<span class="change">(+1&#160;-1)</span>,
+        TraverseFolder.java&#160;<span class="change">(+1&#160;-1)</span>,
+        package-info.java&#160;<span class="change">(+1&#160;-1)</span>
+      </li>
+      <li>
+        <strong>files/tests</strong>:
+        MODEL0406270966.xml&#160;<span class="change">(+1&#160;-1)</span>,
+        model.xml&#160;<span class="change">(+1&#160;-1)</span>
+      </li>
+      <li>
+        <strong>licenses/lib-licenses</strong>:
+        JLaTeXMath.txt&#160;<span class="change">(+1&#160;-1)</span>
+      </li>
+      <li>
+        <strong>modules/celldesigner</strong>:
+        build.xml&#160;<span class="change">(+1&#160;-1)</span>
+      </li>
+      <li>
+        <strong>modules/celldesigner/resources/org/sbml/squeezer/celldesigner</strong>:
+        Messages.xml&#160;<span class="change">(+1&#160;-1)</span>
+      </li>
+      <li>
+        <strong>modules/celldesigner/src/org/sbml/squeezer/celldesigner</strong>:
+        Plugin.java&#160;<span class="change">(+1&#160;-1)</span>,
+        PluginAction.java&#160;<span class="change">(+1&#160;-1)</span>,
+        package-info.java&#160;<span class="change">(+1&#160;-1)</span>
+      </li>
+      <li>
+        <strong>resources/org/sbml/squeezer/gui/locales</strong>:
+        Messages.xml&#160;<span class="change">(+1&#160;-1)</span>,
+        Messages_de.xml&#160;<span class="change">(+1&#160;-1)</span>,
+        Options.xml&#160;<span class="change">(+1&#160;-1)</span>,
+        Options_de.xml&#160;<span class="change">(+1&#160;-1)</span>,
+        Warnings.xml&#160;<span class="change">(+1&#160;-1)</span>,
+        package-info.java&#160;<span class="change">(+1&#160;-1)</span>
+      </li>
+      <li>
+        <strong>resources/org/sbml/squeezer/resources/html</strong>:
+        License.html&#160;<span class="change">(+1&#160;-1)</span>,
+        ModelDoesNotContainAnyReactions.html&#160;<span class="change">(+1&#160;-1)</span>,
+        NoNewKineticsCreated.html&#160;<span class="change">(+1&#160;-1)</span>,
+        ReleaseNotes.html&#160;<span class="change">(+1&#160;-1)</span>,
+        about.html&#160;<span class="change">(+2&#160;-2)</span>,
+        package-info.java&#160;<span class="change">(+1&#160;-1)</span>
+      </li>
+      <li>
+        <strong>resources/org/sbml/squeezer/resources/img</strong>:
+        package-info.java&#160;<span class="change">(+1&#160;-1)</span>
+      </li>
+      <li>
+        <strong>src</strong>:
+        overview.html&#160;<span class="change">(+1&#160;-1)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer</strong>:
+        ConsistencyReportBuilder.java&#160;<span class="change">(+1&#160;-1)</span>,
+        KineticLawGenerator.java&#160;<span class="change">(+1&#160;-1)</span>,
+        ModificationException.java&#160;<span class="change">(+1&#160;-1)</span>,
+        OptionsGeneral.java&#160;<span class="change">(+1&#160;-1)</span>,
+        ParameterFactory.java&#160;<span class="change">(+1&#160;-1)</span>,
+        RateLawNotApplicableException.java&#160;<span class="change">(+1&#160;-1)</span>,
+        ReactionType.java&#160;<span class="change">(+1&#160;-1)</span>,
+        SBMLsqueezer.java&#160;<span class="change">(+3&#160;-2)</span>,
+        SubmodelController.java&#160;<span class="change">(+1&#160;-1)</span>,
+        UnitConsistencyType.java&#160;<span class="change">(+1&#160;-1)</span>,
+        UnitFactory.java&#160;<span class="change">(+1&#160;-1)</span>,
+        package-info.java&#160;<span class="change">(+1&#160;-1)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/gui</strong>:
+        KineticLawGeneratorWorker.java&#160;<span class="change">(+1&#160;-1)</span>,
+        KineticLawSelectionDialog.java&#160;<span class="change">(+1&#160;-1)</span>,
+        KineticLawSelectionPanel.java&#160;<span class="change">(+1&#160;-1)</span>,
+        KineticLawTable.java&#160;<span class="change">(+1&#160;-1)</span>,
+        KineticLawTableCellRenderer.java&#160;<span class="change">(+1&#160;-1)</span>,
+        KineticLawTableModel.java&#160;<span class="change">(+1&#160;-1)</span>,
+        KineticLawWindowAdapter.java&#160;<span class="change">(+1&#160;-1)</span>,
+        LaTeXRenderer.java&#160;<span class="change">(+1&#160;-1)</span>,
+        SBMLsqueezerUI.java&#160;<span class="change">(+1&#160;-1)</span>,
+        package-info.java&#160;<span class="change">(+1&#160;-1)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/gui/wizard</strong>:
+        KineticLawSelectionEquationPanel.java&#160;<span class="change">(+1&#160;-1)</span>,
+        KineticLawSelectionEquationPanelDescriptor.java&#160;<span class="change">(+1&#160;-1)</span>,
+        KineticLawSelectionEquationProgressPanelDescriptor.java&#160;<span class="change">(+1&#160;-1)</span>,
+        KineticLawSelectionOptionPanel.java&#160;<span class="change">(+1&#160;-1)</span>,
+        KineticLawSelectionOptionPanelDescriptor.java&#160;<span class="change">(+1&#160;-1)</span>,
+        KineticLawSelectionWizard.java&#160;<span class="change">(+1&#160;-1)</span>,
+        package-info.java&#160;<span class="change">(+1&#160;-1)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/io</strong>:
+        IOOptions.java&#160;<span class="change">(+1&#160;-1)</span>,
+        SBMLio.java&#160;<span class="change">(+1&#160;-1)</span>,
+        SqSBMLReader.java&#160;<span class="change">(+1&#160;-1)</span>,
+        SqSBMLWriter.java&#160;<span class="change">(+1&#160;-1)</span>,
+        package-info.java&#160;<span class="change">(+1&#160;-1)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/kinetics</strong>:
+        AdditiveModelLinear.java&#160;<span class="change">(+1&#160;-1)</span>,
+        AdditiveModelNonLinear.java&#160;<span class="change">(+1&#160;-1)</span>,
+        BasicKineticLaw.java&#160;<span class="change">(+1&#160;-1)</span>,
+        CommonModularRateLaw.java&#160;<span class="change">(+1&#160;-1)</span>,
+        ConvenienceKinetics.java&#160;<span class="change">(+1&#160;-1)</span>,
+        DirectBindingModularRateLaw.java&#160;<span class="change">(+1&#160;-1)</span>,
+        ForceDependentModularRateLaw.java&#160;<span class="change">(+1&#160;-1)</span>,
+        GeneralizedMassAction.java&#160;<span class="change">(+1&#160;-1)</span>,
+        HSystem.java&#160;<span class="change">(+1&#160;-1)</span>,
+        HillEquation.java&#160;<span class="change">(+1&#160;-1)</span>,
+        HillHinzeEquation.java&#160;<span class="change">(+1&#160;-1)</span>,
+        HillRaddeEquation.java&#160;<span class="change">(+1&#160;-1)</span>,
+        InterfaceArbitraryEnzymeKinetics.java&#160;<span class="change">(+1&#160;-1)</span>,
+        InterfaceBiBiKinetics.java&#160;<span class="change">(+1&#160;-1)</span>,
+        InterfaceBiUniKinetics.java&#160;<span class="change">(+1&#160;-1)</span>,
+        InterfaceGeneRegulatoryKinetics.java&#160;<span class="change">(+1&#160;-1)</span>,
+        InterfaceIntegerStoichiometry.java&#160;<span class="change">(+1&#160;-1)</span>,
+        InterfaceIrreversibleKinetics.java&#160;<span class="change">(+1&#160;-1)</span>,
+        InterfaceKinteticsType.java&#160;<span class="change">(+1&#160;-1)</span>,
+        InterfaceModulatedKinetics.java&#160;<span class="change">(+1&#160;-1)</span>,
+        InterfaceNonEnzymeKinetics.java&#160;<span class="change">(+1&#160;-1)</span>,
+        InterfaceReversibleKinetics.java&#160;<span class="change">(+1&#160;-1)</span>,
+        InterfaceUniUniKinetics.java&#160;<span class="change">(+1&#160;-1)</span>,
+        InterfaceZeroProducts.java&#160;<span class="change">(+1&#160;-1)</span>,
+        InterfaceZeroReactants.java&#160;<span class="change">(+1&#160;-1)</span>,
+        IrrevCompetNonCooperativeEnzymes.java&#160;<span class="change">(+1&#160;-1)</span>,
+        IrrevNonModulatedNonInteractingEnzymes.java&#160;<span class="change">(+1&#160;-1)</span>,
+        MichaelisMenten.java&#160;<span class="change">(+1&#160;-1)</span>,
+        NetGeneratorLinear.java&#160;<span class="change">(+1&#160;-1)</span>,
+        NetGeneratorNonLinear.java&#160;<span class="change">(+1&#160;-1)</span>,
+        OptionsRateLaws.java&#160;<span class="change">(+1&#160;-1)</span>,
+        OrderedMechanism.java&#160;<span class="change">(+1&#160;-1)</span>,
+        PingPongMechanism.java&#160;<span class="change">(+1&#160;-1)</span>,
+        PowerLawModularRateLaw.java&#160;<span class="change">(+1&#160;-1)</span>,
+        RandomOrderMechanism.java&#160;<span class="change">(+1&#160;-1)</span>,
+        RestrictedSpaceKinetics.java&#160;<span class="change">(+1&#160;-1)</span>,
+        SSystem.java&#160;<span class="change">(+1&#160;-1)</span>,
+        SimultaneousBindingModularRateLaw.java&#160;<span class="change">(+1&#160;-1)</span>,
+        TypeStandardVersion.java&#160;<span class="change">(+1&#160;-1)</span>,
+        Vohradsky.java&#160;<span class="change">(+1&#160;-1)</span>,
+        Weaver.java&#160;<span class="change">(+1&#160;-1)</span>,
+        ZerothOrderForwardGMAK.java&#160;<span class="change">(+1&#160;-1)</span>,
+        ZerothOrderReverseGMAK.java&#160;<span class="change">(+1&#160;-1)</span>,
+        package-info.java&#160;<span class="change">(+1&#160;-1)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/math</strong>:
+        GaussianRank.java&#160;<span class="change">(+1&#160;-1)</span>,
+        package-info.java&#160;<span class="change">(+1&#160;-1)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/resources</strong>:
+        package-info.java&#160;<span class="change">(+1&#160;-1)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/sabiork</strong>:
+        AutomaticSearch.java&#160;<span class="change">(+20&#160;-18)</span>,
+        SABIORK.java&#160;<span class="change">(+2&#160;-2)</span>,
+        package-info.java&#160;<span class="change">(+1&#160;-1)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/sabiork/util</strong>:
+        WebServiceConnectException.java&#160;<span class="change">(+1&#160;-1)</span>,
+        WebServiceResponseException.java&#160;<span class="change">(+1&#160;-1)</span>,
+        XMLParser.java&#160;<span class="change">(+1&#160;-1)</span>,
+        package-info.java&#160;<span class="change">(+1&#160;-1)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/sabiork/wizard</strong>:
+        SABIORKWizard.java&#160;<span class="change">(+1&#160;-1)</span>,
+        package-info.java&#160;<span class="change">(+1&#160;-1)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/sabiork/wizard/console</strong>:
+        ConsoleWizard.java&#160;<span class="change">(+1&#160;-1)</span>,
+        SearchAResult.java&#160;<span class="change">(+1&#160;-1)</span>,
+        package-info.java&#160;<span class="change">(+1&#160;-1)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/sabiork/wizard/gui</strong>:
+        Card.java&#160;<span class="change">(+1&#160;-1)</span>,
+        CardMatching.java&#160;<span class="change">(+1&#160;-1)</span>,
+        CardMethod.java&#160;<span class="change">(+1&#160;-1)</span>,
+        CardReactionsA.java&#160;<span class="change">(+1&#160;-1)</span>,
+        CardReactionsM.java&#160;<span class="change">(+1&#160;-1)</span>,
+        CardSearchA.java&#160;<span class="change">(+1&#160;-1)</span>,
+        CardSearchM.java&#160;<span class="change">(+1&#160;-1)</span>,
+        CardSummaryA.java&#160;<span class="change">(+1&#160;-1)</span>,
+        CardSummaryM.java&#160;<span class="change">(+1&#160;-1)</span>,
+        ComboBoxModelCaptions.java&#160;<span class="change">(+1&#160;-1)</span>,
+        ComboBoxModelConstraints.java&#160;<span class="change">(+1&#160;-1)</span>,
+        ComboBoxModelReactionFilters.java&#160;<span class="change">(+1&#160;-1)</span>,
+        ComboBoxModelSearchItems.java&#160;<span class="change">(+1&#160;-1)</span>,
+        JComboBoxInterval.java&#160;<span class="change">(+1&#160;-1)</span>,
+        JComboBoxSearchField.java&#160;<span class="change">(+1&#160;-1)</span>,
+        JComponentEtchedLine.java&#160;<span class="change">(+1&#160;-1)</span>,
+        JDialogWizard.java&#160;<span class="change">(+1&#160;-1)</span>,
+        JPanelFilterOptions.java&#160;<span class="change">(+1&#160;-1)</span>,
+        TableCellRendererBooleans.java&#160;<span class="change">(+2&#160;-2)</span>,
+        TableCellRendererColorGradient.java&#160;<span class="change">(+1&#160;-1)</span>,
+        TableCellRendererReactions.java&#160;<span class="change">(+1&#160;-1)</span>,
+        TableCellRendererSearchAResults.java&#160;<span class="change">(+1&#160;-1)</span>,
+        TableCellRendererTemperature.java&#160;<span class="change">(+1&#160;-1)</span>,
+        TableCellRendererpHValues.java&#160;<span class="change">(+1&#160;-1)</span>,
+        TableModelReactions.java&#160;<span class="change">(+1&#160;-1)</span>,
+        TableModelSearchAResults.java&#160;<span class="change">(+1&#160;-1)</span>,
+        TableModelSearchMResults.java&#160;<span class="change">(+1&#160;-1)</span>,
+        TableModelSearchTerms.java&#160;<span class="change">(+1&#160;-1)</span>,
+        package-info.java&#160;<span class="change">(+1&#160;-1)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/sabiork/wizard/model</strong>:
+        KineticLawImporter.java&#160;<span class="change">(+2&#160;-1)</span>,
+        WizardModel.java&#160;<span class="change">(+1&#160;-1)</span>,
+        WizardProperties.java&#160;<span class="change">(+1&#160;-1)</span>,
+        package-info.java&#160;<span class="change">(+1&#160;-1)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/util</strong>:
+        Bundles.java&#160;<span class="change">(+1&#160;-1)</span>,
+        ConnectToSABIORK.java&#160;<span class="change">(+1&#160;-1)</span>,
+        ModelChangeListener.java&#160;<span class="change">(+1&#160;-1)</span>,
+        ProgressAdapter.java&#160;<span class="change">(+1&#160;-1)</span>,
+        package-info.java&#160;<span class="change">(+1&#160;-1)</span>
+      </li>
+      <li>
+        <strong>test/org/sbml/squeezer/test/cases</strong>:
+        BiBiKineticsTest.java&#160;<span class="change">(+1&#160;-1)</span>,
+        BiUniKineticsTest.java&#160;<span class="change">(+1&#160;-1)</span>,
+        GeneRegulatoryKineticsTest.java&#160;<span class="change">(+1&#160;-1)</span>,
+        GeneralizedMassActionTest.java&#160;<span class="change">(+1&#160;-1)</span>,
+        KineticsTest.java&#160;<span class="change">(+1&#160;-1)</span>,
+        ReversibleKinetics.java&#160;<span class="change">(+1&#160;-1)</span>,
+        SBMLsqueezerTestSuite.java&#160;<span class="change">(+1&#160;-1)</span>,
+        UniUniKineticsTest.java&#160;<span class="change">(+1&#160;-1)</span>,
+        ZeroProductsTest.java&#160;<span class="change">(+1&#160;-1)</span>,
+        ZeroReactantsTest.java&#160;<span class="change">(+1&#160;-1)</span>,
+        package-info.java&#160;<span class="change">(+1&#160;-1)</span>
+      </li>
+      <li>
+        <strong>test/org/sbml/squeezer/test/data</strong>:
+        gene-regulation.xml&#160;<span class="change">(+1&#160;-1)</span>,
+        package-info.java&#160;<span class="change">(+1&#160;-1)</span>,
+        uni-uni-reaction.xml&#160;<span class="change">(+1&#160;-1)</span>
+      </li>
+      <li>
+        <strong>test/org/sbml/squeezer/test/gui</strong>:
+        package-info.java&#160;<span class="change">(+1&#160;-1)</span>
+      </li>
+      <li>
+        <strong>test/org/sbml/squeezer/test/sabiork</strong>:
+        SABIORKApplication.java&#160;<span class="change">(+1&#160;-1)</span>,
+        SABIORKTest.java&#160;<span class="change">(+1&#160;-1)</span>,
+        XMLParserTest.java&#160;<span class="change">(+1&#160;-1)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="12"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2013-12-17 12:31</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">1076</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Added throws declarations where needed due to recent changes in JSBML.
+    </p>
+    <p class="commitdetails"><strong>4246</strong> lines of code changed in <span class="files">33 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer</strong>:
+        KineticLawGenerator.java&#160;<span class="change">(+2&#160;-2)</span>,
+        SubmodelController.java&#160;<span class="change">(+20&#160;-19)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/kinetics</strong>:
+        AdditiveModelLinear.java&#160;<span class="change">(+157&#160;-154)</span>,
+        AdditiveModelNonLinear.java&#160;<span class="change">(+59&#160;-56)</span>,
+        BasicKineticLaw.java&#160;<span class="change">(+260&#160;-256)</span>,
+        CommonModularRateLaw.java&#160;<span class="change">(+92&#160;-89)</span>,
+        ConvenienceKinetics.java&#160;<span class="change">(+9&#160;-2)</span>,
+        DirectBindingModularRateLaw.java&#160;<span class="change">(+74&#160;-71)</span>,
+        ForceDependentModularRateLaw.java&#160;<span class="change">(+81&#160;-78)</span>,
+        GeneralizedMassAction.java&#160;<span class="change">(+519&#160;-516)</span>,
+        HSystem.java&#160;<span class="change">(+4&#160;-1)</span>,
+        HillEquation.java&#160;<span class="change">(+137&#160;-134)</span>,
+        HillHinzeEquation.java&#160;<span class="change">(+159&#160;-156)</span>,
+        HillRaddeEquation.java&#160;<span class="change">(+114&#160;-111)</span>,
+        IrrevCompetNonCooperativeEnzymes.java&#160;<span class="change">(+112&#160;-109)</span>,
+        IrrevNonModulatedNonInteractingEnzymes.java&#160;<span class="change">(+103&#160;-100)</span>,
+        MichaelisMenten.java&#160;<span class="change">(+283&#160;-280)</span>,
+        NetGeneratorLinear.java&#160;<span class="change">(+56&#160;-53)</span>,
+        NetGeneratorNonLinear.java&#160;<span class="change">(+4&#160;-1)</span>,
+        OrderedMechanism.java&#160;<span class="change">(+359&#160;-356)</span>,
+        PingPongMechanism.java&#160;<span class="change">(+213&#160;-210)</span>,
+        PowerLawModularRateLaw.java&#160;<span class="change">(+389&#160;-386)</span>,
+        RandomOrderMechanism.java&#160;<span class="change">(+281&#160;-278)</span>,
+        RestrictedSpaceKinetics.java&#160;<span class="change">(+70&#160;-67)</span>,
+        SSystem.java&#160;<span class="change">(+4&#160;-1)</span>,
+        SimultaneousBindingModularRateLaw.java&#160;<span class="change">(+87&#160;-84)</span>,
+        Vohradsky.java&#160;<span class="change">(+4&#160;-1)</span>,
+        Weaver.java&#160;<span class="change">(+4&#160;-1)</span>,
+        ZerothOrderForwardGMAK.java&#160;<span class="change">(+49&#160;-46)</span>,
+        ZerothOrderReverseGMAK.java&#160;<span class="change">(+51&#160;-48)</span>
+      </li>
+      <li>
+        <strong>test/org/sbml/squeezer/test/cases</strong>:
+        SBMLsqueezerTestSuite.java&#160;<span class="new">(new&#160;44)</span>,
+        SqueezerTests.java&#160;<span class="change">(+438&#160;-437)</span>,
+        UniUniKineticsTest.java&#160;<span class="change">(+8&#160;-8)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="11"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2013-12-11 17:20</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">1075</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Several changes and improvements: Unit corrections, parameter corrections, changes due to changes in JSBML.
+    </p>
+    <p class="commitdetails"><strong>1915</strong> lines of code changed in <span class="files">100 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        build.xml&#160;<span class="change">(changed)</span>
+      </li>
+      <li>
+        <strong>examples/src/org/sbml/squeezer/test</strong>:
+        MiniSBML.java&#160;<span class="new">(new&#160;31)</span>,
+        OptionPanelTest.java&#160;<span class="new">(new&#160;62)</span>,
+        SqueezertestFunctions.java&#160;<span class="new">(new&#160;431)</span>,
+        TestCasesAnalyst.java&#160;<span class="new">(new&#160;283)</span>,
+        TestFolder.java&#160;<span class="new">(new&#160;183)</span>,
+        TraverseFolder.java&#160;<span class="new">(new&#160;65)</span>,
+        package-info.java&#160;<span class="new">(new&#160;29)</span>
+      </li>
+      <li>
+        <strong>lib</strong>:
+        SysBio.jar&#160;<span class="change">(changed)</span>,
+        jsbml-1.0-a1-with-dependencies.jar&#160;<span class="change">(changed)</span>
+      </li>
+      <li>
+        <strong>resources/org/sbml/squeezer/gui/locales</strong>:
+        Messages_de.xml&#160;<span class="change">(changed)</span>,
+        Options.xml&#160;<span class="change">(changed)</span>,
+        Options_de.xml&#160;<span class="new">(new&#160;239)</span>,
+        Warnings.xml&#160;<span class="change">(changed)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer</strong>:
+        ConsistencyReportBuilder.java&#160;<span class="new">(new&#160;78)</span>,
+        KineticLawGenerator.java&#160;<span class="change">(changed)</span>,
+        ParameterFactory.java&#160;<span class="change">(changed)</span>,
+        ReactionType.java&#160;<span class="change">(changed)</span>,
+        SBMLsqueezer.java&#160;<span class="change">(changed)</span>,
+        UnitFactory.java&#160;<span class="change">(changed)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/gui</strong>:
+        KineticLawSelectionPanel.java&#160;<span class="change">(changed)</span>,
+        KineticLawTable.java&#160;<span class="change">(changed)</span>,
+        KineticLawWindowAdapter.java&#160;<span class="change">(changed)</span>,
+        SBMLsqueezerUI.java&#160;<span class="change">(changed)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/gui/wizard</strong>:
+        KineticLawSelectionEquationProgressPanelDescriptor.java&#160;<span class="change">(changed)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/io</strong>:
+        SBMLio.java&#160;<span class="change">(changed)</span>,
+        SqSBMLReader.java&#160;<span class="change">(changed)</span>,
+        SqSBMLWriter.java&#160;<span class="change">(changed)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/kinetics</strong>:
+        AdditiveModelLinear.java&#160;<span class="change">(changed)</span>,
+        AdditiveModelNonLinear.java&#160;<span class="change">(changed)</span>,
+        BasicKineticLaw.java&#160;<span class="change">(changed)</span>,
+        CommonModularRateLaw.java&#160;<span class="change">(changed)</span>,
+        ConvenienceKinetics.java&#160;<span class="change">(changed)</span>,
+        DirectBindingModularRateLaw.java&#160;<span class="change">(changed)</span>,
+        ForceDependentModularRateLaw.java&#160;<span class="change">(changed)</span>,
+        GeneralizedMassAction.java&#160;<span class="change">(changed)</span>,
+        HSystem.java&#160;<span class="change">(changed)</span>,
+        HillEquation.java&#160;<span class="change">(changed)</span>,
+        HillHinzeEquation.java&#160;<span class="change">(changed)</span>,
+        HillRaddeEquation.java&#160;<span class="change">(changed)</span>,
+        InterfaceArbitraryEnzymeKinetics.java&#160;<span class="change">(changed)</span>,
+        InterfaceBiBiKinetics.java&#160;<span class="change">(changed)</span>,
+        InterfaceBiUniKinetics.java&#160;<span class="change">(changed)</span>,
+        InterfaceGeneRegulatoryKinetics.java&#160;<span class="change">(changed)</span>,
+        InterfaceIntegerStoichiometry.java&#160;<span class="change">(changed)</span>,
+        InterfaceIrreversibleKinetics.java&#160;<span class="change">(changed)</span>,
+        InterfaceKinteticsType.java&#160;<span class="change">(changed)</span>,
+        InterfaceModulatedKinetics.java&#160;<span class="change">(changed)</span>,
+        InterfaceNonEnzymeKinetics.java&#160;<span class="change">(changed)</span>,
+        InterfaceReversibleKinetics.java&#160;<span class="change">(changed)</span>,
+        InterfaceUniUniKinetics.java&#160;<span class="change">(changed)</span>,
+        InterfaceZeroProducts.java&#160;<span class="change">(changed)</span>,
+        InterfaceZeroReactants.java&#160;<span class="change">(changed)</span>,
+        IrrevCompetNonCooperativeEnzymes.java&#160;<span class="change">(changed)</span>,
+        IrrevNonModulatedNonInteractingEnzymes.java&#160;<span class="change">(changed)</span>,
+        MichaelisMenten.java&#160;<span class="change">(changed)</span>,
+        NetGeneratorLinear.java&#160;<span class="change">(changed)</span>,
+        NetGeneratorNonLinear.java&#160;<span class="change">(changed)</span>,
+        OptionsRateLaws.java&#160;<span class="change">(changed)</span>,
+        OrderedMechanism.java&#160;<span class="change">(changed)</span>,
+        PingPongMechanism.java&#160;<span class="change">(changed)</span>,
+        PowerLawModularRateLaw.java&#160;<span class="change">(changed)</span>,
+        RandomOrderMechanism.java&#160;<span class="change">(changed)</span>,
+        RestrictedSpaceKinetics.java&#160;<span class="change">(changed)</span>,
+        SSystem.java&#160;<span class="change">(changed)</span>,
+        SimultaneousBindingModularRateLaw.java&#160;<span class="change">(changed)</span>,
+        Vohradsky.java&#160;<span class="change">(changed)</span>,
+        Weaver.java&#160;<span class="change">(changed)</span>,
+        ZerothOrderForwardGMAK.java&#160;<span class="change">(changed)</span>,
+        ZerothOrderReverseGMAK.java&#160;<span class="change">(changed)</span>,
+        package-info.java&#160;<span class="change">(changed)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/sabiork</strong>:
+        SABIORK.java&#160;<span class="change">(changed)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/sabiork/wizard/console</strong>:
+        ConsoleWizard.java&#160;<span class="change">(changed)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/sabiork/wizard/gui</strong>:
+        CardReactionsM.java&#160;<span class="change">(changed)</span>,
+        CardSearchM.java&#160;<span class="change">(changed)</span>,
+        JDialogWizard.java&#160;<span class="change">(changed)</span>,
+        TableModelSearchTerms.java&#160;<span class="change">(changed)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/sabiork/wizard/model</strong>:
+        KineticLawImporter.java&#160;<span class="change">(changed)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/util</strong>:
+        ConnectToSABIORK.java&#160;<span class="change">(changed)</span>,
+        ModelChangeListener.java&#160;<span class="change">(changed)</span>
+      </li>
+      <li>
+        <strong>test/org/sbml/squeezer/test</strong>:
+        MiniSBML.java&#160;<span class="del">(del)</span>,
+        OptionPanelTest.java&#160;<span class="del">(del)</span>,
+        SqueezerTests.java&#160;<span class="del">(del)</span>,
+        SqueezertestFunctions.java&#160;<span class="del">(del)</span>,
+        TestCasesAnalyst.java&#160;<span class="del">(del)</span>,
+        TestFolder.java&#160;<span class="del">(del)</span>,
+        TraverseFolder.java&#160;<span class="del">(del)</span>,
+        package-info.java&#160;<span class="del">(del)</span>
+      </li>
+      <li>
+        <strong>test/org/sbml/squeezer/test/cases</strong>:
+        BiBiKineticsTest.java&#160;<span class="change">(changed)</span>,
+        BiUniKineticsTest.java&#160;<span class="change">(changed)</span>,
+        GeneRegulatoryKineticsTest.java&#160;<span class="change">(changed)</span>,
+        GeneralizedMassActionTest.java&#160;<span class="change">(changed)</span>,
+        KineticsTest.java&#160;<span class="change">(changed)</span>,
+        ReversibleKinetics.java&#160;<span class="change">(changed)</span>,
+        SqueezerTests.java&#160;<span class="new">(new&#160;478)</span>,
+        UniUniKineticsTest.java&#160;<span class="change">(changed)</span>,
+        ZeroProductsTest.java&#160;<span class="change">(changed)</span>,
+        ZeroReactantsTest.java&#160;<span class="change">(changed)</span>
+      </li>
+      <li>
+        <strong>test/org/sbml/squeezer/test/data</strong>:
+        empty_model.xml&#160;<span class="new">(new&#160;36)</span>
+      </li>
+      <li>
+        <strong>test/org/sbml/squeezer/test/sabiork</strong>:
+        SABIORKApplication.java&#160;<span class="change">(changed)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="10"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2013-12-05 11:27</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">1074</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Updated documentation: User guide did not properly compile. Now it does.
+    </p>
+    <p class="commitdetails"><strong>165</strong> lines of code changed in <span class="files">4 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>doc/tutorials/user_guide</strong>:
+        UT.sty&#160;<span class="new">(new&#160;152)</span>,
+        UserGuide.tex&#160;<span class="change">(+8&#160;-5)</span>
+      </li>
+      <li>
+        <strong>doc/tutorials/user_guide/tex</strong>:
+        01_docuBody.tex&#160;<span class="change">(+2&#160;-2)</span>,
+        macros.tex&#160;<span class="change">(+3&#160;-3)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="9"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2013-08-06 17:43</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">1070</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Created translation file for messages (German).
+    </p>
+    <p class="commitdetails"><strong>166</strong> lines of code changed in <span class="files">2 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>resources/org/sbml/squeezer/gui/locales</strong>:
+        Messages.xml&#160;<span class="change">(+1&#160;-1)</span>,
+        Messages_de.xml&#160;<span class="new">(new&#160;165)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="8"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2013-08-05 17:28</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">1069</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+* Identified a bug that prevented SBMLsqueezer from generating kinetic equations in several cases (interfered with the SABIO-RK functionality)<br />
+* changed the default values of some options (respect reversibility as given, prefer local parameters because global parameters can lead to a significantly higher run time due to the checks if a parameter is called somewhere)<br />
+* Improved the runtime by moving the creation of global parameters to a different position (not repeatedly done for every reaction).
+    </p>
+    <p class="commitdetails"><strong>1319</strong> lines of code changed in <span class="files">4 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer</strong>:
+        KineticLawGenerator.java&#160;<span class="change">(+2&#160;-2)</span>,
+        OptionsGeneral.java&#160;<span class="change">(+10&#160;-11)</span>,
+        SubmodelController.java&#160;<span class="change">(+1305&#160;-1247)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/kinetics</strong>:
+        OptionsRateLaws.java&#160;<span class="change">(+2&#160;-2)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="7"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2013-08-02 16:32</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">1068</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Fixed a bug in the Wizard that actually option changes could not be considered when going back and changing something. It just didn't apply the user's new choice. Now it does.
+    </p>
+    <p class="commitdetails"><strong>130</strong> lines of code changed in <span class="files">14 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        build.xml&#160;<span class="change">(+2)</span>
+      </li>
+      <li>
+        <strong>lib</strong>:
+        SysBio.jar&#160;<span class="change">(changed)</span>,
+        jsbml-1.0-a1-with-dependencies.jar&#160;<span class="change">(changed)</span>
+      </li>
+      <li>
+        <strong>modules/celldesigner/src/org/sbml/squeezer/celldesigner</strong>:
+        Plugin.java&#160;<span class="change">(-1)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer</strong>:
+        KineticLawGenerator.java&#160;<span class="change">(+6&#160;-1)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/gui</strong>:
+        KineticLawTable.java&#160;<span class="change">(+3)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/gui/wizard</strong>:
+        KineticLawSelectionEquationPanel.java&#160;<span class="change">(+32&#160;-22)</span>,
+        KineticLawSelectionOptionPanel.java&#160;<span class="change">(+50&#160;-3)</span>,
+        KineticLawSelectionOptionPanelDescriptor.java&#160;<span class="change">(+4&#160;-4)</span>,
+        KineticLawSelectionWizard.java&#160;<span class="change">(+5&#160;-4)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/sabiork</strong>:
+        AutomaticSearch.java&#160;<span class="change">(+4&#160;-2)</span>,
+        SABIORK.java&#160;<span class="change">(+2)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/sabiork/wizard/gui</strong>:
+        CardReactionsM.java&#160;<span class="change">(+6&#160;-12)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/util</strong>:
+        ProgressAdapter.java&#160;<span class="change">(+16&#160;-14)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="6"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2013-04-25 06:46</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">1067</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Moved screenshots to dist folder, added license statement to Messages.xml, and improved build script.
+    </p>
+    <p class="commitdetails"><strong>2905</strong> lines of code changed in <span class="files">8 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        build.xml&#160;<span class="change">(+11&#160;-14)</span>
+      </li>
+      <li>
+        <strong>dist</strong>:
+        Screenshot_1.png&#160;<span class="new">(new&#160;699)</span>,
+        Screenshot_2.png&#160;<span class="new">(new&#160;1141)</span>,
+        Screenshot_3.png&#160;<span class="new">(new&#160;1028)</span>
+      </li>
+      <li>
+        <strong>resources/org/sbml/squeezer/gui/locales</strong>:
+        Messages.xml&#160;<span class="change">(+26)</span>
+      </li>
+      <li>
+        <strong>resources/org/sbml/squeezer/resources/img</strong>:
+        Screenshot_1.png&#160;<span class="del">(del)</span>,
+        Screenshot_2.png&#160;<span class="del">(del)</span>,
+        Screenshot_3.png&#160;<span class="del">(del)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="5"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2013-04-24 02:43</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">1066</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Improved build script, removed unnecessary files, added Garuda configuration, and removed unnecessary libs.
+    </p>
+    <p class="commitdetails"><strong>91</strong> lines of code changed in <span class="files">21 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        build.xml&#160;<span class="change">(+26&#160;-23)</span>
+      </li>
+      <li>
+        <strong>dist</strong>:
+        KeyGen.sh&#160;<span class="new">(new&#160;20)</span>,
+        SBMLsqueezer-1.4-with-dependencies.jar&#160;<span class="del">(del)</span>,
+        SBMLsqueezer1.1.jar&#160;<span class="del">(del)</span>,
+        SBMLsqueezer1.1.zip&#160;<span class="del">(del)</span>,
+        SBMLsqueezer1.2.1.jar&#160;<span class="del">(del)</span>,
+        SBMLsqueezer1.2.1.zip&#160;<span class="del">(del)</span>,
+        SBMLsqueezer1.2.2.tar.gz&#160;<span class="del">(del)</span>,
+        SBMLsqueezer1.2.3.jar&#160;<span class="del">(del)</span>,
+        SBMLsqueezer1.2.jar&#160;<span class="del">(del)</span>,
+        SBMLsqueezer1.2.zip&#160;<span class="del">(del)</span>,
+        SBMLsqueezer1.3.jar&#160;<span class="del">(del)</span>,
+        SBMLsqueezer1.3.zip&#160;<span class="del">(del)</span>,
+        SBMLsqueezerFull.jar&#160;<span class="del">(del)</span>,
+        gadget_config.xml&#160;<span class="new">(new&#160;45)</span>,
+        keystore&#160;<span class="new">(new)</span>
+      </li>
+      <li>
+        <strong>dist/SBMLsqueezer/icons</strong>:
+        SBMLsqueezerLogo.png&#160;<span class="del">(del)</span>
+      </li>
+      <li>
+        <strong>dist/SBMLsqueezer/snapshots</strong>:
+        Screen1.png&#160;<span class="del">(del)</span>,
+        Screen2.png&#160;<span class="del">(del)</span>
+      </li>
+      <li>
+        <strong>lib/garuda</strong>:
+        GarudaBackend.jar&#160;<span class="del">(del)</span>,
+        log4j-1.2.16.jar&#160;<span class="del">(del)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="4"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2013-04-24 01:12</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">1065</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Improved build script for Garuda, removed uneccssary old files.
+    </p>
+    <p class="commitdetails"><strong>3102</strong> lines of code changed in <span class="files">17 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        build.xml&#160;<span class="change">(+278&#160;-111)</span>,
+        options&#160;<span class="del">(del)</span>,
+        umlgraph.xml&#160;<span class="del">(del)</span>
+      </li>
+      <li>
+        <strong>lib</strong>:
+        SBML2LaTeX-0.9.9_slim.jar&#160;<span class="del">(del)</span>,
+        SBML2LaTeX_v1.0alpha.jar&#160;<span class="change">(changed)</span>,
+        SysBio.jar&#160;<span class="change">(changed)</span>,
+        jsbml-1.0-a1-with-dependencies.jar&#160;<span class="change">(changed)</span>,
+        jsbml-libSBMLio-0.8.15.jar&#160;<span class="del">(del)</span>
+      </li>
+      <li>
+        <strong>resources/org/sbml/squeezer/resources/img</strong>:
+        SBMLsqueezerIcon_64.png&#160;<span class="change">(changed)</span>,
+        SBMLsqueezerLogo_128.png&#160;<span class="del">(del)</span>,
+        SBMLsqueezerLogo_256.png&#160;<span class="del">(del)</span>,
+        SBMLsqueezerLogo_64.png&#160;<span class="del">(del)</span>,
+        Screenshot_1.png&#160;<span class="change">(+684&#160;-727)</span>,
+        Screenshot_2.png&#160;<span class="change">(+1127&#160;-1204)</span>,
+        Screenshot_3.png&#160;<span class="change">(+1012&#160;-926)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer</strong>:
+        SBMLsqueezer.java&#160;<span class="change">(+1&#160;-1)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/gui</strong>:
+        SBMLsqueezerUI.java&#160;<span class="change">(-3)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="3"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2013-04-05 07:09</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">1064</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+* Solved a bug that caused a NullPointerException when not using SABIO-RK before creating rate laws ab initio.<br />
+* Removed JUnit library because this is not needed (provided by the OS).<br />
+* Updated JSBML, SysBio, and SBML2LaTeX packages<br />
+* Improved CellDesigner interface<br />
+* Many adaptations because of the new SBML2LaTeX and the attempt to provide CellDesigner plug-in functions<br />
+* Improved ant build script.<br />
+* Smaller code improvements.
+    </p>
+    <p class="commitdetails"><strong>41</strong> lines of code changed in <span class="files">22 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        build.xml&#160;<span class="change">(changed)</span>
+      </li>
+      <li>
+        <strong>lib</strong>:
+        SBML2LaTeX_v1.0alpha.jar&#160;<span class="new">(new)</span>,
+        SysBio.jar&#160;<span class="change">(changed)</span>,
+        jsbml-1.0-a1-with-dependencies.jar&#160;<span class="change">(changed)</span>,
+        junit-4.3.1.jar&#160;<span class="del">(del)</span>
+      </li>
+      <li>
+        <strong>modules/celldesigner/src/org/sbml/squeezer/celldesigner</strong>:
+        ConsoleHandler.java&#160;<span class="new">(new&#160;41)</span>,
+        Plugin.java&#160;<span class="change">(changed)</span>
+      </li>
+      <li>
+        <strong>resources/org/sbml/squeezer/gui/locales</strong>:
+        Options.xml&#160;<span class="change">(changed)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer</strong>:
+        KineticLawGenerator.java&#160;<span class="change">(changed)</span>,
+        SBMLsqueezer.java&#160;<span class="change">(changed)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/gui</strong>:
+        KineticLawSelectionDialog.java&#160;<span class="change">(changed)</span>,
+        KineticLawTable.java&#160;<span class="change">(changed)</span>,
+        KineticLawWindowAdapter.java&#160;<span class="change">(changed)</span>,
+        SBMLsqueezerUI.java&#160;<span class="change">(changed)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/gui/wizard</strong>:
+        KineticLawSelectionEquationPanel.java&#160;<span class="change">(changed)</span>,
+        KineticLawSelectionOptionPanelDescriptor.java&#160;<span class="change">(changed)</span>,
+        KineticLawSelectionWizard.java&#160;<span class="change">(changed)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/io</strong>:
+        SBMLio.java&#160;<span class="change">(changed)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/sabiork</strong>:
+        SABIORKPreferences.java&#160;<span class="change">(changed)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/sabiork/wizard</strong>:
+        SABIORKWizard.java&#160;<span class="change">(changed)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/sabiork/wizard/console</strong>:
+        ConsoleWizard.java&#160;<span class="change">(changed)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/sabiork/wizard/gui</strong>:
+        TableModelSearchTerms.java&#160;<span class="change">(changed)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="2"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2013-03-22 06:27</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">1062</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Improved the build script (mainly for JavaDoc generation) and added the style file for Uni Tuebingen layout.
+    </p>
+    <p class="commitdetails"><strong>446</strong> lines of code changed in <span class="files">2 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        build.xml&#160;<span class="change">(+217&#160;-172)</span>
+      </li>
+      <li>
+        <strong>doc/api</strong>:
+        javadoc-style.css&#160;<span class="new">(new&#160;229)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="1"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2013-03-21 09:20</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">1061</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Improved the build script and the CellDesigner plugin function.
+    </p>
+    <p class="commitdetails"><strong>613</strong> lines of code changed in <span class="files">10 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        build.xml&#160;<span class="change">(+422&#160;-388)</span>
+      </li>
+      <li>
+        <strong>lib</strong>:
+        SysBio.jar&#160;<span class="change">(changed)</span>,
+        jsbml-1.0-a1-with-dependencies.jar&#160;<span class="change">(changed)</span>
+      </li>
+      <li>
+        <strong>modules/celldesigner/resources/org/sbml/squeezer/celldesigner</strong>:
+        Messages.xml&#160;<span class="new">(new&#160;61)</span>
+      </li>
+      <li>
+        <strong>modules/celldesigner/src/org/sbml/squeezer/celldesigner</strong>:
+        Plugin.java&#160;<span class="change">(+99&#160;-77)</span>,
+        PluginAction.java&#160;<span class="change">(+18&#160;-2)</span>,
+        package-info.java&#160;<span class="change">(+1&#160;-2)</span>
+      </li>
+      <li>
+        <strong>modules/celldesigner/test/org/sbml/squeezer/celldesigner</strong>:
+        PluginTest.java&#160;<span class="change">(+1&#160;-2)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/gui</strong>:
+        SBMLsqueezerUI.java&#160;<span class="change">(+5&#160;-6)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/io</strong>:
+        SBMLio.java&#160;<span class="change">(+6&#160;-3)</span>
+      </li>
+    </ul>
+  </dd>
+
+</dl>
+
+<p>(413 more)</p>
+</div><div id="generatedby">Generated by <a href="http://www.statsvn.org">StatSVN</a> 0.7.0</div>
+</body>
+</html>

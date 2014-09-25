@@ -1,0 +1,468 @@
+<?xml version="1.0"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>StatSVN - Directory test/org/sbml/squeezer/math/</title>
+ <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"/>
+    <meta name="Generator" content="StatSVN 0.7.0"/>
+<link rel="stylesheet" href="objectlab-statcvs.css" type="text/css"/>
+<script type="text/javascript" charset="utf-8" src="http://bit.ly/javascript-api.js?version=latest&#38;login=statsvn&#38;apiKey=R_2c362b417d0517c27876cbaca1bb68cc"></script>
+<script type="text/javascript" charset="utf-8">
+   // wait until page is loaded to call API
+   var redir_url;
+   var short_url;
+   BitlyCB.myShortenCallback = function(data) {
+      // this is how to get a result of shortening a single url
+      var result;
+      short_url=null;
+      for (var r in data.results) {
+         result = data.results[r];
+         result['longUrl'] = r;
+         short_url = result['shortUrl'];
+         break;
+      }
+      if (short_url==null) // bit.ly failed
+      document.location=redir_url;
+      else
+      redirToTwitter();
+   };
+   function shortenTweet(url) {
+      if (short_url == null || redir_url!=url) {
+      redir_url = url;
+      BitlyClient.shorten(document.location, 'BitlyCB.myShortenCallback');
+      }
+      else
+      redirToTwitter();
+      return false;
+   }
+   function redirToTwitter() { 
+      // replace {0} which is visible as %7B0} in the link
+      document.location = redir_url.replace('%7B0}', short_url);
+   }
+</script>
+  </head>
+
+<body>
+
+<h1>Directory test/org/sbml/squeezer/math/</h1>
+<div id="parentlink">&#171; <a href="index.html">Development Statistics for /trunk</a></div>
+<dl class="attributes">
+    <dt>Directory Created:</dt>
+    <dd><span class="date">2010-01-07 02:21</span></dd>
+    <dt>Directory Deleted:</dt>
+    <dd><span class="date">2010-04-28 01:30</span></dd>
+    <dt>Total Files:</dt>
+    <dd>0</dd>
+    <dt>Deleted Files:</dt>
+    <dd>2</dd>
+    <dt>Lines of Code:</dt>
+    <dd>0</dd>
+</dl>
+<p class="dirtree">
+<a href="dir.html">[root]</a>/<a href="dir_test.html">test</a>/<a href="dir_test_org.html">org</a>/<a href="dir_test_org_sbml.html">sbml</a>/<a href="dir_test_org_sbml_squeezer.html">squeezer</a>/<strong>math</strong><br/>
+</p>
+
+<div class="section">
+<h2>Lines of Code</h2>
+<p class="chart"><img src="loc_module_test_org_sbml_squeezer_math.png" alt="test/org/sbml/squeezer/math/ Lines of Code" width="800" height="500" /></p></div>
+<div class="section">
+<h2>Developers</h2>
+  <table  rules="groups" summary="All authors and the number of their changes and lines of code in this directory">
+    <colgroup align="left"/>
+    <colgroup align="right"/>
+    <colgroup align="right"/>
+    <colgroup align="right"/>
+    <thead>
+      <tr>
+        <th>Author</th>
+        <th>Changes</th>
+        <th>Lines of Code</th>
+        <th>Lines per Change</th>
+      </tr>
+    </thead>
+    <tfoot>
+      <tr>
+        <th>Totals</th>
+        <td>25 (100.0%)</td>
+        <td>349 (100.0%)</td>
+        <td>13.9</td>
+      </tr>
+    </tfoot>
+    <tbody>
+      <tr  class="odd">
+        <th><a href="user_draeger.html" class="author">draeger</a></th>
+        <td>11 (44.0%)</td>
+        <td>182 (52.1%)</td>
+        <td>16.5</td>
+      </tr>
+      <tr  class="even">
+        <th><a href="user_Doerr.html" class="author">Doerr</a></th>
+        <td>14 (56.0%)</td>
+        <td>167 (47.9%)</td>
+        <td>11.9</td>
+      </tr>
+    </tbody>
+  </table>
+
+</div>
+<div class="section">
+<h2>Most Recent Commits</h2>
+<dl class="commitlist">
+  <dt><a name="19"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2010-04-28 01:30</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">534</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Bug fixes.
+    </p>
+    <p class="commitdetails"><strong>0</strong> lines of code changed in <span class="files">2 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>test/org/sbml/squeezer/math</strong>:
+        SimulationTest.java&#160;<span class="del">(del)</span>,
+        SimulationTestAutomatic.java&#160;<span class="del">(del)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="18"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2010-04-21 01:07</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">526</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+SBMLsqueezer was updated due to several changes in the underlying JSBML base.
+    </p>
+    <p class="commitdetails"><strong>103</strong> lines of code changed in <span class="files">2 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>test/org/sbml/squeezer/math</strong>:
+        SimulationTest.java&#160;<span class="change">(+34&#160;-28)</span>,
+        SimulationTestAutomatic.java&#160;<span class="change">(+69&#160;-62)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="17"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2010-04-05 03:43</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">507</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+I've started working on the simulator for our SBML interpretion.
+    </p>
+    <p class="commitdetails"><strong>52</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>test/org/sbml/squeezer/math</strong>:
+        SimulationTestAutomatic.java&#160;<span class="change">(+52&#160;-66)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="16"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2010-03-25 03:02</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">489</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Implemented the generalized version of Hill's equation as suggested by Cornish-Bowden (2004, p. 314)
+    </p>
+    <p class="commitdetails"><strong>2</strong> lines of code changed in <span class="files">2 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>test/org/sbml/squeezer/math</strong>:
+        SimulationTest.java&#160;<span class="change">(-1)</span>,
+        SimulationTestAutomatic.java&#160;<span class="change">(+2&#160;-2)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="15"></a>
+    <a href="user_Doerr.html" class="author">Doerr</a>
+    <span class="date">2010-03-15 02:53</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">480</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+
+    </p>
+    <p class="commitdetails"><strong>5</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>test/org/sbml/squeezer/math</strong>:
+        SimulationTest.java&#160;<span class="change">(+5&#160;-3)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="14"></a>
+    <a href="user_Doerr.html" class="author">Doerr</a>
+    <span class="date">2010-03-15 01:56</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">479</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+
+    </p>
+    <p class="commitdetails"><strong>9</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>test/org/sbml/squeezer/math</strong>:
+        SimulationTestAutomatic.java&#160;<span class="change">(+9&#160;-5)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="13"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2010-03-15 01:38</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">478</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Now the path must be given as a command line argument.
+    </p>
+    <p class="commitdetails"><strong>4</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>test/org/sbml/squeezer/math</strong>:
+        SimulationTest.java&#160;<span class="change">(+4&#160;-4)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="12"></a>
+    <a href="user_Doerr.html" class="author">Doerr</a>
+    <span class="date">2010-03-13 04:16</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">476</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+- fixed mistake in root function<br />
+- have to consider compartment at the evaluation 	of rules and assignments<br />
+- have to consider compartment dimension when 	compiling species
+    </p>
+    <p class="commitdetails"><strong>14</strong> lines of code changed in <span class="files">2 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>test/org/sbml/squeezer/math</strong>:
+        SimulationTest.java&#160;<span class="change">(+2&#160;-6)</span>,
+        SimulationTestAutomatic.java&#160;<span class="change">(+12&#160;-7)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="11"></a>
+    <a href="user_Doerr.html" class="author">Doerr</a>
+    <span class="date">2010-01-28 10:15</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">429</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+changed evaluation of events<br />
+
+    </p>
+    <p class="commitdetails"><strong>4</strong> lines of code changed in <span class="files">2 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>test/org/sbml/squeezer/math</strong>:
+        SimulationTest.java&#160;<span class="change">(+2&#160;-3)</span>,
+        SimulationTestAutomatic.java&#160;<span class="change">(+2&#160;-2)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="10"></a>
+    <a href="user_Doerr.html" class="author">Doerr</a>
+    <span class="date">2010-01-28 07:00</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">427</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+added constant entities to Y
+    </p>
+    <p class="commitdetails"><strong>65</strong> lines of code changed in <span class="files">2 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>test/org/sbml/squeezer/math</strong>:
+        SimulationTest.java&#160;<span class="change">(+14&#160;-8)</span>,
+        SimulationTestAutomatic.java&#160;<span class="change">(+51&#160;-19)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="9"></a>
+    <a href="user_Doerr.html" class="author">Doerr</a>
+    <span class="date">2010-01-28 04:08</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">426</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+
+    </p>
+    <p class="commitdetails"><strong>35</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>test/org/sbml/squeezer/math</strong>:
+        SimulationTestAutomatic.java&#160;<span class="new">(new&#160;35)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="8"></a>
+    <a href="user_Doerr.html" class="author">Doerr</a>
+    <span class="date">2010-01-28 04:08</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">425</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+added new test method<br />
+
+    </p>
+    <p class="commitdetails"><strong>12</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>test/org/sbml/squeezer/math</strong>:
+        SimulationTest.java&#160;<span class="change">(+12&#160;-3)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="7"></a>
+    <a href="user_Doerr.html" class="author">Doerr</a>
+    <span class="date">2010-01-14 06:11</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">415</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+fixed some bugs in the Interpreter preventing a correct simulation
+    </p>
+    <p class="commitdetails"><strong>7</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>test/org/sbml/squeezer/math</strong>:
+        SimulationTest.java&#160;<span class="change">(+7&#160;-6)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="6"></a>
+    <a href="user_Doerr.html" class="author">Doerr</a>
+    <span class="date">2010-01-14 02:42</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">414</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+changed order of points<br />
+
+    </p>
+    <p class="commitdetails"><strong>7</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>test/org/sbml/squeezer/math</strong>:
+        SimulationTest.java&#160;<span class="change">(+7&#160;-3)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="5"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2010-01-07 14:05</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">409</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+
+    </p>
+    <p class="commitdetails"><strong>0</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>test/org/sbml/squeezer/math</strong>:
+        SimulationTest.java&#160;<span class="change">(-10)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="4"></a>
+    <a href="user_Doerr.html" class="author">Doerr</a>
+    <span class="date">2010-01-07 08:37</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">408</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+changed Double cast into toDouble method
+    </p>
+    <p class="commitdetails"><strong>8</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>test/org/sbml/squeezer/math</strong>:
+        SimulationTest.java&#160;<span class="change">(+8&#160;-7)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="3"></a>
+    <a href="user_Doerr.html" class="author">Doerr</a>
+    <span class="date">2010-01-07 06:44</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">401</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+
+    </p>
+    <p class="commitdetails"><strong>1</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>test/org/sbml/squeezer/math</strong>:
+        SimulationTest.java&#160;<span class="change">(+1)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="2"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2010-01-07 02:32</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">392</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Restructured eva2 package.
+    </p>
+    <p class="commitdetails"><strong>1</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>test/org/sbml/squeezer/math</strong>:
+        SimulationTest.java&#160;<span class="change">(+1&#160;-1)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="1"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2010-01-07 02:21</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">390</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+A new test folder.
+    </p>
+    <p class="commitdetails"><strong>20</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>test/org/sbml/squeezer/math</strong>:
+        SimulationTest.java&#160;<span class="new">(new&#160;20)</span>
+      </li>
+    </ul>
+  </dd>
+
+</dl>
+
+</div><div id="generatedby">Generated by <a href="http://www.statsvn.org">StatSVN</a> 0.7.0</div>
+</body>
+</html>

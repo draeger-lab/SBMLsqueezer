@@ -1,0 +1,157 @@
+\begin{thebibliography}{}
+
+\bibitem[Bornstein {\em et~al.}(2008)Bornstein, Keating, Jouraku, and
+  Hucka]{Bornstein2008}
+Bornstein, B.~J., Keating, S.~M., Jouraku, A., and Hucka, M. (2008).
+\newblock {LibSBML: an API library for SBML}.
+\newblock {\em Bioinformatics\/}, {\bf 24}(6), 880--881.
+
+\bibitem[B{\"u}chel {\em et~al.}(2013)B{\"u}chel, Rodriguez, Swainston,
+  Wrzodek, Czauderna, Keller, Mittag, Schubert, Glont, Golebiewski, van Iersel,
+  Keating, Rall, Wybrow, Hermjakob, Hucka, Kell, M{\"u}ller, Mendes, Zell,
+  Chaouiya, Saez-Rodriguez, Schreiber, Laibe, Dr{\"a}ger, and
+  Le~Nov\`{e}re]{Buechel2013}
+B{\"u}chel, F., Rodriguez, N., Swainston, N., Wrzodek, C., Czauderna, T.,
+  Keller, R., Mittag, F., Schubert, M., Glont, M., Golebiewski, M., van Iersel,
+  M., Keating, S., Rall, M., Wybrow, M., Hermjakob, H., Hucka, M., Kell, D.~B.,
+  M{\"u}ller, W., Mendes, P., Zell, A., Chaouiya, C., Saez-Rodriguez, J.,
+  Schreiber, F., Laibe, C., Dr{\"a}ger, A., and Le~Nov\`{e}re, N. (2013).
+\newblock Large-scale generation of computational models from biochemical
+  pathway maps.
+\newblock {\em BMC Systems Biology\/}, {\bf 7}(1), 116.
+
+\bibitem[Courtot {\em et~al.}(2011)Courtot, Juty, Kn\"upfer, Waltemath,
+  Zhukova, Dr\"ager, Dumontier, Finney, Golebiewski, Hastings, Hoops, Keating,
+  Kell, Kerrien, Lawson, Lister, Lu, Machne, Mendes, Pocock, Rodriguez,
+  Vill\'{e}ger, Wilkinson, Wimalaratne, Laibe, Hucka, and {Le
+  Nov\`{e}re}]{Courtot2011}
+Courtot, M., Juty, N., Kn\"upfer, C., Waltemath, D., Zhukova, A., Dr\"ager, A.,
+  Dumontier, M., Finney, A., Golebiewski, M., Hastings, J., Hoops, S., Keating,
+  S., Kell, D.~B., Kerrien, S., Lawson, J., Lister, A., Lu, J., Machne, R.,
+  Mendes, P., Pocock, M., Rodriguez, N., Vill\'{e}ger, A., Wilkinson, D.~J.,
+  Wimalaratne, S., Laibe, C., Hucka, M., and {Le Nov\`{e}re}, N. (2011).
+\newblock Controlled vocabularies and semantics in systems biology.
+\newblock {\em Mol Syst Biol\/}, {\bf 7}, 543.
+
+\bibitem[Dr{\"a}ger(2011)Dr{\"a}ger]{Draeger2011}
+Dr{\"a}ger, A. (2011).
+\newblock {\em {Computational Modeling of Biochemical Networks}\/}.
+\newblock Ph.D. thesis, University of Tuebingen.
+
+\bibitem[Dr{\"a}ger {\em et~al.}(2008)Dr{\"a}ger, Hassis, Supper, Schr{\"o}der,
+  and Zell]{Draeger2008}
+Dr{\"a}ger, A., Hassis, N., Supper, J., Schr{\"o}der, A., and Zell, A. (2008).
+\newblock {SBMLsqueezer: a CellDesigner plug-in to generate kinetic rate
+  equations for biochemical networks}.
+\newblock {\em BMC Syst Biol\/}, {\bf 2}(1), 39.
+
+\bibitem[Dr{\"a}ger {\em et~al.}(2009a)Dr{\"a}ger, Kronfeld, Ziller, Supper,
+  Planatscher, Magnus, Oldiges, Kohlbacher, and Zell]{Draeger2009a}
+Dr{\"a}ger, A., Kronfeld, M., Ziller, M.~J., Supper, J., Planatscher, H.,
+  Magnus, J.~B., Oldiges, M., Kohlbacher, O., and Zell, A. (2009a).
+\newblock {Modeling metabolic networks in \emph{C.~glutamicum}: a comparison of
+  rate laws in combination with various parameter optimization strategies}.
+\newblock {\em BMC Syst Biol\/}, {\bf 3}, 5.
+
+\bibitem[Dr{\"a}ger {\em et~al.}(2009b)Dr{\"a}ger, Planatscher, Wouamba,
+  Schr{\"o}der, Hucka, Endler, Golebiewski, M{\"u}ller, and Zell]{Draeger2009b}
+Dr{\"a}ger, A., Planatscher, H., Wouamba, D.~M., Schr{\"o}der, A., Hucka, M.,
+  Endler, L., Golebiewski, M., M{\"u}ller, W., and Zell, A. (2009b).
+\newblock {SBML2\LaTeX: Conversion of SBML files into human-readable reports}.
+\newblock {\em Bioinformatics\/}, {\bf 25}(11), 1455--1456.
+
+\bibitem[Dr{\"a}ger {\em et~al.}(2010)Dr{\"a}ger, Schr{\"o}der, and
+  Zell]{Draeger2010}
+Dr{\"a}ger, A., Schr{\"o}der, A., and Zell, A. (2010).
+\newblock {\em Systems Biology for Signaling Networks\/}, volume~2, chapter
+  Automating mathematical modeling of biochemical reaction networks.
+\newblock Springer.
+
+\bibitem[Dr{\"a}ger {\em et~al.}(2011)Dr{\"a}ger, Rodriguez, Dumousseau,
+  D{\"o}rr, Wrzodek, Le~Nov\`{e}re, Zell, and Hucka]{Draeger2011b}
+Dr{\"a}ger, A., Rodriguez, N., Dumousseau, M., D{\"o}rr, A., Wrzodek, C.,
+  Le~Nov\`{e}re, N., Zell, A., and Hucka, M. (2011).
+\newblock {JSBML: a flexible Java library for working with SBML}.
+\newblock {\em Bioinformatics\/}, {\bf 27}(15), 2167--2168.
+
+\bibitem[Funahashi {\em et~al.}(2003)Funahashi, Tanimura, Morohashi, and
+  Kitano]{Funahashi2003}
+Funahashi, A., Tanimura, N., Morohashi, M., and Kitano, H. (2003).
+\newblock {CellDesigner: a process diagram editor for gene-regulatory and
+  biochemical networks}.
+\newblock {\em BioSilico\/}, {\bf 1}(5), 159--162.
+
+\bibitem[Funahashi {\em et~al.}(2007)Funahashi, Jouraku, Matsuoka, and
+  Kitano]{Funahashi2007}
+Funahashi, A., Jouraku, A., Matsuoka, Y., and Kitano, H. (2007).
+\newblock {Integration of CellDesigner and SABIO-RK}.
+\newblock {\em In Silico Biology\/}, {\bf 7}(2 Suppl), S81--S90.
+
+\bibitem[Ghosh {\em et~al.}(2011)Ghosh, Matsuoka, Asai, Hsin, and
+  Kitano]{Ghosh2011}
+Ghosh, S., Matsuoka, Y., Asai, Y., Hsin, K.-Y., and Kitano, H. (2011).
+\newblock Software for systems biology: from tools to integrated platforms.
+\newblock {\em Nat. Rev. Genet.}, {\bf 12}(12), 821--832.
+
+\bibitem[Goecks {\em et~al.}(2010)Goecks, Nekrutenko, Taylor, and
+  Team]{Goecks2010}
+Goecks, J., Nekrutenko, A., Taylor, J., and Team, G. (2010).
+\newblock Galaxy: a comprehensive approach for supporting accessible,
+  reproducible, and transparent computational research in the life sciences.
+\newblock {\em Genome Biol\/}, {\bf 11}(8), R86.
+
+\bibitem[Hoops {\em et~al.}(2006)Hoops, Sahle, Gauges, Lee, Pahle, Simus,
+  Singhal, Xu, Mendes, and Kummer]{Hoops2006}
+Hoops, S., Sahle, S., Gauges, R., Lee, C., Pahle, J., Simus, N., Singhal, M.,
+  Xu, L., Mendes, P., and Kummer, U. (2006).
+\newblock {COPASI--a COmplex PAthway SImulator}.
+\newblock {\em Bioinformatics\/}, {\bf 22}(24), 3067--3074.
+
+\bibitem[Hucka {\em et~al.}(2004)Hucka, Finney, Bornstein, Keating, Shapiro,
+  Matthews, Kovitz, Schilstra, Funahashi, Doyle, and Kitano]{Hucka2004}
+Hucka, M., Finney, A., Bornstein, B.~J., Keating, S.~M., Shapiro, B.~E.,
+  Matthews, J., Kovitz, B.~L., Schilstra, M.~J., Funahashi, A., Doyle, J.~C.,
+  and Kitano, H. (2004).
+\newblock {Evolving a \emph{lingua franca} and associated software
+  infrastructure for computational systems biology: the Systems Biology Markup
+  Language (SBML) project}.
+\newblock {\em Systems Biology, IEE\/}, {\bf 1}(1), 41--53.
+
+\bibitem[Krumsiek {\em et~al.}(2010)Krumsiek, P{\"o}lsterl, Wittmann, and
+  Theis]{Krumsiek2010}
+Krumsiek, J., P{\"o}lsterl, S., Wittmann, D.~M., and Theis, F.~J. (2010).
+\newblock Odefy--from discrete to continuous models.
+\newblock {\em BMC Bioinformatics\/}, {\bf 11}, 233.
+
+\bibitem[Shapiro {\em et~al.}(2002)Shapiro, Levchenko, Meyerowitz, Wold, and
+  Mjolsness]{Shapiro2002}
+Shapiro, B.~E., Levchenko, A., Meyerowitz, E.~M., Wold, B.~J., and Mjolsness,
+  E.~D. (2002).
+\newblock Cellerator: extending a computer algebra system to include
+  biochemical arrows for signal transduction simulations.
+\newblock {\em Bioinformatics\/}, {\bf 19}(5), 677--678.
+
+\bibitem[Thiele and Palsson(2010)Thiele and Palsson]{Thiele2010}
+Thiele, I. and Palsson, B.~{\O}. (2010).
+\newblock A protocol for generating a high-quality genome-scale metabolic
+  reconstruction.
+\newblock {\em Nat Protoc\/}, {\bf 5}(1), 93--121.
+
+\bibitem[Weber {\em et~al.}(2013)Weber, Henkel, Vlaic, Guthke, {van Zoelen},
+  and Driesch]{Weber2013}
+Weber, M., Henkel, S.~G., Vlaic, S., Guthke, R., {van Zoelen}, E.~J., and
+  Driesch, D. (2013).
+\newblock Inference of dynamical gene-regulatory networks based on
+  time-resolved multi-stimuli multi-experiment data applying netgenerator v2.0.
+\newblock {\em BMC Syst Biol\/}, {\bf 7}(1), 1.
+
+\bibitem[Wittig {\em et~al.}(2012)Wittig, Kania, Golebiewski, Rey, Shi, Jong,
+  Algaa, Weidemann, Sauer-Danzwith, Mir, Krebs, Bittkowski, Wetsch, Rojas, and
+  M{\"u}ller]{Wittig2012}
+Wittig, U., Kania, R., Golebiewski, M., Rey, M., Shi, L., Jong, L., Algaa, E.,
+  Weidemann, A., Sauer-Danzwith, H., Mir, S., Krebs, O., Bittkowski, M.,
+  Wetsch, E., Rojas, I., and M{\"u}ller, W. (2012).
+\newblock {SABIO-RK--database for biochemical reaction kinetics}.
+\newblock {\em Nucleic Acids Res\/}, {\bf 40}(Database issue), D790--D796.
+
+\end{thebibliography}

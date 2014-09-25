@@ -1,0 +1,332 @@
+<?xml version="1.0"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>StatSVN - April 2013 Commit Log</title>
+ <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"/>
+    <meta name="Generator" content="StatSVN 0.7.0"/>
+<link rel="stylesheet" href="objectlab-statcvs.css" type="text/css"/>
+<script type="text/javascript" charset="utf-8" src="http://bit.ly/javascript-api.js?version=latest&#38;login=statsvn&#38;apiKey=R_2c362b417d0517c27876cbaca1bb68cc"></script>
+<script type="text/javascript" charset="utf-8">
+   // wait until page is loaded to call API
+   var redir_url;
+   var short_url;
+   BitlyCB.myShortenCallback = function(data) {
+      // this is how to get a result of shortening a single url
+      var result;
+      short_url=null;
+      for (var r in data.results) {
+         result = data.results[r];
+         result['longUrl'] = r;
+         short_url = result['shortUrl'];
+         break;
+      }
+      if (short_url==null) // bit.ly failed
+      document.location=redir_url;
+      else
+      redirToTwitter();
+   };
+   function shortenTweet(url) {
+      if (short_url == null || redir_url!=url) {
+      redir_url = url;
+      BitlyClient.shorten(document.location, 'BitlyCB.myShortenCallback');
+      }
+      else
+      redirToTwitter();
+      return false;
+   }
+   function redirToTwitter() { 
+      // replace {0} which is visible as %7B0} in the link
+      document.location = redir_url.replace('%7B0}', short_url);
+   }
+</script>
+  </head>
+
+<body>
+
+<h1>April 2013 Commit Log</h1>
+<div id="parentlink">&#171; <a href="index.html">Development Statistics for /trunk</a></div>
+
+<div id="nav" class="section">
+<h2>Commit Logs</h2>
+<ul>
+    <li><a href="commitlog.html">March 2014</a></li>
+    <li><a href="2014-02.html">February 2014</a></li>
+    <li><a href="2014-01.html">January 2014</a></li>
+    <li><a href="2013-12.html">December 2013</a></li>
+    <li><a href="2013-11.html">November 2013</a></li>
+    <li><a href="2013-10.html">October 2013</a></li>
+    <li><a href="2013-09.html">September 2013</a></li>
+    <li><a href="2013-08.html">August 2013</a></li>
+    <li><a href="2013-07.html">July 2013</a></li>
+    <li><a href="2013-06.html">June 2013</a></li>
+    <li><a href="2013-05.html">May 2013</a></li>
+    <li><span class="here">April 2013</span></li>
+    <li><a href="2013-03.html">March 2013</a></li>
+    <li><a href="2013-02.html">February 2013</a></li>
+    <li><a href="2013-01.html">January 2013</a></li>
+    <li><a href="2012-12.html">December 2012</a></li>
+    <li><a href="2012-11.html">November 2012</a></li>
+    <li><a href="2012-10.html">October 2012</a></li>
+    <li><a href="2012-09.html">September 2012</a></li>
+    <li><a href="2012-08.html">August 2012</a></li>
+    <li><a href="2012-07.html">July 2012</a></li>
+    <li><a href="2012-06.html">June 2012</a></li>
+    <li><a href="2012-05.html">May 2012</a></li>
+    <li><a href="2012-04.html">April 2012</a></li>
+    <li><a href="2012-03.html">March 2012</a></li>
+    <li><a href="2012-02.html">February 2012</a></li>
+    <li><a href="2012-01.html">January 2012</a></li>
+    <li><a href="2011-12.html">December 2011</a></li>
+    <li><a href="2011-11.html">November 2011</a></li>
+    <li><a href="2011-10.html">October 2011</a></li>
+    <li><a href="2011-09.html">September 2011</a></li>
+    <li><a href="2011-08.html">August 2011</a></li>
+    <li><a href="2011-07.html">July 2011</a></li>
+    <li><a href="2011-06.html">June 2011</a></li>
+    <li><a href="2011-05.html">May 2011</a></li>
+    <li><a href="2011-04.html">April 2011</a></li>
+    <li><a href="2011-03.html">March 2011</a></li>
+    <li><a href="2011-02.html">February 2011</a></li>
+    <li><a href="2011-01.html">January 2011</a></li>
+    <li><a href="2010-12.html">December 2010</a></li>
+    <li><a href="2010-11.html">November 2010</a></li>
+    <li><a href="2010-10.html">October 2010</a></li>
+    <li><a href="2010-09.html">September 2010</a></li>
+    <li><a href="2010-08.html">August 2010</a></li>
+    <li><a href="2010-07.html">July 2010</a></li>
+    <li><a href="2010-06.html">June 2010</a></li>
+    <li><a href="2010-05.html">May 2010</a></li>
+    <li><a href="2010-04.html">April 2010</a></li>
+    <li><a href="2010-03.html">March 2010</a></li>
+    <li><a href="2010-02.html">February 2010</a></li>
+    <li><a href="2010-01.html">January 2010</a></li>
+    <li><a href="2009-12.html">December 2009</a></li>
+    <li><a href="2009-11.html">November 2009</a></li>
+    <li><a href="2009-10.html">October 2009</a></li>
+    <li><a href="2009-09.html">September 2009</a></li>
+    <li><a href="2009-08.html">August 2009</a></li>
+    <li><a href="2009-07.html">July 2009</a></li>
+    <li><a href="2009-06.html">June 2009</a></li>
+</ul>
+</div><dl class="attributes">
+    <dt>Number of Commits:</dt>
+    <dd>4</dd>
+    <dt>Number of Active Developers:</dt>
+    <dd>1</dd>
+</dl>
+<dl class="commitlist">
+  <dt><a name="4"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2013-04-25 06:46</span>
+    <a class="permalink" title="Permalink to this commit" href="#4">#4</a>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">1067</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Moved screenshots to dist folder, added license statement to Messages.xml, and improved build script.
+    </p>
+    <p class="commitdetails"><strong>2905</strong> lines of code changed in <span class="files">8 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        build.xml&#160;<span class="change">(+11&#160;-14)</span>
+      </li>
+      <li>
+        <strong>dist</strong>:
+        Screenshot_1.png&#160;<span class="new">(new&#160;699)</span>,
+        Screenshot_2.png&#160;<span class="new">(new&#160;1141)</span>,
+        Screenshot_3.png&#160;<span class="new">(new&#160;1028)</span>
+      </li>
+      <li>
+        <strong>resources/org/sbml/squeezer/gui/locales</strong>:
+        Messages.xml&#160;<span class="change">(+26)</span>
+      </li>
+      <li>
+        <strong>resources/org/sbml/squeezer/resources/img</strong>:
+        Screenshot_1.png&#160;<span class="del">(del)</span>,
+        Screenshot_2.png&#160;<span class="del">(del)</span>,
+        Screenshot_3.png&#160;<span class="del">(del)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="3"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2013-04-24 02:43</span>
+    <a class="permalink" title="Permalink to this commit" href="#3">#3</a>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">1066</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Improved build script, removed unnecessary files, added Garuda configuration, and removed unnecessary libs.
+    </p>
+    <p class="commitdetails"><strong>91</strong> lines of code changed in <span class="files">21 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        build.xml&#160;<span class="change">(+26&#160;-23)</span>
+      </li>
+      <li>
+        <strong>dist</strong>:
+        KeyGen.sh&#160;<span class="new">(new&#160;20)</span>,
+        SBMLsqueezer-1.4-with-dependencies.jar&#160;<span class="del">(del)</span>,
+        SBMLsqueezer1.1.jar&#160;<span class="del">(del)</span>,
+        SBMLsqueezer1.1.zip&#160;<span class="del">(del)</span>,
+        SBMLsqueezer1.2.1.jar&#160;<span class="del">(del)</span>,
+        SBMLsqueezer1.2.1.zip&#160;<span class="del">(del)</span>,
+        SBMLsqueezer1.2.2.tar.gz&#160;<span class="del">(del)</span>,
+        SBMLsqueezer1.2.3.jar&#160;<span class="del">(del)</span>,
+        SBMLsqueezer1.2.jar&#160;<span class="del">(del)</span>,
+        SBMLsqueezer1.2.zip&#160;<span class="del">(del)</span>,
+        SBMLsqueezer1.3.jar&#160;<span class="del">(del)</span>,
+        SBMLsqueezer1.3.zip&#160;<span class="del">(del)</span>,
+        SBMLsqueezerFull.jar&#160;<span class="del">(del)</span>,
+        gadget_config.xml&#160;<span class="new">(new&#160;45)</span>,
+        keystore&#160;<span class="new">(new)</span>
+      </li>
+      <li>
+        <strong>dist/SBMLsqueezer/icons</strong>:
+        SBMLsqueezerLogo.png&#160;<span class="del">(del)</span>
+      </li>
+      <li>
+        <strong>dist/SBMLsqueezer/snapshots</strong>:
+        Screen1.png&#160;<span class="del">(del)</span>,
+        Screen2.png&#160;<span class="del">(del)</span>
+      </li>
+      <li>
+        <strong>lib/garuda</strong>:
+        GarudaBackend.jar&#160;<span class="del">(del)</span>,
+        log4j-1.2.16.jar&#160;<span class="del">(del)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="2"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2013-04-24 01:12</span>
+    <a class="permalink" title="Permalink to this commit" href="#2">#2</a>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">1065</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Improved build script for Garuda, removed uneccssary old files.
+    </p>
+    <p class="commitdetails"><strong>3102</strong> lines of code changed in <span class="files">17 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        build.xml&#160;<span class="change">(+278&#160;-111)</span>,
+        options&#160;<span class="del">(del)</span>,
+        umlgraph.xml&#160;<span class="del">(del)</span>
+      </li>
+      <li>
+        <strong>lib</strong>:
+        SBML2LaTeX-0.9.9_slim.jar&#160;<span class="del">(del)</span>,
+        SBML2LaTeX_v1.0alpha.jar&#160;<span class="change">(changed)</span>,
+        SysBio.jar&#160;<span class="change">(changed)</span>,
+        jsbml-1.0-a1-with-dependencies.jar&#160;<span class="change">(changed)</span>,
+        jsbml-libSBMLio-0.8.15.jar&#160;<span class="del">(del)</span>
+      </li>
+      <li>
+        <strong>resources/org/sbml/squeezer/resources/img</strong>:
+        SBMLsqueezerIcon_64.png&#160;<span class="change">(changed)</span>,
+        SBMLsqueezerLogo_128.png&#160;<span class="del">(del)</span>,
+        SBMLsqueezerLogo_256.png&#160;<span class="del">(del)</span>,
+        SBMLsqueezerLogo_64.png&#160;<span class="del">(del)</span>,
+        Screenshot_1.png&#160;<span class="change">(+684&#160;-727)</span>,
+        Screenshot_2.png&#160;<span class="change">(+1127&#160;-1204)</span>,
+        Screenshot_3.png&#160;<span class="change">(+1012&#160;-926)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer</strong>:
+        SBMLsqueezer.java&#160;<span class="change">(+1&#160;-1)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/gui</strong>:
+        SBMLsqueezerUI.java&#160;<span class="change">(-3)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="1"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2013-04-05 07:09</span>
+    <a class="permalink" title="Permalink to this commit" href="#1">#1</a>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">1064</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+* Solved a bug that caused a NullPointerException when not using SABIO-RK before creating rate laws ab initio.<br />
+* Removed JUnit library because this is not needed (provided by the OS).<br />
+* Updated JSBML, SysBio, and SBML2LaTeX packages<br />
+* Improved CellDesigner interface<br />
+* Many adaptations because of the new SBML2LaTeX and the attempt to provide CellDesigner plug-in functions<br />
+* Improved ant build script.<br />
+* Smaller code improvements.
+    </p>
+    <p class="commitdetails"><strong>41</strong> lines of code changed in <span class="files">22 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        build.xml&#160;<span class="change">(changed)</span>
+      </li>
+      <li>
+        <strong>lib</strong>:
+        SBML2LaTeX_v1.0alpha.jar&#160;<span class="new">(new)</span>,
+        SysBio.jar&#160;<span class="change">(changed)</span>,
+        jsbml-1.0-a1-with-dependencies.jar&#160;<span class="change">(changed)</span>,
+        junit-4.3.1.jar&#160;<span class="del">(del)</span>
+      </li>
+      <li>
+        <strong>modules/celldesigner/src/org/sbml/squeezer/celldesigner</strong>:
+        ConsoleHandler.java&#160;<span class="new">(new&#160;41)</span>,
+        Plugin.java&#160;<span class="change">(changed)</span>
+      </li>
+      <li>
+        <strong>resources/org/sbml/squeezer/gui/locales</strong>:
+        Options.xml&#160;<span class="change">(changed)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer</strong>:
+        KineticLawGenerator.java&#160;<span class="change">(changed)</span>,
+        SBMLsqueezer.java&#160;<span class="change">(changed)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/gui</strong>:
+        KineticLawSelectionDialog.java&#160;<span class="change">(changed)</span>,
+        KineticLawTable.java&#160;<span class="change">(changed)</span>,
+        KineticLawWindowAdapter.java&#160;<span class="change">(changed)</span>,
+        SBMLsqueezerUI.java&#160;<span class="change">(changed)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/gui/wizard</strong>:
+        KineticLawSelectionEquationPanel.java&#160;<span class="change">(changed)</span>,
+        KineticLawSelectionOptionPanelDescriptor.java&#160;<span class="change">(changed)</span>,
+        KineticLawSelectionWizard.java&#160;<span class="change">(changed)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/io</strong>:
+        SBMLio.java&#160;<span class="change">(changed)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/sabiork</strong>:
+        SABIORKPreferences.java&#160;<span class="change">(changed)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/sabiork/wizard</strong>:
+        SABIORKWizard.java&#160;<span class="change">(changed)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/sabiork/wizard/console</strong>:
+        ConsoleWizard.java&#160;<span class="change">(changed)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/sabiork/wizard/gui</strong>:
+        TableModelSearchTerms.java&#160;<span class="change">(changed)</span>
+      </li>
+    </ul>
+  </dd>
+
+</dl>
+
+<p class="previous"><a href="2013-03.html">March 2013</a> &#187; </p>
+<div id="generatedby">Generated by <a href="http://www.statsvn.org">StatSVN</a> 0.7.0</div>
+</body>
+</html>

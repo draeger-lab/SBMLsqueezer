@@ -42,8 +42,8 @@
     </tstamp>
   	
     <property name="Name" value="SBMLsqueezer"/>
-    <property name="version" value="2.0"/>
-    <property name="api.version" value="2.0 alpha"/>
+    <property name="version" value="2.0.1"/>
+    <property name="api.version" value="2.0 beta"/>
 
     <property name="year" value="${YEAR}"/>
 
@@ -76,6 +76,7 @@
   	<property name="celldesigner.src"       value="${celldesigner}/src"/>
   	<property name="celldesigner.test"      value="${celldesigner}/test"/>
   	<property name="celldesigner.resources" value="${celldesigner}/resources"/>
+  	<property name="celldesigner.version"   value="celldesigner-4.4-GSoC"/>
   	<property name="UUID"                   value="dd624b40-7bc0-11e2-b92a-0800200c9a66"/>
   	
   	<property name="jar.name" value="${Name}_v${version}"/>
@@ -92,7 +93,7 @@
     <path id="classpath">
       <fileset dir="${lib}"         includes="*.jar, *.zip"/>
       <fileset dir="${lib}/garuda"  includes="*.jar, *.zip"/>
-      <fileset dir="${celldesigner}/lib" includes="*.jar, *.zip"/>
+      <fileset dir="${celldesigner}/lib" includes="${celldesigner.version}.jar, sbmlj.jar"/>
     </path>
 	<path id="sourcepath">
 	  <fileset dir="${src}"/>
@@ -654,7 +655,7 @@
 
   	<path id="celldesigner.classpath">
   	  <fileset dir="${jsbml.dir}/core/lib" includes="**.jar, **/*.jar, **.zip"/>
-  	  <fileset dir="${jsbml.dir}/modules/celldesigner/lib" includes="**.jar, **/*.jar, **.zip"/>
+  	  <fileset dir="${jsbml.dir}/modules/celldesigner/lib" includes="${celldesigner.version}.jar, sbmlj.jar"/>
   	</path>
   	<javac
   	  classpathref="celldesigner.classpath"

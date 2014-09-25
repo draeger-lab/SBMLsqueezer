@@ -1,0 +1,761 @@
+<?xml version="1.0"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>StatSVN - Directory src/org/sbml/squeezer/resources/cfg/</title>
+ <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"/>
+    <meta name="Generator" content="StatSVN 0.7.0"/>
+<link rel="stylesheet" href="objectlab-statcvs.css" type="text/css"/>
+<script type="text/javascript" charset="utf-8" src="http://bit.ly/javascript-api.js?version=latest&#38;login=statsvn&#38;apiKey=R_2c362b417d0517c27876cbaca1bb68cc"></script>
+<script type="text/javascript" charset="utf-8">
+   // wait until page is loaded to call API
+   var redir_url;
+   var short_url;
+   BitlyCB.myShortenCallback = function(data) {
+      // this is how to get a result of shortening a single url
+      var result;
+      short_url=null;
+      for (var r in data.results) {
+         result = data.results[r];
+         result['longUrl'] = r;
+         short_url = result['shortUrl'];
+         break;
+      }
+      if (short_url==null) // bit.ly failed
+      document.location=redir_url;
+      else
+      redirToTwitter();
+   };
+   function shortenTweet(url) {
+      if (short_url == null || redir_url!=url) {
+      redir_url = url;
+      BitlyClient.shorten(document.location, 'BitlyCB.myShortenCallback');
+      }
+      else
+      redirToTwitter();
+      return false;
+   }
+   function redirToTwitter() { 
+      // replace {0} which is visible as %7B0} in the link
+      document.location = redir_url.replace('%7B0}', short_url);
+   }
+</script>
+  </head>
+
+<body>
+
+<h1>Directory src/org/sbml/squeezer/resources/cfg/</h1>
+<div id="parentlink">&#171; <a href="index.html">Development Statistics for /trunk</a></div>
+<dl class="attributes">
+    <dt>Directory Created:</dt>
+    <dd><span class="date">2009-08-14 07:02</span></dd>
+    <dt>Directory Deleted:</dt>
+    <dd><span class="date">2010-01-29 02:21</span></dd>
+    <dt>Total Files:</dt>
+    <dd>0</dd>
+    <dt>Deleted Files:</dt>
+    <dd>6</dd>
+    <dt>Lines of Code:</dt>
+    <dd>0</dd>
+</dl>
+<p class="dirtree">
+<a href="dir.html">[root]</a>/<a href="dir_src.html">src</a>/<a href="dir_src_org.html">org</a>/<a href="dir_src_org_sbml.html">sbml</a>/<a href="dir_src_org_sbml_squeezer.html">squeezer</a>/<a href="dir_src_org_sbml_squeezer_resources.html">resources</a>/<strong>cfg</strong><br/>
+</p>
+
+<div class="section">
+<h2>Lines of Code</h2>
+<p class="chart"><img src="loc_module_src_org_sbml_squeezer_resources_cfg.png" alt="src/org/sbml/squeezer/resources/cfg/ Lines of Code" width="800" height="500" /></p></div>
+<div class="section">
+<h2>Developers</h2>
+  <table  rules="groups" summary="All authors and the number of their changes and lines of code in this directory">
+    <colgroup align="left"/>
+    <colgroup align="right"/>
+    <colgroup align="right"/>
+    <colgroup align="right"/>
+    <thead>
+      <tr>
+        <th>Author</th>
+        <th>Changes</th>
+        <th>Lines of Code</th>
+        <th>Lines per Change</th>
+      </tr>
+    </thead>
+    <tfoot>
+      <tr>
+        <th>Totals</th>
+        <td>42 (100.0%)</td>
+        <td>3233 (100.0%)</td>
+        <td>76.9</td>
+      </tr>
+    </tfoot>
+    <tbody>
+      <tr  class="odd">
+        <th><a href="user_draeger.html" class="author">draeger</a></th>
+        <td>37 (88.1%)</td>
+        <td>3148 (97.4%)</td>
+        <td>85.0</td>
+      </tr>
+      <tr  class="even">
+        <th><a href="user_schaefer.html" class="author">schaefer</a></th>
+        <td>4 (9.5%)</td>
+        <td>67 (2.1%)</td>
+        <td>16.7</td>
+      </tr>
+      <tr  class="odd">
+        <th><a href="user_Doerr.html" class="author">Doerr</a></th>
+        <td>1 (2.4%)</td>
+        <td>18 (0.6%)</td>
+        <td>18.0</td>
+      </tr>
+    </tbody>
+  </table>
+
+</div>
+<div class="section">
+<h2>Most Recent Commits</h2>
+<dl class="commitlist">
+  <dt><a name="35"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2010-01-29 02:21</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">432</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+moved resources in new source folder resources.
+    </p>
+    <p class="commitdetails"><strong>0</strong> lines of code changed in <span class="files">6 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/resources/cfg</strong>:
+        Alias2SBO.cfg&#160;<span class="del">(del)</span>,
+        CfgKeys.java&#160;<span class="del">(del)</span>,
+        HTML2LaTeX_config.xml&#160;<span class="del">(del)</span>,
+        MIRIAM.xml&#160;<span class="del">(del)</span>,
+        SBMLsqueezer.cfg&#160;<span class="del">(del)</span>,
+        SBO2Alias.cfg&#160;<span class="del">(del)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="34"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2009-12-29 02:32</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">364</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Corrected some mistakes regarding units of parameters.
+    </p>
+    <p class="commitdetails"><strong>1</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/resources/cfg</strong>:
+        SBMLsqueezer.cfg&#160;<span class="change">(+1&#160;-1)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="33"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2009-12-28 07:29</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">354</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+New feature: Certain species can be ignored when creating kinetic equations - based on their MIRIAM annotation.
+    </p>
+    <p class="commitdetails"><strong>13</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/resources/cfg</strong>:
+        SBMLsqueezer.cfg&#160;<span class="change">(+13)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="32"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2009-12-08 11:13</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">328</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Now SBMLsqueezer provides hyper links to MIRIAM resources and shows a progress bar when storing kinetic equations.
+    </p>
+    <p class="commitdetails"><strong>2089</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/resources/cfg</strong>:
+        MIRIAM.xml&#160;<span class="new">(new&#160;2089)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="31"></a>
+    <a href="user_Doerr.html" class="author">Doerr</a>
+    <span class="date">2009-11-26 08:42</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">296</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+added:<br />
+- settings for stability analysis in preferences<br />
+- icon and toolbar button for stability analysis
+    </p>
+    <p class="commitdetails"><strong>18</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/resources/cfg</strong>:
+        SBMLsqueezer.cfg&#160;<span class="change">(+18)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="30"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2009-10-19 13:32</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">259</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+SBMLsqueezer now almost works as a CellDesigner plug-in...
+    </p>
+    <p class="commitdetails"><strong>1</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/resources/cfg</strong>:
+        SBMLsqueezer.cfg&#160;<span class="change">(+1)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="29"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2009-10-16 06:27</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">256</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Removed unnecessary throws statements, improved SBMLException handling and corrected smaller errors. There are now two new command line options for default Compartment/Species values.
+    </p>
+    <p class="commitdetails"><strong>2</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/resources/cfg</strong>:
+        SBMLsqueezer.cfg&#160;<span class="change">(+2)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="28"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2009-10-15 08:16</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">255</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+SBMLsqueezer's unit handling was improved and there is also a new command line argument to suppress libSBML's warnings.
+    </p>
+    <p class="commitdetails"><strong>3</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/resources/cfg</strong>:
+        SBMLsqueezer.cfg&#160;<span class="change">(+3&#160;-2)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="27"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2009-10-12 07:11</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">251</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+detected and corrected errors.
+    </p>
+    <p class="commitdetails"><strong>1</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/resources/cfg</strong>:
+        SBMLsqueezer.cfg&#160;<span class="change">(+1)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="26"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2009-10-12 00:54</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">250</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+New Units management, new parameter for default parameter value
+    </p>
+    <p class="commitdetails"><strong>1</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/resources/cfg</strong>:
+        SBMLsqueezer.cfg&#160;<span class="change">(+1)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="25"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2009-10-10 10:42</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">249</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Improved unit support for kinetic laws
+    </p>
+    <p class="commitdetails"><strong>7</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/resources/cfg</strong>:
+        SBMLsqueezer.cfg&#160;<span class="change">(+7&#160;-3)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="24"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2009-10-04 14:58</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">246</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+SBMLsqueezer now even considers units and lets the user decide how to ensure unit consistency.
+    </p>
+    <p class="commitdetails"><strong>1</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/resources/cfg</strong>:
+        SBMLsqueezer.cfg&#160;<span class="change">(+1)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="23"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2009-10-03 10:00</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">244</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Started to include subsance units
+    </p>
+    <p class="commitdetails"><strong>4</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/resources/cfg</strong>:
+        SBMLsqueezer.cfg&#160;<span class="change">(+4)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="22"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2009-10-02 09:37</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">242</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+corrected errors
+    </p>
+    <p class="commitdetails"><strong>6</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/resources/cfg</strong>:
+        SBMLsqueezer.cfg&#160;<span class="change">(+6&#160;-6)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="21"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2009-10-02 05:13</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">240</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+cleaned project
+    </p>
+    <p class="commitdetails"><strong>3</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/resources/cfg</strong>:
+        SBMLsqueezer.cfg&#160;<span class="change">(+3)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="20"></a>
+    <a href="user_schaefer.html" class="author">schaefer</a>
+    <span class="date">2009-09-24 08:44</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">232</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+
+    </p>
+    <p class="commitdetails"><strong>37</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/resources/cfg</strong>:
+        SBO2Alias.cfg&#160;<span class="new">(new&#160;37)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="19"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2009-09-24 08:18</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">231</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Now SBMLsqueezer automatically queries the kinetics package for applicable kinetic equations and it is no longer required to write explicit knowledge into the KineticLawGenerator or any other class. The only requirement is to implement designated interfaces that can also be found in the kinetics package.
+    </p>
+    <p class="commitdetails"><strong>6</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/resources/cfg</strong>:
+        SBMLsqueezer.cfg&#160;<span class="change">(+6&#160;-6)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="18"></a>
+    <a href="user_schaefer.html" class="author">schaefer</a>
+    <span class="date">2009-09-23 07:24</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">228</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+fixed parent problem with pluginwriter
+    </p>
+    <p class="commitdetails"><strong>1</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/resources/cfg</strong>:
+        Alias2SBO.cfg&#160;<span class="change">(+1)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="17"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2009-09-22 06:45</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">219</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Started to implement reflection for GUI elements and simpler integration of new kinetic equations.
+    </p>
+    <p class="commitdetails"><strong>5</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/resources/cfg</strong>:
+        SBMLsqueezer.cfg&#160;<span class="change">(+5)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="16"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2009-09-14 09:49</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">199</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Now SBMLsqueezer also has a simple command line mode so that an SBML file can be processed automatically.
+    </p>
+    <p class="commitdetails"><strong>1</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/resources/cfg</strong>:
+        SBMLsqueezer.cfg&#160;<span class="change">(+1)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="15"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2009-09-08 15:57</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">184</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Two things don't work yet: 1. equals method -&gt; hence, duplicate parameters cannot be removed properly. 2. The SBML tree does not expand!
+    </p>
+    <p class="commitdetails"><strong>52</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/resources/cfg</strong>:
+        SBMLsqueezer.cfg&#160;<span class="change">(+52&#160;-25)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="14"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2009-09-06 09:22</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">179</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Now SBMLsqueezer uses settings from a configuration file and is fully able to save and restore these settings.
+    </p>
+    <p class="commitdetails"><strong>26</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/resources/cfg</strong>:
+        SBMLsqueezer.cfg&#160;<span class="change">(+26&#160;-4)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="13"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2009-09-04 06:52</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">172</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+SBML write function implemented for stand-alone version.
+    </p>
+    <p class="commitdetails"><strong>1</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/resources/cfg</strong>:
+        SBMLsqueezer.cfg&#160;<span class="change">(+1)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="12"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2009-09-03 08:25</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">170</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Now two things are missing: first update of SBML tree and second write function into original sbml data structure.
+    </p>
+    <p class="commitdetails"><strong>1</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/resources/cfg</strong>:
+        SBMLsqueezer.cfg&#160;<span class="change">(+1)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="11"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2009-09-01 09:12</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">166</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Restructured KineticLawGenerator.
+    </p>
+    <p class="commitdetails"><strong>6</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/resources/cfg</strong>:
+        SBMLsqueezer.cfg&#160;<span class="change">(+6)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="10"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2009-08-31 07:57</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">163</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Now we have an almost complete SBML data structure.
+    </p>
+    <p class="commitdetails"><strong>1</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/resources/cfg</strong>:
+        CfgKeys.java&#160;<span class="change">(+1&#160;-1)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="9"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2009-08-30 09:27</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">159</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+First stand-alone version of SBMLsqueezer available!
+    </p>
+    <p class="commitdetails"><strong>19</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/resources/cfg</strong>:
+        Alias2SBO.cfg&#160;<span class="change">(+19&#160;-15)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="8"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2009-08-29 08:39</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">158</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Now only two questions are to be solved: First, How can we deal with this list of possible enzymes? Second, how can we redesign this KineticLawGenerator so that it writes all information back correctly?
+    </p>
+    <p class="commitdetails"><strong>19</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/resources/cfg</strong>:
+        Alias2SBO.cfg&#160;<span class="change">(+19&#160;-15)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="7"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2009-08-28 12:03</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">157</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+improved kinetic equations.
+    </p>
+    <p class="commitdetails"><strong>1</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/resources/cfg</strong>:
+        SBMLsqueezer.cfg&#160;<span class="change">(+1&#160;-1)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="6"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2009-08-28 09:58</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">156</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Improved SBMLreaders and adapted KineticLaws.
+    </p>
+    <p class="commitdetails"><strong>2</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/resources/cfg</strong>:
+        SBMLsqueezer.cfg&#160;<span class="change">(+2&#160;-2)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="5"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2009-08-26 10:16</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">147</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Now update messages are also displayed in the stand-alone version either on the command line or within the GUI. The SBMLio class was restructured and now contains a reader and a writer object for SBML.
+    </p>
+    <p class="commitdetails"><strong>828</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/resources/cfg</strong>:
+        HTML2LaTeX_config.xml&#160;<span class="new">(new&#160;828)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="4"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2009-08-23 04:28</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">142</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Now SBMLsqueezer can read default path for opening and saving files from a configuration file and the tabs in the stand alone version have now close buttons so that these can be closed individually. The menu items respond to closing and opening events as well.
+    </p>
+    <p class="commitdetails"><strong>41</strong> lines of code changed in <span class="files">3 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/resources/cfg</strong>:
+        Alias2SBO.cfg&#160;<span class="change">(+1&#160;-1)</span>,
+        CfgKeys.java&#160;<span class="new">(new&#160;37)</span>,
+        SBMLsqueezer.cfg&#160;<span class="new">(new&#160;3)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="3"></a>
+    <a href="user_schaefer.html" class="author">schaefer</a>
+    <span class="date">2009-08-17 04:24</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">126</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+
+    </p>
+    <p class="commitdetails"><strong>1</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/resources/cfg</strong>:
+        Alias2SBO.cfg&#160;<span class="change">(+1&#160;-1)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="2"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2009-08-14 08:21</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">124</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Improved our SBML data structures.
+    </p>
+    <p class="commitdetails"><strong>7</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/resources/cfg</strong>:
+        Alias2SBO.cfg&#160;<span class="change">(+7&#160;-7)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="1"></a>
+    <a href="user_schaefer.html" class="author">schaefer</a>
+    <span class="date">2009-08-14 07:02</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">123</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+sboterms in cfg file<br />
+
+    </p>
+    <p class="commitdetails"><strong>28</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/resources/cfg</strong>:
+        Alias2SBO.cfg&#160;<span class="new">(new&#160;28)</span>
+      </li>
+    </ul>
+  </dd>
+
+</dl>
+
+</div><div id="generatedby">Generated by <a href="http://www.statsvn.org">StatSVN</a> 0.7.0</div>
+</body>
+</html>

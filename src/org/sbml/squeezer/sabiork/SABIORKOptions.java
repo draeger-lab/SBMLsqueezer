@@ -47,22 +47,22 @@ public interface SABIORKOptions extends KeyProvider {
   /**
    * The pathway for which the kinetics have been determined.
    */
-  public static final Option<String> PATHWAY = new Option<String>("PATHWAY", String.class, OPTIONS_BUNDLE, null);
+  public static final Option<String> PATHWAY = new Option<String>("PATHWAY", String.class, OPTIONS_BUNDLE, (String) null);
   
   /**
    * The tissue for which the kinetics have been determined.
    */
-  public static final Option<String> TISSUE = new Option<String>("TISSUE", String.class, OPTIONS_BUNDLE, null);
+  public static final Option<String> TISSUE = new Option<String>("TISSUE", String.class, OPTIONS_BUNDLE, (String) null);
   
   /**
    * The cellular location for which the kinetics have been determined.
    */
-  public static final Option<String> CELLULAR_LOCATION = new Option<String>("CELLULAR_LOCATION", String.class, OPTIONS_BUNDLE, null);
+  public static final Option<String> CELLULAR_LOCATION = new Option<String>("CELLULAR_LOCATION", String.class, OPTIONS_BUNDLE, (String) null);
   
   /**
    * The organism for which the kinetics have been determined.
    */
-  public static final Option<String> ORGANISM = new Option<String>("ORGANISM", String.class, OPTIONS_BUNDLE, null);
+  public static final Option<String> ORGANISM = new Option<String>("ORGANISM", String.class, OPTIONS_BUNDLE, (String) null);
   
   /**
    * 

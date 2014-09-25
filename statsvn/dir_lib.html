@@ -1,0 +1,935 @@
+<?xml version="1.0"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>StatSVN - Directory lib/</title>
+ <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"/>
+    <meta name="Generator" content="StatSVN 0.7.0"/>
+<link rel="stylesheet" href="objectlab-statcvs.css" type="text/css"/>
+<script type="text/javascript" charset="utf-8" src="http://bit.ly/javascript-api.js?version=latest&#38;login=statsvn&#38;apiKey=R_2c362b417d0517c27876cbaca1bb68cc"></script>
+<script type="text/javascript" charset="utf-8">
+   // wait until page is loaded to call API
+   var redir_url;
+   var short_url;
+   BitlyCB.myShortenCallback = function(data) {
+      // this is how to get a result of shortening a single url
+      var result;
+      short_url=null;
+      for (var r in data.results) {
+         result = data.results[r];
+         result['longUrl'] = r;
+         short_url = result['shortUrl'];
+         break;
+      }
+      if (short_url==null) // bit.ly failed
+      document.location=redir_url;
+      else
+      redirToTwitter();
+   };
+   function shortenTweet(url) {
+      if (short_url == null || redir_url!=url) {
+      redir_url = url;
+      BitlyClient.shorten(document.location, 'BitlyCB.myShortenCallback');
+      }
+      else
+      redirToTwitter();
+      return false;
+   }
+   function redirToTwitter() { 
+      // replace {0} which is visible as %7B0} in the link
+      document.location = redir_url.replace('%7B0}', short_url);
+   }
+</script>
+  </head>
+
+<body>
+
+<h1>Directory lib/</h1>
+<div id="parentlink">&#171; <a href="index.html">Development Statistics for /trunk</a></div>
+<dl class="attributes">
+    <dt>Total Files:</dt>
+    <dd>7</dd>
+    <dt>Deleted Files:</dt>
+    <dd>27</dd>
+    <dt>Lines of Code:</dt>
+    <dd>7612</dd>
+</dl>
+<p class="dirtree">
+<a href="dir.html">[root]</a>/<strong>lib</strong><br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<img src="folder-deleted.png" width="15" height="13" alt="Folder removed from repo" title="Folder removed from repo"/> 
+<a href="dir_lib_atp.html">atp</a> 
+(0 files, 0 lines)<br />
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<img src="folder.png" width="15" height="13" alt="directory in repo" title="directory in repo"/> 
+<a href="dir_lib_garuda.html">garuda</a> 
+(3 files, 554 lines)<br />
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<img src="folder-deleted.png" width="15" height="13" alt="Folder removed from repo" title="Folder removed from repo"/> 
+<a href="dir_lib_jsbml-old.html">jsbml-old</a> 
+(0 files, 0 lines)<br />
+</p>
+
+<div class="section">
+<h2>Lines of Code</h2>
+<p class="chart"><img src="loc_module_lib.png" alt="lib/ Lines of Code" width="800" height="500" /></p></div>
+<div class="section">
+<h2>Developers</h2>
+  <table  rules="groups" summary="All authors and the number of their changes and lines of code in this directory">
+    <colgroup align="left"/>
+    <colgroup align="right"/>
+    <colgroup align="right"/>
+    <colgroup align="right"/>
+    <thead>
+      <tr>
+        <th>Author</th>
+        <th>Changes</th>
+        <th>Lines of Code</th>
+        <th>Lines per Change</th>
+      </tr>
+    </thead>
+    <tfoot>
+      <tr>
+        <th>Totals</th>
+        <td>194 (100.0%)</td>
+        <td>18601 (100.0%)</td>
+        <td>95.8</td>
+      </tr>
+    </tfoot>
+    <tbody>
+      <tr  class="odd">
+        <th><a href="user_draeger.html" class="author">draeger</a></th>
+        <td>179 (92.3%)</td>
+        <td>18599 (100.0%)</td>
+        <td>103.9</td>
+      </tr>
+      <tr  class="even">
+        <th><a href="user_snagel.html" class="author">snagel</a></th>
+        <td>14 (7.2%)</td>
+        <td>2 (0.0%)</td>
+        <td>0.1</td>
+      </tr>
+      <tr  class="odd">
+        <th><a href="user_keller.html" class="author">keller</a></th>
+        <td>1 (0.5%)</td>
+        <td>0 (0.0%)</td>
+        <td>0.0</td>
+      </tr>
+    </tbody>
+  </table>
+
+</div>
+<div class="section">
+<h2>Most Recent Commits</h2>
+<dl class="commitlist">
+  <dt><a name="40"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2014-03-03 15:57</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">1085</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Many changes because of the new GARUDA version.<br />
+<br />
+The CellDesigner plugin version does no longer offer settings for SABIO-RK.
+    </p>
+    <p class="commitdetails"><strong>0</strong> lines of code changed in <span class="files">2 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>lib</strong>:
+        SysBio.jar&#160;<span class="change">(changed)</span>,
+        jsbml-1.0-a1-with-dependencies.jar&#160;<span class="change">(changed)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="39"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2014-02-22 08:15</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">1081</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Updated libraries JSBML and SysBio, fixed a small bug in the build script for building SysBio, and updated all classes to Java 1.6 (adde missing override tags).
+    </p>
+    <p class="commitdetails"><strong>0</strong> lines of code changed in <span class="files">2 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>lib</strong>:
+        SysBio.jar&#160;<span class="change">(changed)</span>,
+        jsbml-1.0-a1-with-dependencies.jar&#160;<span class="change">(changed)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="38"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2014-02-17 22:53</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">1079</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Updated JSBML and SysBio and changed classes because now the ProgressListener also can send messages along with the current progress state.
+    </p>
+    <p class="commitdetails"><strong>0</strong> lines of code changed in <span class="files">2 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>lib</strong>:
+        SysBio.jar&#160;<span class="change">(changed)</span>,
+        jsbml-1.0-a1-with-dependencies.jar&#160;<span class="change">(changed)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="37"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2014-02-16 22:21</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">1078</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+SBMLsqueezer runs now again as plugin for CellDesigner and also based on libSBML and JSBML. Many improvements have been made:<br />
+<br />
+* The build script has been revised to compile the modules of JSBML for CellDesigner and libSBML separately.<br />
+* The SysBio library has been updated and also a new version of JSBML has been incorporated.<br />
+* Several bugs have been fixed.
+    </p>
+    <p class="commitdetails"><strong>7610</strong> lines of code changed in <span class="files">5 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>lib</strong>:
+        SBML2LaTeX_v1.0_slim.jar&#160;<span class="new">(new&#160;4753)</span>,
+        SBML2LaTeX_v1.0alpha.jar&#160;<span class="del">(del)</span>,
+        SysBio.jar&#160;<span class="change">(changed)</span>,
+        jsbml-1.0-a1-with-dependencies.jar&#160;<span class="change">(changed)</span>,
+        libsbmlj-5.9.0.jar&#160;<span class="new">(new&#160;2857)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="36"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2013-12-11 17:20</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">1075</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Several changes and improvements: Unit corrections, parameter corrections, changes due to changes in JSBML.
+    </p>
+    <p class="commitdetails"><strong>0</strong> lines of code changed in <span class="files">2 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>lib</strong>:
+        SysBio.jar&#160;<span class="change">(changed)</span>,
+        jsbml-1.0-a1-with-dependencies.jar&#160;<span class="change">(changed)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="35"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2013-08-02 16:32</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">1068</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Fixed a bug in the Wizard that actually option changes could not be considered when going back and changing something. It just didn't apply the user's new choice. Now it does.
+    </p>
+    <p class="commitdetails"><strong>0</strong> lines of code changed in <span class="files">2 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>lib</strong>:
+        SysBio.jar&#160;<span class="change">(changed)</span>,
+        jsbml-1.0-a1-with-dependencies.jar&#160;<span class="change">(changed)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="34"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2013-04-24 01:12</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">1065</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Improved build script for Garuda, removed uneccssary old files.
+    </p>
+    <p class="commitdetails"><strong>0</strong> lines of code changed in <span class="files">5 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>lib</strong>:
+        SBML2LaTeX-0.9.9_slim.jar&#160;<span class="del">(del)</span>,
+        SBML2LaTeX_v1.0alpha.jar&#160;<span class="change">(changed)</span>,
+        SysBio.jar&#160;<span class="change">(changed)</span>,
+        jsbml-1.0-a1-with-dependencies.jar&#160;<span class="change">(changed)</span>,
+        jsbml-libSBMLio-0.8.15.jar&#160;<span class="del">(del)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="33"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2013-04-05 07:09</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">1064</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+* Solved a bug that caused a NullPointerException when not using SABIO-RK before creating rate laws ab initio.<br />
+* Removed JUnit library because this is not needed (provided by the OS).<br />
+* Updated JSBML, SysBio, and SBML2LaTeX packages<br />
+* Improved CellDesigner interface<br />
+* Many adaptations because of the new SBML2LaTeX and the attempt to provide CellDesigner plug-in functions<br />
+* Improved ant build script.<br />
+* Smaller code improvements.
+    </p>
+    <p class="commitdetails"><strong>0</strong> lines of code changed in <span class="files">4 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>lib</strong>:
+        SBML2LaTeX_v1.0alpha.jar&#160;<span class="new">(new)</span>,
+        SysBio.jar&#160;<span class="change">(changed)</span>,
+        jsbml-1.0-a1-with-dependencies.jar&#160;<span class="change">(changed)</span>,
+        junit-4.3.1.jar&#160;<span class="del">(del)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="32"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2013-03-21 09:20</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">1061</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Improved the build script and the CellDesigner plugin function.
+    </p>
+    <p class="commitdetails"><strong>0</strong> lines of code changed in <span class="files">2 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>lib</strong>:
+        SysBio.jar&#160;<span class="change">(changed)</span>,
+        jsbml-1.0-a1-with-dependencies.jar&#160;<span class="change">(changed)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="31"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2013-03-21 01:49</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">1060</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+* Added more JAR files, improved build script for a minimal SysBio.jar<br />
+* Improved the User's Guide.
+    </p>
+    <p class="commitdetails"><strong>1</strong> lines of code changed in <span class="files">4 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>lib</strong>:
+        SysBio.jar&#160;<span class="change">(changed)</span>,
+        jsbml-1.0-a1-with-dependencies.jar&#160;<span class="change">(changed)</span>,
+        junit-4.3.1.jar&#160;<span class="new">(new&#160;1)</span>,
+        quaqua.jar&#160;<span class="new">(new)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="30"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2013-03-20 01:20</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">1059</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+* Improved the user
+    </p>
+    <p class="commitdetails"><strong>0</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>lib</strong>:
+        jsbml-1.0-a1-with-dependencies.jar&#160;<span class="change">(changed)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="29"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2013-02-21 04:11</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">1034</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+* New versions of libraries JSBML, SysBio, and CellDesigner.<br />
+<br />
+* Improved localization support.<br />
+<br />
+* New icons, screenshots, and images.<br />
+<br />
+* SBMLsqueezer: Update of the current year and adaptation to the latest version of Garuda<br />
+<br />
+* SubmodelController: Avoids a null pointer exception in case that for some reason no kinetics has been created for a reaction within the submodel.<br />
+<br />
+* Made the dialogs for the kinetics selection and also for SABIO-RK resizable.<br />
+<br />
+* SBMLsqueezerUI: Adaptation to latest version of Garuda; also shifted the garuda menu entry to the edit menu to make it less prominent; fixed a bug that after loading kinetics from SABIO-RK the SBML tree was not updated.<br />
+<br />
+* SABIORKWizard: This dialog is now placed relative to the main window and has become resizable, which is both important!<br />
+<br />
+* JDialogWizard: Since in SBMLsqueezer the user selects already all or just one reaction in a model, the dialog has been changed so that these are pre-selected. The user can, however, still go back and change this selection. The default size of the dialog has been reduced with respect to small displays, where the dialog might otherwise not even pop up. It is also now resizable.<br />
+<br />
+* Improved the build script.<br />
+<br />
+* General: Updated old-style &lt;code&gt;…&lt;/code&gt; to the new {@code …} and code style cleaning; in SABIO-RK part, tables don't have to fill a panel, Auto-resize has been switched of in order to make columns arbitrarily large. At the moment, this should be improved because sometimes columns are too little.
+    </p>
+    <p class="commitdetails"><strong>0</strong> lines of code changed in <span class="files">2 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>lib</strong>:
+        SysBio.jar&#160;<span class="change">(changed)</span>,
+        jsbml-1.0-a1-with-dependencies.jar&#160;<span class="change">(changed)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="28"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2013-02-13 10:06</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">1032</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+* Removed the Resource class.<br />
+* Removed the HotEqn LaTeX renderer and replaced it by jlatexmath.<br />
+* Added a new zoom feature to the equation preview.<br />
+* Created an overview.html file and improved the build script.<br />
+* Fixed several smaller bugs.
+    </p>
+    <p class="commitdetails"><strong>0</strong> lines of code changed in <span class="files">4 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>lib</strong>:
+        HotEqn.jar&#160;<span class="del">(del)</span>,
+        SysBio.jar&#160;<span class="change">(changed)</span>,
+        jlatexmath-1.0.0.jar&#160;<span class="new">(new)</span>,
+        jsbml-1.0-a1-with-dependencies.jar&#160;<span class="change">(changed)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="27"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2012-10-02 03:11</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">1024</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Moved a lot of Garuda-dependent code to SysBio.
+    </p>
+    <p class="commitdetails"><strong>0</strong> lines of code changed in <span class="files">2 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>lib</strong>:
+        SysBio.jar&#160;<span class="change">(changed)</span>,
+        jsbml-1.0-a1-with-dependencies.jar&#160;<span class="change">(changed)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="26"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2012-10-01 05:00</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">1023</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Solved several bugs in SBMLsqueezer and improved some images in the GUI.
+    </p>
+    <p class="commitdetails"><strong>0</strong> lines of code changed in <span class="files">2 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>lib</strong>:
+        SysBio.jar&#160;<span class="change">(changed)</span>,
+        jsbml-1.0-a1-with-dependencies.jar&#160;<span class="change">(changed)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="25"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2012-09-26 02:43</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">1021</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+SBMLsqueezer is now GARUDA-enabled.
+    </p>
+    <p class="commitdetails"><strong>0</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>lib</strong>:
+        jsbml-1.0-a1-with-dependencies.jar&#160;<span class="change">(changed)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="24"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2012-09-24 00:37</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">1006</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Corrected several problems in user-settings usage for the creation of submodels.
+    </p>
+    <p class="commitdetails"><strong>0</strong> lines of code changed in <span class="files">2 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>lib</strong>:
+        SysBio.jar&#160;<span class="change">(changed)</span>,
+        jsbml-1.0-a1-with-dependencies.jar&#160;<span class="change">(changed)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="23"></a>
+    <a href="user_snagel.html" class="author">snagel</a>
+    <span class="date">2012-09-08 05:39</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">996</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+updated sysbio.jar, added comments, changed units and test cases, fixed celldesigner plugin bug
+    </p>
+    <p class="commitdetails"><strong>0</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>lib</strong>:
+        SysBio.jar&#160;<span class="change">(changed)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="22"></a>
+    <a href="user_snagel.html" class="author">snagel</a>
+    <span class="date">2012-08-28 11:27</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">985</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+fixed some celldesigner bugs
+    </p>
+    <p class="commitdetails"><strong>0</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>lib</strong>:
+        SysBio.jar&#160;<span class="change">(changed)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="21"></a>
+    <a href="user_snagel.html" class="author">snagel</a>
+    <span class="date">2012-08-23 00:12</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">980</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+fixed SBMLsqueezerUI resource paths, deleted previous sysbio.jar
+    </p>
+    <p class="commitdetails"><strong>0</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>lib</strong>:
+        SysBio-1.4-with-dependencies.jar&#160;<span class="del">(del)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="20"></a>
+    <a href="user_snagel.html" class="author">snagel</a>
+    <span class="date">2012-08-19 09:04</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">976</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+some changes for cell designer plugin: fixed some bugs and updated build.xml and sysbio.jar
+    </p>
+    <p class="commitdetails"><strong>0</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>lib</strong>:
+        SysBio.jar&#160;<span class="new">(new)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="19"></a>
+    <a href="user_snagel.html" class="author">snagel</a>
+    <span class="date">2012-07-04 04:56</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">951</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+updated build.xml an depended libraries
+    </p>
+    <p class="commitdetails"><strong>0</strong> lines of code changed in <span class="files">2 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>lib</strong>:
+        SBML2LaTeX-0.9.9_slim.jar&#160;<span class="change">(changed)</span>,
+        SysBio-1.4-with-dependencies.jar&#160;<span class="change">(changed)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="18"></a>
+    <a href="user_snagel.html" class="author">snagel</a>
+    <span class="date">2012-07-02 04:14</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">950</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+updated build.xml an depended libraries. changed loading of resources
+    </p>
+    <p class="commitdetails"><strong>1</strong> lines of code changed in <span class="files">5 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>lib</strong>:
+        SBML2LaTeX-0.9.9_slim.jar&#160;<span class="change">(changed)</span>,
+        jsbml-1.0-incl-libs.jar&#160;<span class="del">(del)</span>,
+        jsbml-libSBMLio-0.8.15.jar&#160;<span class="new">(new&#160;1)</span>,
+        jsbml.jar&#160;<span class="del">(del)</span>,
+        jsbmlio.jar&#160;<span class="del">(del)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="17"></a>
+    <a href="user_snagel.html" class="author">snagel</a>
+    <span class="date">2012-07-01 11:53</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">948</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+updated build.xml and dependent jars
+    </p>
+    <p class="commitdetails"><strong>1</strong> lines of code changed in <span class="files">3 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>lib</strong>:
+        SysBio-1.4-with-dependencies.jar&#160;<span class="new">(new&#160;1)</span>,
+        jsbml-1.0-a1-with-dependencies.jar&#160;<span class="new">(new)</span>,
+        sysbio.jar&#160;<span class="del">(del)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="16"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2012-05-25 07:12</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">928</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Added some TODO tags and a current version of JSBML.
+    </p>
+    <p class="commitdetails"><strong>1</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>lib</strong>:
+        jsbml-1.0-incl-libs.jar&#160;<span class="new">(new&#160;1)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="15"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2012-05-25 03:27</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">926</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Updated license headers and SVN properties.
+    </p>
+    <p class="commitdetails"><strong>0</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>lib</strong>:
+        sysbio.jar&#160;<span class="change">(changed)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="14"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2012-05-08 01:11</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">920</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Solved issues with the detection of possible enzymes and also fixed the problem that the units of catalysts in Generalized Mass Action were not correctly taken into account.
+    </p>
+    <p class="commitdetails"><strong>0</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>lib</strong>:
+        sysbio.jar&#160;<span class="change">(changed)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="13"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2012-05-04 03:28</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">919</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Changed the build script to a new version and updated the UnitDefinition.
+    </p>
+    <p class="commitdetails"><strong>0</strong> lines of code changed in <span class="files">2 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>lib</strong>:
+        SBML2LaTeX-0.9.9_slim.jar&#160;<span class="change">(changed)</span>,
+        sysbio.jar&#160;<span class="change">(changed)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="12"></a>
+    <a href="user_keller.html" class="author">keller</a>
+    <span class="date">2012-04-19 02:33</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">901</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+SysBio library updated.
+    </p>
+    <p class="commitdetails"><strong>0</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>lib</strong>:
+        sysbio.jar&#160;<span class="change">(changed)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="11"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2012-02-21 08:34</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">823</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Updated all license headers.
+    </p>
+    <p class="commitdetails"><strong>0</strong> lines of code changed in <span class="files">3 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>lib</strong>:
+        jsbml-0.8-rc1-with-dependencies.jar&#160;<span class="del">(del)</span>,
+        jsbml-0.8-rc1.jar&#160;<span class="del">(del)</span>,
+        jsbml-0.8-rc1.zip&#160;<span class="del">(del)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="10"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2011-12-14 01:37</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">735</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Added the new JSBML release 0.8 and the new version of SBML2LaTeX. Now we can remove the dependency of SBMLsqueezer from two other projects.
+    </p>
+    <p class="commitdetails"><strong>0</strong> lines of code changed in <span class="files">4 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>lib</strong>:
+        SBML2LaTeX-0.9.9_slim.jar&#160;<span class="new">(new)</span>,
+        jsbml-0.8-rc1-with-dependencies.jar&#160;<span class="new">(new)</span>,
+        jsbml-0.8-rc1.jar&#160;<span class="new">(new)</span>,
+        jsbml-0.8-rc1.zip&#160;<span class="new">(new)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="9"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2011-08-12 00:56</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">634</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Restructured project: Removed text files by adding their content to our trac system; changed SVN properties of all Java classes and organized the license files of this library and all referenced libraries.
+    </p>
+    <p class="commitdetails"><strong>0</strong> lines of code changed in <span class="files">3 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>lib</strong>:
+        biojava.jar&#160;<span class="del">(del)</span>,
+        eva2.jar&#160;<span class="del">(del)</span>,
+        jdom.jar&#160;<span class="del">(del)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="8"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2010-10-22 01:13</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">611</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+This is an unstable version! We are trying to change the way how the user's configuration is stored and manipulated.
+    </p>
+    <p class="commitdetails"><strong>0</strong> lines of code changed in <span class="files">6 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>lib</strong>:
+        html2latex.jar&#160;<span class="del">(del)</span>,
+        installLibSBML.sh&#160;<span class="del">(del)</span>,
+        jaxen-core.jar&#160;<span class="del">(del)</span>,
+        jaxen-jdom.jar&#160;<span class="del">(del)</span>,
+        opencsv-1.7.jar&#160;<span class="del">(del)</span>,
+        saxpath.jar&#160;<span class="del">(del)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="7"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2010-09-16 02:45</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">607</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Added SysBio library.
+    </p>
+    <p class="commitdetails"><strong>10852</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>lib</strong>:
+        sysbio.jar&#160;<span class="new">(new&#160;10852)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="6"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2010-08-05 01:52</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">582</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+
+    </p>
+    <p class="commitdetails"><strong>2</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>lib</strong>:
+        jsbmlbridge.jar&#160;<span class="new">(new&#160;2)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="5"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2010-05-21 05:04</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">550</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+The way how the MIRIAM annotation file is read has been changed because in the Plugin version SBMLsqueezer could not access the file. Now it works.
+    </p>
+    <p class="commitdetails"><strong>0</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>lib</strong>:
+        jsbmlio.jar&#160;<span class="change">(changed)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="4"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2010-04-28 01:30</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">534</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Bug fixes.
+    </p>
+    <p class="commitdetails"><strong>0</strong> lines of code changed in <span class="files">3 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>lib</strong>:
+        cdplugin.jar&#160;<span class="del">(del)</span>,
+        jsbml.jar&#160;<span class="change">(changed)</span>,
+        jsbmlio.jar&#160;<span class="change">(changed)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="3"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2010-03-29 04:02</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">492</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Now all gene-regulatory kinetics can also be applied if the number of reactants is zero.
+    </p>
+    <p class="commitdetails"><strong>0</strong> lines of code changed in <span class="files">3 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>lib</strong>:
+        cdplugin.jar&#160;<span class="change">(changed)</span>,
+        jsbml.jar&#160;<span class="change">(changed)</span>,
+        jsbmlio.jar&#160;<span class="change">(changed)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="2"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2010-02-25 05:27</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">473</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Changed name of HillEquation to HillHinzeEquation and had therefore also change the entry in the default configuration file.
+    </p>
+    <p class="commitdetails"><strong>0</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>lib</strong>:
+        cdplugin.jar&#160;<span class="change">(changed)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="1"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2010-02-25 03:50</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">471</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Corrected the GRN kinetic equations, which did not consider the gene product in many cases.
+    </p>
+    <p class="commitdetails"><strong>0</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>lib</strong>:
+        jsbmlio.jar&#160;<span class="change">(changed)</span>
+      </li>
+    </ul>
+  </dd>
+
+</dl>
+
+<p>(60 more)</p>
+</div><div id="generatedby">Generated by <a href="http://www.statsvn.org">StatSVN</a> 0.7.0</div>
+</body>
+</html>

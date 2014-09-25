@@ -1,0 +1,663 @@
+<?xml version="1.0"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>StatSVN - August 2010 Commit Log</title>
+ <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"/>
+    <meta name="Generator" content="StatSVN 0.7.0"/>
+<link rel="stylesheet" href="objectlab-statcvs.css" type="text/css"/>
+<script type="text/javascript" charset="utf-8" src="http://bit.ly/javascript-api.js?version=latest&#38;login=statsvn&#38;apiKey=R_2c362b417d0517c27876cbaca1bb68cc"></script>
+<script type="text/javascript" charset="utf-8">
+   // wait until page is loaded to call API
+   var redir_url;
+   var short_url;
+   BitlyCB.myShortenCallback = function(data) {
+      // this is how to get a result of shortening a single url
+      var result;
+      short_url=null;
+      for (var r in data.results) {
+         result = data.results[r];
+         result['longUrl'] = r;
+         short_url = result['shortUrl'];
+         break;
+      }
+      if (short_url==null) // bit.ly failed
+      document.location=redir_url;
+      else
+      redirToTwitter();
+   };
+   function shortenTweet(url) {
+      if (short_url == null || redir_url!=url) {
+      redir_url = url;
+      BitlyClient.shorten(document.location, 'BitlyCB.myShortenCallback');
+      }
+      else
+      redirToTwitter();
+      return false;
+   }
+   function redirToTwitter() { 
+      // replace {0} which is visible as %7B0} in the link
+      document.location = redir_url.replace('%7B0}', short_url);
+   }
+</script>
+  </head>
+
+<body>
+
+<h1>August 2010 Commit Log</h1>
+<div id="parentlink">&#171; <a href="index.html">Development Statistics for /trunk</a></div>
+
+<div id="nav" class="section">
+<h2>Commit Logs</h2>
+<ul>
+    <li><a href="commitlog.html">March 2014</a></li>
+    <li><a href="2014-02.html">February 2014</a></li>
+    <li><a href="2014-01.html">January 2014</a></li>
+    <li><a href="2013-12.html">December 2013</a></li>
+    <li><a href="2013-11.html">November 2013</a></li>
+    <li><a href="2013-10.html">October 2013</a></li>
+    <li><a href="2013-09.html">September 2013</a></li>
+    <li><a href="2013-08.html">August 2013</a></li>
+    <li><a href="2013-07.html">July 2013</a></li>
+    <li><a href="2013-06.html">June 2013</a></li>
+    <li><a href="2013-05.html">May 2013</a></li>
+    <li><a href="2013-04.html">April 2013</a></li>
+    <li><a href="2013-03.html">March 2013</a></li>
+    <li><a href="2013-02.html">February 2013</a></li>
+    <li><a href="2013-01.html">January 2013</a></li>
+    <li><a href="2012-12.html">December 2012</a></li>
+    <li><a href="2012-11.html">November 2012</a></li>
+    <li><a href="2012-10.html">October 2012</a></li>
+    <li><a href="2012-09.html">September 2012</a></li>
+    <li><a href="2012-08.html">August 2012</a></li>
+    <li><a href="2012-07.html">July 2012</a></li>
+    <li><a href="2012-06.html">June 2012</a></li>
+    <li><a href="2012-05.html">May 2012</a></li>
+    <li><a href="2012-04.html">April 2012</a></li>
+    <li><a href="2012-03.html">March 2012</a></li>
+    <li><a href="2012-02.html">February 2012</a></li>
+    <li><a href="2012-01.html">January 2012</a></li>
+    <li><a href="2011-12.html">December 2011</a></li>
+    <li><a href="2011-11.html">November 2011</a></li>
+    <li><a href="2011-10.html">October 2011</a></li>
+    <li><a href="2011-09.html">September 2011</a></li>
+    <li><a href="2011-08.html">August 2011</a></li>
+    <li><a href="2011-07.html">July 2011</a></li>
+    <li><a href="2011-06.html">June 2011</a></li>
+    <li><a href="2011-05.html">May 2011</a></li>
+    <li><a href="2011-04.html">April 2011</a></li>
+    <li><a href="2011-03.html">March 2011</a></li>
+    <li><a href="2011-02.html">February 2011</a></li>
+    <li><a href="2011-01.html">January 2011</a></li>
+    <li><a href="2010-12.html">December 2010</a></li>
+    <li><a href="2010-11.html">November 2010</a></li>
+    <li><a href="2010-10.html">October 2010</a></li>
+    <li><a href="2010-09.html">September 2010</a></li>
+    <li><span class="here">August 2010</span></li>
+    <li><a href="2010-07.html">July 2010</a></li>
+    <li><a href="2010-06.html">June 2010</a></li>
+    <li><a href="2010-05.html">May 2010</a></li>
+    <li><a href="2010-04.html">April 2010</a></li>
+    <li><a href="2010-03.html">March 2010</a></li>
+    <li><a href="2010-02.html">February 2010</a></li>
+    <li><a href="2010-01.html">January 2010</a></li>
+    <li><a href="2009-12.html">December 2009</a></li>
+    <li><a href="2009-11.html">November 2009</a></li>
+    <li><a href="2009-10.html">October 2009</a></li>
+    <li><a href="2009-09.html">September 2009</a></li>
+    <li><a href="2009-08.html">August 2009</a></li>
+    <li><a href="2009-07.html">July 2009</a></li>
+    <li><a href="2009-06.html">June 2009</a></li>
+</ul>
+</div><dl class="attributes">
+    <dt>Number of Commits:</dt>
+    <dd>17</dd>
+    <dt>Number of Active Developers:</dt>
+    <dd>2</dd>
+</dl>
+<dl class="commitlist">
+  <dt><a name="17"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2010-08-31 10:07</span>
+    <a class="permalink" title="Permalink to this commit" href="#17">#17</a>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">595</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Completely revised data structure for our simulator.
+    </p>
+    <p class="commitdetails"><strong>201</strong> lines of code changed in <span class="files">3 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/simulator/gui</strong>:
+        SimulationPanel.java&#160;<span class="change">(+78&#160;-55)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/math</strong>:
+        Distance.java&#160;<span class="change">(+27&#160;-8)</span>,
+        SBMLinterpreter.java&#160;<span class="change">(+96&#160;-39)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="16"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2010-08-30 11:05</span>
+    <a class="permalink" title="Permalink to this commit" href="#16">#16</a>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">594</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Adaptation due to new structure of the ODE solvers.
+    </p>
+    <p class="commitdetails"><strong>421</strong> lines of code changed in <span class="files">8 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/optimizer</strong>:
+        EstimationProblem.java&#160;<span class="change">(+15&#160;-53)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/simulator/gui</strong>:
+        SimulationPanel.java&#160;<span class="change">(+50&#160;-50)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/math</strong>:
+        Distance.java&#160;<span class="change">(+169&#160;-34)</span>,
+        NMetric.java&#160;<span class="change">(+39&#160;-34)</span>,
+        RSE.java&#160;<span class="change">(+31&#160;-38)</span>,
+        SBMLinterpreter.java&#160;<span class="change">(+99&#160;-76)</span>
+      </li>
+      <li>
+        <strong>test/org/sbml/squeezer/test/math</strong>:
+        SimulationTest.java&#160;<span class="change">(+7&#160;-6)</span>,
+        SimulationTestAutomatic.java&#160;<span class="change">(+11&#160;-7)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="15"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2010-08-25 09:51</span>
+    <a class="permalink" title="Permalink to this commit" href="#15">#15</a>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">593</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Adaptation due to changes in EvA2. The interpreter should be slightly faster now because it does not necessarily have to allocate a new result vector in each time step anymore.
+    </p>
+    <p class="commitdetails"><strong>147</strong> lines of code changed in <span class="files">4 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/math</strong>:
+        Distance.java&#160;<span class="change">(+11&#160;-5)</span>,
+        NMetric.java&#160;<span class="change">(+7&#160;-4)</span>,
+        RSE.java&#160;<span class="change">(+1&#160;-1)</span>,
+        SBMLinterpreter.java&#160;<span class="change">(+128&#160;-124)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="14"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2010-08-25 02:02</span>
+    <a class="permalink" title="Permalink to this commit" href="#14">#14</a>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">592</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+A first version for a problem class has been created to optimize the values of some model elements.
+    </p>
+    <p class="commitdetails"><strong>380</strong> lines of code changed in <span class="files">2 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/optimizer</strong>:
+        EstimationProblem.java&#160;<span class="new">(new&#160;369)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/math</strong>:
+        SBMLinterpreter.java&#160;<span class="change">(+11&#160;-9)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="13"></a>
+    <a href="user_Doerr.html" class="author">Doerr</a>
+    <span class="date">2010-08-24 05:33</span>
+    <a class="permalink" title="Permalink to this commit" href="#13">#13</a>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">591</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+fixed a bug in the processing of assignment variables
+    </p>
+    <p class="commitdetails"><strong>15</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/math</strong>:
+        SBMLinterpreter.java&#160;<span class="change">(+15&#160;-12)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="12"></a>
+    <a href="user_Doerr.html" class="author">Doerr</a>
+    <span class="date">2010-08-20 04:57</span>
+    <a class="permalink" title="Permalink to this commit" href="#12">#12</a>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">590</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+added the method processAssignmentVaribale to<br />
+determine how the quantity of a species during an event or assignment has to be interpreted
+    </p>
+    <p class="commitdetails"><strong>106</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/math</strong>:
+        SBMLinterpreter.java&#160;<span class="change">(+106&#160;-100)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="11"></a>
+    <a href="user_Doerr.html" class="author">Doerr</a>
+    <span class="date">2010-08-18 05:33</span>
+    <a class="permalink" title="Permalink to this commit" href="#11">#11</a>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">589</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Removed Value Objects.<br />
+Now the indices of the symbols are directly hashed over their id and a second HashMap was introduced to quickly get the index of a species' compartment
+    </p>
+    <p class="commitdetails"><strong>166</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/math</strong>:
+        SBMLinterpreter.java&#160;<span class="change">(+166&#160;-162)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="10"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2010-08-10 05:41</span>
+    <a class="permalink" title="Permalink to this commit" href="#10">#10</a>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">588</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Renamed the former internal Value class to Index and improved the overview generator for the SBML test suite: It now also highlights models without reactions.
+    </p>
+    <p class="commitdetails"><strong>45</strong> lines of code changed in <span class="files">2 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/math</strong>:
+        SBMLinterpreter.java&#160;<span class="change">(+41&#160;-35)</span>
+      </li>
+      <li>
+        <strong>test/org/sbml/squeezer/test</strong>:
+        TestCasesAnalyser.java&#160;<span class="change">(+4)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="9"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2010-08-10 02:04</span>
+    <a class="permalink" title="Permalink to this commit" href="#9">#9</a>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">587</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Restructured the packages to separate our simulation tool box from our traditional SBMLsqueezer.
+    </p>
+    <p class="commitdetails"><strong>3379</strong> lines of code changed in <span class="files">15 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/simulator/gui</strong>:
+        SettingsPanelSimulation.java&#160;<span class="new">(new&#160;794)</span>,
+        SettingsPanelStability.java&#160;<span class="new">(new&#160;281)</span>,
+        SimulationDialog.java&#160;<span class="new">(new&#160;122)</span>,
+        SimulationPanel.java&#160;<span class="new">(new&#160;2006)</span>,
+        StabilityDialog.java&#160;<span class="new">(new&#160;152)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/gui</strong>:
+        SBMLsqueezerUI.java&#160;<span class="change">(+2)</span>,
+        SettingsPanel.java&#160;<span class="change">(+1&#160;-1)</span>,
+        SettingsPanelAll.java&#160;<span class="change">(+2)</span>,
+        SettingsPanelSimulation.java&#160;<span class="del">(del)</span>,
+        SettingsPanelStability.java&#160;<span class="del">(del)</span>,
+        SimulationDialog.java&#160;<span class="del">(del)</span>,
+        SimulationPanel.java&#160;<span class="del">(del)</span>,
+        StabilityDialog.java&#160;<span class="del">(del)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/math</strong>:
+        AlgebraicRuleConverter.java&#160;<span class="change">(+18&#160;-15)</span>
+      </li>
+      <li>
+        <strong>test/org/sbml/squeezer/test/math</strong>:
+        SimulationModeTest.java&#160;<span class="change">(+1&#160;-1)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="8"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2010-08-09 09:19</span>
+    <a class="permalink" title="Permalink to this commit" href="#8">#8</a>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">586</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Added a class to check the content of all SBML test cases.
+    </p>
+    <p class="commitdetails"><strong>269</strong> lines of code changed in <span class="files">3 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/gui</strong>:
+        SimulationPanel.java&#160;<span class="change">(+4)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/io</strong>:
+        SBMLio.java&#160;<span class="change">(+4&#160;-3)</span>
+      </li>
+      <li>
+        <strong>test/org/sbml/squeezer/test</strong>:
+        TestCasesAnalyser.java&#160;<span class="new">(new&#160;261)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="7"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2010-08-09 04:06</span>
+    <a class="permalink" title="Permalink to this commit" href="#7">#7</a>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">585</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+removed doc
+    </p>
+    <p class="commitdetails"><strong>0</strong> lines of code changed in <span class="files">36 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>doc</strong>:
+        allclasses-frame.html&#160;<span class="del">(del)</span>,
+        allclasses-noframe.html&#160;<span class="del">(del)</span>,
+        constant-values.html&#160;<span class="del">(del)</span>,
+        deprecated-list.html&#160;<span class="del">(del)</span>,
+        help-doc.html&#160;<span class="del">(del)</span>,
+        index.html&#160;<span class="del">(del)</span>,
+        overview-frame.html&#160;<span class="del">(del)</span>,
+        overview-summary.html&#160;<span class="del">(del)</span>,
+        overview-tree.html&#160;<span class="del">(del)</span>,
+        package-list&#160;<span class="del">(del)</span>,
+        serialized-form.html&#160;<span class="del">(del)</span>,
+        stylesheet.css&#160;<span class="del">(del)</span>
+      </li>
+      <li>
+        <strong>doc/index-files</strong>:
+        index-1.html&#160;<span class="del">(del)</span>,
+        index-10.html&#160;<span class="del">(del)</span>,
+        index-11.html&#160;<span class="del">(del)</span>,
+        index-12.html&#160;<span class="del">(del)</span>,
+        index-13.html&#160;<span class="del">(del)</span>,
+        index-14.html&#160;<span class="del">(del)</span>,
+        index-15.html&#160;<span class="del">(del)</span>,
+        index-16.html&#160;<span class="del">(del)</span>,
+        index-17.html&#160;<span class="del">(del)</span>,
+        index-18.html&#160;<span class="del">(del)</span>,
+        index-19.html&#160;<span class="del">(del)</span>,
+        index-2.html&#160;<span class="del">(del)</span>,
+        index-20.html&#160;<span class="del">(del)</span>,
+        index-21.html&#160;<span class="del">(del)</span>,
+        index-22.html&#160;<span class="del">(del)</span>,
+        index-23.html&#160;<span class="del">(del)</span>,
+        index-3.html&#160;<span class="del">(del)</span>,
+        index-4.html&#160;<span class="del">(del)</span>,
+        index-5.html&#160;<span class="del">(del)</span>,
+        index-6.html&#160;<span class="del">(del)</span>,
+        index-7.html&#160;<span class="del">(del)</span>,
+        index-8.html&#160;<span class="del">(del)</span>,
+        index-9.html&#160;<span class="del">(del)</span>
+      </li>
+      <li>
+        <strong>doc/org</strong>:
+        sbmlsqueezer&#160;<span class="del">(del)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="6"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2010-08-09 02:42</span>
+    <a class="permalink" title="Permalink to this commit" href="#6">#6</a>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">584</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Moved Overdietermination exception into JSBML.
+    </p>
+    <p class="commitdetails"><strong>224</strong> lines of code changed in <span class="files">6 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer</strong>:
+        SBMLsqueezer.java&#160;<span class="change">(+2&#160;-2)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/math</strong>:
+        AlgebraicRuleConverter.java&#160;<span class="change">(+214&#160;-206)</span>,
+        ModelOverdeterminedException.java&#160;<span class="del">(del)</span>,
+        OverdeterminationValidator.java&#160;<span class="del">(del)</span>,
+        SBMLMatrixParser.java&#160;<span class="change">(+1)</span>,
+        SBMLinterpreter.java&#160;<span class="change">(+7&#160;-9)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="5"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2010-08-06 00:21</span>
+    <a class="permalink" title="Permalink to this commit" href="#5">#5</a>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">583</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Changes due to a revised data structure in JSBML.
+    </p>
+    <p class="commitdetails"><strong>2</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/math</strong>:
+        SBMLinterpreter.java&#160;<span class="change">(+2&#160;-2)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="4"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2010-08-05 01:52</span>
+    <a class="permalink" title="Permalink to this commit" href="#4">#4</a>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">582</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+
+    </p>
+    <p class="commitdetails"><strong>56246</strong> lines of code changed in <span class="files">73 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>dist</strong>:
+        SBMLsqueezer1.2.2.tar.gz&#160;<span class="new">(new&#160;2)</span>,
+        SBMLsqueezer1.2.3.jar&#160;<span class="new">(new&#160;2)</span>
+      </li>
+      <li>
+        <strong>files</strong>:
+        COPYING.html&#160;<span class="new">(new&#160;618)</span>,
+        COPYING.txt&#160;<span class="new">(new&#160;513)</span>,
+        Stability.png&#160;<span class="new">(new)</span>,
+        steuer_icon.png&#160;<span class="new">(new)</span>,
+        steuer_icon.svg&#160;<span class="new">(new&#160;235)</span>
+      </li>
+      <li>
+        <strong>files/SBMLsqueezerProbleme</strong>:
+        SMBL-pathway.doc&#160;<span class="new">(new&#160;22456)</span>,
+        ro-8220.xml&#160;<span class="new">(new&#160;2155)</span>,
+        sqr-8220-2.xml&#160;<span class="new">(new&#160;2503)</span>
+      </li>
+      <li>
+        <strong>files/images</strong>:
+        camera.svgz&#160;<span class="new">(new)</span>
+      </li>
+      <li>
+        <strong>files/tests</strong>:
+        BIOMD0000000075_test.xml&#160;<span class="new">(new&#160;1175)</span>,
+        BiBiReactionCellDesigner.xml&#160;<span class="new">(new&#160;389)</span>,
+        BiUniFeedback.xml&#160;<span class="new">(new&#160;276)</span>,
+        BiUniReaction.xml&#160;<span class="new">(new&#160;24)</span>,
+        BiUniReactionCellDesigner.xml&#160;<span class="new">(new&#160;221)</span>,
+        BiUniReactionCellDesignerSqueezed.xml&#160;<span class="new">(new&#160;282)</span>,
+        BiUniReactionSqueezed.xml&#160;<span class="new">(new&#160;107)</span>,
+        BiUniReactionSqueezedAPI.xml&#160;<span class="new">(new&#160;1537)</span>,
+        BiUniReaction_SBMLsqueezer.xml&#160;<span class="new">(new&#160;73)</span>,
+        COPYING.html&#160;<span class="new">(new&#160;618)</span>,
+        COPYING.txt&#160;<span class="new">(new&#160;513)</span>,
+        CellDesignerTest.xml&#160;<span class="new">(new&#160;474)</span>,
+        CellDesignerTestSqueezed.xml&#160;<span class="new">(new&#160;269)</span>,
+        CellDesignerTestSqueezedL2V4.xml&#160;<span class="new">(new&#160;128)</span>,
+        ConvenienceIndependentModel.xml&#160;<span class="new">(new&#160;65)</span>,
+        ConvenienceIndependentModel1.xml&#160;<span class="new">(new&#160;312)</span>,
+        Glycolysis_ICSB_Tutorial.xml&#160;<span class="new">(new&#160;1383)</span>,
+        LICENSE.txt&#160;<span class="new">(new&#160;27)</span>,
+        MODEL0406270966.xml&#160;<span class="new">(new&#160;2921)</span>,
+        NEWS.txt&#160;<span class="new">(new&#160;195)</span>,
+        SBML.xml&#160;<span class="new">(new&#160;482)</span>,
+        SBMLsqueezer_BiUniReaction_Convenience.xml&#160;<span class="new">(new&#160;942)</span>,
+        SBMLsqueezertest.txt&#160;<span class="new">(new&#160;45)</span>,
+        UniUniFeedback.xml&#160;<span class="new">(new&#160;234)</span>,
+        convenienceIndep.pdf&#160;<span class="new">(new)</span>,
+        convenienceIndep.tex&#160;<span class="new">(new&#160;445)</span>,
+        functionTest.xml&#160;<span class="new">(new&#160;83)</span>,
+        localParamTest.xml&#160;<span class="new">(new&#160;1364)</span>,
+        model.xml&#160;<span class="new">(new&#160;1233)</span>,
+        sbmlsqueezertest.aux&#160;<span class="new">(new&#160;6)</span>,
+        sbmlsqueezertest.pdf&#160;<span class="new">(new)</span>,
+        sbmlsqueezertest.tex&#160;<span class="new">(new&#160;20)</span>,
+        sbmlsqueezertest1.aux&#160;<span class="new">(new&#160;50)</span>,
+        sbmlsqueezertest1.pdf&#160;<span class="new">(new)</span>,
+        sbmlsqueezertest1.tex&#160;<span class="new">(new&#160;94)</span>,
+        speciesTypes.xml&#160;<span class="new">(new&#160;445)</span>,
+        tcellModel.xml&#160;<span class="new">(new&#160;3321)</span>,
+        tcellModelL2V4.xml&#160;<span class="new">(new&#160;1700)</span>,
+        tcellModelSqueezed.xml&#160;<span class="new">(new&#160;1795)</span>,
+        testXu2003.xml&#160;<span class="new">(new&#160;1041)</span>,
+        test_neu.xml&#160;<span class="new">(new&#160;341)</span>,
+        test_neu1.xml&#160;<span class="new">(new&#160;90)</span>,
+        test_neu1.xml.aux&#160;<span class="new">(new&#160;132)</span>,
+        test_neu1.xml.out&#160;<span class="new">(new&#160;37)</span>,
+        test_neu1.xml.pdf&#160;<span class="new">(new&#160;775)</span>,
+        test_neu1.xml.tex&#160;<span class="new">(new&#160;20)</span>,
+        testdatei.sbml&#160;<span class="new">(new&#160;53)</span>,
+        testdatei19092009.sbml&#160;<span class="new">(new&#160;60)</span>,
+        testsinnlos.xml&#160;<span class="new">(new&#160;1022)</span>,
+        transcription.xml&#160;<span class="new">(new&#160;213)</span>
+      </li>
+      <li>
+        <strong>lib</strong>:
+        jsbmlbridge.jar&#160;<span class="new">(new&#160;2)</span>
+      </li>
+      <li>
+        <strong>lib/atp</strong>:
+        EqScanner.java&#160;<span class="new">(new)</span>,
+        HotEqn.java&#160;<span class="new">(new)</span>,
+        LICENSE.txt&#160;<span class="new">(new&#160;554)</span>,
+        cHotEqn.java&#160;<span class="new">(new)</span>,
+        dHotEqn.java&#160;<span class="new">(new)</span>,
+        mHotEqn.java&#160;<span class="new">(new)</span>,
+        sHotEqn.java&#160;<span class="new">(new)</span>
+      </li>
+      <li>
+        <strong>resources/org/sbml/squeezer/resources/cfg</strong>:
+        Alias2SBO.cfg&#160;<span class="new">(new&#160;135)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/gui</strong>:
+        SettingsPanelSimulation.java&#160;<span class="change">(+2&#160;-1)</span>,
+        SimulationPanel.java&#160;<span class="change">(+4&#160;-4)</span>
+      </li>
+      <li>
+        <strong>test/org/sbml/squeezer/test/gui</strong>:
+        PlotTest.java&#160;<span class="new">(new&#160;33)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="3"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2010-08-05 01:27</span>
+    <a class="permalink" title="Permalink to this commit" href="#3">#3</a>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">581</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+
+    </p>
+    <p class="commitdetails"><strong>0</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        installLibSBML.sh&#160;<span class="del">(del)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="2"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2010-08-05 01:16</span>
+    <a class="permalink" title="Permalink to this commit" href="#2">#2</a>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">580</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+
+    </p>
+    <p class="commitdetails"><strong>0</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        installLibSBML.sh&#160;<span class="new">(new)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="1"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2010-08-03 08:24</span>
+    <a class="permalink" title="Permalink to this commit" href="#1">#1</a>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">579</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Some changes because a new integration method was implemented (Euler).
+    </p>
+    <p class="commitdetails"><strong>31</strong> lines of code changed in <span class="files">3 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/gui</strong>:
+        SimulationPanel.java&#160;<span class="change">(+27&#160;-7)</span>
+      </li>
+      <li>
+        <strong>test/org/sbml/squeezer/test/math</strong>:
+        SimulationTest.java&#160;<span class="change">(+2&#160;-1)</span>,
+        SimulationTestAutomatic.java&#160;<span class="change">(+2&#160;-1)</span>
+      </li>
+    </ul>
+  </dd>
+
+</dl>
+
+<p class="previous"><a href="2010-07.html">July 2010</a> &#187; </p>
+<div id="generatedby">Generated by <a href="http://www.statsvn.org">StatSVN</a> 0.7.0</div>
+</body>
+</html>
