@@ -1,0 +1,485 @@
+<?xml version="1.0"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>StatSVN - Directory modules/celldesigner/src/org/sbml/squeezer/celldesigner/</title>
+ <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"/>
+    <meta name="Generator" content="StatSVN 0.7.0"/>
+<link rel="stylesheet" href="objectlab-statcvs.css" type="text/css"/>
+<script type="text/javascript" charset="utf-8" src="http://bit.ly/javascript-api.js?version=latest&#38;login=statsvn&#38;apiKey=R_2c362b417d0517c27876cbaca1bb68cc"></script>
+<script type="text/javascript" charset="utf-8">
+   // wait until page is loaded to call API
+   var redir_url;
+   var short_url;
+   BitlyCB.myShortenCallback = function(data) {
+      // this is how to get a result of shortening a single url
+      var result;
+      short_url=null;
+      for (var r in data.results) {
+         result = data.results[r];
+         result['longUrl'] = r;
+         short_url = result['shortUrl'];
+         break;
+      }
+      if (short_url==null) // bit.ly failed
+      document.location=redir_url;
+      else
+      redirToTwitter();
+   };
+   function shortenTweet(url) {
+      if (short_url == null || redir_url!=url) {
+      redir_url = url;
+      BitlyClient.shorten(document.location, 'BitlyCB.myShortenCallback');
+      }
+      else
+      redirToTwitter();
+      return false;
+   }
+   function redirToTwitter() { 
+      // replace {0} which is visible as %7B0} in the link
+      document.location = redir_url.replace('%7B0}', short_url);
+   }
+</script>
+  </head>
+
+<body>
+
+<h1>Directory modules/celldesigner/src/org/sbml/squeezer/celldesigner/</h1>
+<div id="parentlink">&#171; <a href="index.html">Development Statistics for /trunk</a></div>
+<dl class="attributes">
+    <dt>Directory Created:</dt>
+    <dd><span class="date">2012-03-22 03:40</span></dd>
+    <dt>Total Files:</dt>
+    <dd>5</dd>
+    <dt>Deleted Files:</dt>
+    <dd>2</dd>
+    <dt>Lines of Code:</dt>
+    <dd>638</dd>
+</dl>
+<p class="dirtree">
+<a href="dir.html">[root]</a>/<a href="dir_modules.html">modules</a>/<a href="dir_modules_celldesigner.html">celldesigner</a>/<a href="dir_modules_celldesigner_src.html">src</a>/<a href="dir_modules_celldesigner_src_org.html">org</a>/<a href="dir_modules_celldesigner_src_org_sbml.html">sbml</a>/<a href="dir_modules_celldesigner_src_org_sbml_squeezer.html">squeezer</a>/<strong>celldesigner</strong><br/>
+</p>
+
+<div class="section">
+<h2>Lines of Code</h2>
+<p class="chart"><img src="loc_module_modules_celldesigner_src_org_sbml_squeezer_celldesigner.png" alt="modules/celldesigner/src/org/sbml/squeezer/celldesigner/ Lines of Code" width="800" height="500" /></p></div>
+<div class="section">
+<h2>Developers</h2>
+  <table  rules="groups" summary="All authors and the number of their changes and lines of code in this directory">
+    <colgroup align="left"/>
+    <colgroup align="right"/>
+    <colgroup align="right"/>
+    <colgroup align="right"/>
+    <thead>
+      <tr>
+        <th>Author</th>
+        <th>Changes</th>
+        <th>Lines of Code</th>
+        <th>Lines per Change</th>
+      </tr>
+    </thead>
+    <tfoot>
+      <tr>
+        <th>Totals</th>
+        <td>33 (100.0%)</td>
+        <td>1194 (100.0%)</td>
+        <td>36.1</td>
+      </tr>
+    </tfoot>
+    <tbody>
+      <tr  class="odd">
+        <th><a href="user_draeger.html" class="author">draeger</a></th>
+        <td>29 (87.9%)</td>
+        <td>1166 (97.7%)</td>
+        <td>40.2</td>
+      </tr>
+      <tr  class="even">
+        <th><a href="user_snagel.html" class="author">snagel</a></th>
+        <td>4 (12.1%)</td>
+        <td>28 (2.3%)</td>
+        <td>7.0</td>
+      </tr>
+    </tbody>
+  </table>
+
+</div>
+<div class="section">
+<h2>Most Recent Commits</h2>
+<dl class="commitlist">
+  <dt><a name="19"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2014-03-12 14:08</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">1088</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Solved error in CellDesigner.
+    </p>
+    <p class="commitdetails"><strong>2</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>modules/celldesigner/src/org/sbml/squeezer/celldesigner</strong>:
+        PluginWorker.java&#160;<span class="change">(+2&#160;-1)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="18"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2014-03-03 15:57</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">1085</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Many changes because of the new GARUDA version.<br />
+<br />
+The CellDesigner plugin version does no longer offer settings for SABIO-RK.
+    </p>
+    <p class="commitdetails"><strong>5</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>modules/celldesigner/src/org/sbml/squeezer/celldesigner</strong>:
+        Plugin.java&#160;<span class="change">(+5&#160;-3)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="17"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2014-02-22 16:54</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">1082</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Updated Java-Doc and code style and added missing override tags.
+    </p>
+    <p class="commitdetails"><strong>2</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>modules/celldesigner/src/org/sbml/squeezer/celldesigner</strong>:
+        package-info.java&#160;<span class="change">(+2&#160;-1)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="16"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2014-02-17 22:53</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">1079</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Updated JSBML and SysBio and changed classes because now the ProgressListener also can send messages along with the current progress state.
+    </p>
+    <p class="commitdetails"><strong>5</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>modules/celldesigner/src/org/sbml/squeezer/celldesigner</strong>:
+        PluginWorker.java&#160;<span class="change">(+5&#160;-2)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="15"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2014-02-16 22:21</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">1078</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+SBMLsqueezer runs now again as plugin for CellDesigner and also based on libSBML and JSBML. Many improvements have been made:<br />
+<br />
+* The build script has been revised to compile the modules of JSBML for CellDesigner and libSBML separately.<br />
+* The SysBio library has been updated and also a new version of JSBML has been incorporated.<br />
+* Several bugs have been fixed.
+    </p>
+    <p class="commitdetails"><strong>510</strong> lines of code changed in <span class="files">5 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>modules/celldesigner/src/org/sbml/squeezer/celldesigner</strong>:
+        ConsoleHandler.java&#160;<span class="del">(del)</span>,
+        Mode.java&#160;<span class="new">(new&#160;116)</span>,
+        Plugin.java&#160;<span class="change">(+107&#160;-323)</span>,
+        PluginAction.java&#160;<span class="change">(+67&#160;-60)</span>,
+        PluginWorker.java&#160;<span class="new">(new&#160;220)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="14"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2014-01-09 15:30</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">1077</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Updated license headers to 2014.
+    </p>
+    <p class="commitdetails"><strong>3</strong> lines of code changed in <span class="files">3 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>modules/celldesigner/src/org/sbml/squeezer/celldesigner</strong>:
+        Plugin.java&#160;<span class="change">(+1&#160;-1)</span>,
+        PluginAction.java&#160;<span class="change">(+1&#160;-1)</span>,
+        package-info.java&#160;<span class="change">(+1&#160;-1)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="13"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2013-08-02 16:32</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">1068</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Fixed a bug in the Wizard that actually option changes could not be considered when going back and changing something. It just didn't apply the user's new choice. Now it does.
+    </p>
+    <p class="commitdetails"><strong>0</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>modules/celldesigner/src/org/sbml/squeezer/celldesigner</strong>:
+        Plugin.java&#160;<span class="change">(-1)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="12"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2013-04-05 07:09</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">1064</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+* Solved a bug that caused a NullPointerException when not using SABIO-RK before creating rate laws ab initio.<br />
+* Removed JUnit library because this is not needed (provided by the OS).<br />
+* Updated JSBML, SysBio, and SBML2LaTeX packages<br />
+* Improved CellDesigner interface<br />
+* Many adaptations because of the new SBML2LaTeX and the attempt to provide CellDesigner plug-in functions<br />
+* Improved ant build script.<br />
+* Smaller code improvements.
+    </p>
+    <p class="commitdetails"><strong>41</strong> lines of code changed in <span class="files">2 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>modules/celldesigner/src/org/sbml/squeezer/celldesigner</strong>:
+        ConsoleHandler.java&#160;<span class="new">(new&#160;41)</span>,
+        Plugin.java&#160;<span class="change">(changed)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="11"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2013-03-21 09:20</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">1061</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Improved the build script and the CellDesigner plugin function.
+    </p>
+    <p class="commitdetails"><strong>118</strong> lines of code changed in <span class="files">3 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>modules/celldesigner/src/org/sbml/squeezer/celldesigner</strong>:
+        Plugin.java&#160;<span class="change">(+99&#160;-77)</span>,
+        PluginAction.java&#160;<span class="change">(+18&#160;-2)</span>,
+        package-info.java&#160;<span class="change">(+1&#160;-2)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="10"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2013-02-06 09:47</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">1031</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+* Updated the license headers in all files to 2013.<br />
+* Fixed several bugs in SubmodelController, KinteticLawGenerator, and ParameterFactory.<br />
+* Improved the adaptation of the main GUI to Mac OS X.<br />
+* Corrected typos in natural text files (XML).
+    </p>
+    <p class="commitdetails"><strong>8</strong> lines of code changed in <span class="files">3 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>modules/celldesigner/src/org/sbml/squeezer/celldesigner</strong>:
+        Plugin.java&#160;<span class="change">(+6&#160;-2)</span>,
+        PluginAction.java&#160;<span class="change">(+1&#160;-1)</span>,
+        package-info.java&#160;<span class="change">(+1&#160;-1)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="9"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2012-09-27 06:26</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">1022</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Shifted Garuda-support so SysBio.
+    </p>
+    <p class="commitdetails"><strong>9</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>modules/celldesigner/src/org/sbml/squeezer/celldesigner</strong>:
+        Plugin.java&#160;<span class="change">(+9&#160;-14)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="8"></a>
+    <a href="user_snagel.html" class="author">snagel</a>
+    <span class="date">2012-09-08 05:40</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">997</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+updated squeezer jar and fixed celldesigner plugin bug
+    </p>
+    <p class="commitdetails"><strong>6</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>modules/celldesigner/src/org/sbml/squeezer/celldesigner</strong>:
+        Plugin.java&#160;<span class="change">(+6&#160;-5)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="7"></a>
+    <a href="user_snagel.html" class="author">snagel</a>
+    <span class="date">2012-09-05 03:34</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">995</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+added comments
+    </p>
+    <p class="commitdetails"><strong>4</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>modules/celldesigner/src/org/sbml/squeezer/celldesigner</strong>:
+        Plugin.java&#160;<span class="change">(+4)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="6"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2012-09-04 04:55</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">992</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Corrected problems of the parallel workflow.
+    </p>
+    <p class="commitdetails"><strong>5</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>modules/celldesigner/src/org/sbml/squeezer/celldesigner</strong>:
+        Plugin.java&#160;<span class="change">(+5&#160;-4)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="5"></a>
+    <a href="user_snagel.html" class="author">snagel</a>
+    <span class="date">2012-08-28 11:25</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">984</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+fixed some celldesigner bugs
+    </p>
+    <p class="commitdetails"><strong>12</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>modules/celldesigner/src/org/sbml/squeezer/celldesigner</strong>:
+        Plugin.java&#160;<span class="change">(+12&#160;-1)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="4"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2012-08-24 07:57</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">981</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Removed unnecessary double dollar symbols, restructured SABIO-RK part of the project and added missing package-info.java files.
+    </p>
+    <p class="commitdetails"><strong>0</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>modules/celldesigner/src/org/sbml/squeezer/celldesigner</strong>:
+        Plugin.java&#160;<span class="change">(-2)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="3"></a>
+    <a href="user_snagel.html" class="author">snagel</a>
+    <span class="date">2012-08-19 09:06</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">977</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+fixed bugs, updated build.xml and squeezer.jar
+    </p>
+    <p class="commitdetails"><strong>6</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>modules/celldesigner/src/org/sbml/squeezer/celldesigner</strong>:
+        Plugin.java&#160;<span class="change">(+6&#160;-5)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="2"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2012-08-13 01:40</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">969</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+* Updated parameter factory: Improved equilibrium constant<br />
+* Changed all package.html files to package-info.java
+    </p>
+    <p class="commitdetails"><strong>32</strong> lines of code changed in <span class="files">2 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>modules/celldesigner/src/org/sbml/squeezer/celldesigner</strong>:
+        package-info.java&#160;<span class="new">(new&#160;32)</span>,
+        package.html&#160;<span class="del">(del)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="1"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2012-03-22 03:40</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">878</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Added the CellDesigner module.
+    </p>
+    <p class="commitdetails"><strong>426</strong> lines of code changed in <span class="files">3 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>modules/celldesigner/src/org/sbml/squeezer/celldesigner</strong>:
+        Plugin.java&#160;<span class="new">(new&#160;333)</span>,
+        PluginAction.java&#160;<span class="new">(new&#160;88)</span>,
+        package.html&#160;<span class="new">(new&#160;5)</span>
+      </li>
+    </ul>
+  </dd>
+
+</dl>
+
+</div><div id="generatedby">Generated by <a href="http://www.statsvn.org">StatSVN</a> 0.7.0</div>
+</body>
+</html>

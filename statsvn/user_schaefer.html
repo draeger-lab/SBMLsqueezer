@@ -1,0 +1,702 @@
+<?xml version="1.0"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>StatSVN - /trunk Developers: schaefer</title>
+ <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"/>
+    <meta name="Generator" content="StatSVN 0.7.0"/>
+<link rel="stylesheet" href="objectlab-statcvs.css" type="text/css"/>
+<script type="text/javascript" charset="utf-8" src="http://bit.ly/javascript-api.js?version=latest&#38;login=statsvn&#38;apiKey=R_2c362b417d0517c27876cbaca1bb68cc"></script>
+<script type="text/javascript" charset="utf-8">
+   // wait until page is loaded to call API
+   var redir_url;
+   var short_url;
+   BitlyCB.myShortenCallback = function(data) {
+      // this is how to get a result of shortening a single url
+      var result;
+      short_url=null;
+      for (var r in data.results) {
+         result = data.results[r];
+         result['longUrl'] = r;
+         short_url = result['shortUrl'];
+         break;
+      }
+      if (short_url==null) // bit.ly failed
+      document.location=redir_url;
+      else
+      redirToTwitter();
+   };
+   function shortenTweet(url) {
+      if (short_url == null || redir_url!=url) {
+      redir_url = url;
+      BitlyClient.shorten(document.location, 'BitlyCB.myShortenCallback');
+      }
+      else
+      redirToTwitter();
+      return false;
+   }
+   function redirToTwitter() { 
+      // replace {0} which is visible as %7B0} in the link
+      document.location = redir_url.replace('%7B0}', short_url);
+   }
+</script>
+  </head>
+
+<body>
+
+<h1>/trunk Developers: schaefer</h1>
+<div id="parentlink">&#171; <a href="index.html">Development Statistics for /trunk</a> &#171; <a href="developers.html">Developers</a></div>
+<dl class="attributes">
+    <dt>Login name:</dt>
+    <dd>schaefer</dd>
+    <dt>Total Commits:</dt>
+    <dd>154 (1,8%)</dd>
+    <dt>Lines of Code:</dt>
+    <dd>5.926 (0,8%)</dd>
+    <dt>Most Recent Commit:</dt>
+    <dd><span class="date">2009-09-24 08:44</span></dd>
+    <dt>Tweet this:</dt>
+    <dd><a onclick="return shortenTweet(this.href);" href="http://twitter.com/home?status=schaefer%20contributed%205.926%20(0%2C8%25)%20lines%20to%20%2Ftrunk%20%7B0}%20most%20recent%20commit%202009-09-24%20stats%20by%20StatSVN%20http%3A%2F%2Fstatsvn.org"><img style="border:0px" alt="Tweet this" src="tweet-this.png"/></a></dd>
+</dl>
+
+<div class="section">
+<h2>Activity by Clock Time</h2>
+<p class="chart"><img src="activity_time_schaefer.png" alt="Activity by Hour of Day for schaefer" width="800" height="500" /></p><p class="chart"><img src="activity_day_schaefer.png" alt="Activity by Day of Week for schaefer" width="800" height="500" /></p></div>
+<div class="section">
+<h2>Activity in Directories</h2>
+  <table  rules="groups" summary="Overview of this author's activities in different directories">
+    <colgroup align="left"/>
+    <colgroup align="right"/>
+    <colgroup align="right"/>
+    <colgroup align="right"/>
+    <thead>
+      <tr>
+        <th>Directory</th>
+        <th>Changes</th>
+        <th>Lines of Code</th>
+        <th>Lines per Change</th>
+      </tr>
+    </thead>
+    <tfoot>
+      <tr>
+        <th>Totals</th>
+        <td>154 (100.0%)</td>
+        <td>5926 (100.0%)</td>
+        <td>38.4</td>
+      </tr>
+    </tfoot>
+    <tbody>
+      <tr  class="odd">
+        <th><a href="dir_src_org_sbml_squeezer_plugin.html" class="directory">src/org/sbml/squeezer/plugin/</a></th>
+        <td>9 (5.8%)</td>
+        <td>1934 (32.6%)</td>
+        <td>214.8</td>
+      </tr>
+      <tr  class="even">
+        <th><a href="dir_src_org_sbml_squeezer_kinetics.html" class="directory">src/org/sbml/squeezer/kinetics/</a></th>
+        <td>51 (33.1%)</td>
+        <td>1181 (19.9%)</td>
+        <td>23.1</td>
+      </tr>
+      <tr  class="odd">
+        <th><a href="dir_src_org_sbmlsqueezer_kinetics.html" class="directory">src/org/sbmlsqueezer/kinetics/</a></th>
+        <td>25 (16.2%)</td>
+        <td>937 (15.8%)</td>
+        <td>37.4</td>
+      </tr>
+      <tr  class="even">
+        <th><a href="dir_src_org_sbml.html" class="directory">src/org/sbml/</a></th>
+        <td>16 (10.4%)</td>
+        <td>354 (6.0%)</td>
+        <td>22.1</td>
+      </tr>
+      <tr  class="odd">
+        <th><a href="dir_src_org_sbmlsqueezer_sbml.html" class="directory">src/org/sbmlsqueezer/sbml/</a></th>
+        <td>15 (9.7%)</td>
+        <td>296 (5.0%)</td>
+        <td>19.7</td>
+      </tr>
+      <tr  class="even">
+        <th><a href="dir_src_org_sbml_squeezer_standalone.html" class="directory">src/org/sbml/squeezer/standalone/</a></th>
+        <td>5 (3.2%)</td>
+        <td>275 (4.6%)</td>
+        <td>55.0</td>
+      </tr>
+      <tr  class="odd">
+        <th><a href="dir_src_org_sbml_squeezer_resources_txt.html" class="directory">src/org/sbml/squeezer/resources/txt/</a></th>
+        <td>2 (1.3%)</td>
+        <td>199 (3.4%)</td>
+        <td>99.5</td>
+      </tr>
+      <tr  class="even">
+        <th><a href="dir_src_org_sbml_squeezer_resources.html" class="directory">src/org/sbml/squeezer/resources/</a></th>
+        <td>1 (0.6%)</td>
+        <td>179 (3.0%)</td>
+        <td>179.0</td>
+      </tr>
+      <tr  class="odd">
+        <th><a href="dir_src_org_sbml_jsbml.html" class="directory">src/org/sbml/jsbml/</a></th>
+        <td>3 (1.9%)</td>
+        <td>178 (3.0%)</td>
+        <td>59.3</td>
+      </tr>
+      <tr  class="even">
+        <th><a href="dir_src_org_sbml_io.html" class="directory">src/org/sbml/io/</a></th>
+        <td>2 (1.3%)</td>
+        <td>159 (2.7%)</td>
+        <td>79.5</td>
+      </tr>
+      <tr  class="odd">
+        <th><a href="dir.html" class="directory">/</a></th>
+        <td>19 (12.3%)</td>
+        <td>150 (2.5%)</td>
+        <td>7.8</td>
+      </tr>
+      <tr  class="even">
+        <th><a href="dir_src_org_sbml_squeezer_resources_cfg.html" class="directory">src/org/sbml/squeezer/resources/cfg/</a></th>
+        <td>4 (2.6%)</td>
+        <td>67 (1.1%)</td>
+        <td>16.7</td>
+      </tr>
+      <tr  class="odd">
+        <th><a href="dir_src_org_sbml_squeezer_io.html" class="directory">src/org/sbml/squeezer/io/</a></th>
+        <td>1 (0.6%)</td>
+        <td>12 (0.2%)</td>
+        <td>12.0</td>
+      </tr>
+      <tr  class="even">
+        <th><a href="dir_src_org_smblsqueezer_converter.html" class="directory">src/org/smblsqueezer/converter/</a></th>
+        <td>1 (0.6%)</td>
+        <td>5 (0.1%)</td>
+        <td>5.0</td>
+      </tr>
+    </tbody>
+  </table>
+
+<p class="chart"><img src="directory_sizes_schaefer.png" alt="Activity of schaefer" width="800" height="500" /></p></div>
+<div class="section">
+<h2>Most Recent Commits</h2>
+<dl class="commitlist">
+  <dt><a name="20"></a>
+    <a href="user_schaefer.html" class="author">schaefer</a>
+    <span class="date">2009-09-24 08:44</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">232</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+
+    </p>
+    <p class="commitdetails"><strong>283</strong> lines of code changed in <span class="files">3 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/jsbml</strong>:
+        SBO.java&#160;<span class="change">(+44&#160;-25)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/plugin</strong>:
+        PluginSBMLWriter.java&#160;<span class="change">(+202&#160;-171)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/resources/cfg</strong>:
+        SBO2Alias.cfg&#160;<span class="new">(new&#160;37)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="19"></a>
+    <a href="user_schaefer.html" class="author">schaefer</a>
+    <span class="date">2009-09-23 07:39</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">229</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+
+    </p>
+    <p class="commitdetails"><strong>17</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/plugin</strong>:
+        PluginSBMLWriter.java&#160;<span class="change">(+17&#160;-26)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="18"></a>
+    <a href="user_schaefer.html" class="author">schaefer</a>
+    <span class="date">2009-09-23 07:24</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">228</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+fixed parent problem with pluginwriter
+    </p>
+    <p class="commitdetails"><strong>405</strong> lines of code changed in <span class="files">6 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/jsbml</strong>:
+        SBMLWriter.java&#160;<span class="change">(+6&#160;-6)</span>,
+        SBO.java&#160;<span class="change">(+128&#160;-81)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/io</strong>:
+        SBMLio.java&#160;<span class="change">(+12&#160;-12)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/plugin</strong>:
+        PluginSBMLWriter.java&#160;<span class="change">(+252&#160;-29)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/resources/cfg</strong>:
+        Alias2SBO.cfg&#160;<span class="change">(+1)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/standalone</strong>:
+        LibSBMLWriter.java&#160;<span class="change">(+6&#160;-6)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="17"></a>
+    <a href="user_schaefer.html" class="author">schaefer</a>
+    <span class="date">2009-09-18 09:05</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">207</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+
+    </p>
+    <p class="commitdetails"><strong>219</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/plugin</strong>:
+        PluginSBMLWriter.java&#160;<span class="change">(+219&#160;-111)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="16"></a>
+    <a href="user_schaefer.html" class="author">schaefer</a>
+    <span class="date">2009-09-17 07:06</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">205</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+
+    </p>
+    <p class="commitdetails"><strong>824</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/plugin</strong>:
+        PluginSBMLWriter.java&#160;<span class="change">(+824&#160;-151)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="15"></a>
+    <a href="user_schaefer.html" class="author">schaefer</a>
+    <span class="date">2009-09-15 07:45</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">203</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+
+    </p>
+    <p class="commitdetails"><strong>35</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/plugin</strong>:
+        PluginSBMLWriter.java&#160;<span class="change">(+35&#160;-2)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="14"></a>
+    <a href="user_schaefer.html" class="author">schaefer</a>
+    <span class="date">2009-09-15 07:31</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">202</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+
+    </p>
+    <p class="commitdetails"><strong>371</strong> lines of code changed in <span class="files">2 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        design_limitations_for_celldesigner_plug-in.txt&#160;<span class="new">(new&#160;4)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/plugin</strong>:
+        PluginSBMLReader.java&#160;<span class="change">(+367&#160;-31)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="13"></a>
+    <a href="user_schaefer.html" class="author">schaefer</a>
+    <span class="date">2009-09-01 06:59</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">165</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+
+    </p>
+    <p class="commitdetails"><strong>159</strong> lines of code changed in <span class="files">2 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml</strong>:
+        Event.java&#160;<span class="change">(+8)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/standalone</strong>:
+        LibSBMLReader.java&#160;<span class="change">(+151&#160;-68)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="12"></a>
+    <a href="user_schaefer.html" class="author">schaefer</a>
+    <span class="date">2009-08-28 05:43</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">155</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+
+    </p>
+    <p class="commitdetails"><strong>116</strong> lines of code changed in <span class="files">12 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml</strong>:
+        Parameter.java&#160;<span class="change">(+1&#160;-5)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/kinetics</strong>:
+        Convenience.java&#160;<span class="change">(+4&#160;-4)</span>,
+        ConvenienceIndependent.java&#160;<span class="change">(+26&#160;-22)</span>,
+        GeneralizedMassAction.java&#160;<span class="change">(+4&#160;-4)</span>,
+        IrrevCompetNonCooperativeEnzymes.java&#160;<span class="change">(+17&#160;-16)</span>,
+        IrrevNonModulatedNonInteractingEnzymes.java&#160;<span class="change">(+8&#160;-7)</span>,
+        MichaelisMenten.java&#160;<span class="change">(+8&#160;-8)</span>,
+        OrderedMechanism.java&#160;<span class="change">(+19&#160;-19)</span>,
+        PingPongMechanism.java&#160;<span class="change">(+9&#160;-9)</span>,
+        RandomOrderMechanism.java&#160;<span class="change">(+18&#160;-18)</span>,
+        ZerothOrderForwardGMAK.java&#160;<span class="change">(+1&#160;-1)</span>,
+        ZerothOrderReverseGMAK.java&#160;<span class="change">(+1&#160;-1)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="11"></a>
+    <a href="user_schaefer.html" class="author">schaefer</a>
+    <span class="date">2009-08-28 03:35</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">152</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+
+    </p>
+    <p class="commitdetails"><strong>183</strong> lines of code changed in <span class="files">13 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml</strong>:
+        Parameter.java&#160;<span class="change">(+5)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/kinetics</strong>:
+        Convenience.java&#160;<span class="change">(+5&#160;-5)</span>,
+        ConvenienceIndependent.java&#160;<span class="change">(+6&#160;-6)</span>,
+        GeneralizedMassAction.java&#160;<span class="change">(+7&#160;-5)</span>,
+        HillEquation.java&#160;<span class="change">(+8&#160;-7)</span>,
+        IrrevCompetNonCooperativeEnzymes.java&#160;<span class="change">(+6&#160;-5)</span>,
+        IrrevNonModulatedNonInteractingEnzymes.java&#160;<span class="change">(+3&#160;-2)</span>,
+        MichaelisMenten.java&#160;<span class="change">(+9&#160;-8)</span>,
+        OrderedMechanism.java&#160;<span class="change">(+20&#160;-19)</span>,
+        PingPongMechanism.java&#160;<span class="change">(+10&#160;-9)</span>,
+        RandomOrderMechanism.java&#160;<span class="change">(+94&#160;-64)</span>,
+        ZerothOrderForwardGMAK.java&#160;<span class="change">(+5&#160;-3)</span>,
+        ZerothOrderReverseGMAK.java&#160;<span class="change">(+5&#160;-3)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="10"></a>
+    <a href="user_schaefer.html" class="author">schaefer</a>
+    <span class="date">2009-08-26 07:10</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">146</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+
+    </p>
+    <p class="commitdetails"><strong>427</strong> lines of code changed in <span class="files">8 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml</strong>:
+        Parameter.java&#160;<span class="change">(+5)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/kinetics</strong>:
+        BasicKineticLaw.java&#160;<span class="change">(+23&#160;-6)</span>,
+        IrrevCompetNonCooperativeEnzymes.java&#160;<span class="change">(+29&#160;-26)</span>,
+        IrrevNonModulatedNonInteractingEnzymes.java&#160;<span class="change">(+22&#160;-19)</span>,
+        MichaelisMenten.java&#160;<span class="change">(+58&#160;-47)</span>,
+        OrderedMechanism.java&#160;<span class="change">(+175&#160;-100)</span>,
+        PingPongMechanism.java&#160;<span class="change">(+93&#160;-58)</span>,
+        RandomOrderMechanism.java&#160;<span class="change">(+22&#160;-21)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="9"></a>
+    <a href="user_schaefer.html" class="author">schaefer</a>
+    <span class="date">2009-08-24 06:04</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">143</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+
+    </p>
+    <p class="commitdetails"><strong>117</strong> lines of code changed in <span class="files">3 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml</strong>:
+        ASTNode.java&#160;<span class="change">(+23&#160;-8)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/kinetics</strong>:
+        Convenience.java&#160;<span class="change">(+29&#160;-25)</span>,
+        ConvenienceIndependent.java&#160;<span class="change">(+65&#160;-52)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="8"></a>
+    <a href="user_schaefer.html" class="author">schaefer</a>
+    <span class="date">2009-08-21 06:59</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">141</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+
+    </p>
+    <p class="commitdetails"><strong>116</strong> lines of code changed in <span class="files">4 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml</strong>:
+        ASTNode.java&#160;<span class="change">(+30)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/kinetics</strong>:
+        BasicKineticLaw.java&#160;<span class="change">(+3&#160;-7)</span>,
+        Convenience.java&#160;<span class="change">(+25&#160;-20)</span>,
+        GeneralizedMassAction.java&#160;<span class="change">(+58&#160;-45)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="7"></a>
+    <a href="user_schaefer.html" class="author">schaefer</a>
+    <span class="date">2009-08-20 08:01</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">139</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+
+    </p>
+    <p class="commitdetails"><strong>144</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml</strong>:
+        ASTNode.java&#160;<span class="change">(+144&#160;-7)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="6"></a>
+    <a href="user_schaefer.html" class="author">schaefer</a>
+    <span class="date">2009-08-18 06:44</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">131</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+
+    </p>
+    <p class="commitdetails"><strong>246</strong> lines of code changed in <span class="files">4 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/kinetics</strong>:
+        BasicKineticLaw.java&#160;<span class="change">(+5)</span>,
+        KineticLawGenerator.java&#160;<span class="change">(+42&#160;-42)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/resources/txt</strong>:
+        SBO_OBO.obo&#160;<span class="new">(new)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="5"></a>
+    <a href="user_schaefer.html" class="author">schaefer</a>
+    <span class="date">2009-08-17 07:28</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">127</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+
+    </p>
+    <p class="commitdetails"><strong>331</strong> lines of code changed in <span class="files">20 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml</strong>:
+        KineticLaw.java&#160;<span class="change">(+11)</span>,
+        Model.java&#160;<span class="change">(+12)</span>,
+        ModifierSpeciesReference.java&#160;<span class="change">(+11)</span>,
+        Reaction.java&#160;<span class="change">(+35)</span>,
+        Species.java&#160;<span class="change">(+11)</span>,
+        SpeciesReference.java&#160;<span class="change">(+12)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/kinetics</strong>:
+        BasicKineticLaw.java&#160;<span class="change">(+18&#160;-19)</span>,
+        Convenience.java&#160;<span class="change">(+18&#160;-17)</span>,
+        ConvenienceIndependent.java&#160;<span class="change">(+18&#160;-17)</span>,
+        GeneralizedMassAction.java&#160;<span class="change">(+72&#160;-70)</span>,
+        HillEquation.java&#160;<span class="change">(+11&#160;-11)</span>,
+        IrrevCompetNonCooperativeEnzymes.java&#160;<span class="change">(+8&#160;-8)</span>,
+        IrrevNonModulatedNonInteractingEnzymes.java&#160;<span class="change">(+12&#160;-12)</span>,
+        KineticLawGenerator.java&#160;<span class="change">(+9&#160;-8)</span>,
+        MichaelisMenten.java&#160;<span class="change">(+12&#160;-12)</span>,
+        OrderedMechanism.java&#160;<span class="change">(+16&#160;-15)</span>,
+        PingPongMechanism.java&#160;<span class="change">(+12&#160;-12)</span>,
+        RandomOrderMechanism.java&#160;<span class="change">(+19&#160;-21)</span>,
+        ZerothOrderForwardGMAK.java&#160;<span class="change">(+7&#160;-7)</span>,
+        ZerothOrderReverseGMAK.java&#160;<span class="change">(+7&#160;-7)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="4"></a>
+    <a href="user_schaefer.html" class="author">schaefer</a>
+    <span class="date">2009-08-17 04:24</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">126</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+
+    </p>
+    <p class="commitdetails"><strong>5</strong> lines of code changed in <span class="files">3 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/plugin</strong>:
+        PluginSBMLReader.java&#160;<span class="change">(+2)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/resources/cfg</strong>:
+        Alias2SBO.cfg&#160;<span class="change">(+1&#160;-1)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/standalone</strong>:
+        LibSBMLReader.java&#160;<span class="change">(+2)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="3"></a>
+    <a href="user_schaefer.html" class="author">schaefer</a>
+    <span class="date">2009-08-14 07:02</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">123</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+sboterms in cfg file<br />
+
+    </p>
+    <p class="commitdetails"><strong>339</strong> lines of code changed in <span class="files">5 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/plugin</strong>:
+        PluginSBMLReader.java&#160;<span class="change">(+16&#160;-1)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/resources</strong>:
+        Resource.java&#160;<span class="change">(+179&#160;-3)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/resources/cfg</strong>:
+        Alias2SBO.cfg&#160;<span class="new">(new&#160;28)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/standalone</strong>:
+        SBMLTree.java&#160;<span class="new">(new&#160;64)</span>,
+        SBMLsqueezer.java&#160;<span class="change">(+52&#160;-46)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="2"></a>
+    <a href="user_schaefer.html" class="author">schaefer</a>
+    <span class="date">2009-08-13 07:44</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">114</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+
+    </p>
+    <p class="commitdetails"><strong>207</strong> lines of code changed in <span class="files">6 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        .classpath&#160;<span class="change">(+2&#160;-1)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml</strong>:
+        Model.java&#160;<span class="change">(+21)</span>,
+        Reaction.java&#160;<span class="change">(+6&#160;-6)</span>,
+        SBase.java&#160;<span class="change">(+19&#160;-2)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/io</strong>:
+        CellDesignerSBMLconverter.java&#160;<span class="change">(+80&#160;-3)</span>,
+        LibSBMLconverter.java&#160;<span class="change">(+79&#160;-3)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="1"></a>
+    <a href="user_schaefer.html" class="author">schaefer</a>
+    <span class="date">2009-08-11 06:47</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">105</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+
+    </p>
+    <p class="commitdetails"><strong>276</strong> lines of code changed in <span class="files">12 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        .classpath&#160;<span class="change">(+1&#160;-1)</span>
+      </li>
+      <li>
+        <strong>src/org/sbmlsqueezer/sbml</strong>:
+        KineticLaw.java&#160;<span class="change">(+6&#160;-6)</span>,
+        Model.java&#160;<span class="change">(+22&#160;-5)</span>,
+        ModifierSpeciesReference.java&#160;<span class="change">(+9&#160;-1)</span>,
+        NamedSBase.java&#160;<span class="new">(new&#160;34)</span>,
+        Parameter.java&#160;<span class="new">(new&#160;9)</span>,
+        Reaction.java&#160;<span class="change">(+62&#160;-6)</span>,
+        SBase.java&#160;<span class="new">(new&#160;49)</span>,
+        SimpleSpeciesReference.java&#160;<span class="new">(new&#160;53)</span>,
+        Species.java&#160;<span class="change">(+4&#160;-10)</span>,
+        SpeciesReference.java&#160;<span class="change">(+22&#160;-2)</span>
+      </li>
+      <li>
+        <strong>src/org/smblsqueezer/converter</strong>:
+        Converter.java&#160;<span class="new">(new&#160;5)</span>
+      </li>
+    </ul>
+  </dd>
+
+</dl>
+
+<p>(14 more)</p>
+</div><div id="generatedby">Generated by <a href="http://www.statsvn.org">StatSVN</a> 0.7.0</div>
+</body>
+</html>

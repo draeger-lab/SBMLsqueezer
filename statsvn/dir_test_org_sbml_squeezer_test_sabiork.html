@@ -1,0 +1,321 @@
+<?xml version="1.0"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>StatSVN - Directory test/org/sbml/squeezer/test/sabiork/</title>
+ <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"/>
+    <meta name="Generator" content="StatSVN 0.7.0"/>
+<link rel="stylesheet" href="objectlab-statcvs.css" type="text/css"/>
+<script type="text/javascript" charset="utf-8" src="http://bit.ly/javascript-api.js?version=latest&#38;login=statsvn&#38;apiKey=R_2c362b417d0517c27876cbaca1bb68cc"></script>
+<script type="text/javascript" charset="utf-8">
+   // wait until page is loaded to call API
+   var redir_url;
+   var short_url;
+   BitlyCB.myShortenCallback = function(data) {
+      // this is how to get a result of shortening a single url
+      var result;
+      short_url=null;
+      for (var r in data.results) {
+         result = data.results[r];
+         result['longUrl'] = r;
+         short_url = result['shortUrl'];
+         break;
+      }
+      if (short_url==null) // bit.ly failed
+      document.location=redir_url;
+      else
+      redirToTwitter();
+   };
+   function shortenTweet(url) {
+      if (short_url == null || redir_url!=url) {
+      redir_url = url;
+      BitlyClient.shorten(document.location, 'BitlyCB.myShortenCallback');
+      }
+      else
+      redirToTwitter();
+      return false;
+   }
+   function redirToTwitter() { 
+      // replace {0} which is visible as %7B0} in the link
+      document.location = redir_url.replace('%7B0}', short_url);
+   }
+</script>
+  </head>
+
+<body>
+
+<h1>Directory test/org/sbml/squeezer/test/sabiork/</h1>
+<div id="parentlink">&#171; <a href="index.html">Development Statistics for /trunk</a></div>
+<dl class="attributes">
+    <dt>Directory Created:</dt>
+    <dd><span class="date">2012-08-17 06:39</span></dd>
+    <dt>Total Files:</dt>
+    <dd>3</dd>
+    <dt>Deleted Files:</dt>
+    <dd>0</dd>
+    <dt>Lines of Code:</dt>
+    <dd>390</dd>
+</dl>
+<p class="dirtree">
+<a href="dir.html">[root]</a>/<a href="dir_test.html">test</a>/<a href="dir_test_org.html">org</a>/<a href="dir_test_org_sbml.html">sbml</a>/<a href="dir_test_org_sbml_squeezer.html">squeezer</a>/<a href="dir_test_org_sbml_squeezer_test.html">test</a>/<strong>sabiork</strong><br/>
+</p>
+
+<div class="section">
+<h2>Lines of Code</h2>
+<p class="chart"><img src="loc_module_test_org_sbml_squeezer_test_sabiork.png" alt="test/org/sbml/squeezer/test/sabiork/ Lines of Code" width="800" height="500" /></p></div>
+<div class="section">
+<h2>Developers</h2>
+  <table  rules="groups" summary="All authors and the number of their changes and lines of code in this directory">
+    <colgroup align="left"/>
+    <colgroup align="right"/>
+    <colgroup align="right"/>
+    <colgroup align="right"/>
+    <thead>
+      <tr>
+        <th>Author</th>
+        <th>Changes</th>
+        <th>Lines of Code</th>
+        <th>Lines per Change</th>
+      </tr>
+    </thead>
+    <tfoot>
+      <tr>
+        <th>Totals</th>
+        <td>18 (100.0%)</td>
+        <td>678 (100.0%)</td>
+        <td>37.6</td>
+      </tr>
+    </tfoot>
+    <tbody>
+      <tr  class="odd">
+        <th><a href="user_keller.html" class="author">keller</a></th>
+        <td>7 (38.9%)</td>
+        <td>398 (58.7%)</td>
+        <td>56.8</td>
+      </tr>
+      <tr  class="even">
+        <th><a href="user_draeger.html" class="author">draeger</a></th>
+        <td>11 (61.1%)</td>
+        <td>280 (41.3%)</td>
+        <td>25.4</td>
+      </tr>
+    </tbody>
+  </table>
+
+</div>
+<div class="section">
+<h2>Most Recent Commits</h2>
+<dl class="commitlist">
+  <dt><a name="11"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2014-02-22 16:54</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">1082</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Updated Java-Doc and code style and added missing override tags.
+    </p>
+    <p class="commitdetails"><strong>269</strong> lines of code changed in <span class="files">3 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>test/org/sbml/squeezer/test/sabiork</strong>:
+        SABIORKApplication.java&#160;<span class="change">(+100&#160;-98)</span>,
+        SABIORKTest.java&#160;<span class="change">(+143&#160;-143)</span>,
+        XMLParserTest.java&#160;<span class="change">(+26&#160;-26)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="10"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2014-01-09 15:30</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">1077</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Updated license headers to 2014.
+    </p>
+    <p class="commitdetails"><strong>3</strong> lines of code changed in <span class="files">3 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>test/org/sbml/squeezer/test/sabiork</strong>:
+        SABIORKApplication.java&#160;<span class="change">(+1&#160;-1)</span>,
+        SABIORKTest.java&#160;<span class="change">(+1&#160;-1)</span>,
+        XMLParserTest.java&#160;<span class="change">(+1&#160;-1)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="9"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2013-12-11 17:20</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">1075</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Several changes and improvements: Unit corrections, parameter corrections, changes due to changes in JSBML.
+    </p>
+    <p class="commitdetails"><strong>0</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>test/org/sbml/squeezer/test/sabiork</strong>:
+        SABIORKApplication.java&#160;<span class="change">(changed)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="8"></a>
+    <a href="user_keller.html" class="author">keller</a>
+    <span class="date">2013-03-14 02:58</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">1058</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Adaptations to changed squeeze and getResultConsole method.
+    </p>
+    <p class="commitdetails"><strong>3</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>test/org/sbml/squeezer/test/sabiork</strong>:
+        SABIORKApplication.java&#160;<span class="change">(+3&#160;-3)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="7"></a>
+    <a href="user_keller.html" class="author">keller</a>
+    <span class="date">2013-03-08 08:20</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">1053</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+More options added.
+    </p>
+    <p class="commitdetails"><strong>1</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>test/org/sbml/squeezer/test/sabiork</strong>:
+        SABIORKApplication.java&#160;<span class="change">(+1&#160;-1)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="6"></a>
+    <a href="user_keller.html" class="author">keller</a>
+    <span class="date">2013-02-28 07:36</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">1039</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Selected reactions are now counted in the SABIO-RK wizard. Some JavaDoc has been added.
+    </p>
+    <p class="commitdetails"><strong>141</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>test/org/sbml/squeezer/test/sabiork</strong>:
+        SABIORKApplication.java&#160;<span class="new">(new&#160;141)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="5"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2013-02-06 09:47</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">1031</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+* Updated the license headers in all files to 2013.<br />
+* Fixed several bugs in SubmodelController, KinteticLawGenerator, and ParameterFactory.<br />
+* Improved the adaptation of the main GUI to Mac OS X.<br />
+* Corrected typos in natural text files (XML).
+    </p>
+    <p class="commitdetails"><strong>2</strong> lines of code changed in <span class="files">2 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>test/org/sbml/squeezer/test/sabiork</strong>:
+        SABIORKTest.java&#160;<span class="change">(+1&#160;-1)</span>,
+        XMLParserTest.java&#160;<span class="change">(+1&#160;-1)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="4"></a>
+    <a href="user_keller.html" class="author">keller</a>
+    <span class="date">2012-08-31 06:13</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">990</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Pair class removed.
+    </p>
+    <p class="commitdetails"><strong>5</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>test/org/sbml/squeezer/test/sabiork</strong>:
+        SABIORKTest.java&#160;<span class="change">(+5&#160;-5)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="3"></a>
+    <a href="user_keller.html" class="author">keller</a>
+    <span class="date">2012-08-29 02:05</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">987</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Small error corrected.
+    </p>
+    <p class="commitdetails"><strong>1</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>test/org/sbml/squeezer/test/sabiork</strong>:
+        SABIORKTest.java&#160;<span class="change">(+1&#160;-1)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="2"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2012-08-24 07:57</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">981</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Removed unnecessary double dollar symbols, restructured SABIO-RK part of the project and added missing package-info.java files.
+    </p>
+    <p class="commitdetails"><strong>6</strong> lines of code changed in <span class="files">2 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>test/org/sbml/squeezer/test/sabiork</strong>:
+        SABIORKTest.java&#160;<span class="change">(+3&#160;-3)</span>,
+        XMLParserTest.java&#160;<span class="change">(+3&#160;-3)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="1"></a>
+    <a href="user_keller.html" class="author">keller</a>
+    <span class="date">2012-08-17 06:39</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">972</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+
+    </p>
+    <p class="commitdetails"><strong>247</strong> lines of code changed in <span class="files">2 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>test/org/sbml/squeezer/test/sabiork</strong>:
+        SABIORKTest.java&#160;<span class="new">(new&#160;184)</span>,
+        XMLParserTest.java&#160;<span class="new">(new&#160;63)</span>
+      </li>
+    </ul>
+  </dd>
+
+</dl>
+
+</div><div id="generatedby">Generated by <a href="http://www.statsvn.org">StatSVN</a> 0.7.0</div>
+</body>
+</html>

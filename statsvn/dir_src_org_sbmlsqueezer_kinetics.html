@@ -1,0 +1,601 @@
+<?xml version="1.0"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>StatSVN - Directory src/org/sbmlsqueezer/kinetics/</title>
+ <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"/>
+    <meta name="Generator" content="StatSVN 0.7.0"/>
+<link rel="stylesheet" href="objectlab-statcvs.css" type="text/css"/>
+<script type="text/javascript" charset="utf-8" src="http://bit.ly/javascript-api.js?version=latest&#38;login=statsvn&#38;apiKey=R_2c362b417d0517c27876cbaca1bb68cc"></script>
+<script type="text/javascript" charset="utf-8">
+   // wait until page is loaded to call API
+   var redir_url;
+   var short_url;
+   BitlyCB.myShortenCallback = function(data) {
+      // this is how to get a result of shortening a single url
+      var result;
+      short_url=null;
+      for (var r in data.results) {
+         result = data.results[r];
+         result['longUrl'] = r;
+         short_url = result['shortUrl'];
+         break;
+      }
+      if (short_url==null) // bit.ly failed
+      document.location=redir_url;
+      else
+      redirToTwitter();
+   };
+   function shortenTweet(url) {
+      if (short_url == null || redir_url!=url) {
+      redir_url = url;
+      BitlyClient.shorten(document.location, 'BitlyCB.myShortenCallback');
+      }
+      else
+      redirToTwitter();
+      return false;
+   }
+   function redirToTwitter() { 
+      // replace {0} which is visible as %7B0} in the link
+      document.location = redir_url.replace('%7B0}', short_url);
+   }
+</script>
+  </head>
+
+<body>
+
+<h1>Directory src/org/sbmlsqueezer/kinetics/</h1>
+<div id="parentlink">&#171; <a href="index.html">Development Statistics for /trunk</a></div>
+<dl class="attributes">
+    <dt>Directory Deleted:</dt>
+    <dd><span class="date">2009-08-13 04:55</span></dd>
+    <dt>Total Files:</dt>
+    <dd>0</dd>
+    <dt>Deleted Files:</dt>
+    <dd>20</dd>
+    <dt>Lines of Code:</dt>
+    <dd>0</dd>
+</dl>
+<p class="dirtree">
+<a href="dir.html">[root]</a>/<a href="dir_src.html">src</a>/<a href="dir_src_org.html">org</a>/<a href="dir_src_org_sbmlsqueezer.html">sbmlsqueezer</a>/<strong>kinetics</strong><br/>
+</p>
+
+<div class="section">
+<h2>Lines of Code</h2>
+<p class="chart"><img src="loc_module_src_org_sbmlsqueezer_kinetics.png" alt="src/org/sbmlsqueezer/kinetics/ Lines of Code" width="800" height="500" /></p></div>
+<div class="section">
+<h2>Developers</h2>
+  <table  rules="groups" summary="All authors and the number of their changes and lines of code in this directory">
+    <colgroup align="left"/>
+    <colgroup align="right"/>
+    <colgroup align="right"/>
+    <colgroup align="right"/>
+    <thead>
+      <tr>
+        <th>Author</th>
+        <th>Changes</th>
+        <th>Lines of Code</th>
+        <th>Lines per Change</th>
+      </tr>
+    </thead>
+    <tfoot>
+      <tr>
+        <th>Totals</th>
+        <td>97 (100.0%)</td>
+        <td>3829 (100.0%)</td>
+        <td>39.4</td>
+      </tr>
+    </tfoot>
+    <tbody>
+      <tr  class="odd">
+        <th><a href="user_draeger.html" class="author">draeger</a></th>
+        <td>72 (74.2%)</td>
+        <td>2892 (75.5%)</td>
+        <td>40.1</td>
+      </tr>
+      <tr  class="even">
+        <th><a href="user_schaefer.html" class="author">schaefer</a></th>
+        <td>25 (25.8%)</td>
+        <td>937 (24.5%)</td>
+        <td>37.4</td>
+      </tr>
+    </tbody>
+  </table>
+
+</div>
+<div class="section">
+<h2>Most Recent Commits</h2>
+<dl class="commitlist">
+  <dt><a name="23"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2009-08-13 04:55</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">113</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+changed package structure.
+    </p>
+    <p class="commitdetails"><strong>0</strong> lines of code changed in <span class="files">20 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbmlsqueezer/kinetics</strong>:
+        BasicKineticLaw.java&#160;<span class="del">(del)</span>,
+        Convenience.java&#160;<span class="del">(del)</span>,
+        ConvenienceIndependent.java&#160;<span class="del">(del)</span>,
+        GeneralizedMassAction.java&#160;<span class="del">(del)</span>,
+        HillEquation.java&#160;<span class="del">(del)</span>,
+        IllegalFormatException.java&#160;<span class="del">(del)</span>,
+        IrrevCompetNonCooperativeEnzymes.java&#160;<span class="del">(del)</span>,
+        IrrevNonModulatedNonInteractingEnzymes.java&#160;<span class="del">(del)</span>,
+        KineticLawGenerator.java&#160;<span class="del">(del)</span>,
+        MichaelisMenten.java&#160;<span class="del">(del)</span>,
+        ModificationException.java&#160;<span class="del">(del)</span>,
+        ODE.java&#160;<span class="del">(del)</span>,
+        OrderedMechanism.java&#160;<span class="del">(del)</span>,
+        PingPongMechanism.java&#160;<span class="del">(del)</span>,
+        RandomOrderMechanism.java&#160;<span class="del">(del)</span>,
+        RateLawNotApplicableException.java&#160;<span class="del">(del)</span>,
+        Species.java&#160;<span class="del">(del)</span>,
+        Test.java&#160;<span class="del">(del)</span>,
+        ZerothOrderForwardGMAK.java&#160;<span class="del">(del)</span>,
+        ZerothOrderReverseGMAK.java&#160;<span class="del">(del)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="22"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2009-08-11 08:26</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">107</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Our internal data structure becomes clother to what is needed.
+    </p>
+    <p class="commitdetails"><strong>0</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbmlsqueezer/kinetics</strong>:
+        BasicKineticLaw.java&#160;<span class="change">(-5)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="21"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2009-08-07 07:59</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">102</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+New release of SBMLsqueezer 1.2.1
+    </p>
+    <p class="commitdetails"><strong>41</strong> lines of code changed in <span class="files">5 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbmlsqueezer/kinetics</strong>:
+        Convenience.java&#160;<span class="change">(-3)</span>,
+        ConvenienceIndependent.java&#160;<span class="change">(+10&#160;-13)</span>,
+        HillEquation.java&#160;<span class="change">(+20&#160;-20)</span>,
+        OrderedMechanism.java&#160;<span class="change">(+6&#160;-9)</span>,
+        RandomOrderMechanism.java&#160;<span class="change">(+5&#160;-5)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="20"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2009-08-05 06:38</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">101</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Now RandomOrderMechanism is a bit more efficient.
+    </p>
+    <p class="commitdetails"><strong>94</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbmlsqueezer/kinetics</strong>:
+        RandomOrderMechanism.java&#160;<span class="change">(+94&#160;-146)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="19"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2009-08-05 01:10</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">100</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Removed unnecessary System.out.println commands.
+    </p>
+    <p class="commitdetails"><strong>0</strong> lines of code changed in <span class="files">3 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbmlsqueezer/kinetics</strong>:
+        BasicKineticLaw.java&#160;<span class="change">(-1)</span>,
+        IrrevCompetNonCooperativeEnzymes.java&#160;<span class="change">(-7)</span>,
+        KineticLawGenerator.java&#160;<span class="change">(-2)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="18"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2009-08-02 08:39</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">96</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+New error in convenience kinetics: for reactions like 2 A &lt;=&gt; B + C the denominator was not created correctly due to this -1 thing.
+    </p>
+    <p class="commitdetails"><strong>5</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbmlsqueezer/kinetics</strong>:
+        ConvenienceIndependent.java&#160;<span class="change">(+5&#160;-2)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="17"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2009-08-02 08:14</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">95</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Corrected the errors that were pointed out by Scott Hinton and also mistakes in thermodynamically independent convenience kinetics.
+    </p>
+    <p class="commitdetails"><strong>69</strong> lines of code changed in <span class="files">4 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbmlsqueezer/kinetics</strong>:
+        BasicKineticLaw.java&#160;<span class="change">(+3&#160;-3)</span>,
+        ConvenienceIndependent.java&#160;<span class="change">(+33&#160;-39)</span>,
+        HillEquation.java&#160;<span class="change">(+2&#160;-2)</span>,
+        KineticLawGenerator.java&#160;<span class="change">(+31&#160;-20)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="16"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2009-07-31 10:09</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">93</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Fixed several problems and made the program more convenient.
+    </p>
+    <p class="commitdetails"><strong>243</strong> lines of code changed in <span class="files">8 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbmlsqueezer/kinetics</strong>:
+        BasicKineticLaw.java&#160;<span class="change">(+2&#160;-2)</span>,
+        Convenience.java&#160;<span class="change">(+13&#160;-108)</span>,
+        ConvenienceIndependent.java&#160;<span class="change">(+55&#160;-25)</span>,
+        GeneralizedMassAction.java&#160;<span class="change">(+4&#160;-8)</span>,
+        HillEquation.java&#160;<span class="change">(+53&#160;-42)</span>,
+        KineticLawGenerator.java&#160;<span class="change">(+98&#160;-75)</span>,
+        MichaelisMenten.java&#160;<span class="change">(+14&#160;-30)</span>,
+        ODE.java&#160;<span class="change">(+4&#160;-4)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="15"></a>
+    <a href="user_schaefer.html" class="author">schaefer</a>
+    <span class="date">2009-07-29 07:43</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">91</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+
+    </p>
+    <p class="commitdetails"><strong>32</strong> lines of code changed in <span class="files">2 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbmlsqueezer/kinetics</strong>:
+        HillEquation.java&#160;<span class="change">(+21&#160;-16)</span>,
+        KineticLawGenerator.java&#160;<span class="change">(+11&#160;-12)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="14"></a>
+    <a href="user_schaefer.html" class="author">schaefer</a>
+    <span class="date">2009-07-29 07:03</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">90</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+
+    </p>
+    <p class="commitdetails"><strong>50</strong> lines of code changed in <span class="files">5 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbmlsqueezer/kinetics</strong>:
+        BasicKineticLaw.java&#160;<span class="change">(+11&#160;-7)</span>,
+        HillEquation.java&#160;<span class="change">(+9&#160;-13)</span>,
+        IrrevCompetNonCooperativeEnzymes.java&#160;<span class="change">(+15&#160;-11)</span>,
+        KineticLawGenerator.java&#160;<span class="change">(+7&#160;-9)</span>,
+        MichaelisMenten.java&#160;<span class="change">(+8&#160;-90)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="13"></a>
+    <a href="user_schaefer.html" class="author">schaefer</a>
+    <span class="date">2009-07-27 08:02</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">88</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+jaja<br />
+
+    </p>
+    <p class="commitdetails"><strong>150</strong> lines of code changed in <span class="files">3 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbmlsqueezer/kinetics</strong>:
+        Convenience.java&#160;<span class="change">(+8&#160;-61)</span>,
+        ConvenienceIndependent.java&#160;<span class="change">(+45&#160;-29)</span>,
+        MichaelisMenten.java&#160;<span class="change">(+97&#160;-61)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="12"></a>
+    <a href="user_schaefer.html" class="author">schaefer</a>
+    <span class="date">2009-07-15 03:51</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">85</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+<br />
+
+    </p>
+    <p class="commitdetails"><strong>29</strong> lines of code changed in <span class="files">2 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbmlsqueezer/kinetics</strong>:
+        OrderedMechanism.java&#160;<span class="change">(+4&#160;-4)</span>,
+        RandomOrderMechanism.java&#160;<span class="change">(+25&#160;-22)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="11"></a>
+    <a href="user_schaefer.html" class="author">schaefer</a>
+    <span class="date">2009-07-13 07:49</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">84</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+
+    </p>
+    <p class="commitdetails"><strong>5</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbmlsqueezer/kinetics</strong>:
+        PingPongMechanism.java&#160;<span class="change">(+5&#160;-5)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="10"></a>
+    <a href="user_schaefer.html" class="author">schaefer</a>
+    <span class="date">2009-07-09 05:24</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">83</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+convinience works:)
+    </p>
+    <p class="commitdetails"><strong>41</strong> lines of code changed in <span class="files">2 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbmlsqueezer/kinetics</strong>:
+        BasicKineticLaw.java&#160;<span class="change">(+6&#160;-5)</span>,
+        Convenience.java&#160;<span class="change">(+35&#160;-28)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="9"></a>
+    <a href="user_schaefer.html" class="author">schaefer</a>
+    <span class="date">2009-07-08 05:30</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">82</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+nicht reversible convinience sollte funktionieren allerdings an einer stelle concat(1 + ) statt sum weil sonst undefined.. hab keine ahnung worans liegt              reversibel muss ich komplett umstellen das funktioniert bist jetzt nur für ein produkt und durch das momentane anhängverfahren lassen sich (1+ produkt~) nicht richtig setzen..
+    </p>
+    <p class="commitdetails"><strong>1</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbmlsqueezer/kinetics</strong>:
+        Convenience.java&#160;<span class="change">(+1&#160;-1)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="8"></a>
+    <a href="user_schaefer.html" class="author">schaefer</a>
+    <span class="date">2009-07-08 05:27</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">81</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Convinience nicht reversibel sollte jetzt funktionieren 
+    </p>
+    <p class="commitdetails"><strong>36</strong> lines of code changed in <span class="files">2 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbmlsqueezer/kinetics</strong>:
+        BasicKineticLaw.java&#160;<span class="change">(+1&#160;-1)</span>,
+        Convenience.java&#160;<span class="change">(+35&#160;-19)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="7"></a>
+    <a href="user_schaefer.html" class="author">schaefer</a>
+    <span class="date">2009-07-06 07:51</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">80</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+
+    </p>
+    <p class="commitdetails"><strong>26</strong> lines of code changed in <span class="files">2 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbmlsqueezer/kinetics</strong>:
+        BasicKineticLaw.java&#160;<span class="change">(+6&#160;-4)</span>,
+        Convenience.java&#160;<span class="change">(+20&#160;-20)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="6"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2009-07-06 01:10</span>
+  </dt>
+  <dd>
+    <p class="comment">
+Corrected some errors.
+    </p>
+    <p class="commitdetails"><strong>175</strong> lines of code changed in <span class="files">2 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbmlsqueezer/kinetics</strong>:
+        Convenience.java&#160;<span class="change">(+6&#160;-10)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="5"></a>
+    <a href="user_schaefer.html" class="author">schaefer</a>
+    <span class="date">2009-07-03 07:10</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">77</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+alte Convinience eingebaut, lief aber im mom noch am umschreiben in StringBuffer (concat, charvalueof, usw)
+    </p>
+    <p class="commitdetails"><strong>421</strong> lines of code changed in <span class="files">3 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbmlsqueezer/kinetics</strong>:
+        BasicKineticLaw.java&#160;<span class="change">(+3&#160;-1)</span>,
+        Convenience.java&#160;<span class="change">(+416&#160;-44)</span>,
+        RandomOrderMechanism.java&#160;<span class="change">(+2&#160;-2)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="4"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2009-07-02 00:49</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">76</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Now we use libSBML to convert our formulae into ASTNodes.
+    </p>
+    <p class="commitdetails"><strong>2</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbmlsqueezer/kinetics</strong>:
+        BasicKineticLaw.java&#160;<span class="change">(+2&#160;-9)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="3"></a>
+    <a href="user_schaefer.html" class="author">schaefer</a>
+    <span class="date">2009-07-01 03:18</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">75</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+
+    </p>
+    <p class="commitdetails"><strong>146</strong> lines of code changed in <span class="files">2 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbmlsqueezer/kinetics</strong>:
+        BasicKineticLaw.java&#160;<span class="change">(+144&#160;-655)</span>,
+        Convenience.java&#160;<span class="change">(+2)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="2"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2009-06-24 08:48</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">74</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Several test runs and corrections.
+    </p>
+    <p class="commitdetails"><strong>1198</strong> lines of code changed in <span class="files">7 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbmlsqueezer/kinetics</strong>:
+        BasicKineticLaw.java&#160;<span class="change">(+797&#160;-217)</span>,
+        Convenience.java&#160;<span class="change">(+76&#160;-107)</span>,
+        ConvenienceIndependent.java&#160;<span class="change">(+42&#160;-44)</span>,
+        IrrevNonModulatedNonInteractingEnzymes.java&#160;<span class="change">(+26&#160;-62)</span>,
+        OrderedMechanism.java&#160;<span class="change">(+142&#160;-177)</span>,
+        PingPongMechanism.java&#160;<span class="change">(+55&#160;-78)</span>,
+        RandomOrderMechanism.java&#160;<span class="change">(+60&#160;-79)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="1"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2009-06-23 08:16</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">72</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Restructured project.
+    </p>
+    <p class="commitdetails"><strong>1065</strong> lines of code changed in <span class="files">19 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbmlsqueezer/kinetics</strong>:
+        BasicKineticLaw.java&#160;<span class="new">(new&#160;217)</span>,
+        Convenience.java&#160;<span class="new">(new&#160;107)</span>,
+        ConvenienceIndependent.java&#160;<span class="new">(new&#160;44)</span>,
+        GeneralizedMassAction.java&#160;<span class="new">(new&#160;8)</span>,
+        HillEquation.java&#160;<span class="new">(new&#160;41)</span>,
+        IllegalFormatException.java&#160;<span class="new">(new)</span>,
+        IrrevCompetNonCooperativeEnzymes.java&#160;<span class="new">(new&#160;11)</span>,
+        IrrevNonModulatedNonInteractingEnzymes.java&#160;<span class="new">(new&#160;62)</span>,
+        KineticLawGenerator.java&#160;<span class="new">(new&#160;78)</span>,
+        MichaelisMenten.java&#160;<span class="new">(new&#160;76)</span>,
+        ModificationException.java&#160;<span class="new">(new)</span>,
+        ODE.java&#160;<span class="new">(new&#160;4)</span>,
+        OrderedMechanism.java&#160;<span class="new">(new&#160;177)</span>,
+        PingPongMechanism.java&#160;<span class="new">(new&#160;78)</span>,
+        RandomOrderMechanism.java&#160;<span class="new">(new&#160;162)</span>,
+        RateLawNotApplicableException.java&#160;<span class="new">(new)</span>,
+        Species.java&#160;<span class="new">(new)</span>,
+        ZerothOrderForwardGMAK.java&#160;<span class="new">(new)</span>,
+        ZerothOrderReverseGMAK.java&#160;<span class="new">(new)</span>
+      </li>
+    </ul>
+  </dd>
+
+</dl>
+
+</div><div id="generatedby">Generated by <a href="http://www.statsvn.org">StatSVN</a> 0.7.0</div>
+</body>
+</html>

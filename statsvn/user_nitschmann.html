@@ -1,0 +1,572 @@
+<?xml version="1.0"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>StatSVN - /trunk Developers: nitschmann</title>
+ <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"/>
+    <meta name="Generator" content="StatSVN 0.7.0"/>
+<link rel="stylesheet" href="objectlab-statcvs.css" type="text/css"/>
+<script type="text/javascript" charset="utf-8" src="http://bit.ly/javascript-api.js?version=latest&#38;login=statsvn&#38;apiKey=R_2c362b417d0517c27876cbaca1bb68cc"></script>
+<script type="text/javascript" charset="utf-8">
+   // wait until page is loaded to call API
+   var redir_url;
+   var short_url;
+   BitlyCB.myShortenCallback = function(data) {
+      // this is how to get a result of shortening a single url
+      var result;
+      short_url=null;
+      for (var r in data.results) {
+         result = data.results[r];
+         result['longUrl'] = r;
+         short_url = result['shortUrl'];
+         break;
+      }
+      if (short_url==null) // bit.ly failed
+      document.location=redir_url;
+      else
+      redirToTwitter();
+   };
+   function shortenTweet(url) {
+      if (short_url == null || redir_url!=url) {
+      redir_url = url;
+      BitlyClient.shorten(document.location, 'BitlyCB.myShortenCallback');
+      }
+      else
+      redirToTwitter();
+      return false;
+   }
+   function redirToTwitter() { 
+      // replace {0} which is visible as %7B0} in the link
+      document.location = redir_url.replace('%7B0}', short_url);
+   }
+</script>
+  </head>
+
+<body>
+
+<h1>/trunk Developers: nitschmann</h1>
+<div id="parentlink">&#171; <a href="index.html">Development Statistics for /trunk</a> &#171; <a href="developers.html">Developers</a></div>
+<dl class="attributes">
+    <dt>Login name:</dt>
+    <dd>nitschmann</dd>
+    <dt>Total Commits:</dt>
+    <dd>142 (1,6%)</dd>
+    <dt>Lines of Code:</dt>
+    <dd>4.192 (0,6%)</dd>
+    <dt>Most Recent Commit:</dt>
+    <dd><span class="date">2009-12-04 07:08</span></dd>
+    <dt>Tweet this:</dt>
+    <dd><a onclick="return shortenTweet(this.href);" href="http://twitter.com/home?status=nitschmann%20contributed%204.192%20(0%2C6%25)%20lines%20to%20%2Ftrunk%20%7B0}%20most%20recent%20commit%202009-12-04%20stats%20by%20StatSVN%20http%3A%2F%2Fstatsvn.org"><img style="border:0px" alt="Tweet this" src="tweet-this.png"/></a></dd>
+</dl>
+
+<div class="section">
+<h2>Activity by Clock Time</h2>
+<p class="chart"><img src="activity_time_nitschmann.png" alt="Activity by Hour of Day for nitschmann" width="800" height="500" /></p><p class="chart"><img src="activity_day_nitschmann.png" alt="Activity by Day of Week for nitschmann" width="800" height="500" /></p></div>
+<div class="section">
+<h2>Activity in Directories</h2>
+  <table  rules="groups" summary="Overview of this author's activities in different directories">
+    <colgroup align="left"/>
+    <colgroup align="right"/>
+    <colgroup align="right"/>
+    <colgroup align="right"/>
+    <thead>
+      <tr>
+        <th>Directory</th>
+        <th>Changes</th>
+        <th>Lines of Code</th>
+        <th>Lines per Change</th>
+      </tr>
+    </thead>
+    <tfoot>
+      <tr>
+        <th>Totals</th>
+        <td>142 (100.0%)</td>
+        <td>4192 (100.0%)</td>
+        <td>29.5</td>
+      </tr>
+    </tfoot>
+    <tbody>
+      <tr  class="odd">
+        <th><a href="dir_src_org_sbml_squeezer_kinetics.html" class="directory">src/org/sbml/squeezer/kinetics/</a></th>
+        <td>105 (73.9%)</td>
+        <td>3460 (82.5%)</td>
+        <td>32.9</td>
+      </tr>
+      <tr  class="even">
+        <th><a href="dir_src_org_sbml_squeezer.html" class="directory">src/org/sbml/squeezer/</a></th>
+        <td>24 (16.9%)</td>
+        <td>500 (11.9%)</td>
+        <td>20.8</td>
+      </tr>
+      <tr  class="odd">
+        <th><a href="dir.html" class="directory">/</a></th>
+        <td>1 (0.7%)</td>
+        <td>71 (1.7%)</td>
+        <td>71.0</td>
+      </tr>
+      <tr  class="even">
+        <th><a href="dir_src_org_sbml_jsbml.html" class="directory">src/org/sbml/jsbml/</a></th>
+        <td>4 (2.8%)</td>
+        <td>52 (1.2%)</td>
+        <td>13.0</td>
+      </tr>
+      <tr  class="odd">
+        <th><a href="dir_src_org_sbml_squeezer_gui.html" class="directory">src/org/sbml/squeezer/gui/</a></th>
+        <td>4 (2.8%)</td>
+        <td>49 (1.2%)</td>
+        <td>12.2</td>
+      </tr>
+      <tr  class="even">
+        <th><a href="dir_src_org_sbml_squeezer_io.html" class="directory">src/org/sbml/squeezer/io/</a></th>
+        <td>2 (1.4%)</td>
+        <td>43 (1.0%)</td>
+        <td>21.5</td>
+      </tr>
+      <tr  class="odd">
+        <th><a href="dir_src_org_sbml_squeezer_plugin.html" class="directory">src/org/sbml/squeezer/plugin/</a></th>
+        <td>1 (0.7%)</td>
+        <td>15 (0.4%)</td>
+        <td>15.0</td>
+      </tr>
+      <tr  class="even">
+        <th><a href="dir_src_org_sbml_squeezer_standalone.html" class="directory">src/org/sbml/squeezer/standalone/</a></th>
+        <td>1 (0.7%)</td>
+        <td>2 (0.0%)</td>
+        <td>2.0</td>
+      </tr>
+    </tbody>
+  </table>
+
+<p class="chart"><img src="directory_sizes_nitschmann.png" alt="Activity of nitschmann" width="800" height="500" /></p></div>
+<div class="section">
+<h2>Most Recent Commits</h2>
+<dl class="commitlist">
+  <dt><a name="20"></a>
+    <a href="user_nitschmann.html" class="author">nitschmann</a>
+    <span class="date">2009-12-04 07:08</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">327</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Unterscheidung Stimulator / Inhibitor eingebaut
+    </p>
+    <p class="commitdetails"><strong>9</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/kinetics</strong>:
+        SSystem.java&#160;<span class="change">(+9)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="19"></a>
+    <a href="user_nitschmann.html" class="author">nitschmann</a>
+    <span class="date">2009-12-03 01:25</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">323</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Detected and corrected a possible source of ClassCastExceptions in the KineticLawTable.
+    </p>
+    <p class="commitdetails"><strong>20</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/gui</strong>:
+        KineticLawTable.java&#160;<span class="change">(+20&#160;-11)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="18"></a>
+    <a href="user_nitschmann.html" class="author">nitschmann</a>
+    <span class="date">2009-12-02 13:19</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">321</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+HSystem überarbeitet
+    </p>
+    <p class="commitdetails"><strong>2</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/kinetics</strong>:
+        HSystem.java&#160;<span class="change">(+2&#160;-2)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="17"></a>
+    <a href="user_nitschmann.html" class="author">nitschmann</a>
+    <span class="date">2009-12-02 12:21</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">320</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Weaver überarbeitet
+    </p>
+    <p class="commitdetails"><strong>5</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/kinetics</strong>:
+        Weaver.java&#160;<span class="change">(+5&#160;-4)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="16"></a>
+    <a href="user_nitschmann.html" class="author">nitschmann</a>
+    <span class="date">2009-12-02 11:52</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">319</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+error corrected
+    </p>
+    <p class="commitdetails"><strong>2</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/kinetics</strong>:
+        Weaver.java&#160;<span class="change">(+2&#160;-3)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="15"></a>
+    <a href="user_nitschmann.html" class="author">nitschmann</a>
+    <span class="date">2009-12-02 07:19</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">315</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+SSystem überarbeitet
+    </p>
+    <p class="commitdetails"><strong>208</strong> lines of code changed in <span class="files">2 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/kinetics</strong>:
+        BasicKineticLaw.java&#160;<span class="change">(+23)</span>,
+        SSystem.java&#160;<span class="change">(+185&#160;-111)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="14"></a>
+    <a href="user_nitschmann.html" class="author">nitschmann</a>
+    <span class="date">2009-12-01 11:44</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">311</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+extends AdditiveModelNonLinear, not extends AdditiveModelLinear
+    </p>
+    <p class="commitdetails"><strong>1</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/kinetics</strong>:
+        Weaver.java&#160;<span class="change">(+1&#160;-1)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="13"></a>
+    <a href="user_nitschmann.html" class="author">nitschmann</a>
+    <span class="date">2009-12-01 03:20</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">303</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+corrected a citation error and rename the GeneralizedHillFunction to SpecialHillEquation
+    </p>
+    <p class="commitdetails"><strong>7</strong> lines of code changed in <span class="files">2 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/kinetics</strong>:
+        GeneralizedHillFunction.java&#160;<span class="del">(del)</span>,
+        SpecialHillEquation.java&#160;<span class="new">(new&#160;7)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="12"></a>
+    <a href="user_nitschmann.html" class="author">nitschmann</a>
+    <span class="date">2009-11-19 04:43</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">281</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Class-Names changed
+    </p>
+    <p class="commitdetails"><strong>567</strong> lines of code changed in <span class="files">15 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/kinetics</strong>:
+        AdditiveModelLinear.java&#160;<span class="new">(new&#160;139)</span>,
+        AdditiveModelNonLinear.java&#160;<span class="new">(new&#160;37)</span>,
+        GRNAdditiveModel.java&#160;<span class="del">(del)</span>,
+        GRNAdditiveModelNonLinear.java&#160;<span class="del">(del)</span>,
+        GRNAdditiveModel_1.java&#160;<span class="del">(del)</span>,
+        GRNAdditiveModel_2.java&#160;<span class="del">(del)</span>,
+        GRNAdditiveModel_NGlinear.java&#160;<span class="del">(del)</span>,
+        GRNAdditiveModel_NGnonlinear.java&#160;<span class="del">(del)</span>,
+        GRNGeneralizedHillFunction.java&#160;<span class="del">(del)</span>,
+        GeneralizedHillFunction.java&#160;<span class="new">(new&#160;151)</span>,
+        HSystem.java&#160;<span class="change">(+49&#160;-75)</span>,
+        NetGeneratorLinear.java&#160;<span class="new">(new&#160;35)</span>,
+        NetGeneratorNonLinear.java&#160;<span class="new">(new&#160;65)</span>,
+        Vohradsky.java&#160;<span class="new">(new&#160;46)</span>,
+        Weaver.java&#160;<span class="new">(new&#160;45)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="11"></a>
+    <a href="user_nitschmann.html" class="author">nitschmann</a>
+    <span class="date">2009-11-19 04:16</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">280</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+getSimpleNames überarbeitet
+    </p>
+    <p class="commitdetails"><strong>6</strong> lines of code changed in <span class="files">6 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/kinetics</strong>:
+        GRNAdditiveModel.java&#160;<span class="change">(+1&#160;-1)</span>,
+        GRNAdditiveModelNonLinear.java&#160;<span class="change">(+1&#160;-1)</span>,
+        GRNAdditiveModel_1.java&#160;<span class="change">(+1&#160;-1)</span>,
+        GRNAdditiveModel_2.java&#160;<span class="change">(+1&#160;-1)</span>,
+        GRNAdditiveModel_NGlinear.java&#160;<span class="change">(+1&#160;-1)</span>,
+        GRNAdditiveModel_NGnonlinear.java&#160;<span class="change">(+1&#160;-1)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="10"></a>
+    <a href="user_nitschmann.html" class="author">nitschmann</a>
+    <span class="date">2009-11-19 03:45</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">278</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+rework over all GRN-Classes and the BasicKineticLaw-Class
+    </p>
+    <p class="commitdetails"><strong>690</strong> lines of code changed in <span class="files">10 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/kinetics</strong>:
+        BasicKineticLaw.java&#160;<span class="change">(+431&#160;-430)</span>,
+        GRNAdditiveModel.java&#160;<span class="change">(+65&#160;-71)</span>,
+        GRNAdditiveModelNonLinear.java&#160;<span class="change">(+8&#160;-10)</span>,
+        GRNAdditiveModel_1.java&#160;<span class="change">(+7&#160;-5)</span>,
+        GRNAdditiveModel_2.java&#160;<span class="change">(+19&#160;-8)</span>,
+        GRNAdditiveModel_NGlinear.java&#160;<span class="change">(+19&#160;-14)</span>,
+        GRNAdditiveModel_NGnonlinear.java&#160;<span class="change">(+11&#160;-11)</span>,
+        GRNGeneralizedHillFunction.java&#160;<span class="change">(+76&#160;-67)</span>,
+        GRNSSystemEquation.java&#160;<span class="change">(+6&#160;-12)</span>,
+        GRN_HSystem.java&#160;<span class="change">(+48&#160;-74)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="9"></a>
+    <a href="user_nitschmann.html" class="author">nitschmann</a>
+    <span class="date">2009-11-19 02:57</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">277</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+SSystemEquation rausgenommen
+    </p>
+    <p class="commitdetails"><strong>1</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/kinetics</strong>:
+        GRNSSystemEquation.java&#160;<span class="change">(+1&#160;-2)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="8"></a>
+    <a href="user_nitschmann.html" class="author">nitschmann</a>
+    <span class="date">2009-11-19 02:45</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">276</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+
+    </p>
+    <p class="commitdetails"><strong>173</strong> lines of code changed in <span class="files">6 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/kinetics</strong>:
+        BasicKineticLaw.java&#160;<span class="change">(+22&#160;-4)</span>,
+        GRNAdditiveModel.java&#160;<span class="change">(+3&#160;-3)</span>,
+        GRNAdditiveModel_NGnonlinear.java&#160;<span class="change">(+1&#160;-1)</span>,
+        GRNGeneralizedHillFunction.java&#160;<span class="new">(new&#160;142)</span>,
+        GRN_HSystem.java&#160;<span class="change">(+4&#160;-4)</span>,
+        HillEquation.java&#160;<span class="change">(+1&#160;-3)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="7"></a>
+    <a href="user_nitschmann.html" class="author">nitschmann</a>
+    <span class="date">2009-11-18 10:16</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">275</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+
+    </p>
+    <p class="commitdetails"><strong>253</strong> lines of code changed in <span class="files">6 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/kinetics</strong>:
+        BasicKineticLaw.java&#160;<span class="change">(+24&#160;-6)</span>,
+        GRNAdditiveModel_1.java&#160;<span class="change">(+1&#160;-23)</span>,
+        GRNAdditiveModel_2.java&#160;<span class="change">(+11&#160;-12)</span>,
+        GRNAdditiveModel_NGlinear.java&#160;<span class="change">(-4)</span>,
+        GRNAdditiveModel_NGnonlinear.java&#160;<span class="change">(+13&#160;-33)</span>,
+        GRN_HSystem.java&#160;<span class="new">(new&#160;204)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="6"></a>
+    <a href="user_nitschmann.html" class="author">nitschmann</a>
+    <span class="date">2009-11-18 09:35</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">274</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+
+    </p>
+    <p class="commitdetails"><strong>68</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/kinetics</strong>:
+        GRNAdditiveModelNonLinear.java&#160;<span class="new">(new&#160;68)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="5"></a>
+    <a href="user_nitschmann.html" class="author">nitschmann</a>
+    <span class="date">2009-11-18 09:29</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">273</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+GRN-Modelle überarbeitet + Fehler korrigiert
+    </p>
+    <p class="commitdetails"><strong>77</strong> lines of code changed in <span class="files">4 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/gui</strong>:
+        SettingsPanelAll.java&#160;<span class="change">(+12&#160;-12)</span>,
+        SettingsPanelDefaultMechanisms.java&#160;<span class="change">(+4&#160;-50)</span>,
+        SettingsPanelLaTeX.java&#160;<span class="change">(+13&#160;-13)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/kinetics</strong>:
+        GRNAdditiveModel.java&#160;<span class="change">(+48&#160;-57)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="4"></a>
+    <a href="user_nitschmann.html" class="author">nitschmann</a>
+    <span class="date">2009-11-18 04:19</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">272</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Fixed a bug in ReactionType
+    </p>
+    <p class="commitdetails"><strong>76</strong> lines of code changed in <span class="files">4 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer</strong>:
+        ReactionType.java&#160;<span class="change">(+7&#160;-8)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/io</strong>:
+        SBMLio.java&#160;<span class="change">(+37&#160;-43)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/kinetics</strong>:
+        HillEquation.java&#160;<span class="change">(+17&#160;-17)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/plugin</strong>:
+        PluginSBMLWriter.java&#160;<span class="change">(+15&#160;-13)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="3"></a>
+    <a href="user_nitschmann.html" class="author">nitschmann</a>
+    <span class="date">2009-10-27 08:55</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">271</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+nochmals überarbeitet
+    </p>
+    <p class="commitdetails"><strong>74</strong> lines of code changed in <span class="files">3 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        .project&#160;<span class="change">(+71)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/kinetics</strong>:
+        BasicKineticLaw.java&#160;<span class="change">(+3&#160;-3)</span>,
+        GRNAdditiveModel.java&#160;<span class="change">(-2)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="2"></a>
+    <a href="user_nitschmann.html" class="author">nitschmann</a>
+    <span class="date">2009-10-27 08:31</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">270</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+weitere Parameter für additive Modelle hinzugefügt
+    </p>
+    <p class="commitdetails"><strong>79</strong> lines of code changed in <span class="files">2 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/kinetics</strong>:
+        BasicKineticLaw.java&#160;<span class="change">(+73&#160;-1)</span>,
+        GRNAdditiveModel.java&#160;<span class="change">(+6&#160;-7)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="1"></a>
+    <a href="user_nitschmann.html" class="author">nitschmann</a>
+    <span class="date">2009-10-27 08:19</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">269</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+"unitDimensionlessPerTime" überarbeitet
+    </p>
+    <p class="commitdetails"><strong>30</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/kinetics</strong>:
+        BasicKineticLaw.java&#160;<span class="change">(+30&#160;-27)</span>
+      </li>
+    </ul>
+  </dd>
+
+</dl>
+
+<p>(24 more)</p>
+</div><div id="generatedby">Generated by <a href="http://www.statsvn.org">StatSVN</a> 0.7.0</div>
+</body>
+</html>

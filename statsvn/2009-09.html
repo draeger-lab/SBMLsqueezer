@@ -1,0 +1,3107 @@
+<?xml version="1.0"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>StatSVN - September 2009 Commit Log</title>
+ <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"/>
+    <meta name="Generator" content="StatSVN 0.7.0"/>
+<link rel="stylesheet" href="objectlab-statcvs.css" type="text/css"/>
+<script type="text/javascript" charset="utf-8" src="http://bit.ly/javascript-api.js?version=latest&#38;login=statsvn&#38;apiKey=R_2c362b417d0517c27876cbaca1bb68cc"></script>
+<script type="text/javascript" charset="utf-8">
+   // wait until page is loaded to call API
+   var redir_url;
+   var short_url;
+   BitlyCB.myShortenCallback = function(data) {
+      // this is how to get a result of shortening a single url
+      var result;
+      short_url=null;
+      for (var r in data.results) {
+         result = data.results[r];
+         result['longUrl'] = r;
+         short_url = result['shortUrl'];
+         break;
+      }
+      if (short_url==null) // bit.ly failed
+      document.location=redir_url;
+      else
+      redirToTwitter();
+   };
+   function shortenTweet(url) {
+      if (short_url == null || redir_url!=url) {
+      redir_url = url;
+      BitlyClient.shorten(document.location, 'BitlyCB.myShortenCallback');
+      }
+      else
+      redirToTwitter();
+      return false;
+   }
+   function redirToTwitter() { 
+      // replace {0} which is visible as %7B0} in the link
+      document.location = redir_url.replace('%7B0}', short_url);
+   }
+</script>
+  </head>
+
+<body>
+
+<h1>September 2009 Commit Log</h1>
+<div id="parentlink">&#171; <a href="index.html">Development Statistics for /trunk</a></div>
+
+<div id="nav" class="section">
+<h2>Commit Logs</h2>
+<ul>
+    <li><a href="commitlog.html">March 2014</a></li>
+    <li><a href="2014-02.html">February 2014</a></li>
+    <li><a href="2014-01.html">January 2014</a></li>
+    <li><a href="2013-12.html">December 2013</a></li>
+    <li><a href="2013-11.html">November 2013</a></li>
+    <li><a href="2013-10.html">October 2013</a></li>
+    <li><a href="2013-09.html">September 2013</a></li>
+    <li><a href="2013-08.html">August 2013</a></li>
+    <li><a href="2013-07.html">July 2013</a></li>
+    <li><a href="2013-06.html">June 2013</a></li>
+    <li><a href="2013-05.html">May 2013</a></li>
+    <li><a href="2013-04.html">April 2013</a></li>
+    <li><a href="2013-03.html">March 2013</a></li>
+    <li><a href="2013-02.html">February 2013</a></li>
+    <li><a href="2013-01.html">January 2013</a></li>
+    <li><a href="2012-12.html">December 2012</a></li>
+    <li><a href="2012-11.html">November 2012</a></li>
+    <li><a href="2012-10.html">October 2012</a></li>
+    <li><a href="2012-09.html">September 2012</a></li>
+    <li><a href="2012-08.html">August 2012</a></li>
+    <li><a href="2012-07.html">July 2012</a></li>
+    <li><a href="2012-06.html">June 2012</a></li>
+    <li><a href="2012-05.html">May 2012</a></li>
+    <li><a href="2012-04.html">April 2012</a></li>
+    <li><a href="2012-03.html">March 2012</a></li>
+    <li><a href="2012-02.html">February 2012</a></li>
+    <li><a href="2012-01.html">January 2012</a></li>
+    <li><a href="2011-12.html">December 2011</a></li>
+    <li><a href="2011-11.html">November 2011</a></li>
+    <li><a href="2011-10.html">October 2011</a></li>
+    <li><a href="2011-09.html">September 2011</a></li>
+    <li><a href="2011-08.html">August 2011</a></li>
+    <li><a href="2011-07.html">July 2011</a></li>
+    <li><a href="2011-06.html">June 2011</a></li>
+    <li><a href="2011-05.html">May 2011</a></li>
+    <li><a href="2011-04.html">April 2011</a></li>
+    <li><a href="2011-03.html">March 2011</a></li>
+    <li><a href="2011-02.html">February 2011</a></li>
+    <li><a href="2011-01.html">January 2011</a></li>
+    <li><a href="2010-12.html">December 2010</a></li>
+    <li><a href="2010-11.html">November 2010</a></li>
+    <li><a href="2010-10.html">October 2010</a></li>
+    <li><a href="2010-09.html">September 2010</a></li>
+    <li><a href="2010-08.html">August 2010</a></li>
+    <li><a href="2010-07.html">July 2010</a></li>
+    <li><a href="2010-06.html">June 2010</a></li>
+    <li><a href="2010-05.html">May 2010</a></li>
+    <li><a href="2010-04.html">April 2010</a></li>
+    <li><a href="2010-03.html">March 2010</a></li>
+    <li><a href="2010-02.html">February 2010</a></li>
+    <li><a href="2010-01.html">January 2010</a></li>
+    <li><a href="2009-12.html">December 2009</a></li>
+    <li><a href="2009-11.html">November 2009</a></li>
+    <li><a href="2009-10.html">October 2009</a></li>
+    <li><span class="here">September 2009</span></li>
+    <li><a href="2009-08.html">August 2009</a></li>
+    <li><a href="2009-07.html">July 2009</a></li>
+    <li><a href="2009-06.html">June 2009</a></li>
+</ul>
+</div><dl class="attributes">
+    <dt>Number of Commits:</dt>
+    <dd>72</dd>
+    <dt>Number of Active Developers:</dt>
+    <dd>3</dd>
+</dl>
+<dl class="commitlist">
+  <dt><a name="72"></a>
+    <a href="user_nitschmann.html" class="author">nitschmann</a>
+    <span class="date">2009-09-28 05:51</span>
+    <a class="permalink" title="Permalink to this commit" href="#72">#72</a>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">238</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Additive Modelle überarbeitet
+    </p>
+    <p class="commitdetails"><strong>51</strong> lines of code changed in <span class="files">5 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/kinetics</strong>:
+        GRNAdditiveModel.java&#160;<span class="change">(+16&#160;-9)</span>,
+        GRNAdditiveModel_1.java&#160;<span class="change">(+3&#160;-5)</span>,
+        GRNAdditiveModel_2.java&#160;<span class="change">(+16&#160;-9)</span>,
+        GRNAdditiveModel_NGlinear.java&#160;<span class="change">(+11&#160;-6)</span>,
+        GRNAdditiveModel_NGnonlinear.java&#160;<span class="change">(+5&#160;-5)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="71"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2009-09-27 07:59</span>
+    <a class="permalink" title="Permalink to this commit" href="#71">#71</a>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">237</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Added unit declarations to many kinetic equations and separated LaTeX output from ASTNode implementation.
+    </p>
+    <p class="commitdetails"><strong>1807</strong> lines of code changed in <span class="files">18 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/jsbml</strong>:
+        ASTNode.java&#160;<span class="change">(+84&#160;-546)</span>,
+        ASTNodeCompiler.java&#160;<span class="new">(new&#160;490)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer</strong>:
+        SBMLsqueezer.java&#160;<span class="change">(+12&#160;-1)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/gui</strong>:
+        SBasePanel.java&#160;<span class="change">(+8&#160;-6)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/io</strong>:
+        LaTeX.java&#160;<span class="change">(+1073&#160;-237)</span>,
+        LaTeXExport.java&#160;<span class="change">(+3&#160;-2)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/kinetics</strong>:
+        BasicKineticLaw.java&#160;<span class="change">(+13&#160;-7)</span>,
+        DirectSaturable.java&#160;<span class="change">(+8&#160;-11)</span>,
+        ForceDependent.java&#160;<span class="change">(+10&#160;-11)</span>,
+        GeneralizedMassAction.java&#160;<span class="change">(+2&#160;-6)</span>,
+        HillEquation.java&#160;<span class="change">(+14&#160;-23)</span>,
+        IrrevCompetNonCooperativeEnzymes.java&#160;<span class="change">(+7&#160;-17)</span>,
+        IrrevNonModulatedNonInteractingEnzymes.java&#160;<span class="change">(+3&#160;-12)</span>,
+        MichaelisMenten.java&#160;<span class="change">(+21&#160;-39)</span>,
+        MultiplicativeSaturable.java&#160;<span class="change">(+14&#160;-15)</span>,
+        OrderedMechanism.java&#160;<span class="change">(+23&#160;-33)</span>,
+        PingPongMechanism.java&#160;<span class="change">(+5&#160;-18)</span>,
+        RandomOrderMechanism.java&#160;<span class="change">(+17&#160;-60)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="70"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2009-09-26 09:54</span>
+    <a class="permalink" title="Permalink to this commit" href="#70">#70</a>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">236</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Detected errors and started to create parameters with units in older kinetic laws as well.
+    </p>
+    <p class="commitdetails"><strong>914</strong> lines of code changed in <span class="files">18 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/jsbml</strong>:
+        ASTNode.java&#160;<span class="change">(+2&#160;-1)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer</strong>:
+        KineticLawGenerator.java&#160;<span class="change">(+59&#160;-130)</span>,
+        SBMLsqueezer.java&#160;<span class="change">(+342&#160;-124)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/gui</strong>:
+        LayoutHelper.java&#160;<span class="change">(-2)</span>,
+        SBasePanel.java&#160;<span class="change">(+2&#160;-2)</span>,
+        SettingsPanelDefaultMechanisms.java&#160;<span class="change">(+60&#160;-57)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/gui/table</strong>:
+        KineticLawJTable.java&#160;<span class="change">(+1&#160;-1)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/io</strong>:
+        TextFormula.java&#160;<span class="change">(-25)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/kinetics</strong>:
+        BasicKineticLaw.java&#160;<span class="change">(+298&#160;-73)</span>,
+        CommonSaturable.java&#160;<span class="change">(+16&#160;-22)</span>,
+        ConvenienceKinetics.java&#160;<span class="change">(+40&#160;-45)</span>,
+        DirectSaturable.java&#160;<span class="change">(+7&#160;-7)</span>,
+        ForceDependent.java&#160;<span class="change">(+1&#160;-1)</span>,
+        IrrevCompetNonCooperativeEnzymes.java&#160;<span class="change">(+10&#160;-10)</span>,
+        MultiplicativeSaturable.java&#160;<span class="change">(+1&#160;-1)</span>,
+        ReversiblePowerLaw.java&#160;<span class="change">(+59&#160;-156)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/plugin</strong>:
+        PluginSBMLReader.java&#160;<span class="change">(+14&#160;-14)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/standalone</strong>:
+        LibSBMLReader.java&#160;<span class="change">(+2&#160;-10)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="69"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2009-09-25 02:05</span>
+    <a class="permalink" title="Permalink to this commit" href="#69">#69</a>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">235</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Now SBMLsqueezer can be started as a plugin in CellDesigner again...
+    </p>
+    <p class="commitdetails"><strong>65</strong> lines of code changed in <span class="files">7 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/jsbml</strong>:
+        SBO.java&#160;<span class="change">(+15&#160;-19)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/gui</strong>:
+        SettingsPanelAll.java&#160;<span class="change">(+19&#160;-3)</span>,
+        SettingsPanelDefaultMechanisms.java&#160;<span class="change">(+19&#160;-3)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/plugin</strong>:
+        PluginSBMLReader.java&#160;<span class="change">(+7&#160;-10)</span>,
+        PluginSBMLWriter.java&#160;<span class="change">(+3&#160;-4)</span>,
+        SBMLsqueezerPlugin.java&#160;<span class="change">(+1&#160;-1)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/resources</strong>:
+        Resource.java&#160;<span class="change">(+1&#160;-4)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="68"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2009-09-24 10:48</span>
+    <a class="permalink" title="Permalink to this commit" href="#68">#68</a>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">234</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Detected and corrected errors.
+    </p>
+    <p class="commitdetails"><strong>97</strong> lines of code changed in <span class="files">3 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer</strong>:
+        KineticLawGenerator.java&#160;<span class="change">(+5&#160;-4)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/gui</strong>:
+        GUITools.java&#160;<span class="change">(+4&#160;-2)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/kinetics</strong>:
+        ConvenienceKinetics.java&#160;<span class="change">(+88&#160;-61)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="67"></a>
+    <a href="user_nitschmann.html" class="author">nitschmann</a>
+    <span class="date">2009-09-24 08:53</span>
+    <a class="permalink" title="Permalink to this commit" href="#67">#67</a>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">233</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Detected an error in KineticLawGenerator that lead to an incorrect selection of kinetic laws in cases of inhibition or activation.
+    </p>
+    <p class="commitdetails"><strong>250</strong> lines of code changed in <span class="files">2 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/jsbml</strong>:
+        SBO.java&#160;<span class="change">(+13&#160;-3)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer</strong>:
+        KineticLawGenerator.java&#160;<span class="change">(+237&#160;-220)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="66"></a>
+    <a href="user_schaefer.html" class="author">schaefer</a>
+    <span class="date">2009-09-24 08:44</span>
+    <a class="permalink" title="Permalink to this commit" href="#66">#66</a>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">232</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+
+    </p>
+    <p class="commitdetails"><strong>283</strong> lines of code changed in <span class="files">3 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/jsbml</strong>:
+        SBO.java&#160;<span class="change">(+44&#160;-25)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/plugin</strong>:
+        PluginSBMLWriter.java&#160;<span class="change">(+202&#160;-171)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/resources/cfg</strong>:
+        SBO2Alias.cfg&#160;<span class="new">(new&#160;37)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="65"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2009-09-24 08:18</span>
+    <a class="permalink" title="Permalink to this commit" href="#65">#65</a>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">231</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Now SBMLsqueezer automatically queries the kinetics package for applicable kinetic equations and it is no longer required to write explicit knowledge into the KineticLawGenerator or any other class. The only requirement is to implement designated interfaces that can also be found in the kinetics package.
+    </p>
+    <p class="commitdetails"><strong>2099</strong> lines of code changed in <span class="files">39 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer</strong>:
+        KineticLawGenerator.java&#160;<span class="change">(+1324&#160;-1407)</span>,
+        Kinetics.java&#160;<span class="del">(del)</span>,
+        SBMLsqueezer.java&#160;<span class="change">(+17&#160;-5)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/gui</strong>:
+        GUITools.java&#160;<span class="change">(+19)</span>,
+        KineticLawSelectionDialog.java&#160;<span class="change">(+3&#160;-36)</span>,
+        KineticLawSelectionPanel.java&#160;<span class="change">(+13&#160;-13)</span>,
+        SettingsDialog.java&#160;<span class="change">(+10&#160;-10)</span>,
+        SettingsPanelAll.java&#160;<span class="change">(+35&#160;-3)</span>,
+        SettingsPanelDefaultMechanisms.java&#160;<span class="change">(+70&#160;-39)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/gui/table</strong>:
+        KineticLawJTable.java&#160;<span class="change">(+22&#160;-5)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/kinetics</strong>:
+        BasicKineticLaw.java&#160;<span class="change">(+8&#160;-14)</span>,
+        CommonSaturable.java&#160;<span class="change">(+12&#160;-3)</span>,
+        Convenience.java&#160;<span class="del">(del)</span>,
+        ConvenienceIndependent.java&#160;<span class="del">(del)</span>,
+        ConvenienceKinetics.java&#160;<span class="new">(new&#160;241)</span>,
+        DirectSaturable.java&#160;<span class="change">(+11&#160;-4)</span>,
+        ForceDependent.java&#160;<span class="change">(+10&#160;-3)</span>,
+        GRNAdditiveModel.java&#160;<span class="change">(+47&#160;-27)</span>,
+        GRNAdditiveModel_1.java&#160;<span class="change">(+26&#160;-14)</span>,
+        GRNAdditiveModel_2.java&#160;<span class="change">(+4)</span>,
+        GRNAdditiveModel_NGlinear.java&#160;<span class="change">(+8)</span>,
+        GRNAdditiveModel_NGnonlinear.java&#160;<span class="change">(+8&#160;-1)</span>,
+        GRNSSystemEquation.java&#160;<span class="change">(+11&#160;-3)</span>,
+        GeneralizedMassAction.java&#160;<span class="change">(+7&#160;-2)</span>,
+        HillEquation.java&#160;<span class="change">(+11&#160;-1)</span>,
+        InterfaceIntegerStoichiometry.java&#160;<span class="new">(new&#160;9)</span>,
+        IrrevCompetNonCooperativeEnzymes.java&#160;<span class="change">(+9&#160;-2)</span>,
+        IrrevNonModulatedNonInteractingEnzymes.java&#160;<span class="change">(+16&#160;-4)</span>,
+        MichaelisMenten.java&#160;<span class="change">(+11&#160;-3)</span>,
+        MultiplicativeSaturable.java&#160;<span class="change">(+12&#160;-4)</span>,
+        OrderedMechanism.java&#160;<span class="change">(+11&#160;-3)</span>,
+        PingPongMechanism.java&#160;<span class="change">(+11&#160;-3)</span>,
+        RandomOrderMechanism.java&#160;<span class="change">(+10&#160;-2)</span>,
+        ReversiblePowerLaw.java&#160;<span class="change">(+13&#160;-3)</span>,
+        ZerothOrderForwardGMAK.java&#160;<span class="change">(+10&#160;-2)</span>,
+        ZerothOrderReverseGMAK.java&#160;<span class="change">(+11&#160;-3)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/resources/cfg</strong>:
+        SBMLsqueezer.cfg&#160;<span class="change">(+6&#160;-6)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/rmi</strong>:
+        RMIInvocationHandler.java&#160;<span class="change">(-3)</span>,
+        Reflect.java&#160;<span class="change">(+53&#160;-53)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="64"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2009-09-23 11:20</span>
+    <a class="permalink" title="Permalink to this commit" href="#64">#64</a>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">230</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+
+    </p>
+    <p class="commitdetails"><strong>35</strong> lines of code changed in <span class="files">11 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer</strong>:
+        KineticLawGenerator.java&#160;<span class="change">(+9&#160;-4)</span>,
+        Kinetics.java&#160;<span class="change">(+13&#160;-11)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/gui</strong>:
+        KineticLawSelectionPanel.java&#160;<span class="change">(+1&#160;-1)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/gui/table</strong>:
+        KineticLawJTable.java&#160;<span class="change">(+2&#160;-5)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/kinetics</strong>:
+        CommonSaturable.java&#160;<span class="change">(+1&#160;-1)</span>,
+        Convenience.java&#160;<span class="change">(+1&#160;-1)</span>,
+        ConvenienceIndependent.java&#160;<span class="change">(+3&#160;-2)</span>,
+        DirectSaturable.java&#160;<span class="change">(+1&#160;-1)</span>,
+        ForceDependent.java&#160;<span class="change">(+1&#160;-1)</span>,
+        IrrevCompetNonCooperativeEnzymes.java&#160;<span class="change">(+2&#160;-1)</span>,
+        MultiplicativeSaturable.java&#160;<span class="change">(+1&#160;-1)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="63"></a>
+    <a href="user_schaefer.html" class="author">schaefer</a>
+    <span class="date">2009-09-23 07:39</span>
+    <a class="permalink" title="Permalink to this commit" href="#63">#63</a>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">229</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+
+    </p>
+    <p class="commitdetails"><strong>17</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/plugin</strong>:
+        PluginSBMLWriter.java&#160;<span class="change">(+17&#160;-26)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="62"></a>
+    <a href="user_schaefer.html" class="author">schaefer</a>
+    <span class="date">2009-09-23 07:24</span>
+    <a class="permalink" title="Permalink to this commit" href="#62">#62</a>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">228</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+fixed parent problem with pluginwriter
+    </p>
+    <p class="commitdetails"><strong>405</strong> lines of code changed in <span class="files">6 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/jsbml</strong>:
+        SBMLWriter.java&#160;<span class="change">(+6&#160;-6)</span>,
+        SBO.java&#160;<span class="change">(+128&#160;-81)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/io</strong>:
+        SBMLio.java&#160;<span class="change">(+12&#160;-12)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/plugin</strong>:
+        PluginSBMLWriter.java&#160;<span class="change">(+252&#160;-29)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/resources/cfg</strong>:
+        Alias2SBO.cfg&#160;<span class="change">(+1)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/standalone</strong>:
+        LibSBMLWriter.java&#160;<span class="change">(+6&#160;-6)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="61"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2009-09-23 02:49</span>
+    <a class="permalink" title="Permalink to this commit" href="#61">#61</a>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">227</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Improved writer.
+    </p>
+    <p class="commitdetails"><strong>335</strong> lines of code changed in <span class="files">48 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/jsbml</strong>:
+        SBMLWriter.java&#160;<span class="change">(+1&#160;-1)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer</strong>:
+        KineticLawGenerator.java&#160;<span class="change">(+112&#160;-40)</span>,
+        SBMLsqueezer.java&#160;<span class="change">(+25&#160;-20)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/gui</strong>:
+        SettingsPanelDefaultMechanisms.java&#160;<span class="change">(+33&#160;-31)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/io</strong>:
+        SBMLio.java&#160;<span class="change">(+2&#160;-3)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/kinetics</strong>:
+        ArbitraryEnzymeKinetics.java&#160;<span class="del">(del)</span>,
+        BiBiKinetics.java&#160;<span class="del">(del)</span>,
+        BiUniKinetics.java&#160;<span class="del">(del)</span>,
+        CommonSaturable.java&#160;<span class="change">(+3&#160;-2)</span>,
+        Convenience.java&#160;<span class="change">(+3&#160;-2)</span>,
+        ConvenienceIndependent.java&#160;<span class="change">(+2&#160;-2)</span>,
+        DirectSaturable.java&#160;<span class="change">(+3&#160;-2)</span>,
+        ForceDependent.java&#160;<span class="change">(+3&#160;-2)</span>,
+        GRNAdditiveModel.java&#160;<span class="change">(+1&#160;-1)</span>,
+        GRNAdditiveModel_1.java&#160;<span class="change">(+1&#160;-1)</span>,
+        GRNAdditiveModel_2.java&#160;<span class="change">(+1&#160;-1)</span>,
+        GRNAdditiveModel_NGlinear.java&#160;<span class="change">(+1&#160;-1)</span>,
+        GRNAdditiveModel_NGnonlinear.java&#160;<span class="change">(+1&#160;-1)</span>,
+        GRNSSystemEquation.java&#160;<span class="change">(+50&#160;-54)</span>,
+        GeneRegulatoryKinetics.java&#160;<span class="del">(del)</span>,
+        GeneralizedMassAction.java&#160;<span class="change">(+2&#160;-1)</span>,
+        HillEquation.java&#160;<span class="change">(+6&#160;-6)</span>,
+        InterfaceArbitraryEnzymeKinetics.java&#160;<span class="new">(new&#160;5)</span>,
+        InterfaceBiBiKinetics.java&#160;<span class="new">(new&#160;5)</span>,
+        InterfaceBiUniKinetics.java&#160;<span class="new">(new&#160;5)</span>,
+        InterfaceGeneRegulatoryKinetics.java&#160;<span class="new">(new&#160;5)</span>,
+        InterfaceIrreversibleKinetics.java&#160;<span class="new">(new&#160;5)</span>,
+        InterfaceModulatedKinetics.java&#160;<span class="new">(new&#160;5)</span>,
+        InterfaceNonEnzymeKinetics.java&#160;<span class="new">(new&#160;5)</span>,
+        InterfaceReversibleKinetics.java&#160;<span class="new">(new&#160;5)</span>,
+        InterfaceUniUniKinetics.java&#160;<span class="new">(new&#160;5)</span>,
+        InterfaceZeroProducts.java&#160;<span class="new">(new&#160;7)</span>,
+        InterfaceZeroReactants.java&#160;<span class="new">(new&#160;6)</span>,
+        IrrevCompetNonCooperativeEnzymes.java&#160;<span class="change">(+2&#160;-1)</span>,
+        IrrevNonModulatedNonInteractingEnzymes.java&#160;<span class="change">(+1&#160;-1)</span>,
+        IrreversibleKinetics.java&#160;<span class="del">(del)</span>,
+        MichaelisMenten.java&#160;<span class="change">(+3&#160;-1)</span>,
+        MultiplicativeSaturable.java&#160;<span class="change">(+3&#160;-2)</span>,
+        NonEnzymeKinetics.java&#160;<span class="del">(del)</span>,
+        OrderedMechanism.java&#160;<span class="change">(+3&#160;-1)</span>,
+        PingPongMechanism.java&#160;<span class="change">(+2&#160;-1)</span>,
+        RandomOrderMechanism.java&#160;<span class="change">(+3&#160;-1)</span>,
+        ReversibleKinetics.java&#160;<span class="del">(del)</span>,
+        ReversiblePowerLaw.java&#160;<span class="change">(+3&#160;-2)</span>,
+        UniUniKinetics.java&#160;<span class="del">(del)</span>,
+        ZerothOrderForwardGMAK.java&#160;<span class="change">(+3&#160;-1)</span>,
+        ZerothOrderReverseGMAK.java&#160;<span class="change">(+3&#160;-1)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/standalone</strong>:
+        LibSBMLWriter.java&#160;<span class="change">(+1&#160;-1)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="60"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2009-09-23 01:10</span>
+    <a class="permalink" title="Permalink to this commit" href="#60">#60</a>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">226</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+SBMLsqueezer is now able to provide all kinetics as defaults in the preferences menu.
+    </p>
+    <p class="commitdetails"><strong>264</strong> lines of code changed in <span class="files">20 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/gui</strong>:
+        SettingsPanelDefaultMechanisms.java&#160;<span class="change">(+167&#160;-335)</span>,
+        SettingsPanelKinetics.java&#160;<span class="change">(+1&#160;-1)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/kinetics</strong>:
+        CommonSaturable.java&#160;<span class="change">(+2&#160;-1)</span>,
+        Convenience.java&#160;<span class="change">(+2&#160;-1)</span>,
+        ConvenienceIndependent.java&#160;<span class="change">(+2&#160;-1)</span>,
+        DirectSaturable.java&#160;<span class="change">(+2&#160;-1)</span>,
+        ForceDependent.java&#160;<span class="change">(+2&#160;-1)</span>,
+        GeneralizedMassAction.java&#160;<span class="change">(+8&#160;-5)</span>,
+        IrrevCompetNonCooperativeEnzymes.java&#160;<span class="change">(+3&#160;-3)</span>,
+        IrrevNonModulatedNonInteractingEnzymes.java&#160;<span class="change">(+2&#160;-1)</span>,
+        IrreversibleKinetics.java&#160;<span class="new">(new&#160;29)</span>,
+        MichaelisMenten.java&#160;<span class="change">(+1&#160;-1)</span>,
+        MultiplicativeSaturable.java&#160;<span class="change">(+2&#160;-1)</span>,
+        OrderedMechanism.java&#160;<span class="change">(+2&#160;-1)</span>,
+        PingPongMechanism.java&#160;<span class="change">(+3&#160;-3)</span>,
+        RandomOrderMechanism.java&#160;<span class="change">(+1&#160;-1)</span>,
+        ReversibleKinetics.java&#160;<span class="new">(new&#160;29)</span>,
+        ReversiblePowerLaw.java&#160;<span class="change">(+2&#160;-1)</span>,
+        ZerothOrderForwardGMAK.java&#160;<span class="change">(+2&#160;-1)</span>,
+        ZerothOrderReverseGMAK.java&#160;<span class="change">(+2&#160;-1)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="59"></a>
+    <a href="user_nitschmann.html" class="author">nitschmann</a>
+    <span class="date">2009-09-22 13:42</span>
+    <a class="permalink" title="Permalink to this commit" href="#59">#59</a>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">225</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+isRNA und isMessengerRNA zusammengefasst in isRNAOrMessengerRNA
+    </p>
+    <p class="commitdetails"><strong>28</strong> lines of code changed in <span class="files">6 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/jsbml</strong>:
+        SBO.java&#160;<span class="change">(+10&#160;-1)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer</strong>:
+        KineticLawGenerator.java&#160;<span class="change">(+11&#160;-14)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/kinetics</strong>:
+        GRNAdditiveModel.java&#160;<span class="change">(+3&#160;-3)</span>,
+        GRNAdditiveModel_NGnonlinear.java&#160;<span class="change">(+1&#160;-1)</span>,
+        GRNSSystemEquation.java&#160;<span class="change">(+1&#160;-1)</span>,
+        HillEquation.java&#160;<span class="change">(+2&#160;-3)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="58"></a>
+    <a href="user_nitschmann.html" class="author">nitschmann</a>
+    <span class="date">2009-09-22 13:28</span>
+    <a class="permalink" title="Permalink to this commit" href="#58">#58</a>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">224</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Variablen reactionWithGenes und reactionWithRNAs wieder eingeführt
+    </p>
+    <p class="commitdetails"><strong>14</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer</strong>:
+        KineticLawGenerator.java&#160;<span class="change">(+14&#160;-15)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="57"></a>
+    <a href="user_nitschmann.html" class="author">nitschmann</a>
+    <span class="date">2009-09-22 08:30</span>
+    <a class="permalink" title="Permalink to this commit" href="#57">#57</a>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">223</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Variablen in KineticLawGenerator: reactionWithGenes reactionWithRNA aufgeteilt in reactantIsGene/modifierIsGene und reactantIsRNA/modifierIsRNA<br />
+<br />
+AdditiveModel: sboTerm setzen falls modifier keinen sboterm haben
+    </p>
+    <p class="commitdetails"><strong>16</strong> lines of code changed in <span class="files">3 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer</strong>:
+        KineticLawGenerator.java&#160;<span class="change">(+12&#160;-11)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/kinetics</strong>:
+        GRNAdditiveModel.java&#160;<span class="change">(+3)</span>,
+        GRNAdditiveModel_NGnonlinear.java&#160;<span class="change">(+1)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="56"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2009-09-22 08:22</span>
+    <a class="permalink" title="Permalink to this commit" href="#56">#56</a>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">222</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Now SBMLsqueezer takes the other enzyme reactions from the interface list.
+    </p>
+    <p class="commitdetails"><strong>275</strong> lines of code changed in <span class="files">21 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/gui</strong>:
+        LayoutHelper.java&#160;<span class="change">(+15)</span>,
+        SettingsPanelDefaultMechanisms.java&#160;<span class="change">(+82&#160;-120)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/kinetics</strong>:
+        ArbitraryEnzymeKinetics.java&#160;<span class="new">(new&#160;29)</span>,
+        BiBiKinetics.java&#160;<span class="new">(new&#160;29)</span>,
+        BiUniKinetics.java&#160;<span class="new">(new&#160;29)</span>,
+        CommonSaturable.java&#160;<span class="change">(+2&#160;-1)</span>,
+        Convenience.java&#160;<span class="change">(+10&#160;-6)</span>,
+        ConvenienceIndependent.java&#160;<span class="change">(+2&#160;-1)</span>,
+        DirectSaturable.java&#160;<span class="change">(+2&#160;-1)</span>,
+        ForceDependent.java&#160;<span class="change">(+2&#160;-1)</span>,
+        GeneralizedMassAction.java&#160;<span class="change">(+1&#160;-1)</span>,
+        MichaelisMenten.java&#160;<span class="change">(+1&#160;-1)</span>,
+        MultiplicativeSaturable.java&#160;<span class="change">(+4&#160;-2)</span>,
+        NonEnzymeKinetics.java&#160;<span class="new">(new&#160;29)</span>,
+        OrderedMechanism.java&#160;<span class="change">(+1&#160;-1)</span>,
+        PingPongMechanism.java&#160;<span class="change">(+1&#160;-1)</span>,
+        RandomOrderMechanism.java&#160;<span class="change">(+3&#160;-3)</span>,
+        ReversiblePowerLaw.java&#160;<span class="change">(+2&#160;-1)</span>,
+        UniUniKinetics.java&#160;<span class="new">(new&#160;29)</span>,
+        ZerothOrderForwardGMAK.java&#160;<span class="change">(+1&#160;-1)</span>,
+        ZerothOrderReverseGMAK.java&#160;<span class="change">(+1&#160;-1)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="55"></a>
+    <a href="user_nitschmann.html" class="author">nitschmann</a>
+    <span class="date">2009-09-22 07:53</span>
+    <a class="permalink" title="Permalink to this commit" href="#55">#55</a>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">221</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+sboTerm-Konflikt: 278 (mRNA) - 250 (RNA) gelöst
+    </p>
+    <p class="commitdetails"><strong>21</strong> lines of code changed in <span class="files">4 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer</strong>:
+        KineticLawGenerator.java&#160;<span class="change">(+16&#160;-13)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/kinetics</strong>:
+        GRNAdditiveModel.java&#160;<span class="change">(+3&#160;-3)</span>,
+        GRNAdditiveModel_NGnonlinear.java&#160;<span class="change">(+1&#160;-1)</span>,
+        GRNSSystemEquation.java&#160;<span class="change">(+1&#160;-1)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="54"></a>
+    <a href="user_nitschmann.html" class="author">nitschmann</a>
+    <span class="date">2009-09-22 07:07</span>
+    <a class="permalink" title="Permalink to this commit" href="#54">#54</a>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">220</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Änderung in SBO.java: isGeneCodingRegion und isGeneOrGeneCodingRegion hinzugefügt<br />
+entsprechende Änderungen in anderen Dateien
+    </p>
+    <p class="commitdetails"><strong>38</strong> lines of code changed in <span class="files">5 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/jsbml</strong>:
+        SBO.java&#160;<span class="change">(+18)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer</strong>:
+        KineticLawGenerator.java&#160;<span class="change">(+9&#160;-9)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/kinetics</strong>:
+        GRNAdditiveModel_NGlinear.java&#160;<span class="change">(+5)</span>,
+        GRNAdditiveModel_NGnonlinear.java&#160;<span class="change">(+4)</span>,
+        HillEquation.java&#160;<span class="change">(+2&#160;-2)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="53"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2009-09-22 06:45</span>
+    <a class="permalink" title="Permalink to this commit" href="#53">#53</a>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">219</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Started to implement reflection for GUI elements and simpler integration of new kinetic equations.
+    </p>
+    <p class="commitdetails"><strong>3002</strong> lines of code changed in <span class="files">39 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/jsbml</strong>:
+        ASTNode.java&#160;<span class="change">(+31&#160;-22)</span>,
+        Compartment.java&#160;<span class="change">(+25&#160;-3)</span>,
+        Parameter.java&#160;<span class="change">(+24)</span>,
+        Species.java&#160;<span class="change">(+17&#160;-1)</span>,
+        Symbol.java&#160;<span class="change">(+16&#160;-3)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer</strong>:
+        CfgKeys.java&#160;<span class="change">(+41&#160;-44)</span>,
+        KineticLawGenerator.java&#160;<span class="change">(+48&#160;-44)</span>,
+        Kinetics.java&#160;<span class="change">(+34&#160;-2)</span>,
+        RateLawNotApplicableException.java&#160;<span class="change">(+1&#160;-1)</span>,
+        SBMLsqueezer.java&#160;<span class="change">(+4)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/gui</strong>:
+        GUITools.java&#160;<span class="change">(+1)</span>,
+        KineticLawSelectionDialog.java&#160;<span class="change">(+3&#160;-3)</span>,
+        SettingsDialog.java&#160;<span class="change">(+77&#160;-145)</span>,
+        SettingsPanelAll.java&#160;<span class="new">(new&#160;222)</span>,
+        SettingsPanelDefaultMechanisms.java&#160;<span class="new">(new&#160;504)</span>,
+        SettingsPanelKinetics.java&#160;<span class="change">(+31&#160;-413)</span>,
+        SettingsPanelLaTeX.java&#160;<span class="change">(+1)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/io</strong>:
+        SBOParser.java&#160;<span class="del">(del)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/kinetics</strong>:
+        BasicKineticLaw.java&#160;<span class="change">(+47)</span>,
+        CommonSaturable.java&#160;<span class="new">(new&#160;106)</span>,
+        DirectSaturable.java&#160;<span class="new">(new&#160;105)</span>,
+        ForceDependent.java&#160;<span class="new">(new&#160;101)</span>,
+        GRNAdditiveModel.java&#160;<span class="change">(+1&#160;-1)</span>,
+        GRNAdditiveModel_1.java&#160;<span class="change">(+1&#160;-1)</span>,
+        GRNAdditiveModel_2.java&#160;<span class="change">(+1&#160;-1)</span>,
+        GRNAdditiveModel_NGlinear.java&#160;<span class="change">(+1&#160;-1)</span>,
+        GRNAdditiveModel_NGnonlinear.java&#160;<span class="change">(+1&#160;-1)</span>,
+        GRNSSystemEquation.java&#160;<span class="change">(+1&#160;-1)</span>,
+        GeneRegulatoryKinetics.java&#160;<span class="new">(new&#160;29)</span>,
+        HillEquation.java&#160;<span class="change">(+1&#160;-1)</span>,
+        MultiplicativeSaturable.java&#160;<span class="new">(new&#160;108)</span>,
+        ReversiblePowerLaw.java&#160;<span class="change">(+165&#160;-103)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/math</strong>:
+        RNG.java&#160;<span class="new">(new&#160;394)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/resources/cfg</strong>:
+        SBMLsqueezer.cfg&#160;<span class="change">(+5)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/resources/txt</strong>:
+        SBO_OBO.obo&#160;<span class="change">(+16&#160;-4)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/rmi</strong>:
+        RMIInvocationHandler.java&#160;<span class="new">(new&#160;27)</span>,
+        RMIInvocationHandlerImpl.java&#160;<span class="new">(new&#160;152)</span>,
+        RMIProxyLocal.java&#160;<span class="new">(new&#160;124)</span>,
+        Reflect.java&#160;<span class="new">(new&#160;536)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="52"></a>
+    <a href="user_nitschmann.html" class="author">nitschmann</a>
+    <span class="date">2009-09-22 04:49</span>
+    <a class="permalink" title="Permalink to this commit" href="#52">#52</a>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">218</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Additive Modelle erweitert und überarbeitet
+    </p>
+    <p class="commitdetails"><strong>202</strong> lines of code changed in <span class="files">8 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer</strong>:
+        KineticLawGenerator.java&#160;<span class="change">(+26&#160;-1)</span>,
+        Kinetics.java&#160;<span class="change">(+18&#160;-2)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/kinetics</strong>:
+        GRNAdditiveModel.java&#160;<span class="change">(-2)</span>,
+        GRNAdditiveModel_1.java&#160;<span class="change">(+3&#160;-4)</span>,
+        GRNAdditiveModel_2.java&#160;<span class="change">(-4)</span>,
+        GRNAdditiveModel_NGlinear.java&#160;<span class="new">(new&#160;57)</span>,
+        GRNAdditiveModel_NGnonlinear.java&#160;<span class="new">(new&#160;98)</span>,
+        GRNSSystemEquation.java&#160;<span class="change">(-1)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="51"></a>
+    <a href="user_nitschmann.html" class="author">nitschmann</a>
+    <span class="date">2009-09-22 03:27</span>
+    <a class="permalink" title="Permalink to this commit" href="#51">#51</a>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">217</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Additive Modelle erweitert
+    </p>
+    <p class="commitdetails"><strong>228</strong> lines of code changed in <span class="files">5 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer</strong>:
+        KineticLawGenerator.java&#160;<span class="change">(+20)</span>,
+        Kinetics.java&#160;<span class="change">(+19&#160;-1)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/kinetics</strong>:
+        GRNAdditiveModel.java&#160;<span class="change">(+37&#160;-30)</span>,
+        GRNAdditiveModel_1.java&#160;<span class="new">(new&#160;77)</span>,
+        GRNAdditiveModel_2.java&#160;<span class="new">(new&#160;75)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="50"></a>
+    <a href="user_nitschmann.html" class="author">nitschmann</a>
+    <span class="date">2009-09-21 07:41</span>
+    <a class="permalink" title="Permalink to this commit" href="#50">#50</a>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">216</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+GRNAdditiveModel erstellt und GRNSSystemEquation überarbeitet
+    </p>
+    <p class="commitdetails"><strong>221</strong> lines of code changed in <span class="files">4 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer</strong>:
+        KineticLawGenerator.java&#160;<span class="change">(+17&#160;-3)</span>,
+        Kinetics.java&#160;<span class="change">(+7&#160;-1)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/kinetics</strong>:
+        GRNAdditiveModel.java&#160;<span class="new">(new&#160;170)</span>,
+        GRNSSystemEquation.java&#160;<span class="change">(+27&#160;-31)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="49"></a>
+    <a href="user_nitschmann.html" class="author">nitschmann</a>
+    <span class="date">2009-09-21 06:38</span>
+    <a class="permalink" title="Permalink to this commit" href="#49">#49</a>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">215</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+GRNSSystemEquation fast fertig
+    </p>
+    <p class="commitdetails"><strong>23</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/kinetics</strong>:
+        GRNSSystemEquation.java&#160;<span class="change">(+23&#160;-40)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="48"></a>
+    <a href="user_nitschmann.html" class="author">nitschmann</a>
+    <span class="date">2009-09-21 05:59</span>
+    <a class="permalink" title="Permalink to this commit" href="#48">#48</a>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">214</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Zeile 67-69 auskommentiert, da es sonst zu mehrfacher Verwendung der modifier kommt
+    </p>
+    <p class="commitdetails"><strong>3</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/kinetics</strong>:
+        BasicKineticLaw.java&#160;<span class="change">(+3&#160;-2)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="47"></a>
+    <a href="user_nitschmann.html" class="author">nitschmann</a>
+    <span class="date">2009-09-21 05:56</span>
+    <a class="permalink" title="Permalink to this commit" href="#47">#47</a>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">213</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Fehler korrigiert und GRNSSystemEquation überarbeitet
+    </p>
+    <p class="commitdetails"><strong>123</strong> lines of code changed in <span class="files">7 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/jsbml</strong>:
+        ASTNode.java&#160;<span class="change">(+11&#160;-12)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer</strong>:
+        KineticLawGenerator.java&#160;<span class="change">(+11&#160;-5)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/kinetics</strong>:
+        Convenience.java&#160;<span class="change">(+9&#160;-13)</span>,
+        GRNSSystemEquation.java&#160;<span class="change">(+72&#160;-68)</span>,
+        GeneralizedMassAction.java&#160;<span class="change">(+16&#160;-22)</span>,
+        IrrevCompetNonCooperativeEnzymes.java&#160;<span class="change">(+2&#160;-3)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/standalone</strong>:
+        LibSBMLReader.java&#160;<span class="change">(+2&#160;-2)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="46"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2009-09-21 03:58</span>
+    <a class="permalink" title="Permalink to this commit" href="#46">#46</a>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">212</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+SBO term of reactions was not set in the mini model copy in KineticLawGenerator.
+    </p>
+    <p class="commitdetails"><strong>559</strong> lines of code changed in <span class="files">10 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/jsbml</strong>:
+        ASTNode.java&#160;<span class="change">(+67&#160;-27)</span>,
+        SBO.java&#160;<span class="change">(+39&#160;-2)</span>,
+        Symbol.java&#160;<span class="change">(+26&#160;-7)</span>,
+        Unit.java&#160;<span class="change">(+164&#160;-57)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer</strong>:
+        KineticLawGenerator.java&#160;<span class="change">(+29&#160;-12)</span>,
+        Kinetics.java&#160;<span class="change">(+42)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/gui</strong>:
+        SBasePanel.java&#160;<span class="change">(+4&#160;-4)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/io</strong>:
+        TextFormula.java&#160;<span class="change">(+4)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/kinetics</strong>:
+        BasicKineticLaw.java&#160;<span class="change">(+12&#160;-1)</span>,
+        ReversiblePowerLaw.java&#160;<span class="change">(+172&#160;-41)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="45"></a>
+    <a href="user_nitschmann.html" class="author">nitschmann</a>
+    <span class="date">2009-09-21 03:27</span>
+    <a class="permalink" title="Permalink to this commit" href="#45">#45</a>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">211</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Änderungen in KineticLawGenerator und GRNSSystemEquation
+    </p>
+    <p class="commitdetails"><strong>27</strong> lines of code changed in <span class="files">3 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer</strong>:
+        KineticLawGenerator.java&#160;<span class="change">(+12&#160;-9)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/kinetics</strong>:
+        GRNSSystemEquation.java&#160;<span class="change">(+15&#160;-1)</span>,
+        TestKinetik.java&#160;<span class="del">(del)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="44"></a>
+    <a href="user_nitschmann.html" class="author">nitschmann</a>
+    <span class="date">2009-09-20 12:43</span>
+    <a class="permalink" title="Permalink to this commit" href="#44">#44</a>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">210</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+GRNSSystemEquation überarbeitet
+    </p>
+    <p class="commitdetails"><strong>15</strong> lines of code changed in <span class="files">2 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer</strong>:
+        KineticLawGenerator.java&#160;<span class="change">(+1)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/kinetics</strong>:
+        GRNSSystemEquation.java&#160;<span class="change">(+14&#160;-14)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="43"></a>
+    <a href="user_nitschmann.html" class="author">nitschmann</a>
+    <span class="date">2009-09-19 09:20</span>
+    <a class="permalink" title="Permalink to this commit" href="#43">#43</a>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">209</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+GRNSSystemEquation überarbeitet
+    </p>
+    <p class="commitdetails"><strong>63</strong> lines of code changed in <span class="files">3 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer</strong>:
+        KineticLawGenerator.java&#160;<span class="change">(+3)</span>,
+        Kinetics.java&#160;<span class="change">(+2&#160;-2)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/kinetics</strong>:
+        GRNSSystemEquation.java&#160;<span class="change">(+58&#160;-48)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="42"></a>
+    <a href="user_nitschmann.html" class="author">nitschmann</a>
+    <span class="date">2009-09-19 06:46</span>
+    <a class="permalink" title="Permalink to this commit" href="#42">#42</a>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">208</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+TestKinetik in GRNSSystemEquation und TEST_KINETIK in SSYSTEM_KINETIC umbenannt
+    </p>
+    <p class="commitdetails"><strong>198</strong> lines of code changed in <span class="files">3 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer</strong>:
+        KineticLawGenerator.java&#160;<span class="change">(+7&#160;-12)</span>,
+        Kinetics.java&#160;<span class="change">(+3&#160;-46)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/kinetics</strong>:
+        GRNSSystemEquation.java&#160;<span class="new">(new&#160;188)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="41"></a>
+    <a href="user_schaefer.html" class="author">schaefer</a>
+    <span class="date">2009-09-18 09:05</span>
+    <a class="permalink" title="Permalink to this commit" href="#41">#41</a>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">207</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+
+    </p>
+    <p class="commitdetails"><strong>219</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/plugin</strong>:
+        PluginSBMLWriter.java&#160;<span class="change">(+219&#160;-111)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="40"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2009-09-17 08:24</span>
+    <a class="permalink" title="Permalink to this commit" href="#40">#40</a>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">206</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Started to implement Liebermeister's new kinetics.
+    </p>
+    <p class="commitdetails"><strong>792</strong> lines of code changed in <span class="files">16 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/jsbml</strong>:
+        ASTNode.java&#160;<span class="change">(+257&#160;-209)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer</strong>:
+        KineticLawGenerator.java&#160;<span class="change">(+7&#160;-2)</span>,
+        Kinetics.java&#160;<span class="change">(+44&#160;-1)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/gui</strong>:
+        KineticLawSelectionDialog.java&#160;<span class="change">(-5)</span>,
+        KineticLawSelectionPanel.java&#160;<span class="change">(+118&#160;-88)</span>,
+        SBMLsqueezerUI.java&#160;<span class="change">(+1&#160;-1)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/gui/table</strong>:
+        KineticLawJTable.java&#160;<span class="change">(+63&#160;-106)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/io</strong>:
+        SBMLio.java&#160;<span class="change">(-4)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/kinetics</strong>:
+        BasicKineticLaw.java&#160;<span class="change">(+23&#160;-1)</span>,
+        Convenience.java&#160;<span class="change">(+1&#160;-2)</span>,
+        ConvenienceIndependent.java&#160;<span class="change">(+1)</span>,
+        GeneralizedMassAction.java&#160;<span class="change">(-1)</span>,
+        HillEquation.java&#160;<span class="change">(+1)</span>,
+        IrrevCompetNonCooperativeEnzymes.java&#160;<span class="change">(+2&#160;-2)</span>,
+        IrrevNonModulatedNonInteractingEnzymes.java&#160;<span class="change">(+1)</span>,
+        ReversiblePowerLaw.java&#160;<span class="new">(new&#160;273)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="39"></a>
+    <a href="user_schaefer.html" class="author">schaefer</a>
+    <span class="date">2009-09-17 07:06</span>
+    <a class="permalink" title="Permalink to this commit" href="#39">#39</a>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">205</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+
+    </p>
+    <p class="commitdetails"><strong>824</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/plugin</strong>:
+        PluginSBMLWriter.java&#160;<span class="change">(+824&#160;-151)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="38"></a>
+    <a href="user_nitschmann.html" class="author">nitschmann</a>
+    <span class="date">2009-09-16 11:00</span>
+    <a class="permalink" title="Permalink to this commit" href="#38">#38</a>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">204</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+TestKinetik überarbeitet
+    </p>
+    <p class="commitdetails"><strong>49</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/kinetics</strong>:
+        TestKinetik.java&#160;<span class="change">(+49&#160;-18)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="37"></a>
+    <a href="user_schaefer.html" class="author">schaefer</a>
+    <span class="date">2009-09-15 07:45</span>
+    <a class="permalink" title="Permalink to this commit" href="#37">#37</a>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">203</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+
+    </p>
+    <p class="commitdetails"><strong>35</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/plugin</strong>:
+        PluginSBMLWriter.java&#160;<span class="change">(+35&#160;-2)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="36"></a>
+    <a href="user_schaefer.html" class="author">schaefer</a>
+    <span class="date">2009-09-15 07:31</span>
+    <a class="permalink" title="Permalink to this commit" href="#36">#36</a>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">202</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+
+    </p>
+    <p class="commitdetails"><strong>371</strong> lines of code changed in <span class="files">2 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        design_limitations_for_celldesigner_plug-in.txt&#160;<span class="new">(new&#160;4)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/plugin</strong>:
+        PluginSBMLReader.java&#160;<span class="change">(+367&#160;-31)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="35"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2009-09-15 02:57</span>
+    <a class="permalink" title="Permalink to this commit" href="#35">#35</a>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">201</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+This installs the latest stable version of libSBML.
+    </p>
+    <p class="commitdetails"><strong>122</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>lib</strong>:
+        installLibSBML.sh&#160;<span class="new">(new&#160;122)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="34"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2009-09-15 01:39</span>
+    <a class="permalink" title="Permalink to this commit" href="#34">#34</a>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">200</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Now it works..!
+    </p>
+    <p class="commitdetails"><strong>171</strong> lines of code changed in <span class="files">12 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>lib</strong>:
+        celldesigner.jar&#160;<span class="change">(changed)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer</strong>:
+        SBMLsqueezer.java&#160;<span class="change">(+1&#160;-1)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/gui</strong>:
+        CloseIcon.java&#160;<span class="change">(+1&#160;-1)</span>,
+        SBasePanel.java&#160;<span class="change">(+3&#160;-3)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/gui/table</strong>:
+        KineticLawCellRenderer.java&#160;<span class="change">(+20&#160;-1)</span>,
+        KineticLawJTable.java&#160;<span class="change">(+38&#160;-48)</span>,
+        KineticLawTableModel.java&#160;<span class="change">(+20&#160;-2)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/io</strong>:
+        AbstractSBMLWriter.java&#160;<span class="change">(+1&#160;-1)</span>,
+        SBMLio.java&#160;<span class="change">(+1&#160;-10)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/standalone</strong>:
+        LibSBMLWriter.java&#160;<span class="change">(+70&#160;-41)</span>,
+        SBMLTree.java&#160;<span class="change">(+16)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="33"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2009-09-14 09:49</span>
+    <a class="permalink" title="Permalink to this commit" href="#33">#33</a>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">199</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Now SBMLsqueezer also has a simple command line mode so that an SBML file can be processed automatically.
+    </p>
+    <p class="commitdetails"><strong>553</strong> lines of code changed in <span class="files">25 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer</strong>:
+        KineticLawGenerator.java&#160;<span class="change">(+10&#160;-10)</span>,
+        SBMLsqueezer.java&#160;<span class="change">(+49&#160;-2)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/gui</strong>:
+        KineticLawSelectionDialog.java&#160;<span class="change">(+5&#160;-6)</span>,
+        SBMLsqueezerUI.java&#160;<span class="change">(+2&#160;-2)</span>,
+        SettingsDialog.java&#160;<span class="change">(-1)</span>,
+        SettingsPanelKinetics.java&#160;<span class="change">(+3&#160;-5)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/gui/table</strong>:
+        KineticLawJTable.java&#160;<span class="change">(-3)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/io</strong>:
+        SBMLio.java&#160;<span class="change">(+27&#160;-7)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/kinetics</strong>:
+        BasicKineticLaw.java&#160;<span class="change">(+1&#160;-4)</span>,
+        Convenience.java&#160;<span class="change">(+1&#160;-2)</span>,
+        ConvenienceIndependent.java&#160;<span class="change">(+7&#160;-8)</span>,
+        GeneralizedMassAction.java&#160;<span class="change">(+1&#160;-3)</span>,
+        HillEquation.java&#160;<span class="change">(+12&#160;-31)</span>,
+        IrrevCompetNonCooperativeEnzymes.java&#160;<span class="change">(+1&#160;-1)</span>,
+        IrrevNonModulatedNonInteractingEnzymes.java&#160;<span class="change">(+1&#160;-4)</span>,
+        MichaelisMenten.java&#160;<span class="change">(+1&#160;-2)</span>,
+        OrderedMechanism.java&#160;<span class="change">(+7&#160;-15)</span>,
+        PingPongMechanism.java&#160;<span class="change">(+1&#160;-3)</span>,
+        RandomOrderMechanism.java&#160;<span class="change">(+1&#160;-3)</span>,
+        TestKinetik.java&#160;<span class="change">(+63&#160;-44)</span>,
+        ZerothOrderForwardGMAK.java&#160;<span class="change">(+1&#160;-4)</span>,
+        ZerothOrderReverseGMAK.java&#160;<span class="change">(+1&#160;-4)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/resources/cfg</strong>:
+        SBMLsqueezer.cfg&#160;<span class="change">(+1)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/standalone</strong>:
+        LibSBMLWriter.java&#160;<span class="change">(+15&#160;-15)</span>,
+        SBMLTree.java&#160;<span class="new">(new&#160;342)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="32"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2009-09-14 06:31</span>
+    <a class="permalink" title="Permalink to this commit" href="#32">#32</a>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">198</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Changed the SBO term and naming computation for all kinetic equations.
+    </p>
+    <p class="commitdetails"><strong>497</strong> lines of code changed in <span class="files">16 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>resources/tests</strong>:
+        convenienceIndep.xml&#160;<span class="change">(+21&#160;-332)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer</strong>:
+        KineticLawGenerator.java&#160;<span class="change">(+7&#160;-5)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/gui</strong>:
+        KineticLawSelectionPanel.java&#160;<span class="change">(+3&#160;-4)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/kinetics</strong>:
+        BasicKineticLaw.java&#160;<span class="change">(+2&#160;-10)</span>,
+        Convenience.java&#160;<span class="change">(+7&#160;-1)</span>,
+        ConvenienceIndependent.java&#160;<span class="change">(+6&#160;-8)</span>,
+        GeneralizedMassAction.java&#160;<span class="change">(+319&#160;-174)</span>,
+        IrrevCompetNonCooperativeEnzymes.java&#160;<span class="change">(+21&#160;-54)</span>,
+        IrrevNonModulatedNonInteractingEnzymes.java&#160;<span class="change">(+16&#160;-49)</span>,
+        MichaelisMenten.java&#160;<span class="change">(+30&#160;-82)</span>,
+        OrderedMechanism.java&#160;<span class="change">(+28&#160;-26)</span>,
+        PingPongMechanism.java&#160;<span class="change">(+12&#160;-17)</span>,
+        RandomOrderMechanism.java&#160;<span class="change">(+21&#160;-20)</span>,
+        TestKinetik.java&#160;<span class="change">(-16)</span>,
+        ZerothOrderForwardGMAK.java&#160;<span class="change">(+2&#160;-2)</span>,
+        ZerothOrderReverseGMAK.java&#160;<span class="change">(+2&#160;-2)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="31"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2009-09-13 15:22</span>
+    <a class="permalink" title="Permalink to this commit" href="#31">#31</a>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">197</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Now most of the parameters that are generated by SBMLsqueezer get an SBO number.
+    </p>
+    <p class="commitdetails"><strong>110</strong> lines of code changed in <span class="files">12 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/kinetics</strong>:
+        Convenience.java&#160;<span class="change">(+16&#160;-14)</span>,
+        ConvenienceIndependent.java&#160;<span class="change">(+3)</span>,
+        GeneralizedMassAction.java&#160;<span class="change">(+5&#160;-1)</span>,
+        HillEquation.java&#160;<span class="change">(+5)</span>,
+        IrrevCompetNonCooperativeEnzymes.java&#160;<span class="change">(+4&#160;-1)</span>,
+        IrrevNonModulatedNonInteractingEnzymes.java&#160;<span class="change">(+2)</span>,
+        MichaelisMenten.java&#160;<span class="change">(+9)</span>,
+        OrderedMechanism.java&#160;<span class="change">(+23&#160;-1)</span>,
+        PingPongMechanism.java&#160;<span class="change">(+12&#160;-1)</span>,
+        RandomOrderMechanism.java&#160;<span class="change">(+29)</span>,
+        ZerothOrderForwardGMAK.java&#160;<span class="change">(+1)</span>,
+        ZerothOrderReverseGMAK.java&#160;<span class="change">(+1)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="30"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2009-09-13 10:49</span>
+    <a class="permalink" title="Permalink to this commit" href="#30">#30</a>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">196</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Identified an error in ASTNode. If the pow function is applied with an exponent of zero, then the list of all children has to be set to an empty list if the value of this node is set to one. Otherwise there will be a conflict because a node with an integer value is not allowed to have any children.
+    </p>
+    <p class="commitdetails"><strong>701</strong> lines of code changed in <span class="files">25 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/jsbml</strong>:
+        ASTNode.java&#160;<span class="change">(+277&#160;-217)</span>,
+        Unit.java&#160;<span class="change">(+113&#160;-4)</span>,
+        UnitDefinition.java&#160;<span class="change">(+3&#160;-1)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/gui</strong>:
+        GUITools.java&#160;<span class="change">(+11&#160;-4)</span>,
+        KineticLawSelectionDialog.java&#160;<span class="change">(+15&#160;-13)</span>,
+        SBMLsqueezerUI.java&#160;<span class="change">(+13&#160;-15)</span>,
+        SBasePanel.java&#160;<span class="change">(+77&#160;-26)</span>,
+        SettingsPanelLaTeX.java&#160;<span class="change">(+2&#160;-2)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/io</strong>:
+        SBFileFilter.java&#160;<span class="change">(+16)</span>,
+        TextFormula.java&#160;<span class="change">(+4)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/kinetics</strong>:
+        BasicKineticLaw.java&#160;<span class="change">(+59&#160;-60)</span>,
+        Convenience.java&#160;<span class="change">(+8&#160;-17)</span>,
+        ConvenienceIndependent.java&#160;<span class="change">(+10&#160;-22)</span>,
+        GeneralizedMassAction.java&#160;<span class="change">(+5&#160;-9)</span>,
+        HillEquation.java&#160;<span class="change">(+11&#160;-14)</span>,
+        IrrevCompetNonCooperativeEnzymes.java&#160;<span class="change">(+4&#160;-8)</span>,
+        IrrevNonModulatedNonInteractingEnzymes.java&#160;<span class="change">(+8&#160;-10)</span>,
+        MichaelisMenten.java&#160;<span class="change">(+8&#160;-24)</span>,
+        OrderedMechanism.java&#160;<span class="change">(+19&#160;-46)</span>,
+        PingPongMechanism.java&#160;<span class="change">(+9&#160;-21)</span>,
+        RandomOrderMechanism.java&#160;<span class="change">(+18&#160;-41)</span>,
+        TestKinetik.java&#160;<span class="change">(+6&#160;-7)</span>,
+        ZerothOrderForwardGMAK.java&#160;<span class="change">(+1&#160;-2)</span>,
+        ZerothOrderReverseGMAK.java&#160;<span class="change">(+1&#160;-2)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/standalone</strong>:
+        LibSBMLWriter.java&#160;<span class="change">(+3)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="29"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2009-09-12 09:14</span>
+    <a class="permalink" title="Permalink to this commit" href="#29">#29</a>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">195</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+There is still an error in the convenience independent kinetics that prevents SBMLsqueezer from saving the SBML code in libSBML's data structure.
+    </p>
+    <p class="commitdetails"><strong>12687</strong> lines of code changed in <span class="files">164 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>resources/tests</strong>:
+        squeezer_test.xml&#160;<span class="change">(+665&#160;-553)</span>,
+        squeezer_test1.xml&#160;<span class="change">(+341&#160;-310)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/jlibsbml</strong>:
+        ASTNode.java&#160;<span class="del">(del)</span>,
+        AbstractNamedSBase.java&#160;<span class="del">(del)</span>,
+        AbstractSBase.java&#160;<span class="del">(del)</span>,
+        AlgebraicRule.java&#160;<span class="del">(del)</span>,
+        AssignmentRule.java&#160;<span class="del">(del)</span>,
+        CVTerm.java&#160;<span class="del">(del)</span>,
+        Compartment.java&#160;<span class="del">(del)</span>,
+        CompartmentType.java&#160;<span class="del">(del)</span>,
+        Constants.java&#160;<span class="del">(del)</span>,
+        Constraint.java&#160;<span class="del">(del)</span>,
+        Delay.java&#160;<span class="del">(del)</span>,
+        Event.java&#160;<span class="del">(del)</span>,
+        EventAssignment.java&#160;<span class="del">(del)</span>,
+        FunctionDefinition.java&#160;<span class="del">(del)</span>,
+        InitialAssignment.java&#160;<span class="del">(del)</span>,
+        KineticLaw.java&#160;<span class="del">(del)</span>,
+        ListOf.java&#160;<span class="del">(del)</span>,
+        MathContainer.java&#160;<span class="del">(del)</span>,
+        Model.java&#160;<span class="del">(del)</span>,
+        ModelCreator.java&#160;<span class="del">(del)</span>,
+        ModelHistory.java&#160;<span class="del">(del)</span>,
+        ModifierSpeciesReference.java&#160;<span class="del">(del)</span>,
+        NamedSBase.java&#160;<span class="del">(del)</span>,
+        Parameter.java&#160;<span class="del">(del)</span>,
+        RateRule.java&#160;<span class="del">(del)</span>,
+        Reaction.java&#160;<span class="del">(del)</span>,
+        Rule.java&#160;<span class="del">(del)</span>,
+        SBMLDocument.java&#160;<span class="del">(del)</span>,
+        SBMLException.java&#160;<span class="del">(del)</span>,
+        SBMLReader.java&#160;<span class="del">(del)</span>,
+        SBMLWriter.java&#160;<span class="del">(del)</span>,
+        SBO.java&#160;<span class="del">(del)</span>,
+        SBase.java&#160;<span class="del">(del)</span>,
+        SimpleSpeciesReference.java&#160;<span class="del">(del)</span>,
+        Species.java&#160;<span class="del">(del)</span>,
+        SpeciesReference.java&#160;<span class="del">(del)</span>,
+        SpeciesType.java&#160;<span class="del">(del)</span>,
+        StoichiometryMath.java&#160;<span class="del">(del)</span>,
+        Symbol.java&#160;<span class="del">(del)</span>,
+        Trigger.java&#160;<span class="del">(del)</span>,
+        Unit.java&#160;<span class="del">(del)</span>,
+        UnitDefinition.java&#160;<span class="del">(del)</span>,
+        UnitKind.java&#160;<span class="del">(del)</span>,
+        package.html&#160;<span class="del">(del)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/jsbml</strong>:
+        ASTNode.java&#160;<span class="change">(+2363)</span>,
+        AbstractNamedSBase.java&#160;<span class="new">(new)</span>,
+        AbstractSBase.java&#160;<span class="new">(new)</span>,
+        AlgebraicRule.java&#160;<span class="change">(+65)</span>,
+        AssignmentRule.java&#160;<span class="change">(+115)</span>,
+        CVTerm.java&#160;<span class="new">(new)</span>,
+        Compartment.java&#160;<span class="new">(new)</span>,
+        CompartmentType.java&#160;<span class="new">(new)</span>,
+        Constraint.java&#160;<span class="change">(+95)</span>,
+        Delay.java&#160;<span class="new">(new)</span>,
+        Event.java&#160;<span class="new">(new)</span>,
+        EventAssignment.java&#160;<span class="change">(+140)</span>,
+        FunctionDefinition.java&#160;<span class="new">(new)</span>,
+        InitialAssignment.java&#160;<span class="new">(new)</span>,
+        KineticLaw.java&#160;<span class="new">(new)</span>,
+        ListOf.java&#160;<span class="change">(+531)</span>,
+        MathContainer.java&#160;<span class="change">(+142)</span>,
+        Model.java&#160;<span class="new">(new)</span>,
+        ModelCreator.java&#160;<span class="new">(new)</span>,
+        ModelHistory.java&#160;<span class="new">(new)</span>,
+        ModifierSpeciesReference.java&#160;<span class="new">(new)</span>,
+        NamedSBase.java&#160;<span class="change">(+64)</span>,
+        Parameter.java&#160;<span class="change">(+114)</span>,
+        RateRule.java&#160;<span class="change">(+116)</span>,
+        Reaction.java&#160;<span class="new">(new)</span>,
+        Rule.java&#160;<span class="change">(+78)</span>,
+        SBMLDocument.java&#160;<span class="change">(+126)</span>,
+        SBMLException.java&#160;<span class="change">(+65)</span>,
+        SBMLReader.java&#160;<span class="change">(+171)</span>,
+        SBMLWriter.java&#160;<span class="change">(+311)</span>,
+        SBO.java&#160;<span class="change">(+711)</span>,
+        SBase.java&#160;<span class="new">(new)</span>,
+        SimpleSpeciesReference.java&#160;<span class="new">(new)</span>,
+        Species.java&#160;<span class="change">(+375)</span>,
+        SpeciesReference.java&#160;<span class="change">(+140)</span>,
+        SpeciesType.java&#160;<span class="change">(+67)</span>,
+        StoichiometryMath.java&#160;<span class="change">(+56)</span>,
+        Symbol.java&#160;<span class="new">(new)</span>,
+        Trigger.java&#160;<span class="new">(new)</span>,
+        Unit.java&#160;<span class="new">(new)</span>,
+        UnitDefinition.java&#160;<span class="new">(new)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer</strong>:
+        KineticLawGenerator.java&#160;<span class="change">(+22&#160;-21)</span>,
+        SBMLsqueezer.java&#160;<span class="change">(+1&#160;-1)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/gui</strong>:
+        KineticLawSelectionDialog.java&#160;<span class="change">(+28&#160;-7)</span>,
+        KineticLawSelectionPanel.java&#160;<span class="change">(+1&#160;-2)</span>,
+        SBMLModelSplitPane.java&#160;<span class="change">(+2&#160;-2)</span>,
+        SBMLTree.java&#160;<span class="change">(+21&#160;-21)</span>,
+        SBMLsqueezerUI.java&#160;<span class="change">(+13&#160;-7)</span>,
+        SBasePanel.java&#160;<span class="change">(+27&#160;-27)</span>,
+        SettingsPanelKinetics.java&#160;<span class="change">(+1&#160;-1)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/gui/table</strong>:
+        KineticLawJTable.java&#160;<span class="change">(+5&#160;-5)</span>,
+        KineticLawTableModel.java&#160;<span class="change">(+3&#160;-3)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/io</strong>:
+        AbstractSBMLReader.java&#160;<span class="change">(+7&#160;-7)</span>,
+        AbstractSBMLWriter.java&#160;<span class="change">(+84&#160;-81)</span>,
+        LaTeXExport.java&#160;<span class="change">(+9&#160;-9)</span>,
+        SBMLio.java&#160;<span class="change">(+42&#160;-42)</span>,
+        SBaseChangedListener.java&#160;<span class="change">(+1&#160;-1)</span>,
+        TextExport.java&#160;<span class="change">(+4&#160;-4)</span>,
+        TextFormula.java&#160;<span class="change">(+1&#160;-1)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/kinetics</strong>:
+        BasicKineticLaw.java&#160;<span class="change">(+7&#160;-7)</span>,
+        Convenience.java&#160;<span class="change">(+4&#160;-5)</span>,
+        ConvenienceIndependent.java&#160;<span class="change">(+12&#160;-13)</span>,
+        GeneralizedMassAction.java&#160;<span class="change">(+4&#160;-4)</span>,
+        HillEquation.java&#160;<span class="change">(+6&#160;-6)</span>,
+        IrrevCompetNonCooperativeEnzymes.java&#160;<span class="change">(+3&#160;-3)</span>,
+        IrrevNonModulatedNonInteractingEnzymes.java&#160;<span class="change">(+4&#160;-4)</span>,
+        MichaelisMenten.java&#160;<span class="change">(+30&#160;-24)</span>,
+        OrderedMechanism.java&#160;<span class="change">(+4&#160;-4)</span>,
+        PingPongMechanism.java&#160;<span class="change">(+4&#160;-4)</span>,
+        RandomOrderMechanism.java&#160;<span class="change">(+5&#160;-5)</span>,
+        TestKinetik.java&#160;<span class="change">(+6&#160;-8)</span>,
+        ZerothOrderForwardGMAK.java&#160;<span class="change">(+3&#160;-3)</span>,
+        ZerothOrderReverseGMAK.java&#160;<span class="change">(+3&#160;-3)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/plugin</strong>:
+        PluginSBMLReader.java&#160;<span class="change">(+18&#160;-18)</span>,
+        PluginSBMLWriter.java&#160;<span class="change">(+26&#160;-26)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/standalone</strong>:
+        LibSBMLReader.java&#160;<span class="change">(+33&#160;-33)</span>,
+        LibSBMLWriter.java&#160;<span class="change">(+147&#160;-107)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="28"></a>
+    <a href="user_nitschmann.html" class="author">nitschmann</a>
+    <span class="date">2009-09-12 08:12</span>
+    <a class="permalink" title="Permalink to this commit" href="#28">#28</a>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">194</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Änderungen für TestKinetik vorgenommen
+    </p>
+    <p class="commitdetails"><strong>19</strong> lines of code changed in <span class="files">2 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer</strong>:
+        KineticLawGenerator.java&#160;<span class="change">(+12&#160;-1)</span>,
+        Kinetics.java&#160;<span class="change">(+7&#160;-1)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="27"></a>
+    <a href="user_nitschmann.html" class="author">nitschmann</a>
+    <span class="date">2009-09-12 08:09</span>
+    <a class="permalink" title="Permalink to this commit" href="#27">#27</a>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">193</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+neue Kinetik (TestKinetik) angelegt
+    </p>
+    <p class="commitdetails"><strong>155</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/kinetics</strong>:
+        TestKinetik.java&#160;<span class="new">(new&#160;155)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="26"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2009-09-11 11:15</span>
+    <a class="permalink" title="Permalink to this commit" href="#26">#26</a>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">192</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Detected errors in both convenience kinetics classes. Unfortunately, for some reason it seems that libSBML does not like the converted ASTNode in every case. Something's wrong here. I guess the convert method does not always yield good results.
+    </p>
+    <p class="commitdetails"><strong>190</strong> lines of code changed in <span class="files">7 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/jlibsbml</strong>:
+        ListOf.java&#160;<span class="change">(+23&#160;-3)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer</strong>:
+        KineticLawGenerator.java&#160;<span class="change">(+29&#160;-6)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/gui/table</strong>:
+        KineticLawJTable.java&#160;<span class="change">(+2&#160;-2)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/kinetics</strong>:
+        BasicKineticLaw.java&#160;<span class="change">(+1&#160;-27)</span>,
+        Convenience.java&#160;<span class="change">(+82&#160;-79)</span>,
+        ConvenienceIndependent.java&#160;<span class="change">(+47&#160;-116)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/standalone</strong>:
+        LibSBMLWriter.java&#160;<span class="change">(+6&#160;-4)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="25"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2009-09-11 06:02</span>
+    <a class="permalink" title="Permalink to this commit" href="#25">#25</a>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">191</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Changed GUI: We now have an enum of available commands in SBMLsqueezer's UI and also some additional convenient methods in our GUITools class.
+    </p>
+    <p class="commitdetails"><strong>887</strong> lines of code changed in <span class="files">12 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/jlibsbml</strong>:
+        ASTNode.java&#160;<span class="change">(+318&#160;-280)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/gui</strong>:
+        GUITools.java&#160;<span class="change">(+41)</span>,
+        KineticLawSelectionDialog.java&#160;<span class="change">(+1&#160;-1)</span>,
+        SBMLTree.java&#160;<span class="change">(+38&#160;-31)</span>,
+        SBMLsqueezerUI.java&#160;<span class="change">(+237&#160;-152)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/io</strong>:
+        LaTeXExport.java&#160;<span class="change">(+33&#160;-4)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/kinetics</strong>:
+        ConvenienceIndependent.java&#160;<span class="change">(+4&#160;-5)</span>,
+        HillEquation.java&#160;<span class="change">(+1&#160;-2)</span>,
+        OrderedMechanism.java&#160;<span class="change">(+112&#160;-133)</span>,
+        PingPongMechanism.java&#160;<span class="change">(+32&#160;-27)</span>,
+        RandomOrderMechanism.java&#160;<span class="change">(+56&#160;-47)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/standalone</strong>:
+        LibSBMLWriter.java&#160;<span class="change">(+14&#160;-4)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="24"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2009-09-10 14:36</span>
+    <a class="permalink" title="Permalink to this commit" href="#24">#24</a>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">190</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+It seems to work in most cases. It was the problem that in independent convenience kinetics ASTNodes were created that were of type name with an empty name in it. This leads to incorrect syntax trees.
+    </p>
+    <p class="commitdetails"><strong>415</strong> lines of code changed in <span class="files">8 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/jlibsbml</strong>:
+        ASTNode.java&#160;<span class="change">(+69&#160;-92)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer</strong>:
+        KineticLawGenerator.java&#160;<span class="change">(+163&#160;-139)</span>,
+        SBMLsqueezer.java&#160;<span class="change">(+3&#160;-1)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/gui</strong>:
+        SBMLsqueezerUI.java&#160;<span class="change">(+57&#160;-44)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/io</strong>:
+        SBMLio.java&#160;<span class="change">(+67&#160;-26)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/kinetics</strong>:
+        ConvenienceIndependent.java&#160;<span class="change">(+32&#160;-24)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/standalone</strong>:
+        LibSBMLReader.java&#160;<span class="change">(+24&#160;-25)</span>,
+        LibSBMLWriter.java&#160;<span class="change">(-1)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="23"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2009-09-10 10:34</span>
+    <a class="permalink" title="Permalink to this commit" href="#23">#23</a>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">189</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Found source of error when storing information: It has something to do with the constant flag of Symbols.
+    </p>
+    <p class="commitdetails"><strong>883</strong> lines of code changed in <span class="files">14 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/jlibsbml</strong>:
+        SBMLException.java&#160;<span class="new">(new&#160;65)</span>,
+        SBMLReader.java&#160;<span class="change">(+17&#160;-4)</span>,
+        SBMLWriter.java&#160;<span class="change">(+18&#160;-1)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer</strong>:
+        KineticLawGenerator.java&#160;<span class="change">(+183&#160;-171)</span>,
+        Kinetics.java&#160;<span class="change">(+89&#160;-87)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/gui</strong>:
+        SBMLsqueezerUI.java&#160;<span class="change">(+41&#160;-8)</span>,
+        SBasePanel.java&#160;<span class="change">(+13)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/io</strong>:
+        LaTeX.java&#160;<span class="change">(-23)</span>,
+        LaTeXExport.java&#160;<span class="change">(-19)</span>,
+        SBMLio.java&#160;<span class="change">(+41&#160;-4)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/plugin</strong>:
+        PluginSBMLReader.java&#160;<span class="change">(+10)</span>,
+        PluginSBMLWriter.java&#160;<span class="change">(+10)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/standalone</strong>:
+        LibSBMLReader.java&#160;<span class="change">(+25)</span>,
+        LibSBMLWriter.java&#160;<span class="change">(+371&#160;-317)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="22"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2009-09-10 05:13</span>
+    <a class="permalink" title="Permalink to this commit" href="#22">#22</a>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">188</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Why do I receive this null pointer exception in libSBML's C code? I really don't like bugs like this!
+    </p>
+    <p class="commitdetails"><strong>564</strong> lines of code changed in <span class="files">6 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/gui</strong>:
+        SBMLModelSplitPane.java&#160;<span class="change">(+16&#160;-6)</span>,
+        SBMLsqueezerUI.java&#160;<span class="change">(+5&#160;-5)</span>,
+        SBasePanel.java&#160;<span class="change">(+1&#160;-1)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/io</strong>:
+        AbstractSBMLWriter.java&#160;<span class="change">(+214)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/standalone</strong>:
+        LibSBMLReader.java&#160;<span class="change">(+121&#160;-121)</span>,
+        LibSBMLWriter.java&#160;<span class="change">(+207&#160;-28)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="21"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2009-09-10 01:20</span>
+    <a class="permalink" title="Permalink to this commit" href="#21">#21</a>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">187</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Now it should be possible for the stand-alone version to change every single SBML object and to write all changes back into an SBML file. Haven't tested this yet, but looks good.
+    </p>
+    <p class="commitdetails"><strong>1114</strong> lines of code changed in <span class="files">16 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/jlibsbml</strong>:
+        ASTNode.java&#160;<span class="change">(+278&#160;-278)</span>,
+        Model.java&#160;<span class="change">(+36)</span>,
+        SBMLReader.java&#160;<span class="change">(+17&#160;-1)</span>,
+        SBMLWriter.java&#160;<span class="change">(+30&#160;-7)</span>,
+        Unit.java&#160;<span class="change">(+39&#160;-39)</span>,
+        UnitDefinition.java&#160;<span class="change">(+5&#160;-5)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/gui</strong>:
+        SBMLTree.java&#160;<span class="change">(+3&#160;-1)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/io</strong>:
+        AbstractSBMLReader.java&#160;<span class="change">(+63&#160;-63)</span>,
+        AbstractSBMLWriter.java&#160;<span class="change">(+62&#160;-62)</span>,
+        LaTeXExport.java&#160;<span class="change">(+43&#160;-80)</span>,
+        SBMLio.java&#160;<span class="change">(+42)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/kinetics</strong>:
+        BasicKineticLaw.java&#160;<span class="change">(+1&#160;-1)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/plugin</strong>:
+        PluginSBMLReader.java&#160;<span class="change">(+23&#160;-11)</span>,
+        PluginSBMLWriter.java&#160;<span class="change">(+18)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/standalone</strong>:
+        LibSBMLReader.java&#160;<span class="change">(+54&#160;-47)</span>,
+        LibSBMLWriter.java&#160;<span class="change">(+400&#160;-39)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="20"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2009-09-09 12:03</span>
+    <a class="permalink" title="Permalink to this commit" href="#20">#20</a>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">186</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+For the first time, I was now able to read in an SBML file, generate kinetic equations and to write the result back into a new SBML file that I could then again read in and the kinetic equation was displayed properly!
+    </p>
+    <p class="commitdetails"><strong>1610</strong> lines of code changed in <span class="files">28 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/jlibsbml</strong>:
+        ASTNode.java&#160;<span class="change">(+350&#160;-88)</span>,
+        AbstractSBase.java&#160;<span class="change">(+37&#160;-23)</span>,
+        CVTerm.java&#160;<span class="change">(+1&#160;-2)</span>,
+        ListOf.java&#160;<span class="change">(+27&#160;-18)</span>,
+        Model.java&#160;<span class="change">(+35&#160;-21)</span>,
+        ModelHistory.java&#160;<span class="change">(+10&#160;-2)</span>,
+        Reaction.java&#160;<span class="change">(+3&#160;-4)</span>,
+        SBMLDocument.java&#160;<span class="change">(+7&#160;-6)</span>,
+        SBMLReader.java&#160;<span class="change">(+7)</span>,
+        SBMLWriter.java&#160;<span class="change">(+72&#160;-16)</span>,
+        SBase.java&#160;<span class="change">(+18)</span>,
+        Species.java&#160;<span class="change">(+1&#160;-1)</span>,
+        Unit.java&#160;<span class="change">(+163&#160;-8)</span>,
+        UnitDefinition.java&#160;<span class="change">(+5&#160;-5)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer</strong>:
+        SBMLsqueezer.java&#160;<span class="change">(+1&#160;-2)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/gui</strong>:
+        KineticLawSelectionDialog.java&#160;<span class="change">(+3&#160;-1)</span>,
+        SBMLModelSplitPane.java&#160;<span class="change">(+3&#160;-12)</span>,
+        SBMLsqueezerUI.java&#160;<span class="change">(+10&#160;-3)</span>,
+        SBasePanel.java&#160;<span class="change">(+5&#160;-3)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/io</strong>:
+        AbstractSBMLReader.java&#160;<span class="change">(+69&#160;-66)</span>,
+        AbstractSBMLWriter.java&#160;<span class="change">(-2)</span>,
+        LaTeXExport.java&#160;<span class="change">(+7&#160;-9)</span>,
+        SBMLio.java&#160;<span class="change">(+88&#160;-12)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/kinetics</strong>:
+        BasicKineticLaw.java&#160;<span class="change">(+1&#160;-2)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/plugin</strong>:
+        PluginSBMLReader.java&#160;<span class="change">(+20&#160;-1)</span>,
+        PluginSBMLWriter.java&#160;<span class="change">(+42)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/standalone</strong>:
+        LibSBMLReader.java&#160;<span class="change">(+106&#160;-98)</span>,
+        LibSBMLWriter.java&#160;<span class="change">(+519&#160;-173)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="19"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2009-09-09 02:14</span>
+    <a class="permalink" title="Permalink to this commit" href="#19">#19</a>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">185</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Improved several equals methods in JlibSBML and changed our ListOf implementation so that it now is a Java LinkedList that also implements the methods of SBase. Beforehand it extended AbstractSBase and implemented the List interface. In this old version somehow mistakes were introduced so that objects couldn't be removed properly from the list. Now it should work fine.
+    </p>
+    <p class="commitdetails"><strong>351</strong> lines of code changed in <span class="files">12 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/jlibsbml</strong>:
+        AbstractNamedSBase.java&#160;<span class="change">(+12&#160;-8)</span>,
+        AbstractSBase.java&#160;<span class="change">(+15&#160;-15)</span>,
+        CVTerm.java&#160;<span class="change">(+1&#160;-1)</span>,
+        Compartment.java&#160;<span class="change">(+6&#160;-5)</span>,
+        FunctionDefinition.java&#160;<span class="change">(+2&#160;-2)</span>,
+        ListOf.java&#160;<span class="change">(+267&#160;-396)</span>,
+        Species.java&#160;<span class="change">(+22&#160;-20)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer</strong>:
+        KineticLawGenerator.java&#160;<span class="change">(+1&#160;-1)</span>,
+        SBMLsqueezer.java&#160;<span class="change">(+2&#160;-1)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/gui</strong>:
+        SBMLModelSplitPane.java&#160;<span class="change">(+3&#160;-4)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/io</strong>:
+        SBMLio.java&#160;<span class="change">(+3&#160;-4)</span>,
+        SBaseChangedListener.java&#160;<span class="change">(+17&#160;-4)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="18"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2009-09-08 15:57</span>
+    <a class="permalink" title="Permalink to this commit" href="#18">#18</a>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">184</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Two things don't work yet: 1. equals method -&gt; hence, duplicate parameters cannot be removed properly. 2. The SBML tree does not expand!
+    </p>
+    <p class="commitdetails"><strong>1901</strong> lines of code changed in <span class="files">22 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/jlibsbml</strong>:
+        AbstractNamedSBase.java&#160;<span class="change">(+10&#160;-11)</span>,
+        Model.java&#160;<span class="change">(+19)</span>,
+        Parameter.java&#160;<span class="change">(+3&#160;-9)</span>,
+        Symbol.java&#160;<span class="change">(+7&#160;-8)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer</strong>:
+        CfgKeys.java&#160;<span class="change">(+42&#160;-11)</span>,
+        KineticLawGenerator.java&#160;<span class="change">(+131&#160;-95)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/gui</strong>:
+        GUITools.java&#160;<span class="change">(+5&#160;-1)</span>,
+        KineticLawSelectionDialog.java&#160;<span class="change">(+161&#160;-137)</span>,
+        KineticLawSelectionPanel.java&#160;<span class="change">(+78&#160;-108)</span>,
+        KineticsSettingsPanel.java&#160;<span class="del">(del)</span>,
+        LaTeXExportDialogPanel.java&#160;<span class="del">(del)</span>,
+        LayoutHelper.java&#160;<span class="change">(+44&#160;-1)</span>,
+        SBMLModelSplitPane.java&#160;<span class="change">(+22&#160;-1)</span>,
+        SBMLTree.java&#160;<span class="change">(+41&#160;-2)</span>,
+        SBMLsqueezerUI.java&#160;<span class="change">(+16&#160;-14)</span>,
+        SBasePanel.java&#160;<span class="change">(+1&#160;-1)</span>,
+        SettingsDialog.java&#160;<span class="change">(+29&#160;-10)</span>,
+        SettingsPanelKinetics.java&#160;<span class="new">(new&#160;949)</span>,
+        SettingsPanelLaTeX.java&#160;<span class="new">(new&#160;288)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/gui/table</strong>:
+        KineticLawJTable.java&#160;<span class="change">(+2&#160;-2)</span>,
+        KineticLawTableModel.java&#160;<span class="change">(+1&#160;-1)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/resources/cfg</strong>:
+        SBMLsqueezer.cfg&#160;<span class="change">(+52&#160;-25)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="17"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2009-09-07 15:17</span>
+    <a class="permalink" title="Permalink to this commit" href="#17">#17</a>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">183</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Now enzyme catalysis can also be influenced in the context menu.
+    </p>
+    <p class="commitdetails"><strong>340</strong> lines of code changed in <span class="files">4 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer</strong>:
+        KineticLawGenerator.java&#160;<span class="change">(+190&#160;-133)</span>,
+        SBMLsqueezer.java&#160;<span class="change">(+1&#160;-1)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/gui</strong>:
+        KineticLawSelectionDialog.java&#160;<span class="change">(+2&#160;-2)</span>,
+        KineticLawSelectionPanel.java&#160;<span class="change">(+147&#160;-85)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="16"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2009-09-07 10:53</span>
+    <a class="permalink" title="Permalink to this commit" href="#16">#16</a>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">182</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+added actionlistener to file save menu item.
+    </p>
+    <p class="commitdetails"><strong>7</strong> lines of code changed in <span class="files">2 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/gui</strong>:
+        SBMLsqueezerUI.java&#160;<span class="change">(+5&#160;-2)</span>,
+        SettingsDialog.java&#160;<span class="change">(+2&#160;-2)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="15"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2009-09-07 09:37</span>
+    <a class="permalink" title="Permalink to this commit" href="#15">#15</a>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">181</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Now SBMLsqueezer really covers all SBML constructs of Level 2 Version 4 but it cannot write everything properly yet and there are still some difficulties with the LaTeX export function. All kinetics must be tested if they produce correct results.
+    </p>
+    <p class="commitdetails"><strong>1398</strong> lines of code changed in <span class="files">21 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/jlibsbml</strong>:
+        ASTNode.java&#160;<span class="change">(+14&#160;-8)</span>,
+        AbstractSBase.java&#160;<span class="change">(+199&#160;-13)</span>,
+        CVTerm.java&#160;<span class="new">(new&#160;361)</span>,
+        ModelCreator.java&#160;<span class="change">(+27&#160;-49)</span>,
+        ModelHistory.java&#160;<span class="change">(+5&#160;-23)</span>,
+        SBMLDocument.java&#160;<span class="new">(new&#160;125)</span>,
+        SBase.java&#160;<span class="change">(+120&#160;-9)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer</strong>:
+        KineticLawGenerator.java&#160;<span class="change">(+8&#160;-4)</span>,
+        SBMLsqueezer.java&#160;<span class="change">(+52&#160;-52)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/gui</strong>:
+        KineticLawSelectionDialog.java&#160;<span class="change">(+3&#160;-2)</span>,
+        KineticLawSelectionPanel.java&#160;<span class="change">(-1)</span>,
+        SBMLModelSplitPane.java&#160;<span class="change">(+1&#160;-1)</span>,
+        SBMLTree.java&#160;<span class="change">(-1)</span>,
+        SBMLsqueezerUI.java&#160;<span class="change">(+7&#160;-1)</span>,
+        SBasePanel.java&#160;<span class="change">(+220&#160;-87)</span>,
+        SettingsDialog.java&#160;<span class="change">(+29&#160;-7)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/io</strong>:
+        ParameterLogger.java&#160;<span class="del">(del)</span>,
+        SBMLio.java&#160;<span class="change">(-1)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/resources</strong>:
+        Resource.java&#160;<span class="change">(-10)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/standalone</strong>:
+        LibSBMLReader.java&#160;<span class="change">(+167&#160;-9)</span>,
+        LibSBMLWriter.java&#160;<span class="change">(+60&#160;-40)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="14"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2009-09-06 13:14</span>
+    <a class="permalink" title="Permalink to this commit" href="#14">#14</a>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">180</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Now SBMLsqueezer has a fancy toolbar.
+    </p>
+    <p class="commitdetails"><strong>188</strong> lines of code changed in <span class="files">2 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/gui</strong>:
+        KineticsSettingsPanel.java&#160;<span class="change">(+74&#160;-33)</span>,
+        SettingsDialog.java&#160;<span class="change">(+114&#160;-65)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="13"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2009-09-06 09:22</span>
+    <a class="permalink" title="Permalink to this commit" href="#13">#13</a>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">179</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Now SBMLsqueezer uses settings from a configuration file and is fully able to save and restore these settings.
+    </p>
+    <p class="commitdetails"><strong>2099</strong> lines of code changed in <span class="files">35 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/biojava/bio</strong>:
+        AbstractAnnotation.java&#160;<span class="change">(+193&#160;-200)</span>,
+        Annotation.java&#160;<span class="change">(+2&#160;-2)</span>,
+        BioError.java&#160;<span class="change">(+59&#160;-48)</span>,
+        BioException.java&#160;<span class="change">(+6&#160;-1)</span>,
+        BioRuntimeException.java&#160;<span class="change">(+63&#160;-53)</span>,
+        SmallAnnotation.java&#160;<span class="change">(+53&#160;-47)</span>
+      </li>
+      <li>
+        <strong>src/org/biojava/bio/seq/io</strong>:
+        ParseException.java&#160;<span class="change">(+53&#160;-38)</span>
+      </li>
+      <li>
+        <strong>src/org/biojava/ontology</strong>:
+        AlreadyExistsException.java&#160;<span class="change">(+5)</span>,
+        DefaultOps.java&#160;<span class="change">(+5)</span>,
+        IntegerOntology.java&#160;<span class="change">(+16&#160;-11)</span>,
+        Ontology.java&#160;<span class="change">(+3&#160;-3)</span>,
+        OntologyException.java&#160;<span class="change">(+22&#160;-19)</span>,
+        OntologyOps.java&#160;<span class="change">(+1&#160;-1)</span>,
+        OntologyTerm.java&#160;<span class="change">(+7&#160;-3)</span>,
+        RemoteTerm.java&#160;<span class="change">(+2&#160;-2)</span>,
+        Variable.java&#160;<span class="change">(+5&#160;-1)</span>
+      </li>
+      <li>
+        <strong>src/org/biojava/utils</strong>:
+        AssertionFailure.java&#160;<span class="change">(+40&#160;-32)</span>,
+        ChangeEvent.java&#160;<span class="change">(+126&#160;-126)</span>,
+        ChangeSupport.java&#160;<span class="change">(+1&#160;-1)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer</strong>:
+        CfgKeys.java&#160;<span class="change">(+49&#160;-1)</span>,
+        KineticLawGenerator.java&#160;<span class="change">(+40&#160;-68)</span>,
+        SBMLsqueezer.java&#160;<span class="change">(+63&#160;-22)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/gui</strong>:
+        ContainerHandler.java&#160;<span class="del">(del)</span>,
+        GUITools.java&#160;<span class="change">(+65&#160;-6)</span>,
+        JSettingsPanel.java&#160;<span class="del">(del)</span>,
+        KineticLawSelectionDialog.java&#160;<span class="change">(+35&#160;-67)</span>,
+        KineticLawSelectionPanel.java&#160;<span class="change">(+26&#160;-26)</span>,
+        KineticsSettingsPanel.java&#160;<span class="new">(new&#160;891)</span>,
+        LayoutHelper.java&#160;<span class="change">(+18)</span>,
+        SBMLsqueezerUI.java&#160;<span class="change">(+21&#160;-37)</span>,
+        SettingsDialog.java&#160;<span class="new">(new&#160;202)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/gui/table</strong>:
+        KineticLawJTable.java&#160;<span class="change">(+1&#160;-1)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/io</strong>:
+        SettingsParser.java&#160;<span class="del">(del)</span>,
+        SettingsWriter.java&#160;<span class="del">(del)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/resources/cfg</strong>:
+        SBMLsqueezer.cfg&#160;<span class="change">(+26&#160;-4)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="12"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2009-09-04 15:42</span>
+    <a class="permalink" title="Permalink to this commit" href="#12">#12</a>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">178</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Model history almost completely implemented.
+    </p>
+    <p class="commitdetails"><strong>633</strong> lines of code changed in <span class="files">9 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/jlibsbml</strong>:
+        Model.java&#160;<span class="change">(+50&#160;-22)</span>,
+        ModelCreator.java&#160;<span class="new">(new&#160;273)</span>,
+        ModelHistory.java&#160;<span class="new">(new&#160;240)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/gui</strong>:
+        GUITools.java&#160;<span class="change">(+28)</span>,
+        KineticLawSelectionDialog.java&#160;<span class="change">(+1&#160;-1)</span>,
+        KineticLawSelectionPanel.java&#160;<span class="change">(+5&#160;-31)</span>,
+        SBasePanel.java&#160;<span class="change">(+19)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/standalone</strong>:
+        LibSBMLReader.java&#160;<span class="change">(+16)</span>,
+        LibSBMLWriter.java&#160;<span class="change">(+1&#160;-1)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="11"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2009-09-04 11:42</span>
+    <a class="permalink" title="Permalink to this commit" href="#11">#11</a>
+  </dt>
+  <dd>
+    <p class="comment">
+what we need from biojava is now directly included.
+    </p>
+    <p class="commitdetails"><strong>7211</strong> lines of code changed in <span class="files">58 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/biojava/bio</strong>:
+        AbstractAnnotation.java&#160;<span class="new">(new&#160;261)</span>,
+        Annotatable.java&#160;<span class="new">(new&#160;147)</span>,
+        Annotation.java&#160;<span class="new">(new&#160;173)</span>,
+        BioError.java&#160;<span class="new">(new&#160;94)</span>,
+        BioException.java&#160;<span class="new">(new&#160;90)</span>,
+        BioRuntimeException.java&#160;<span class="new">(new&#160;105)</span>,
+        EmptyAnnotation.java&#160;<span class="new">(new&#160;107)</span>,
+        SmallAnnotation.java&#160;<span class="new">(new&#160;87)</span>
+      </li>
+      <li>
+        <strong>src/org/biojava/bio/seq/io</strong>:
+        ParseException.java&#160;<span class="new">(new&#160;73)</span>
+      </li>
+      <li>
+        <strong>src/org/biojava/ontology</strong>:
+        AbstractTerm.java&#160;<span class="new">(new&#160;80)</span>,
+        AlreadyExistsException.java&#160;<span class="new">(new&#160;42)</span>,
+        DefaultOps.java&#160;<span class="new">(new&#160;16)</span>,
+        IntegerOntology.java&#160;<span class="new">(new&#160;225)</span>,
+        OntoTools.java&#160;<span class="new">(new&#160;143)</span>,
+        Ontology.java&#160;<span class="new">(new&#160;651)</span>,
+        OntologyException.java&#160;<span class="new">(new&#160;49)</span>,
+        OntologyFactory.java&#160;<span class="new">(new&#160;21)</span>,
+        OntologyOps.java&#160;<span class="new">(new&#160;33)</span>,
+        OntologyTerm.java&#160;<span class="new">(new&#160;148)</span>,
+        RemoteTerm.java&#160;<span class="new">(new&#160;140)</span>,
+        Synonym.java&#160;<span class="new">(new&#160;92)</span>,
+        Term.java&#160;<span class="new">(new&#160;228)</span>,
+        Triple.java&#160;<span class="new">(new&#160;260)</span>,
+        Variable.java&#160;<span class="new">(new&#160;21)</span>,
+        core.onto&#160;<span class="new">(new&#160;55)</span>
+      </li>
+      <li>
+        <strong>src/org/biojava/ontology/io</strong>:
+        OboParser.java&#160;<span class="new">(new&#160;110)</span>,
+        TabDelimParser.java&#160;<span class="new">(new&#160;183)</span>
+      </li>
+      <li>
+        <strong>src/org/biojava/ontology/obo</strong>:
+        OboFileEventListener.java&#160;<span class="new">(new&#160;72)</span>,
+        OboFileHandler.java&#160;<span class="new">(new&#160;184)</span>,
+        OboFileParser.java&#160;<span class="new">(new&#160;673)</span>
+      </li>
+      <li>
+        <strong>src/org/biojava/utils</strong>:
+        AbstractChangeable.java&#160;<span class="new">(new&#160;124)</span>,
+        AssertionFailure.java&#160;<span class="new">(new&#160;51)</span>,
+        ChangeAdapter.java&#160;<span class="new">(new&#160;36)</span>,
+        ChangeEvent.java&#160;<span class="new">(new&#160;165)</span>,
+        ChangeForwarder.java&#160;<span class="new">(new&#160;155)</span>,
+        ChangeListener.java&#160;<span class="new">(new&#160;189)</span>,
+        ChangeSupport.java&#160;<span class="new">(new&#160;387)</span>,
+        ChangeType.java&#160;<span class="new">(new&#160;304)</span>,
+        ChangeVetoException.java&#160;<span class="new">(new&#160;136)</span>,
+        Changeable.java&#160;<span class="new">(new&#160;81)</span>,
+        ClassTools.java&#160;<span class="new">(new&#160;57)</span>,
+        SmallMap.java&#160;<span class="new">(new&#160;248)</span>,
+        StaticMemberPlaceHolder.java&#160;<span class="new">(new&#160;55)</span>,
+        Unchangeable.java&#160;<span class="new">(new&#160;53)</span>
+      </li>
+      <li>
+        <strong>src/org/biojava/utils/cache</strong>:
+        KeyedWeakReference.java&#160;<span class="new">(new&#160;53)</span>,
+        WeakValueHashMap.java&#160;<span class="new">(new&#160;217)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/jlibsbml</strong>:
+        ASTNode.java&#160;<span class="change">(+19&#160;-2)</span>,
+        SpeciesReference.java&#160;<span class="change">(+3)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer</strong>:
+        KineticLawGenerator.java&#160;<span class="change">(+29&#160;-24)</span>,
+        SBMLsqueezer.java&#160;<span class="change">(+17&#160;-7)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/gui</strong>:
+        GUITools.java&#160;<span class="new">(new&#160;85)</span>,
+        KineticLawSelectionDialog.java&#160;<span class="change">(+68&#160;-111)</span>,
+        KineticLawSelectionPanel.java&#160;<span class="change">(+6&#160;-1)</span>,
+        SBMLModelSplitPane.java&#160;<span class="change">(+41&#160;-41)</span>,
+        SBMLsqueezerUI.java&#160;<span class="change">(+28&#160;-41)</span>,
+        SBasePanel.java&#160;<span class="change">(+13&#160;-16)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/kinetics</strong>:
+        Convenience.java&#160;<span class="change">(+17&#160;-13)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/standalone</strong>:
+        LibSBMLWriter.java&#160;<span class="change">(+11)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="10"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2009-09-04 08:45</span>
+    <a class="permalink" title="Permalink to this commit" href="#10">#10</a>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">173</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Our SBML part should now be more compliant to libSBML 4.0.
+    </p>
+    <p class="commitdetails"><strong>9995</strong> lines of code changed in <span class="files">113 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml</strong>:
+        ASTNode.java&#160;<span class="del">(del)</span>,
+        AbstractNamedSBase.java&#160;<span class="del">(del)</span>,
+        AbstractSBase.java&#160;<span class="del">(del)</span>,
+        AlgebraicRule.java&#160;<span class="del">(del)</span>,
+        AssignmentRule.java&#160;<span class="del">(del)</span>,
+        Compartment.java&#160;<span class="del">(del)</span>,
+        CompartmentType.java&#160;<span class="del">(del)</span>,
+        Constants.java&#160;<span class="del">(del)</span>,
+        Constraint.java&#160;<span class="del">(del)</span>,
+        Delay.java&#160;<span class="del">(del)</span>,
+        Event.java&#160;<span class="del">(del)</span>,
+        EventAssignment.java&#160;<span class="del">(del)</span>,
+        FunctionDefinition.java&#160;<span class="del">(del)</span>,
+        InitialAssignment.java&#160;<span class="del">(del)</span>,
+        KineticLaw.java&#160;<span class="del">(del)</span>,
+        ListOf.java&#160;<span class="del">(del)</span>,
+        MathContainer.java&#160;<span class="del">(del)</span>,
+        Model.java&#160;<span class="del">(del)</span>,
+        ModifierSpeciesReference.java&#160;<span class="del">(del)</span>,
+        NamedSBase.java&#160;<span class="del">(del)</span>,
+        Parameter.java&#160;<span class="del">(del)</span>,
+        RateRule.java&#160;<span class="del">(del)</span>,
+        Reaction.java&#160;<span class="del">(del)</span>,
+        Rule.java&#160;<span class="del">(del)</span>,
+        SBMLReader.java&#160;<span class="del">(del)</span>,
+        SBMLWriter.java&#160;<span class="del">(del)</span>,
+        SBO.java&#160;<span class="del">(del)</span>,
+        SBase.java&#160;<span class="del">(del)</span>,
+        SimpleSpeciesReference.java&#160;<span class="del">(del)</span>,
+        Species.java&#160;<span class="del">(del)</span>,
+        SpeciesReference.java&#160;<span class="del">(del)</span>,
+        SpeciesType.java&#160;<span class="del">(del)</span>,
+        StoichiometryMath.java&#160;<span class="del">(del)</span>,
+        Symbol.java&#160;<span class="del">(del)</span>,
+        Trigger.java&#160;<span class="del">(del)</span>,
+        Unit.java&#160;<span class="del">(del)</span>,
+        UnitDefinition.java&#160;<span class="del">(del)</span>,
+        UnitKind.java&#160;<span class="del">(del)</span>,
+        package.html&#160;<span class="del">(del)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/jlibsbml</strong>:
+        ASTNode.java&#160;<span class="new">(new&#160;2038)</span>,
+        AbstractNamedSBase.java&#160;<span class="new">(new&#160;163)</span>,
+        AbstractSBase.java&#160;<span class="new">(new&#160;313)</span>,
+        AlgebraicRule.java&#160;<span class="new">(new&#160;65)</span>,
+        AssignmentRule.java&#160;<span class="new">(new&#160;115)</span>,
+        Compartment.java&#160;<span class="new">(new&#160;260)</span>,
+        CompartmentType.java&#160;<span class="new">(new&#160;63)</span>,
+        Constants.java&#160;<span class="new">(new&#160;280)</span>,
+        Constraint.java&#160;<span class="new">(new&#160;95)</span>,
+        Delay.java&#160;<span class="new">(new&#160;62)</span>,
+        Event.java&#160;<span class="new">(new&#160;313)</span>,
+        EventAssignment.java&#160;<span class="new">(new&#160;140)</span>,
+        FunctionDefinition.java&#160;<span class="new">(new&#160;193)</span>,
+        InitialAssignment.java&#160;<span class="new">(new&#160;108)</span>,
+        KineticLaw.java&#160;<span class="new">(new&#160;200)</span>,
+        ListOf.java&#160;<span class="new">(new&#160;631)</span>,
+        MathContainer.java&#160;<span class="new">(new&#160;142)</span>,
+        Model.java&#160;<span class="new">(new&#160;853)</span>,
+        ModifierSpeciesReference.java&#160;<span class="new">(new&#160;56)</span>,
+        NamedSBase.java&#160;<span class="new">(new&#160;64)</span>,
+        Parameter.java&#160;<span class="new">(new&#160;120)</span>,
+        RateRule.java&#160;<span class="new">(new&#160;116)</span>,
+        Reaction.java&#160;<span class="new">(new&#160;327)</span>,
+        Rule.java&#160;<span class="new">(new&#160;78)</span>,
+        SBMLReader.java&#160;<span class="new">(new&#160;135)</span>,
+        SBMLWriter.java&#160;<span class="new">(new&#160;205)</span>,
+        SBO.java&#160;<span class="new">(new&#160;711)</span>,
+        SBase.java&#160;<span class="new">(new&#160;152)</span>,
+        SimpleSpeciesReference.java&#160;<span class="new">(new&#160;131)</span>,
+        Species.java&#160;<span class="new">(new&#160;373)</span>,
+        SpeciesReference.java&#160;<span class="new">(new&#160;137)</span>,
+        SpeciesType.java&#160;<span class="new">(new&#160;67)</span>,
+        StoichiometryMath.java&#160;<span class="new">(new&#160;56)</span>,
+        Symbol.java&#160;<span class="new">(new&#160;193)</span>,
+        Trigger.java&#160;<span class="new">(new&#160;41)</span>,
+        Unit.java&#160;<span class="new">(new&#160;221)</span>,
+        UnitDefinition.java&#160;<span class="new">(new&#160;172)</span>,
+        UnitKind.java&#160;<span class="new">(new&#160;174)</span>,
+        package.html&#160;<span class="new">(new&#160;3)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer</strong>:
+        KineticLawGenerator.java&#160;<span class="change">(+11&#160;-11)</span>,
+        SBMLsqueezer.java&#160;<span class="change">(+1&#160;-1)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/gui</strong>:
+        JSettingsPanel.java&#160;<span class="change">(+1&#160;-1)</span>,
+        KineticLawSelectionDialog.java&#160;<span class="change">(+26&#160;-23)</span>,
+        KineticLawSelectionPanel.java&#160;<span class="change">(+2&#160;-2)</span>,
+        SBMLModelSplitPane.java&#160;<span class="change">(+3&#160;-4)</span>,
+        SBMLTree.java&#160;<span class="change">(+19&#160;-19)</span>,
+        SBMLsqueezerUI.java&#160;<span class="change">(+2&#160;-2)</span>,
+        SBasePanel.java&#160;<span class="change">(+23&#160;-23)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/gui/table</strong>:
+        KineticLawJTable.java&#160;<span class="change">(+3&#160;-3)</span>,
+        KineticLawTableModel.java&#160;<span class="change">(+3&#160;-3)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/io</strong>:
+        AbstractSBMLReader.java&#160;<span class="change">(+8&#160;-8)</span>,
+        AbstractSBMLWriter.java&#160;<span class="change">(+6&#160;-6)</span>,
+        LaTeXExport.java&#160;<span class="change">(+13&#160;-13)</span>,
+        SBMLio.java&#160;<span class="change">(+26&#160;-29)</span>,
+        SBaseChangedListener.java&#160;<span class="change">(+1&#160;-1)</span>,
+        TextExport.java&#160;<span class="change">(+4&#160;-4)</span>,
+        TextFormula.java&#160;<span class="change">(+1&#160;-1)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/kinetics</strong>:
+        BasicKineticLaw.java&#160;<span class="change">(+8&#160;-8)</span>,
+        Convenience.java&#160;<span class="change">(+8&#160;-8)</span>,
+        ConvenienceIndependent.java&#160;<span class="change">(+10&#160;-10)</span>,
+        GeneralizedMassAction.java&#160;<span class="change">(+8&#160;-8)</span>,
+        HillEquation.java&#160;<span class="change">(+11&#160;-11)</span>,
+        IrrevCompetNonCooperativeEnzymes.java&#160;<span class="change">(+7&#160;-7)</span>,
+        IrrevNonModulatedNonInteractingEnzymes.java&#160;<span class="change">(+6&#160;-6)</span>,
+        MichaelisMenten.java&#160;<span class="change">(+11&#160;-11)</span>,
+        OrderedMechanism.java&#160;<span class="change">(+23&#160;-23)</span>,
+        PingPongMechanism.java&#160;<span class="change">(+13&#160;-13)</span>,
+        RandomOrderMechanism.java&#160;<span class="change">(+23&#160;-23)</span>,
+        ZerothOrderForwardGMAK.java&#160;<span class="change">(+4&#160;-4)</span>,
+        ZerothOrderReverseGMAK.java&#160;<span class="change">(+4&#160;-4)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/plugin</strong>:
+        PluginSBMLReader.java&#160;<span class="change">(+26&#160;-23)</span>,
+        PluginSBMLWriter.java&#160;<span class="change">(+23&#160;-23)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/standalone</strong>:
+        LibSBMLReader.java&#160;<span class="change">(+63&#160;-48)</span>,
+        LibSBMLWriter.java&#160;<span class="change">(+28&#160;-26)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="9"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2009-09-04 06:52</span>
+    <a class="permalink" title="Permalink to this commit" href="#9">#9</a>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">172</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+SBML write function implemented for stand-alone version.
+    </p>
+    <p class="commitdetails"><strong>2381</strong> lines of code changed in <span class="files">35 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml</strong>:
+        ASTNode.java&#160;<span class="change">(+29&#160;-7)</span>,
+        AbstractSBase.java&#160;<span class="change">(-2)</span>,
+        AssignmentRule.java&#160;<span class="change">(+13&#160;-5)</span>,
+        InitialAssignment.java&#160;<span class="change">(+8)</span>,
+        KineticLaw.java&#160;<span class="change">(+3)</span>,
+        ListOf.java&#160;<span class="change">(+31)</span>,
+        RateRule.java&#160;<span class="change">(+12&#160;-4)</span>,
+        Rule.java&#160;<span class="change">(+24)</span>,
+        SBMLWriter.java&#160;<span class="change">(+164)</span>,
+        SBase.java&#160;<span class="change">(+10&#160;-1)</span>,
+        SIUnit.java&#160;<span class="del">(del)</span>,
+        Species.java&#160;<span class="change">(+17&#160;-1)</span>,
+        Symbol.java&#160;<span class="change">(+10&#160;-2)</span>,
+        Unit.java&#160;<span class="change">(+7&#160;-7)</span>,
+        UnitDefinition.java&#160;<span class="change">(+55)</span>,
+        UnitKind.java&#160;<span class="new">(new&#160;174)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer</strong>:
+        CfgKeys.java&#160;<span class="change">(+6&#160;-1)</span>,
+        KineticLawGenerator.java&#160;<span class="change">(+38&#160;-21)</span>,
+        SBMLsqueezer.java&#160;<span class="change">(+27&#160;-35)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/gui</strong>:
+        JSettingsPanel.java&#160;<span class="change">(-5)</span>,
+        KineticLawSelectionDialog.java&#160;<span class="change">(+5&#160;-7)</span>,
+        SBMLModelSplitPane.java&#160;<span class="change">(+10&#160;-3)</span>,
+        SBMLsqueezerUI.java&#160;<span class="change">(+36&#160;-21)</span>,
+        SBasePanel.java&#160;<span class="change">(+1&#160;-1)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/gui/table</strong>:
+        KineticLawJTable.java&#160;<span class="change">(+33&#160;-27)</span>,
+        KineticLawTableModel.java&#160;<span class="change">(+5&#160;-3)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/io</strong>:
+        AbstractSBMLReader.java&#160;<span class="change">(+14&#160;-39)</span>,
+        AbstractSBMLWriter.java&#160;<span class="change">(+271&#160;-1)</span>,
+        LaTeXExport.java&#160;<span class="change">(+2&#160;-2)</span>,
+        SBMLio.java&#160;<span class="change">(+283&#160;-28)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/plugin</strong>:
+        PluginSBMLReader.java&#160;<span class="change">(+6)</span>,
+        PluginSBMLWriter.java&#160;<span class="change">(+211)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/resources/cfg</strong>:
+        SBMLsqueezer.cfg&#160;<span class="change">(+1)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/standalone</strong>:
+        LibSBMLReader.java&#160;<span class="change">(+85&#160;-76)</span>,
+        LibSBMLWriter.java&#160;<span class="change">(+790&#160;-4)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="8"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2009-09-03 14:23</span>
+    <a class="permalink" title="Permalink to this commit" href="#8">#8</a>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">171</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Now ASTNode implements the TreeNode interface and can therefore be displayed in a tree easily.
+    </p>
+    <p class="commitdetails"><strong>121</strong> lines of code changed in <span class="files">2 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml</strong>:
+        ASTNode.java&#160;<span class="change">(+104&#160;-2)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/gui</strong>:
+        SBMLTree.java&#160;<span class="change">(+17&#160;-2)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="7"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2009-09-03 08:25</span>
+    <a class="permalink" title="Permalink to this commit" href="#7">#7</a>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">170</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Now two things are missing: first update of SBML tree and second write function into original sbml data structure.
+    </p>
+    <p class="commitdetails"><strong>398</strong> lines of code changed in <span class="files">9 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml</strong>:
+        MathContainer.java&#160;<span class="change">(+23)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer</strong>:
+        CfgKeys.java&#160;<span class="change">(+6&#160;-1)</span>,
+        KineticLawGenerator.java&#160;<span class="change">(+333&#160;-288)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/gui</strong>:
+        KineticLawSelectionDialog.java&#160;<span class="change">(+19&#160;-32)</span>,
+        KineticLawSelectionPanel.java&#160;<span class="change">(+5&#160;-8)</span>,
+        LayoutHelper.java&#160;<span class="change">(+1)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/gui/table</strong>:
+        KineticLawTableModel.java&#160;<span class="change">(+9&#160;-23)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/io</strong>:
+        SBMLio.java&#160;<span class="change">(+1&#160;-1)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/resources/cfg</strong>:
+        SBMLsqueezer.cfg&#160;<span class="change">(+1)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="6"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2009-09-02 09:27</span>
+    <a class="permalink" title="Permalink to this commit" href="#6">#6</a>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">169</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Improved settings parser and writer, GUI and data structures.
+    </p>
+    <p class="commitdetails"><strong>1181</strong> lines of code changed in <span class="files">21 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        TODO.txt&#160;<span class="change">(+3)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml</strong>:
+        ASTNode.java&#160;<span class="change">(-2)</span>,
+        Compartment.java&#160;<span class="change">(+28&#160;-4)</span>,
+        Constraint.java&#160;<span class="change">(+9&#160;-1)</span>,
+        Event.java&#160;<span class="change">(+31&#160;-9)</span>,
+        Model.java&#160;<span class="change">(+40&#160;-25)</span>,
+        Reaction.java&#160;<span class="change">(+3&#160;-6)</span>,
+        SBMLReader.java&#160;<span class="change">(+29&#160;-22)</span>,
+        Species.java&#160;<span class="change">(+17&#160;-1)</span>,
+        Unit.java&#160;<span class="change">(+61&#160;-4)</span>,
+        UnitDefinition.java&#160;<span class="change">(+28&#160;-7)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/gui</strong>:
+        KineticLawSelectionDialog.java&#160;<span class="change">(+1)</span>,
+        SBMLModelSplitPane.java&#160;<span class="change">(+86&#160;-23)</span>,
+        SBasePanel.java&#160;<span class="change">(+269&#160;-93)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/io</strong>:
+        AbstractSBMLReader.java&#160;<span class="change">(+64&#160;-1)</span>,
+        LaTeX.java&#160;<span class="change">(+33)</span>,
+        LaTeXExport.java&#160;<span class="change">(+240)</span>,
+        SBMLio.java&#160;<span class="change">(+16&#160;-2)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/kinetics</strong>:
+        ConvenienceIndependent.java&#160;<span class="change">(+31&#160;-10)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/plugin</strong>:
+        PluginSBMLReader.java&#160;<span class="change">(+36)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/standalone</strong>:
+        LibSBMLReader.java&#160;<span class="change">(+156&#160;-14)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="5"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2009-09-02 03:09</span>
+    <a class="permalink" title="Permalink to this commit" href="#5">#5</a>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">168</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Now it works!
+    </p>
+    <p class="commitdetails"><strong>991</strong> lines of code changed in <span class="files">22 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml</strong>:
+        AssignmentRule.java&#160;<span class="change">(+6&#160;-6)</span>,
+        Compartment.java&#160;<span class="change">(+1&#160;-1)</span>,
+        EventAssignment.java&#160;<span class="change">(+4&#160;-4)</span>,
+        InitialAssignment.java&#160;<span class="change">(+22&#160;-22)</span>,
+        Model.java&#160;<span class="change">(+87&#160;-13)</span>,
+        Parameter.java&#160;<span class="change">(+1&#160;-1)</span>,
+        RateRule.java&#160;<span class="change">(+6&#160;-6)</span>,
+        SBMLReader.java&#160;<span class="change">(+29)</span>,
+        Species.java&#160;<span class="change">(+1&#160;-1)</span>,
+        Symbol.java&#160;<span class="new">(new&#160;173)</span>,
+        Variable.java&#160;<span class="del">(del)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer</strong>:
+        KineticLawGenerator.java&#160;<span class="change">(+19&#160;-17)</span>,
+        SBMLsqueezer.java&#160;<span class="change">(+33&#160;-6)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/gui</strong>:
+        JSettingsPanel.java&#160;<span class="change">(+49&#160;-225)</span>,
+        KineticLawSelectionDialog.java&#160;<span class="change">(+1&#160;-33)</span>,
+        LayoutHelper.java&#160;<span class="change">(+29)</span>,
+        SBMLTree.java&#160;<span class="change">(+35&#160;-11)</span>,
+        SBasePanel.java&#160;<span class="change">(+285&#160;-192)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/gui/table</strong>:
+        KineticLawTableModel.java&#160;<span class="change">(+8&#160;-6)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/io</strong>:
+        SBMLio.java&#160;<span class="change">(+76&#160;-39)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/plugin</strong>:
+        PluginSBMLReader.java&#160;<span class="change">(+32&#160;-10)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/standalone</strong>:
+        LibSBMLReader.java&#160;<span class="change">(+94&#160;-3)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="4"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2009-09-01 09:18</span>
+    <a class="permalink" title="Permalink to this commit" href="#4">#4</a>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">167</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Restructured KineticLawGenerator.
+    </p>
+    <p class="commitdetails"><strong>5</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer</strong>:
+        KineticLawGenerator.java&#160;<span class="change">(+5&#160;-43)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="3"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2009-09-01 09:12</span>
+    <a class="permalink" title="Permalink to this commit" href="#3">#3</a>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">166</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Restructured KineticLawGenerator.
+    </p>
+    <p class="commitdetails"><strong>1039</strong> lines of code changed in <span class="files">31 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml</strong>:
+        Event.java&#160;<span class="change">(+1&#160;-1)</span>,
+        FunctionDefinition.java&#160;<span class="change">(+15)</span>,
+        KineticLaw.java&#160;<span class="change">(+8&#160;-6)</span>,
+        Model.java&#160;<span class="change">(+64)</span>,
+        SBMLReader.java&#160;<span class="change">(+7)</span>,
+        SBO.java&#160;<span class="change">(+8)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer</strong>:
+        CfgKeys.java&#160;<span class="new">(new&#160;103)</span>,
+        KineticLawGenerator.java&#160;<span class="change">(+343&#160;-550)</span>,
+        Kinetics.java&#160;<span class="new">(new&#160;113)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/gui</strong>:
+        JSettingsPanel.java&#160;<span class="change">(+15&#160;-12)</span>,
+        KineticLawSelectionDialog.java&#160;<span class="change">(+43&#160;-24)</span>,
+        KineticLawSelectionPanel.java&#160;<span class="change">(+11&#160;-8)</span>,
+        SBMLTree.java&#160;<span class="change">(+49&#160;-7)</span>,
+        SBMLsqueezerUI.java&#160;<span class="change">(+1&#160;-1)</span>,
+        SBasePanel.java&#160;<span class="change">(+15&#160;-7)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/gui/table</strong>:
+        KineticLawJTable.java&#160;<span class="change">(+4&#160;-3)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/io</strong>:
+        SBMLio.java&#160;<span class="change">(+39)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/kinetics</strong>:
+        BasicKineticLaw.java&#160;<span class="change">(+14&#160;-6)</span>,
+        Convenience.java&#160;<span class="change">(+4&#160;-4)</span>,
+        ConvenienceIndependent.java&#160;<span class="change">(+4&#160;-4)</span>,
+        GeneralizedMassAction.java&#160;<span class="change">(+4&#160;-4)</span>,
+        HillEquation.java&#160;<span class="change">(+1&#160;-1)</span>,
+        IrrevCompetNonCooperativeEnzymes.java&#160;<span class="change">(+4&#160;-4)</span>,
+        IrrevNonModulatedNonInteractingEnzymes.java&#160;<span class="change">(+2&#160;-2)</span>,
+        MichaelisMenten.java&#160;<span class="change">(+8&#160;-8)</span>,
+        OrderedMechanism.java&#160;<span class="change">(+4&#160;-4)</span>,
+        ZerothOrderForwardGMAK.java&#160;<span class="change">(+1&#160;-1)</span>,
+        ZerothOrderReverseGMAK.java&#160;<span class="change">(+1&#160;-1)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/plugin</strong>:
+        PluginSBMLReader.java&#160;<span class="change">(+6)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/resources/cfg</strong>:
+        SBMLsqueezer.cfg&#160;<span class="change">(+6)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/standalone</strong>:
+        LibSBMLReader.java&#160;<span class="change">(+141&#160;-110)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="2"></a>
+    <a href="user_schaefer.html" class="author">schaefer</a>
+    <span class="date">2009-09-01 06:59</span>
+    <a class="permalink" title="Permalink to this commit" href="#2">#2</a>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">165</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+
+    </p>
+    <p class="commitdetails"><strong>159</strong> lines of code changed in <span class="files">2 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml</strong>:
+        Event.java&#160;<span class="change">(+8)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/standalone</strong>:
+        LibSBMLReader.java&#160;<span class="change">(+151&#160;-68)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="1"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2009-09-01 05:03</span>
+    <a class="permalink" title="Permalink to this commit" href="#1">#1</a>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">164</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Changed type hierarchy: we now have a Variable class.
+    </p>
+    <p class="commitdetails"><strong>622</strong> lines of code changed in <span class="files">20 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml</strong>:
+        ASTNode.java&#160;<span class="change">(+8&#160;-6)</span>,
+        AbstractNamedSBase.java&#160;<span class="change">(+1&#160;-1)</span>,
+        AbstractSBase.java&#160;<span class="change">(+14&#160;-13)</span>,
+        Compartment.java&#160;<span class="change">(+51&#160;-9)</span>,
+        CompartmentType.java&#160;<span class="change">(-1)</span>,
+        ListOf.java&#160;<span class="change">(+2&#160;-2)</span>,
+        SBase.java&#160;<span class="change">(+19&#160;-1)</span>,
+        SIUnit.java&#160;<span class="new">(new&#160;174)</span>,
+        Species.java&#160;<span class="change">(+168&#160;-51)</span>,
+        SpeciesType.java&#160;<span class="change">(+1&#160;-1)</span>,
+        Unit.java&#160;<span class="change">(+4&#160;-4)</span>,
+        UnitSId.java&#160;<span class="del">(del)</span>,
+        Variable.java&#160;<span class="change">(+127&#160;-4)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer</strong>:
+        SBMLsqueezer.java&#160;<span class="change">(+1&#160;-1)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/gui</strong>:
+        SBMLModelSplitPane.java&#160;<span class="change">(+4&#160;-13)</span>,
+        SBMLTree.java&#160;<span class="change">(+3&#160;-3)</span>,
+        SBasePanel.java&#160;<span class="change">(+5&#160;-5)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/io</strong>:
+        AbstractSBMLReader.java&#160;<span class="change">(+13&#160;-6)</span>,
+        LaTeXExport.java&#160;<span class="change">(+2&#160;-2)</span>
+      </li>
+      <li>
+        <strong>src/org/sbml/squeezer/standalone</strong>:
+        LibSBMLReader.java&#160;<span class="change">(+25&#160;-5)</span>
+      </li>
+    </ul>
+  </dd>
+
+</dl>
+
+<p class="previous"><a href="2009-08.html">August 2009</a> &#187; </p>
+<div id="generatedby">Generated by <a href="http://www.statsvn.org">StatSVN</a> 0.7.0</div>
+</body>
+</html>

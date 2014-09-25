@@ -1,0 +1,919 @@
+<?xml version="1.0"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>StatSVN - Directory src/org/sbml/squeezer/sabiork/wizard/gui/</title>
+ <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"/>
+    <meta name="Generator" content="StatSVN 0.7.0"/>
+<link rel="stylesheet" href="objectlab-statcvs.css" type="text/css"/>
+<script type="text/javascript" charset="utf-8" src="http://bit.ly/javascript-api.js?version=latest&#38;login=statsvn&#38;apiKey=R_2c362b417d0517c27876cbaca1bb68cc"></script>
+<script type="text/javascript" charset="utf-8">
+   // wait until page is loaded to call API
+   var redir_url;
+   var short_url;
+   BitlyCB.myShortenCallback = function(data) {
+      // this is how to get a result of shortening a single url
+      var result;
+      short_url=null;
+      for (var r in data.results) {
+         result = data.results[r];
+         result['longUrl'] = r;
+         short_url = result['shortUrl'];
+         break;
+      }
+      if (short_url==null) // bit.ly failed
+      document.location=redir_url;
+      else
+      redirToTwitter();
+   };
+   function shortenTweet(url) {
+      if (short_url == null || redir_url!=url) {
+      redir_url = url;
+      BitlyClient.shorten(document.location, 'BitlyCB.myShortenCallback');
+      }
+      else
+      redirToTwitter();
+      return false;
+   }
+   function redirToTwitter() { 
+      // replace {0} which is visible as %7B0} in the link
+      document.location = redir_url.replace('%7B0}', short_url);
+   }
+</script>
+  </head>
+
+<body>
+
+<h1>Directory src/org/sbml/squeezer/sabiork/wizard/gui/</h1>
+<div id="parentlink">&#171; <a href="index.html">Development Statistics for /trunk</a></div>
+<dl class="attributes">
+    <dt>Directory Created:</dt>
+    <dd><span class="date">2012-08-17 06:36</span></dd>
+    <dt>Total Files:</dt>
+    <dd>31</dd>
+    <dt>Deleted Files:</dt>
+    <dd>3</dd>
+    <dt>Lines of Code:</dt>
+    <dd>6239</dd>
+</dl>
+<p class="dirtree">
+<a href="dir.html">[root]</a>/<a href="dir_src.html">src</a>/<a href="dir_src_org.html">org</a>/<a href="dir_src_org_sbml.html">sbml</a>/<a href="dir_src_org_sbml_squeezer.html">squeezer</a>/<a href="dir_src_org_sbml_squeezer_sabiork.html">sabiork</a>/<a href="dir_src_org_sbml_squeezer_sabiork_wizard.html">wizard</a>/<strong>gui</strong><br/>
+</p>
+
+<div class="section">
+<h2>Lines of Code</h2>
+<p class="chart"><img src="loc_module_src_org_sbml_squeezer_sabiork_wizard_gui.png" alt="src/org/sbml/squeezer/sabiork/wizard/gui/ Lines of Code" width="800" height="500" /></p></div>
+<div class="section">
+<h2>Developers</h2>
+  <table  rules="groups" summary="All authors and the number of their changes and lines of code in this directory">
+    <colgroup align="left"/>
+    <colgroup align="right"/>
+    <colgroup align="right"/>
+    <colgroup align="right"/>
+    <thead>
+      <tr>
+        <th>Author</th>
+        <th>Changes</th>
+        <th>Lines of Code</th>
+        <th>Lines per Change</th>
+      </tr>
+    </thead>
+    <tfoot>
+      <tr>
+        <th>Totals</th>
+        <td>297 (100.0%)</td>
+        <td>13055 (100.0%)</td>
+        <td>43.9</td>
+      </tr>
+    </tfoot>
+    <tbody>
+      <tr  class="odd">
+        <th><a href="user_keller.html" class="author">keller</a></th>
+        <td>90 (30.3%)</td>
+        <td>7597 (58.2%)</td>
+        <td>84.4</td>
+      </tr>
+      <tr  class="even">
+        <th><a href="user_draeger.html" class="author">draeger</a></th>
+        <td>207 (69.7%)</td>
+        <td>5458 (41.8%)</td>
+        <td>26.3</td>
+      </tr>
+    </tbody>
+  </table>
+
+</div>
+<div class="section">
+<h2>Most Recent Commits</h2>
+<dl class="commitlist">
+  <dt><a name="28"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2014-02-22 16:54</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">1082</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Updated Java-Doc and code style and added missing override tags.
+    </p>
+    <p class="commitdetails"><strong>32</strong> lines of code changed in <span class="files">31 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/sabiork/wizard/gui</strong>:
+        Card.java&#160;<span class="change">(+1)</span>,
+        CardMatching.java&#160;<span class="change">(+1)</span>,
+        CardMethod.java&#160;<span class="change">(+1)</span>,
+        CardReactionsA.java&#160;<span class="change">(+1)</span>,
+        CardReactionsM.java&#160;<span class="change">(+2&#160;-1)</span>,
+        CardSearchA.java&#160;<span class="change">(+1)</span>,
+        CardSearchM.java&#160;<span class="change">(+1)</span>,
+        CardSearchResultsA.java&#160;<span class="change">(+1)</span>,
+        CardSearchResultsM.java&#160;<span class="change">(+1)</span>,
+        CardSummaryA.java&#160;<span class="change">(+1)</span>,
+        CardSummaryM.java&#160;<span class="change">(+1)</span>,
+        ComboBoxModelCaptions.java&#160;<span class="change">(+1)</span>,
+        ComboBoxModelConstraints.java&#160;<span class="change">(+1)</span>,
+        ComboBoxModelReactionFilters.java&#160;<span class="change">(+1)</span>,
+        ComboBoxModelSearchItems.java&#160;<span class="change">(+1)</span>,
+        JComboBoxInterval.java&#160;<span class="change">(+1)</span>,
+        JComboBoxSearchField.java&#160;<span class="change">(+1)</span>,
+        JComponentEtchedLine.java&#160;<span class="change">(+1)</span>,
+        JDialogWizard.java&#160;<span class="change">(+1)</span>,
+        JPanelFilterOptions.java&#160;<span class="change">(+1)</span>,
+        TableCellRendererBooleans.java&#160;<span class="change">(+1)</span>,
+        TableCellRendererColorGradient.java&#160;<span class="change">(+1)</span>,
+        TableCellRendererReactions.java&#160;<span class="change">(+1)</span>,
+        TableCellRendererSearchAResults.java&#160;<span class="change">(+1)</span>,
+        TableCellRendererTemperature.java&#160;<span class="change">(+1)</span>,
+        TableCellRendererpHValues.java&#160;<span class="change">(+1)</span>,
+        TableModelReactions.java&#160;<span class="change">(+1)</span>,
+        TableModelSearchAResults.java&#160;<span class="change">(+1)</span>,
+        TableModelSearchMResults.java&#160;<span class="change">(+1)</span>,
+        TableModelSearchTerms.java&#160;<span class="change">(+1)</span>,
+        package-info.java&#160;<span class="change">(+1)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="27"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2014-02-22 08:15</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">1081</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Updated libraries JSBML and SysBio, fixed a small bug in the build script for building SysBio, and updated all classes to Java 1.6 (adde missing override tags).
+    </p>
+    <p class="commitdetails"><strong>3966</strong> lines of code changed in <span class="files">29 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/sabiork/wizard/gui</strong>:
+        CardMethod.java&#160;<span class="change">(+106&#160;-104)</span>,
+        CardReactionsA.java&#160;<span class="change">(+178&#160;-173)</span>,
+        CardReactionsM.java&#160;<span class="change">(+1)</span>,
+        CardSearchA.java&#160;<span class="change">(+210&#160;-201)</span>,
+        CardSearchM.java&#160;<span class="change">(+229&#160;-220)</span>,
+        CardSearchResultsA.java&#160;<span class="change">(+354&#160;-344)</span>,
+        CardSearchResultsM.java&#160;<span class="change">(+446&#160;-433)</span>,
+        CardSummaryA.java&#160;<span class="change">(+75&#160;-72)</span>,
+        CardSummaryM.java&#160;<span class="change">(+69&#160;-66)</span>,
+        ComboBoxModelCaptions.java&#160;<span class="change">(+152&#160;-146)</span>,
+        ComboBoxModelConstraints.java&#160;<span class="change">(+40&#160;-40)</span>,
+        ComboBoxModelReactionFilters.java&#160;<span class="change">(+68&#160;-68)</span>,
+        ComboBoxModelSearchItems.java&#160;<span class="change">(+118&#160;-114)</span>,
+        JComboBoxInterval.java&#160;<span class="change">(+72&#160;-72)</span>,
+        JComboBoxSearchField.java&#160;<span class="change">(+197&#160;-192)</span>,
+        JComponentEtchedLine.java&#160;<span class="change">(+16&#160;-16)</span>,
+        JDialogWizard.java&#160;<span class="change">(+483&#160;-477)</span>,
+        JPanelFilterOptions.java&#160;<span class="change">(+84&#160;-84)</span>,
+        TableCellRendererBooleans.java&#160;<span class="change">(+26&#160;-25)</span>,
+        TableCellRendererColorGradient.java&#160;<span class="change">(+48&#160;-48)</span>,
+        TableCellRendererReactions.java&#160;<span class="change">(+26&#160;-25)</span>,
+        TableCellRendererSearchAResults.java&#160;<span class="change">(+54&#160;-54)</span>,
+        TableCellRendererTemperature.java&#160;<span class="change">(+70&#160;-70)</span>,
+        TableCellRendererpHValues.java&#160;<span class="change">(+63&#160;-63)</span>,
+        TableModelReactions.java&#160;<span class="change">(+123&#160;-120)</span>,
+        TableModelSearchAResults.java&#160;<span class="change">(+259&#160;-253)</span>,
+        TableModelSearchMResults.java&#160;<span class="change">(+156&#160;-150)</span>,
+        TableModelSearchTerms.java&#160;<span class="change">(+241&#160;-241)</span>,
+        package-info.java&#160;<span class="change">(+2&#160;-1)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="26"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2014-02-16 22:21</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">1078</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+SBMLsqueezer runs now again as plugin for CellDesigner and also based on libSBML and JSBML. Many improvements have been made:<br />
+<br />
+* The build script has been revised to compile the modules of JSBML for CellDesigner and libSBML separately.<br />
+* The SysBio library has been updated and also a new version of JSBML has been incorporated.<br />
+* Several bugs have been fixed.
+    </p>
+    <p class="commitdetails"><strong>815</strong> lines of code changed in <span class="files">3 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/sabiork/wizard/gui</strong>:
+        Card.java&#160;<span class="change">(+64&#160;-64)</span>,
+        CardMatching.java&#160;<span class="change">(+578&#160;-569)</span>,
+        CardReactionsM.java&#160;<span class="change">(+173&#160;-167)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="25"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2014-01-09 15:30</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">1077</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Updated license headers to 2014.
+    </p>
+    <p class="commitdetails"><strong>30</strong> lines of code changed in <span class="files">29 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/sabiork/wizard/gui</strong>:
+        Card.java&#160;<span class="change">(+1&#160;-1)</span>,
+        CardMatching.java&#160;<span class="change">(+1&#160;-1)</span>,
+        CardMethod.java&#160;<span class="change">(+1&#160;-1)</span>,
+        CardReactionsA.java&#160;<span class="change">(+1&#160;-1)</span>,
+        CardReactionsM.java&#160;<span class="change">(+1&#160;-1)</span>,
+        CardSearchA.java&#160;<span class="change">(+1&#160;-1)</span>,
+        CardSearchM.java&#160;<span class="change">(+1&#160;-1)</span>,
+        CardSummaryA.java&#160;<span class="change">(+1&#160;-1)</span>,
+        CardSummaryM.java&#160;<span class="change">(+1&#160;-1)</span>,
+        ComboBoxModelCaptions.java&#160;<span class="change">(+1&#160;-1)</span>,
+        ComboBoxModelConstraints.java&#160;<span class="change">(+1&#160;-1)</span>,
+        ComboBoxModelReactionFilters.java&#160;<span class="change">(+1&#160;-1)</span>,
+        ComboBoxModelSearchItems.java&#160;<span class="change">(+1&#160;-1)</span>,
+        JComboBoxInterval.java&#160;<span class="change">(+1&#160;-1)</span>,
+        JComboBoxSearchField.java&#160;<span class="change">(+1&#160;-1)</span>,
+        JComponentEtchedLine.java&#160;<span class="change">(+1&#160;-1)</span>,
+        JDialogWizard.java&#160;<span class="change">(+1&#160;-1)</span>,
+        JPanelFilterOptions.java&#160;<span class="change">(+1&#160;-1)</span>,
+        TableCellRendererBooleans.java&#160;<span class="change">(+2&#160;-2)</span>,
+        TableCellRendererColorGradient.java&#160;<span class="change">(+1&#160;-1)</span>,
+        TableCellRendererReactions.java&#160;<span class="change">(+1&#160;-1)</span>,
+        TableCellRendererSearchAResults.java&#160;<span class="change">(+1&#160;-1)</span>,
+        TableCellRendererTemperature.java&#160;<span class="change">(+1&#160;-1)</span>,
+        TableCellRendererpHValues.java&#160;<span class="change">(+1&#160;-1)</span>,
+        TableModelReactions.java&#160;<span class="change">(+1&#160;-1)</span>,
+        TableModelSearchAResults.java&#160;<span class="change">(+1&#160;-1)</span>,
+        TableModelSearchMResults.java&#160;<span class="change">(+1&#160;-1)</span>,
+        TableModelSearchTerms.java&#160;<span class="change">(+1&#160;-1)</span>,
+        package-info.java&#160;<span class="change">(+1&#160;-1)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="24"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2013-12-11 17:20</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">1075</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Several changes and improvements: Unit corrections, parameter corrections, changes due to changes in JSBML.
+    </p>
+    <p class="commitdetails"><strong>0</strong> lines of code changed in <span class="files">4 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/sabiork/wizard/gui</strong>:
+        CardReactionsM.java&#160;<span class="change">(changed)</span>,
+        CardSearchM.java&#160;<span class="change">(changed)</span>,
+        JDialogWizard.java&#160;<span class="change">(changed)</span>,
+        TableModelSearchTerms.java&#160;<span class="change">(changed)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="23"></a>
+    <a href="user_keller.html" class="author">keller</a>
+    <span class="date">2013-08-13 06:19</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">1073</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Unnecessary imports removed.
+    </p>
+    <p class="commitdetails"><strong>0</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/sabiork/wizard/gui</strong>:
+        CardSearchResultsM.java&#160;<span class="change">(-11)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="22"></a>
+    <a href="user_keller.html" class="author">keller</a>
+    <span class="date">2013-08-13 06:15</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">1071</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+SABIO-RK wizard improved.
+    </p>
+    <p class="commitdetails"><strong>983</strong> lines of code changed in <span class="files">6 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/sabiork/wizard/gui</strong>:
+        Card.java&#160;<span class="change">(+8&#160;-1)</span>,
+        CardSearchA.java&#160;<span class="change">(+19&#160;-298)</span>,
+        CardSearchM.java&#160;<span class="change">(+28&#160;-391)</span>,
+        CardSearchResultsA.java&#160;<span class="new">(new&#160;405)</span>,
+        CardSearchResultsM.java&#160;<span class="new">(new&#160;511)</span>,
+        JDialogWizard.java&#160;<span class="change">(+12&#160;-4)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="21"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2013-08-02 16:32</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">1068</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Fixed a bug in the Wizard that actually option changes could not be considered when going back and changing something. It just didn't apply the user's new choice. Now it does.
+    </p>
+    <p class="commitdetails"><strong>6</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/sabiork/wizard/gui</strong>:
+        CardReactionsM.java&#160;<span class="change">(+6&#160;-12)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="20"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2013-04-05 07:09</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">1064</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+* Solved a bug that caused a NullPointerException when not using SABIO-RK before creating rate laws ab initio.<br />
+* Removed JUnit library because this is not needed (provided by the OS).<br />
+* Updated JSBML, SysBio, and SBML2LaTeX packages<br />
+* Improved CellDesigner interface<br />
+* Many adaptations because of the new SBML2LaTeX and the attempt to provide CellDesigner plug-in functions<br />
+* Improved ant build script.<br />
+* Smaller code improvements.
+    </p>
+    <p class="commitdetails"><strong>0</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/sabiork/wizard/gui</strong>:
+        TableModelSearchTerms.java&#160;<span class="change">(changed)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="19"></a>
+    <a href="user_keller.html" class="author">keller</a>
+    <span class="date">2013-03-08 08:21</span>
+  </dt>
+  <dd>
+    <p class="comment">
+More options added.
+    </p>
+    <p class="commitdetails"><strong>129</strong> lines of code changed in <span class="files">4 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/sabiork/wizard/gui</strong>:
+        CardSearchA.java&#160;<span class="change">(+5)</span>,
+        CardSearchM.java&#160;<span class="change">(+5)</span>,
+        JPanelFilterOptions.java&#160;<span class="change">(+27&#160;-27)</span>,
+        TableModelSearchTerms.java&#160;<span class="change">(+92)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="18"></a>
+    <a href="user_keller.html" class="author">keller</a>
+    <span class="date">2013-03-06 05:55</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">1051</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Unnecessary class removed.
+    </p>
+    <p class="commitdetails"><strong>0</strong> lines of code changed in <span class="files">2 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/sabiork/wizard/gui</strong>:
+        JDialogCalendar.java&#160;<span class="del">(del)</span>,
+        JPanelFilterOptions.java&#160;<span class="change">(-35)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="17"></a>
+    <a href="user_keller.html" class="author">keller</a>
+    <span class="date">2013-03-05 07:06</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">1049</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Date option added.
+    </p>
+    <p class="commitdetails"><strong>3</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/sabiork/wizard/gui</strong>:
+        JPanelFilterOptions.java&#160;<span class="change">(+3&#160;-7)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="16"></a>
+    <a href="user_keller.html" class="author">keller</a>
+    <span class="date">2013-03-05 03:04</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">1047</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+JPanelFilterOptions adapted to properties.
+    </p>
+    <p class="commitdetails"><strong>87</strong> lines of code changed in <span class="files">6 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/sabiork/wizard/gui</strong>:
+        CardReactionsA.java&#160;<span class="change">(-2)</span>,
+        CardReactionsM.java&#160;<span class="change">(-2)</span>,
+        CardSearchA.java&#160;<span class="change">(+18&#160;-7)</span>,
+        CardSearchM.java&#160;<span class="change">(+18&#160;-7)</span>,
+        JDialogWizard.java&#160;<span class="change">(+6&#160;-2)</span>,
+        JPanelFilterOptions.java&#160;<span class="change">(+45&#160;-638)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="15"></a>
+    <a href="user_keller.html" class="author">keller</a>
+    <span class="date">2013-03-01 07:16</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">1042</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+The properties of the SABIO-RK search are now saved.
+    </p>
+    <p class="commitdetails"><strong>164</strong> lines of code changed in <span class="files">5 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/sabiork/wizard/gui</strong>:
+        Card.java&#160;<span class="change">(+6)</span>,
+        CardSearchA.java&#160;<span class="change">(+10)</span>,
+        CardSearchM.java&#160;<span class="change">(+10)</span>,
+        JDialogWizard.java&#160;<span class="change">(+1)</span>,
+        JPanelFilterOptions.java&#160;<span class="change">(+137&#160;-16)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="14"></a>
+    <a href="user_keller.html" class="author">keller</a>
+    <span class="date">2013-02-28 07:37</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">1040</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Selected reactions are now counted in the SABIO-RK wizard. Some JavaDoc has been added.
+    </p>
+    <p class="commitdetails"><strong>600</strong> lines of code changed in <span class="files">22 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/sabiork/wizard/gui</strong>:
+        Card.java&#160;<span class="change">(+2&#160;-4)</span>,
+        CardMatching.java&#160;<span class="change">(+48&#160;-1)</span>,
+        CardMethod.java&#160;<span class="change">(+8)</span>,
+        CardReactionsA.java&#160;<span class="change">(+11&#160;-1)</span>,
+        CardReactionsM.java&#160;<span class="change">(+32)</span>,
+        CardSearchA.java&#160;<span class="change">(+39&#160;-2)</span>,
+        CardSearchM.java&#160;<span class="change">(+46&#160;-4)</span>,
+        CardSummaryA.java&#160;<span class="change">(+20)</span>,
+        CardSummaryM.java&#160;<span class="change">(+20)</span>,
+        ComboBoxModelCaptions.java&#160;<span class="change">(-6)</span>,
+        ComboBoxModelConstraints.java&#160;<span class="change">(+11)</span>,
+        ComboBoxModelSearchItems.java&#160;<span class="change">(+3)</span>,
+        JComboBoxSearchField.java&#160;<span class="change">(+23&#160;-4)</span>,
+        JComponentEtchedLine.java&#160;<span class="change">(+3)</span>,
+        JDialogCalendar.java&#160;<span class="change">(+28&#160;-1)</span>,
+        JPanelFilterOptions.java&#160;<span class="change">(+115&#160;-1)</span>,
+        TableCellRendererSearchAResults.java&#160;<span class="change">(+4)</span>,
+        TableCellRendererTemperature.java&#160;<span class="change">(+4)</span>,
+        TableCellRendererpHValues.java&#160;<span class="change">(+4)</span>,
+        TableModelSearchAResults.java&#160;<span class="change">(+83&#160;-1)</span>,
+        TableModelSearchMResults.java&#160;<span class="change">(+42)</span>,
+        TableModelSearchTerms.java&#160;<span class="change">(+54)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="13"></a>
+    <a href="user_keller.html" class="author">keller</a>
+    <span class="date">2013-02-28 04:32</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">1038</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+The searching for kinetic laws is now stopped when the cancel or back button is pressed.
+    </p>
+    <p class="commitdetails"><strong>50</strong> lines of code changed in <span class="files">4 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/sabiork/wizard/gui</strong>:
+        Card.java&#160;<span class="change">(+14)</span>,
+        CardSearchA.java&#160;<span class="change">(+17)</span>,
+        CardSearchM.java&#160;<span class="change">(+16)</span>,
+        JDialogWizard.java&#160;<span class="change">(+3)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="12"></a>
+    <a href="user_keller.html" class="author">keller</a>
+    <span class="date">2013-02-28 03:09</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">1037</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+SABIO-RK wizard improved.
+    </p>
+    <p class="commitdetails"><strong>30</strong> lines of code changed in <span class="files">3 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/sabiork/wizard/gui</strong>:
+        CardReactionsA.java&#160;<span class="change">(+7&#160;-3)</span>,
+        CardReactionsM.java&#160;<span class="change">(+19&#160;-13)</span>,
+        JDialogWizard.java&#160;<span class="change">(+4&#160;-4)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="11"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2013-02-21 04:11</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">1034</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+* New versions of libraries JSBML, SysBio, and CellDesigner.<br />
+<br />
+* Improved localization support.<br />
+<br />
+* New icons, screenshots, and images.<br />
+<br />
+* SBMLsqueezer: Update of the current year and adaptation to the latest version of Garuda<br />
+<br />
+* SubmodelController: Avoids a null pointer exception in case that for some reason no kinetics has been created for a reaction within the submodel.<br />
+<br />
+* Made the dialogs for the kinetics selection and also for SABIO-RK resizable.<br />
+<br />
+* SBMLsqueezerUI: Adaptation to latest version of Garuda; also shifted the garuda menu entry to the edit menu to make it less prominent; fixed a bug that after loading kinetics from SABIO-RK the SBML tree was not updated.<br />
+<br />
+* SABIORKWizard: This dialog is now placed relative to the main window and has become resizable, which is both important!<br />
+<br />
+* JDialogWizard: Since in SBMLsqueezer the user selects already all or just one reaction in a model, the dialog has been changed so that these are pre-selected. The user can, however, still go back and change this selection. The default size of the dialog has been reduced with respect to small displays, where the dialog might otherwise not even pop up. It is also now resizable.<br />
+<br />
+* Improved the build script.<br />
+<br />
+* General: Updated old-style &lt;code&gt;…&lt;/code&gt; to the new {@code …} and code style cleaning; in SABIO-RK part, tables don't have to fill a panel, Auto-resize has been switched of in order to make columns arbitrarily large. At the moment, this should be improved because sometimes columns are too little.
+    </p>
+    <p class="commitdetails"><strong>251</strong> lines of code changed in <span class="files">10 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/sabiork/wizard/gui</strong>:
+        CardReactionsA.java&#160;<span class="change">(+40&#160;-18)</span>,
+        CardReactionsM.java&#160;<span class="change">(+10&#160;-14)</span>,
+        CardSearchA.java&#160;<span class="change">(+2)</span>,
+        CardSearchM.java&#160;<span class="change">(+2)</span>,
+        CardSummaryM.java&#160;<span class="change">(+1&#160;-1)</span>,
+        ComboBoxModelReactionFilters.java&#160;<span class="change">(+27&#160;-14)</span>,
+        JComboBoxInterval.java&#160;<span class="change">(+4&#160;-4)</span>,
+        JDialogWizard.java&#160;<span class="change">(+118&#160;-32)</span>,
+        TableCellRendererReactions.java&#160;<span class="change">(+3)</span>,
+        TableModelReactions.java&#160;<span class="change">(+44&#160;-5)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="10"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2013-02-06 09:47</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">1031</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+* Updated the license headers in all files to 2013.<br />
+* Fixed several bugs in SubmodelController, KinteticLawGenerator, and ParameterFactory.<br />
+* Improved the adaptation of the main GUI to Mac OS X.<br />
+* Corrected typos in natural text files (XML).
+    </p>
+    <p class="commitdetails"><strong>37</strong> lines of code changed in <span class="files">30 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/sabiork/wizard/gui</strong>:
+        Card.java&#160;<span class="change">(+1&#160;-1)</span>,
+        CardMatching.java&#160;<span class="change">(+1&#160;-1)</span>,
+        CardMethod.java&#160;<span class="change">(+1&#160;-1)</span>,
+        CardReactionsA.java&#160;<span class="change">(+1&#160;-1)</span>,
+        CardReactionsM.java&#160;<span class="change">(+1&#160;-1)</span>,
+        CardSearchA.java&#160;<span class="change">(+1&#160;-1)</span>,
+        CardSearchM.java&#160;<span class="change">(+1&#160;-1)</span>,
+        CardSummaryA.java&#160;<span class="change">(+1&#160;-1)</span>,
+        CardSummaryM.java&#160;<span class="change">(+1&#160;-1)</span>,
+        ComboBoxModelCaptions.java&#160;<span class="change">(+1&#160;-1)</span>,
+        ComboBoxModelConstraints.java&#160;<span class="change">(+1&#160;-1)</span>,
+        ComboBoxModelReactionFilters.java&#160;<span class="change">(+1&#160;-1)</span>,
+        ComboBoxModelSearchItems.java&#160;<span class="change">(+1&#160;-1)</span>,
+        JComboBoxInterval.java&#160;<span class="change">(+1&#160;-1)</span>,
+        JComboBoxSearchField.java&#160;<span class="change">(+1&#160;-1)</span>,
+        JComponentEtchedLine.java&#160;<span class="change">(+1&#160;-1)</span>,
+        JDialogCalendar.java&#160;<span class="change">(+1&#160;-1)</span>,
+        JDialogWizard.java&#160;<span class="change">(+8&#160;-8)</span>,
+        JPanelFilterOptions.java&#160;<span class="change">(+1&#160;-1)</span>,
+        TableCellRendererBooleans.java&#160;<span class="change">(+1&#160;-1)</span>,
+        TableCellRendererColorGradient.java&#160;<span class="change">(+1&#160;-1)</span>,
+        TableCellRendererReactions.java&#160;<span class="change">(+1&#160;-1)</span>,
+        TableCellRendererSearchAResults.java&#160;<span class="change">(+1&#160;-1)</span>,
+        TableCellRendererTemperature.java&#160;<span class="change">(+1&#160;-1)</span>,
+        TableCellRendererpHValues.java&#160;<span class="change">(+1&#160;-1)</span>,
+        TableModelReactions.java&#160;<span class="change">(+1&#160;-1)</span>,
+        TableModelSearchAResults.java&#160;<span class="change">(+1&#160;-1)</span>,
+        TableModelSearchMResults.java&#160;<span class="change">(+1&#160;-1)</span>,
+        TableModelSearchTerms.java&#160;<span class="change">(+1&#160;-1)</span>,
+        package-info.java&#160;<span class="change">(+1&#160;-1)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="9"></a>
+    <a href="user_keller.html" class="author">keller</a>
+    <span class="date">2012-10-24 06:56</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">1028</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+SABIO-RK support improved.
+    </p>
+    <p class="commitdetails"><strong>71</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/sabiork/wizard/gui</strong>:
+        JDialogWizard.java&#160;<span class="change">(+71&#160;-9)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="8"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2012-10-17 01:06</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">1026</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Removed dependency from TabbedPaneCloseListener, new icon, many smaller changes and bug fix (avoid NullPointerException when creating rate laws).
+    </p>
+    <p class="commitdetails"><strong>15</strong> lines of code changed in <span class="files">2 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/sabiork/wizard/gui</strong>:
+        CardMatching.java&#160;<span class="change">(+10)</span>,
+        ComboBoxModelCaptions.java&#160;<span class="change">(+5)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="7"></a>
+    <a href="user_keller.html" class="author">keller</a>
+    <span class="date">2012-09-20 01:49</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">1005</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+SABIO-RK connection improved.
+    </p>
+    <p class="commitdetails"><strong>13</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/sabiork/wizard/gui</strong>:
+        JDialogWizard.java&#160;<span class="change">(+13)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="6"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2012-09-11 03:23</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">1001</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Fixed a bug that prevented SBMLsqueezer from creating more than one kinetic law in one go and updated many JavaDoc entries to use {@code ...} instead of &lt;code&gt;...&lt;/code&gt;.
+    </p>
+    <p class="commitdetails"><strong>16</strong> lines of code changed in <span class="files">5 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/sabiork/wizard/gui</strong>:
+        CardMatching.java&#160;<span class="change">(+6&#160;-6)</span>,
+        CardSearchA.java&#160;<span class="change">(+2&#160;-2)</span>,
+        CardSearchM.java&#160;<span class="change">(+2&#160;-2)</span>,
+        ComboBoxModelSearchItems.java&#160;<span class="change">(+4&#160;-4)</span>,
+        JComboBoxSearchField.java&#160;<span class="change">(+2&#160;-2)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="5"></a>
+    <a href="user_keller.html" class="author">keller</a>
+    <span class="date">2012-08-31 06:13</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">991</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Pair class removed.
+    </p>
+    <p class="commitdetails"><strong>15</strong> lines of code changed in <span class="files">3 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/sabiork/wizard/gui</strong>:
+        CardSearchA.java&#160;<span class="change">(+2&#160;-2)</span>,
+        CardSearchM.java&#160;<span class="change">(+3&#160;-3)</span>,
+        TableModelSearchTerms.java&#160;<span class="change">(+10&#160;-9)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="4"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2012-08-31 00:42</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">989</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+* Added more detailed progress information when filling the overview table for the user.<br />
+* Code cleaning in SABIO-RK part
+    </p>
+    <p class="commitdetails"><strong>174</strong> lines of code changed in <span class="files">29 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/sabiork/wizard/gui</strong>:
+        Card.java&#160;<span class="change">(+10&#160;-2)</span>,
+        CardMatching.java&#160;<span class="change">(+27&#160;-3)</span>,
+        CardMethod.java&#160;<span class="change">(+15&#160;-2)</span>,
+        CardReactionsA.java&#160;<span class="change">(+4&#160;-2)</span>,
+        CardReactionsM.java&#160;<span class="change">(+4&#160;-2)</span>,
+        CardSearchA.java&#160;<span class="change">(+5&#160;-2)</span>,
+        CardSearchM.java&#160;<span class="change">(+5&#160;-2)</span>,
+        CardSummaryA.java&#160;<span class="change">(+4&#160;-2)</span>,
+        CardSummaryM.java&#160;<span class="change">(+4&#160;-2)</span>,
+        ComboBoxModelCaptions.java&#160;<span class="change">(+35&#160;-2)</span>,
+        ComboBoxModelConstraints.java&#160;<span class="change">(+5&#160;-2)</span>,
+        ComboBoxModelReactionFilters.java&#160;<span class="change">(+5&#160;-2)</span>,
+        ComboBoxModelSearchItems.java&#160;<span class="change">(+5&#160;-2)</span>,
+        JComboBoxInterval.java&#160;<span class="change">(+4&#160;-2)</span>,
+        JComboBoxSearchField.java&#160;<span class="change">(+4&#160;-2)</span>,
+        JComponentEtchedLine.java&#160;<span class="change">(+5&#160;-2)</span>,
+        JDialogCalendar.java&#160;<span class="change">(+4&#160;-2)</span>,
+        JDialogWizard.java&#160;<span class="change">(+5&#160;-2)</span>,
+        JPanelFilterOptions.java&#160;<span class="change">(+4&#160;-2)</span>,
+        TableCellRendererBooleans.java&#160;<span class="change">(+3&#160;-1)</span>,
+        TableCellRendererColorGradient.java&#160;<span class="change">(-1)</span>,
+        TableCellRendererReactions.java&#160;<span class="change">(-1)</span>,
+        TableCellRendererSearchAResults.java&#160;<span class="change">(-1)</span>,
+        TableCellRendererTemperature.java&#160;<span class="change">(-1)</span>,
+        TableCellRendererpHValues.java&#160;<span class="change">(-1)</span>,
+        TableModelReactions.java&#160;<span class="change">(+5&#160;-3)</span>,
+        TableModelSearchAResults.java&#160;<span class="change">(+4&#160;-2)</span>,
+        TableModelSearchMResults.java&#160;<span class="change">(+4&#160;-2)</span>,
+        TableModelSearchTerms.java&#160;<span class="change">(+4&#160;-2)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="3"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2012-08-24 07:57</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">981</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Removed unnecessary double dollar symbols, restructured SABIO-RK part of the project and added missing package-info.java files.
+    </p>
+    <p class="commitdetails"><strong>88</strong> lines of code changed in <span class="files">30 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/sabiork/wizard/gui</strong>:
+        Card.java&#160;<span class="change">(+3&#160;-3)</span>,
+        CardMatching.java&#160;<span class="change">(+3&#160;-3)</span>,
+        CardMethod.java&#160;<span class="change">(+3&#160;-3)</span>,
+        CardReactionsA.java&#160;<span class="change">(+3&#160;-3)</span>,
+        CardReactionsM.java&#160;<span class="change">(+3&#160;-3)</span>,
+        CardSearchA.java&#160;<span class="change">(+3&#160;-3)</span>,
+        CardSearchM.java&#160;<span class="change">(+3&#160;-3)</span>,
+        CardSummaryA.java&#160;<span class="change">(+3&#160;-3)</span>,
+        CardSummaryM.java&#160;<span class="change">(+3&#160;-3)</span>,
+        ComboBoxModelCaptions.java&#160;<span class="change">(+3&#160;-3)</span>,
+        ComboBoxModelConstraints.java&#160;<span class="change">(+3&#160;-3)</span>,
+        ComboBoxModelReactionFilters.java&#160;<span class="change">(+3&#160;-3)</span>,
+        ComboBoxModelSearchItems.java&#160;<span class="change">(+3&#160;-3)</span>,
+        JComboBoxInterval.java&#160;<span class="change">(+3&#160;-3)</span>,
+        JComboBoxSearchField.java&#160;<span class="change">(+3&#160;-3)</span>,
+        JComponentEtchedLine.java&#160;<span class="change">(+3&#160;-3)</span>,
+        JDialogCalendar.java&#160;<span class="change">(+3&#160;-3)</span>,
+        JDialogWizard.java&#160;<span class="change">(+3&#160;-3)</span>,
+        JPanelFilterOptions.java&#160;<span class="change">(+3&#160;-3)</span>,
+        TableCellRendererBooleans.java&#160;<span class="change">(+3&#160;-3)</span>,
+        TableCellRendererColorGradient.java&#160;<span class="change">(+3&#160;-3)</span>,
+        TableCellRendererReactions.java&#160;<span class="change">(+3&#160;-3)</span>,
+        TableCellRendererSearchAResults.java&#160;<span class="change">(+3&#160;-3)</span>,
+        TableCellRendererTemperature.java&#160;<span class="change">(+3&#160;-3)</span>,
+        TableCellRendererpHValues.java&#160;<span class="change">(+3&#160;-3)</span>,
+        TableModelReactions.java&#160;<span class="change">(+3&#160;-3)</span>,
+        TableModelSearchAResults.java&#160;<span class="change">(+3&#160;-3)</span>,
+        TableModelSearchMResults.java&#160;<span class="change">(+3&#160;-3)</span>,
+        TableModelSearchTerms.java&#160;<span class="change">(+3&#160;-3)</span>,
+        package-info.java&#160;<span class="change">(+1&#160;-1)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="2"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2012-08-21 08:01</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">979</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Created missing package-info.java files in the sabiork packages and moved resource files into the resources folder.
+    </p>
+    <p class="commitdetails"><strong>28</strong> lines of code changed in <span class="files">3 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/sabiork/wizard/gui</strong>:
+        Calendar.png&#160;<span class="del">(del)</span>,
+        Logo.jpg&#160;<span class="del">(del)</span>,
+        package-info.java&#160;<span class="new">(new&#160;28)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="1"></a>
+    <a href="user_keller.html" class="author">keller</a>
+    <span class="date">2012-08-17 06:36</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">971</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+SABIO-RK application extended.
+    </p>
+    <p class="commitdetails"><strong>5452</strong> lines of code changed in <span class="files">31 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/sabiork/wizard/gui</strong>:
+        Calendar.png&#160;<span class="new">(new)</span>,
+        Card.java&#160;<span class="new">(new&#160;71)</span>,
+        CardMatching.java&#160;<span class="new">(new&#160;556)</span>,
+        CardMethod.java&#160;<span class="new">(new&#160;137)</span>,
+        CardReactionsA.java&#160;<span class="new">(new&#160;192)</span>,
+        CardReactionsM.java&#160;<span class="new">(new&#160;189)</span>,
+        CardSearchA.java&#160;<span class="new">(new&#160;452)</span>,
+        CardSearchM.java&#160;<span class="new">(new&#160;551)</span>,
+        CardSummaryA.java&#160;<span class="new">(new&#160;95)</span>,
+        CardSummaryM.java&#160;<span class="new">(new&#160;89)</span>,
+        ComboBoxModelCaptions.java&#160;<span class="new">(new&#160;162)</span>,
+        ComboBoxModelConstraints.java&#160;<span class="new">(new&#160;62)</span>,
+        ComboBoxModelReactionFilters.java&#160;<span class="new">(new&#160;86)</span>,
+        ComboBoxModelSearchItems.java&#160;<span class="new">(new&#160;144)</span>,
+        JComboBoxInterval.java&#160;<span class="new">(new&#160;107)</span>,
+        JComboBoxSearchField.java&#160;<span class="new">(new&#160;219)</span>,
+        JComponentEtchedLine.java&#160;<span class="new">(new&#160;46)</span>,
+        JDialogCalendar.java&#160;<span class="new">(new&#160;273)</span>,
+        JDialogWizard.java&#160;<span class="new">(new&#160;373)</span>,
+        JPanelFilterOptions.java&#160;<span class="new">(new&#160;519)</span>,
+        Logo.jpg&#160;<span class="new">(new)</span>,
+        TableCellRendererBooleans.java&#160;<span class="new">(new&#160;61)</span>,
+        TableCellRendererColorGradient.java&#160;<span class="new">(new&#160;84)</span>,
+        TableCellRendererReactions.java&#160;<span class="new">(new&#160;63)</span>,
+        TableCellRendererSearchAResults.java&#160;<span class="new">(new&#160;96)</span>,
+        TableCellRendererTemperature.java&#160;<span class="new">(new&#160;110)</span>,
+        TableCellRendererpHValues.java&#160;<span class="new">(new&#160;103)</span>,
+        TableModelReactions.java&#160;<span class="new">(new&#160;117)</span>,
+        TableModelSearchAResults.java&#160;<span class="new">(new&#160;211)</span>,
+        TableModelSearchMResults.java&#160;<span class="new">(new&#160;148)</span>,
+        TableModelSearchTerms.java&#160;<span class="new">(new&#160;136)</span>
+      </li>
+    </ul>
+  </dd>
+
+</dl>
+
+</div><div id="generatedby">Generated by <a href="http://www.statsvn.org">StatSVN</a> 0.7.0</div>
+</body>
+</html>

@@ -1,0 +1,239 @@
+<?xml version="1.0"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>StatSVN - Directory licenses/</title>
+ <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"/>
+    <meta name="Generator" content="StatSVN 0.7.0"/>
+<link rel="stylesheet" href="objectlab-statcvs.css" type="text/css"/>
+<script type="text/javascript" charset="utf-8" src="http://bit.ly/javascript-api.js?version=latest&#38;login=statsvn&#38;apiKey=R_2c362b417d0517c27876cbaca1bb68cc"></script>
+<script type="text/javascript" charset="utf-8">
+   // wait until page is loaded to call API
+   var redir_url;
+   var short_url;
+   BitlyCB.myShortenCallback = function(data) {
+      // this is how to get a result of shortening a single url
+      var result;
+      short_url=null;
+      for (var r in data.results) {
+         result = data.results[r];
+         result['longUrl'] = r;
+         short_url = result['shortUrl'];
+         break;
+      }
+      if (short_url==null) // bit.ly failed
+      document.location=redir_url;
+      else
+      redirToTwitter();
+   };
+   function shortenTweet(url) {
+      if (short_url == null || redir_url!=url) {
+      redir_url = url;
+      BitlyClient.shorten(document.location, 'BitlyCB.myShortenCallback');
+      }
+      else
+      redirToTwitter();
+      return false;
+   }
+   function redirToTwitter() { 
+      // replace {0} which is visible as %7B0} in the link
+      document.location = redir_url.replace('%7B0}', short_url);
+   }
+</script>
+  </head>
+
+<body>
+
+<h1>Directory licenses/</h1>
+<div id="parentlink">&#171; <a href="index.html">Development Statistics for /trunk</a></div>
+<dl class="attributes">
+    <dt>Total Files:</dt>
+    <dd>2</dd>
+    <dt>Deleted Files:</dt>
+    <dd>8</dd>
+    <dt>Lines of Code:</dt>
+    <dd>745</dd>
+</dl>
+<p class="dirtree">
+<a href="dir.html">[root]</a>/<strong>licenses</strong><br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<img src="folder.png" width="15" height="13" alt="directory in repo" title="directory in repo"/> 
+<a href="dir_licenses_lib-licenses.html">lib-licenses</a> 
+(3 files, 712 lines)<br />
+</p>
+
+<div class="section">
+<h2>Lines of Code</h2>
+<p class="chart"><img src="loc_module_licenses.png" alt="licenses/ Lines of Code" width="800" height="500" /></p></div>
+<div class="section">
+<h2>Developers</h2>
+  <table  rules="groups" summary="All authors and the number of their changes and lines of code in this directory">
+    <colgroup align="left"/>
+    <colgroup align="right"/>
+    <colgroup align="right"/>
+    <colgroup align="right"/>
+    <thead>
+      <tr>
+        <th>Author</th>
+        <th>Changes</th>
+        <th>Lines of Code</th>
+        <th>Lines per Change</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr  class="odd">
+        <th><a href="user_draeger.html" class="author">draeger</a></th>
+        <td>16 (100.0%)</td>
+        <td>735 (100.0%)</td>
+        <td>45.9</td>
+      </tr>
+    </tbody>
+  </table>
+
+</div>
+<div class="section">
+<h2>Most Recent Commits</h2>
+<dl class="commitlist">
+  <dt><a name="7"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2013-02-28 07:53</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">1041</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+* Started to write abstract and introduction for the User's Guide; extended the outline and collected literature.<br />
+* Updated list of Authors of the actual program<br />
+* New version of SBMLsqueezer's icon.
+    </p>
+    <p class="commitdetails"><strong>9</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>licenses</strong>:
+        AUTHORS&#160;<span class="change">(+9&#160;-10)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="6"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2013-02-06 09:47</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">1031</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+* Updated the license headers in all files to 2013.<br />
+* Fixed several bugs in SubmodelController, KinteticLawGenerator, and ParameterFactory.<br />
+* Improved the adaptation of the main GUI to Mac OS X.<br />
+* Corrected typos in natural text files (XML).
+    </p>
+    <p class="commitdetails"><strong>35</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>licenses</strong>:
+        AUTHORS&#160;<span class="change">(+35&#160;-29)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="5"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2012-03-19 05:24</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">868</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Included the CellDesigner plug-in mode of SBMLsqueezer as a module into this project. However, there are many compilation errors now that need to be fixed.
+    </p>
+    <p class="commitdetails"><strong>1</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>licenses</strong>:
+        AUTHORS&#160;<span class="change">(+1&#160;-1)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="4"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2011-11-25 03:14</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">700</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Change in test class.
+    </p>
+    <p class="commitdetails"><strong>3</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>licenses</strong>:
+        AUTHORS&#160;<span class="change">(+3&#160;-3)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="3"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2011-11-25 02:06</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">698</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Moved SBMLsqueezer to the new Launcher in SysBio.
+    </p>
+    <p class="commitdetails"><strong>12</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>licenses</strong>:
+        AUTHORS&#160;<span class="change">(+12)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="2"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2011-08-16 09:24</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">651</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Bug fixes mainly for SBML Level 3.
+    </p>
+    <p class="commitdetails"><strong>1</strong> lines of code changed in <span class="files">2 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>licenses</strong>:
+        AUTHORS&#160;<span class="new">(new)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="1"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2011-08-12 00:56</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">634</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Restructured project: Removed text files by adding their content to our trac system; changed SVN properties of all Java classes and organized the license files of this library and all referenced libraries.
+    </p>
+    <p class="commitdetails"><strong>674</strong> lines of code changed in <span class="files">9 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>licenses</strong>:
+        COPYING.txt&#160;<span class="new">(new&#160;674)</span>,
+        SBMLsqueezer.txt&#160;<span class="del">(del)</span>,
+        biojava.txt&#160;<span class="del">(del)</span>,
+        eva2.txt&#160;<span class="del">(del)</span>,
+        html2latex.txt&#160;<span class="del">(del)</span>,
+        icons.txt&#160;<span class="del">(del)</span>,
+        jaxen.txt&#160;<span class="del">(del)</span>,
+        jdom.txt&#160;<span class="del">(del)</span>,
+        jsbml.txt&#160;<span class="del">(del)</span>
+      </li>
+    </ul>
+  </dd>
+
+</dl>
+
+</div><div id="generatedby">Generated by <a href="http://www.statsvn.org">StatSVN</a> 0.7.0</div>
+</body>
+</html>

@@ -1,0 +1,480 @@
+<?xml version="1.0"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>StatSVN - Directory src/org/sbml/squeezer/sabiork/wizard/</title>
+ <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"/>
+    <meta name="Generator" content="StatSVN 0.7.0"/>
+<link rel="stylesheet" href="objectlab-statcvs.css" type="text/css"/>
+<script type="text/javascript" charset="utf-8" src="http://bit.ly/javascript-api.js?version=latest&#38;login=statsvn&#38;apiKey=R_2c362b417d0517c27876cbaca1bb68cc"></script>
+<script type="text/javascript" charset="utf-8">
+   // wait until page is loaded to call API
+   var redir_url;
+   var short_url;
+   BitlyCB.myShortenCallback = function(data) {
+      // this is how to get a result of shortening a single url
+      var result;
+      short_url=null;
+      for (var r in data.results) {
+         result = data.results[r];
+         result['longUrl'] = r;
+         short_url = result['shortUrl'];
+         break;
+      }
+      if (short_url==null) // bit.ly failed
+      document.location=redir_url;
+      else
+      redirToTwitter();
+   };
+   function shortenTweet(url) {
+      if (short_url == null || redir_url!=url) {
+      redir_url = url;
+      BitlyClient.shorten(document.location, 'BitlyCB.myShortenCallback');
+      }
+      else
+      redirToTwitter();
+      return false;
+   }
+   function redirToTwitter() { 
+      // replace {0} which is visible as %7B0} in the link
+      document.location = redir_url.replace('%7B0}', short_url);
+   }
+</script>
+  </head>
+
+<body>
+
+<h1>Directory src/org/sbml/squeezer/sabiork/wizard/</h1>
+<div id="parentlink">&#171; <a href="index.html">Development Statistics for /trunk</a></div>
+<dl class="attributes">
+    <dt>Directory Created:</dt>
+    <dd><span class="date">2012-08-17 06:36</span></dd>
+    <dt>Total Files:</dt>
+    <dd>2</dd>
+    <dt>Deleted Files:</dt>
+    <dd>0</dd>
+    <dt>Lines of Code:</dt>
+    <dd>160</dd>
+</dl>
+<p class="dirtree">
+<a href="dir.html">[root]</a>/<a href="dir_src.html">src</a>/<a href="dir_src_org.html">org</a>/<a href="dir_src_org_sbml.html">sbml</a>/<a href="dir_src_org_sbml_squeezer.html">squeezer</a>/<a href="dir_src_org_sbml_squeezer_sabiork.html">sabiork</a>/<strong>wizard</strong><br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<img src="folder.png" width="15" height="13" alt="directory in repo" title="directory in repo"/> 
+<a href="dir_src_org_sbml_squeezer_sabiork_wizard_console.html">console</a> 
+(3 files, 458 lines)<br />
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<img src="folder.png" width="15" height="13" alt="directory in repo" title="directory in repo"/> 
+<a href="dir_src_org_sbml_squeezer_sabiork_wizard_gui.html">gui</a> 
+(31 files, 6239 lines)<br />
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<img src="folder.png" width="15" height="13" alt="directory in repo" title="directory in repo"/> 
+<a href="dir_src_org_sbml_squeezer_sabiork_wizard_model.html">model</a> 
+(4 files, 1358 lines)<br />
+</p>
+
+<div class="section">
+<h2>Lines of Code</h2>
+<p class="chart"><img src="loc_module_src_org_sbml_squeezer_sabiork_wizard.png" alt="src/org/sbml/squeezer/sabiork/wizard/ Lines of Code" width="800" height="500" /></p></div>
+<div class="section">
+<h2>Developers</h2>
+  <table  rules="groups" summary="All authors and the number of their changes and lines of code in this directory">
+    <colgroup align="left"/>
+    <colgroup align="right"/>
+    <colgroup align="right"/>
+    <colgroup align="right"/>
+    <thead>
+      <tr>
+        <th>Author</th>
+        <th>Changes</th>
+        <th>Lines of Code</th>
+        <th>Lines per Change</th>
+      </tr>
+    </thead>
+    <tfoot>
+      <tr>
+        <th>Totals</th>
+        <td>22 (100.0%)</td>
+        <td>281 (100.0%)</td>
+        <td>12.7</td>
+      </tr>
+    </tfoot>
+    <tbody>
+      <tr  class="odd">
+        <th><a href="user_keller.html" class="author">keller</a></th>
+        <td>8 (36.4%)</td>
+        <td>152 (54.1%)</td>
+        <td>19.0</td>
+      </tr>
+      <tr  class="even">
+        <th><a href="user_draeger.html" class="author">draeger</a></th>
+        <td>14 (63.6%)</td>
+        <td>129 (45.9%)</td>
+        <td>9.2</td>
+      </tr>
+    </tbody>
+  </table>
+
+</div>
+<div class="section">
+<h2>Most Recent Commits</h2>
+<dl class="commitlist">
+  <dt><a name="18"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2014-02-22 16:54</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">1082</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Updated Java-Doc and code style and added missing override tags.
+    </p>
+    <p class="commitdetails"><strong>2</strong> lines of code changed in <span class="files">2 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/sabiork/wizard</strong>:
+        SABIORKWizard.java&#160;<span class="change">(+1)</span>,
+        package-info.java&#160;<span class="change">(+1)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="17"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2014-02-22 08:15</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">1081</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Updated libraries JSBML and SysBio, fixed a small bug in the build script for building SysBio, and updated all classes to Java 1.6 (adde missing override tags).
+    </p>
+    <p class="commitdetails"><strong>88</strong> lines of code changed in <span class="files">2 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/sabiork/wizard</strong>:
+        SABIORKWizard.java&#160;<span class="change">(+86&#160;-87)</span>,
+        package-info.java&#160;<span class="change">(+2&#160;-1)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="16"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2014-01-09 15:30</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">1077</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Updated license headers to 2014.
+    </p>
+    <p class="commitdetails"><strong>2</strong> lines of code changed in <span class="files">2 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/sabiork/wizard</strong>:
+        SABIORKWizard.java&#160;<span class="change">(+1&#160;-1)</span>,
+        package-info.java&#160;<span class="change">(+1&#160;-1)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="15"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2013-04-05 07:09</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">1064</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+* Solved a bug that caused a NullPointerException when not using SABIO-RK before creating rate laws ab initio.<br />
+* Removed JUnit library because this is not needed (provided by the OS).<br />
+* Updated JSBML, SysBio, and SBML2LaTeX packages<br />
+* Improved CellDesigner interface<br />
+* Many adaptations because of the new SBML2LaTeX and the attempt to provide CellDesigner plug-in functions<br />
+* Improved ant build script.<br />
+* Smaller code improvements.
+    </p>
+    <p class="commitdetails"><strong>0</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/sabiork/wizard</strong>:
+        SABIORKWizard.java&#160;<span class="change">(changed)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="14"></a>
+    <a href="user_keller.html" class="author">keller</a>
+    <span class="date">2013-03-13 07:42</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">1057</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+SABIO-RK search from command line is now working.
+    </p>
+    <p class="commitdetails"><strong>9</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/sabiork/wizard</strong>:
+        SABIORKWizard.java&#160;<span class="change">(+9&#160;-10)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="13"></a>
+    <a href="user_keller.html" class="author">keller</a>
+    <span class="date">2013-03-08 08:21</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">1054</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+More options added.
+    </p>
+    <p class="commitdetails"><strong>1</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/sabiork/wizard</strong>:
+        SABIORKWizard.java&#160;<span class="change">(+1&#160;-1)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="12"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2013-02-21 04:11</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">1034</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+* New versions of libraries JSBML, SysBio, and CellDesigner.<br />
+<br />
+* Improved localization support.<br />
+<br />
+* New icons, screenshots, and images.<br />
+<br />
+* SBMLsqueezer: Update of the current year and adaptation to the latest version of Garuda<br />
+<br />
+* SubmodelController: Avoids a null pointer exception in case that for some reason no kinetics has been created for a reaction within the submodel.<br />
+<br />
+* Made the dialogs for the kinetics selection and also for SABIO-RK resizable.<br />
+<br />
+* SBMLsqueezerUI: Adaptation to latest version of Garuda; also shifted the garuda menu entry to the edit menu to make it less prominent; fixed a bug that after loading kinetics from SABIO-RK the SBML tree was not updated.<br />
+<br />
+* SABIORKWizard: This dialog is now placed relative to the main window and has become resizable, which is both important!<br />
+<br />
+* JDialogWizard: Since in SBMLsqueezer the user selects already all or just one reaction in a model, the dialog has been changed so that these are pre-selected. The user can, however, still go back and change this selection. The default size of the dialog has been reduced with respect to small displays, where the dialog might otherwise not even pop up. It is also now resizable.<br />
+<br />
+* Improved the build script.<br />
+<br />
+* General: Updated old-style &lt;code&gt;…&lt;/code&gt; to the new {@code …} and code style cleaning; in SABIO-RK part, tables don't have to fill a panel, Auto-resize has been switched of in order to make columns arbitrarily large. At the moment, this should be improved because sometimes columns are too little.
+    </p>
+    <p class="commitdetails"><strong>5</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/sabiork/wizard</strong>:
+        SABIORKWizard.java&#160;<span class="change">(+5&#160;-1)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="11"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2013-02-06 09:47</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">1031</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+* Updated the license headers in all files to 2013.<br />
+* Fixed several bugs in SubmodelController, KinteticLawGenerator, and ParameterFactory.<br />
+* Improved the adaptation of the main GUI to Mac OS X.<br />
+* Corrected typos in natural text files (XML).
+    </p>
+    <p class="commitdetails"><strong>2</strong> lines of code changed in <span class="files">2 files</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/sabiork/wizard</strong>:
+        SABIORKWizard.java&#160;<span class="change">(+1&#160;-1)</span>,
+        package-info.java&#160;<span class="change">(+1&#160;-1)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="10"></a>
+    <a href="user_keller.html" class="author">keller</a>
+    <span class="date">2012-10-24 06:56</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">1029</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+SABIO-RK support improved.
+    </p>
+    <p class="commitdetails"><strong>10</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/sabiork/wizard</strong>:
+        SABIORKWizard.java&#160;<span class="change">(+10&#160;-8)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="9"></a>
+    <a href="user_keller.html" class="author">keller</a>
+    <span class="date">2012-09-20 01:49</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">1005</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+SABIO-RK connection improved.
+    </p>
+    <p class="commitdetails"><strong>5</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/sabiork/wizard</strong>:
+        SABIORKWizard.java&#160;<span class="change">(+5&#160;-3)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="8"></a>
+    <a href="user_keller.html" class="author">keller</a>
+    <span class="date">2012-09-11 06:25</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">1002</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+SABIO-RK integration improved.
+    </p>
+    <p class="commitdetails"><strong>13</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/sabiork/wizard</strong>:
+        SABIORKWizard.java&#160;<span class="change">(+13)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="7"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2012-09-11 03:23</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">1001</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Fixed a bug that prevented SBMLsqueezer from creating more than one kinetic law in one go and updated many JavaDoc entries to use {@code ...} instead of &lt;code&gt;...&lt;/code&gt;.
+    </p>
+    <p class="commitdetails"><strong>1</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/sabiork/wizard</strong>:
+        SABIORKWizard.java&#160;<span class="change">(+1&#160;-1)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="6"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2012-08-31 00:42</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">989</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+* Added more detailed progress information when filling the overview table for the user.<br />
+* Code cleaning in SABIO-RK part
+    </p>
+    <p class="commitdetails"><strong>0</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/sabiork/wizard</strong>:
+        SABIORKWizard.java&#160;<span class="change">(-1)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="5"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2012-08-24 07:57</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">981</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Removed unnecessary double dollar symbols, restructured SABIO-RK part of the project and added missing package-info.java files.
+    </p>
+    <p class="commitdetails"><strong>1</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/sabiork/wizard</strong>:
+        package-info.java&#160;<span class="change">(+1&#160;-1)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="4"></a>
+    <a href="user_draeger.html" class="author">draeger</a>
+    <span class="date">2012-08-21 08:01</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">979</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+Created missing package-info.java files in the sabiork packages and moved resource files into the resources folder.
+    </p>
+    <p class="commitdetails"><strong>28</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/sabiork/wizard</strong>:
+        package-info.java&#160;<span class="new">(new&#160;28)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="3"></a>
+    <a href="user_keller.html" class="author">keller</a>
+    <span class="date">2012-08-17 06:45</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">975</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+
+    </p>
+    <p class="commitdetails"><strong>1</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/sabiork/wizard</strong>:
+        SABIORKWizard.java&#160;<span class="change">(+1&#160;-1)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="2"></a>
+    <a href="user_keller.html" class="author">keller</a>
+    <span class="date">2012-08-17 06:40</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">973</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+
+    </p>
+    <p class="commitdetails"><strong>2</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/sabiork/wizard</strong>:
+        SABIORKWizard.java&#160;<span class="change">(+2&#160;-2)</span>
+      </li>
+    </ul>
+  </dd>
+
+  <dt><a name="1"></a>
+    <a href="user_keller.html" class="author">keller</a>
+    <span class="date">2012-08-17 06:36</span>
+    <span class="revisionNumberOuter">Rev.: <span class="revisionNumberInner">971</span></span>
+  </dt>
+  <dd>
+    <p class="comment">
+SABIO-RK application extended.
+    </p>
+    <p class="commitdetails"><strong>111</strong> lines of code changed in <span class="files">1 file</span>:</p>
+    <ul class="commitdetails">
+      <li>
+        <strong>src/org/sbml/squeezer/sabiork/wizard</strong>:
+        SABIORKWizard.java&#160;<span class="new">(new&#160;111)</span>
+      </li>
+    </ul>
+  </dd>
+
+</dl>
+
+</div><div id="generatedby">Generated by <a href="http://www.statsvn.org">StatSVN</a> 0.7.0</div>
+</body>
+</html>
