@@ -77,7 +77,7 @@
   	<property name="celldesigner.test"      value="${celldesigner}/test"/>
   	<property name="celldesigner.resources" value="${celldesigner}/resources"/>
   	<property name="celldesigner.version"   value="celldesigner-4.4-GSoC"/>
-  	<property name="UUID"                   value="dd624b40-7bc0-11e2-b92a-0800200c9a66"/>
+  	<property name="UUID"                   value="b3048f09-e26d-3d28-b0da-4e708c2dd6ec"/>
   	
   	<property name="jar.name" value="${Name}_v${version}"/>
   	<property name="appJar"   value="${dist.dir}/${jar.name}_incl-libs.jar"/>
