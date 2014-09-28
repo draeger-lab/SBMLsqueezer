@@ -42,8 +42,6 @@ import java.util.logging.Logger;
 
 import javax.xml.stream.XMLStreamException;
 
-import jp.sbi.garuda.platform.commons.exception.NetworkException;
-
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBMLDocument;
@@ -68,9 +66,7 @@ import org.sbml.tolatex.SBML2LaTeX;
 import de.zbit.AppConf;
 import de.zbit.Launcher;
 import de.zbit.garuda.GarudaOptions;
-import de.zbit.garuda.GarudaSoftwareBackend;
 import de.zbit.gui.GUIOptions;
-import de.zbit.gui.GUITools;
 import de.zbit.io.FileWalker;
 import de.zbit.io.filefilter.SBFileFilter;
 import de.zbit.util.ResourceManager;
@@ -94,19 +90,18 @@ import de.zbit.util.progressbar.ProgressBar;
 @SuppressWarnings("unchecked")
 public class SBMLsqueezer<T> extends Launcher {
   
-  /**
-   * Localization support.
-   */
-  public static final transient ResourceBundle MESSAGES = ResourceManager.getBundle(Bundles.MESSAGES);
-  /**
-   * Localization support.
-   */
-  public static final transient ResourceBundle WARNINGS = ResourceManager.getBundle(Bundles.WARNINGS);
-  
+  private static Boolean libSBMLAvailable = null;
   /**
    * The {@link Logger} for this class.
    */
   private static final transient Logger logger = Logger.getLogger(SBMLsqueezer.class.getName());
+  
+  /**
+   * Localization support.
+   */
+  public static final transient ResourceBundle MESSAGES = ResourceManager.getBundle(Bundles.MESSAGES);
+  
+  private static boolean sabiorkEnabled = true;
   
   /**
    * Generated serial version identifier.
@@ -114,27 +109,16 @@ public class SBMLsqueezer<T> extends Launcher {
   private static final long serialVersionUID = 8751196023375780898L;
   
   /**
+   * Localization support.
+   */
+  public static final transient ResourceBundle WARNINGS = ResourceManager.getBundle(Bundles.WARNINGS);
+  
+  /**
    * 
    * @return
    */
   public static List<Class<? extends KeyProvider>> getInteractiveConfigOptions() {
     return Arrays.asList(getInteractiveConfigOptionsArray());
-  }
-  
-  private static boolean sabiorkEnabled = true;
-  
-  /**
-   * @return the sabiorkEnabled
-   */
-  public static boolean isSABIORKEnabled() {
-    return sabiorkEnabled;
-  }
-  
-  /**
-   * @param sabiorkEnabled the sabiorkEnabled to set
-   */
-  public static void setSABIORKEnabled(boolean sabiorkEnabled) {
-    SBMLsqueezer.sabiorkEnabled = sabiorkEnabled;
   }
   
   /**
@@ -178,42 +162,11 @@ public class SBMLsqueezer<T> extends Launcher {
     return enzymeTypes.toArray(new String[] {});
   }
   
-  private static Boolean libSBMLAvailable = null;
-  
   /**
-   * Does initialization for creating a SBMLsqueezer Object.
-   * Checks if libSBML is available and initializes the Reader/Writer.
-   * @param tryLoadingLibSBML
-   * @param reader
-   * @param writer
+   * @return the sabiorkEnabled
    */
-  private void initializeReaderAndWriter(boolean tryLoadingLibSBML) {
-    if (tryLoadingLibSBML) {
-      if (libSBMLAvailable == null) {
-        try {
-          // In order to initialize libSBML, check the java.library.path.
-          System.loadLibrary("sbmlj");
-          // Extra check to be sure we have access to libSBML:
-          Class.forName("org.sbml.libsbml.libsbml");
-          logger.info(MESSAGES.getString("LOADING_LIBSBML"));
-          libSBMLAvailable = Boolean.TRUE;
-        } catch (Error e) {
-          libSBMLAvailable = Boolean.FALSE;
-        } catch (Throwable e) {
-          libSBMLAvailable = Boolean.FALSE;
-        }
-      }
-      if (libSBMLAvailable.booleanValue()) {
-        logger.info(MESSAGES.getString("LAUNCHING_LIBSBML"));
-        sbmlIo = (SBMLio<T>) new SBMLio<org.sbml.libsbml.Model>(
-            new LibSBMLReader(), new LibSBMLWriter());
-      }
-    }
-    if (sbmlIo == null) {
-      logger.info(MESSAGES.getString("LOADING_JSBML"));
-      sbmlIo = (SBMLio<T>) new SBMLio<Model>(new SqSBMLReader(),
-          new SqSBMLWriter());
-    }
+  public static boolean isSABIORKEnabled() {
+    return sabiorkEnabled;
   }
   
   /**
@@ -225,14 +178,21 @@ public class SBMLsqueezer<T> extends Launcher {
   }
   
   /**
-   * 
+   * @param sabiorkEnabled the sabiorkEnabled to set
    */
-  private SBMLio<T> sbmlIo;
+  public static void setSABIORKEnabled(boolean sabiorkEnabled) {
+    SBMLsqueezer.sabiorkEnabled = sabiorkEnabled;
+  }
   
   /**
    * 
    */
   private AppConf appConf;
+  
+  /**
+   * 
+   */
+  private SBMLio<T> sbmlIo;
   
   /**
    * 
@@ -262,6 +222,7 @@ public class SBMLsqueezer<T> extends Launcher {
    */
   public SBMLsqueezer(String[] args) {
     super(args);
+    System.out.println(getId());
   }
   
   /* (non-Javadoc)
@@ -323,7 +284,6 @@ public class SBMLsqueezer<T> extends Launcher {
     return list;
   }
   
-  
   /* (non-Javadoc)
    * @see de.zbit.Launcher#getInteractiveOptions()
    */
@@ -331,6 +291,7 @@ public class SBMLsqueezer<T> extends Launcher {
   public List<Class<? extends KeyProvider>> getInteractiveOptions() {
     return getInteractiveConfigOptions();
   }
+  
   
   /* (non-Javadoc)
    * @see de.zbit.Launcher#getLogPackages()
@@ -381,7 +342,7 @@ public class SBMLsqueezer<T> extends Launcher {
    */
   @Override
   public String getVersionNumber() {
-    return "2.0";
+    return "2.0.1";
   }
   
   /* (non-Javadoc)
@@ -409,29 +370,51 @@ public class SBMLsqueezer<T> extends Launcher {
     if (properties.containsKey(IOOptions.SBML_IN_FILE)) {
       readSBMLSource(properties.get(IOOptions.SBML_IN_FILE));
     }
-    final SBMLsqueezerUI gui = new SBMLsqueezerUI(getSBMLIO(), appConf);
-    if (getCmdLineOptions().contains(GarudaOptions.class)
-        && (!appConf.getCmdArgs().containsKey(GarudaOptions.CONNECT_TO_GARUDA) ||
-            appConf.getCmdArgs().getBoolean(GarudaOptions.CONNECT_TO_GARUDA))) {
-      new Thread(new Runnable() {
-        /* (non-Javadoc)
-         * @see java.lang.Runnable#run()
-         */
-        @Override
-        public void run() {
-          try {
-            GarudaSoftwareBackend garudaBackend = new GarudaSoftwareBackend(
-              "dd624b40-7bc0-11e2-b92a-0800200c9a66", gui);
-            garudaBackend.init();
-          } catch (NetworkException exc) {
-            GUITools.showErrorMessage(gui, exc);
-          } catch (Throwable exc) {
-            logger.fine(getMessage(exc));
-          }
+    return new SBMLsqueezerUI(getSBMLIO(), appConf);
+  }
+  
+  /**
+   * Does initialization for creating a SBMLsqueezer Object.
+   * Checks if libSBML is available and initializes the Reader/Writer.
+   * @param tryLoadingLibSBML
+   * @param reader
+   * @param writer
+   */
+  private void initializeReaderAndWriter(boolean tryLoadingLibSBML) {
+    if (tryLoadingLibSBML) {
+      if (libSBMLAvailable == null) {
+        try {
+          // In order to initialize libSBML, check the java.library.path.
+          System.loadLibrary("sbmlj");
+          // Extra check to be sure we have access to libSBML:
+          Class.forName("org.sbml.libsbml.libsbml");
+          logger.info(MESSAGES.getString("LOADING_LIBSBML"));
+          libSBMLAvailable = Boolean.TRUE;
+        } catch (Error e) {
+          libSBMLAvailable = Boolean.FALSE;
+        } catch (Throwable e) {
+          libSBMLAvailable = Boolean.FALSE;
         }
-      }).start();
+      }
+      if (libSBMLAvailable.booleanValue()) {
+        logger.info(MESSAGES.getString("LAUNCHING_LIBSBML"));
+        sbmlIo = (SBMLio<T>) new SBMLio<org.sbml.libsbml.Model>(
+            new LibSBMLReader(), new LibSBMLWriter());
+      }
     }
-    return gui;
+    if (sbmlIo == null) {
+      logger.info(MESSAGES.getString("LOADING_JSBML"));
+      sbmlIo = (SBMLio<T>) new SBMLio<Model>(new SqSBMLReader(),
+          new SqSBMLWriter());
+    }
+  }
+  
+  /* (non-Javadoc)
+   * @see de.zbit.Launcher#isGarudaEnabled()
+   */
+  @Override
+  public boolean isGarudaEnabled() {
+    return true;
   }
   
   /**
@@ -594,39 +577,12 @@ public class SBMLsqueezer<T> extends Launcher {
   }
   
   /**
-   * Convenient method that writes a LaTeX file from the given SBML source.
-   * 
-   * @param sbmlInfile
-   * @param latexFile
-   * @throws IOException
-   * @throws SBMLException
-   * @throws XMLStreamException
+   * @param absolutePath
+   * @param outputPath
+   * @throws Throwable
    */
-  public void toLaTeX(Object sbmlSource, String latexFile) throws IOException, SBMLException, XMLStreamException {
-    readSBMLSource(sbmlSource);
-    SBPreferences prefsIO = SBPreferences.getPreferencesFor(GUIOptions.class);
-    String dir = prefsIO.get(GUIOptions.OPEN_DIR).toString();
-    if (latexFile != null) {
-      File out = new File(latexFile);
-      if (SBFileFilter.createTeXFileFilter().accept(out)) {
-        String path = out.getParent();
-        if (!path.equals(dir)) {
-          prefsIO.put(GUIOptions.OPEN_DIR, path);
-        }
-        if (!out.exists()) {
-          long time = System.currentTimeMillis();
-          logger.info(MESSAGES.getString("WRITING_LATEX_OUTPUT"));
-          SBML2LaTeX.convert(sbmlIo.getSelectedModel(), out);
-          logger.info(MessageFormat.format(
-            MESSAGES.getString("DONE_IN_MS"), (System.currentTimeMillis() - time)) + "\n");
-        }
-      } else {
-        logger.log(Level.WARNING, MessageFormat.format(
-          WARNINGS.getString("INVALID_TEX_FILE"), latexFile) +"\n");
-      }
-    } else {
-      logger.log(Level.WARNING, WARNINGS.getString("NO_TEX_FILE_PROVIDED"));
-    }
+  public void squeeze(String absolutePath, String outputPath) throws Throwable {
+    squeeze(absolutePath, outputPath, false);
   }
   
   /**
@@ -777,12 +733,39 @@ public class SBMLsqueezer<T> extends Launcher {
   }
   
   /**
-   * @param absolutePath
-   * @param outputPath
-   * @throws Throwable
+   * Convenient method that writes a LaTeX file from the given SBML source.
+   * 
+   * @param sbmlInfile
+   * @param latexFile
+   * @throws IOException
+   * @throws SBMLException
+   * @throws XMLStreamException
    */
-  public void squeeze(String absolutePath, String outputPath) throws Throwable {
-    squeeze(absolutePath, outputPath, false);
+  public void toLaTeX(Object sbmlSource, String latexFile) throws IOException, SBMLException, XMLStreamException {
+    readSBMLSource(sbmlSource);
+    SBPreferences prefsIO = SBPreferences.getPreferencesFor(GUIOptions.class);
+    String dir = prefsIO.get(GUIOptions.OPEN_DIR).toString();
+    if (latexFile != null) {
+      File out = new File(latexFile);
+      if (SBFileFilter.createTeXFileFilter().accept(out)) {
+        String path = out.getParent();
+        if (!path.equals(dir)) {
+          prefsIO.put(GUIOptions.OPEN_DIR, path);
+        }
+        if (!out.exists()) {
+          long time = System.currentTimeMillis();
+          logger.info(MESSAGES.getString("WRITING_LATEX_OUTPUT"));
+          SBML2LaTeX.convert(sbmlIo.getSelectedModel(), out);
+          logger.info(MessageFormat.format(
+            MESSAGES.getString("DONE_IN_MS"), (System.currentTimeMillis() - time)) + "\n");
+        }
+      } else {
+        logger.log(Level.WARNING, MessageFormat.format(
+          WARNINGS.getString("INVALID_TEX_FILE"), latexFile) +"\n");
+      }
+    } else {
+      logger.log(Level.WARNING, WARNINGS.getString("NO_TEX_FILE_PROVIDED"));
+    }
   }
   
 }
