@@ -141,14 +141,14 @@ CellDesigner \citep{Funahashi2007}, %\citep{Funahashi2003},
 the MASS-Toolbox (\url{http://opencobra.github.io/MASS-Toolbox/}), and 
 Cellerator \citep{Shapiro2002}, 
 provide pre-defined lists of kinetic equations and also allow the user to modify these rate laws or to even create customized equations.
-CellDesigner~4.3 %has only two pre-defined rate laws but 
+CellDesigner~4.4 %has only two pre-defined rate laws but 
 provides a dialog that assists the user to obtain rate laws from the kinetics database SABIO-RK \citep{Wittig2012}.
 The MASS-Toolbox focuses on the creation of elementary rate laws and automatically derives pseudo-elementary rate constants with their units.
 Inference programs, such as Net\emph{Gene}rator \citep{Weber2013}, estimate a topology and generate specific rate laws  for gene-regulatory processes. 
 Odefy \citep{Krumsiek2010} converts discrete Boolean networks into quantitative differential equation systems by applying Hill-type rate laws to each transition. % and creates parameters accordingly.
 %COPASI version~4.12 gives the user the possibility to navigate through all reactions and to manually select an appropriate rate law to it from the list of currently 38 functions.
 %Alternatively, the user can type a specific rate law or alter a given formula.
-%CellDesigner version~4.3 provides two pre-defined rate laws, but also provides a text editor for customized formulas.
+%CellDesigner version~4.4 provides two pre-defined rate laws, but also provides a text editor for customized formulas.
 %CellDesigner has a dialog available that assists the user to obtain rate laws from the kinetics database SABIO-RK \citep{Wittig2012}.
 %Cellerator \citep{Shapiro2002} facilitates equation generation by providing build-in functions for a set of rate laws, which the user can apply to reactions.
 
@@ -207,8 +207,8 @@ The content of models can be summarized in a comprehensive human-readable PDF re
 \begin{methods}
 \section{Implementation}
 SBMLsqueezer~2 is based on the data format SBML \citep{Hucka2004}.
-It is entirely implemented in Java\texttrademark{} and runs on every platform, for which a JVM is available.
-Reading and writing of SBML files is done with JSBML \citep{Draeger2011b}, which also acts as the internal data structure.
+It is entirely implemented in Java\texttrademark{} and runs on every platform for which a JVM is available.
+\TODO{Reading and writing of SBML files is done with JSBML \citep{Draeger2011b}, which also acts as the internal data structure.}
 SBMLsqueezer~2 can also be launched using a libSBML \citep{Bornstein2008} back-end.
 The on-line program version is based on the command-line interface of the stand-alone tool, which is wrapped in a Galaxy \citep{Goecks2010} framework.
 For writing model reports, SBMLsqueezer~2 contains a development release of \SBMLLaTeX{} \citep{Draeger2009}.
@@ -245,7 +245,7 @@ The path2models project \citep{Buechel2013} has demonstrated the usefulness of a
 %Complex try-and-evaluate cycles, in which the most suitable rate law for a certain reaction needs to be identified in repeated simulation runs, also require such a method \citep{Draeger2011}.
 Based on SBMLsqueezer~2
 %this program, 
-complex try-and-evaluate cycles, in which the most suitable rate law for a certain reaction needs to be identified in repeated simulation runs \citep{Draeger2011} now become possible.
+complex try-and-evaluate cycles, in which the most suitable rate law for a certain reaction needs to be identified in repeated simulation runs \citep{Draeger2011}, now become possible.
 
 \vspace{-.2cm}
 \section*{Acknowledgments}
