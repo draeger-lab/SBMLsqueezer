@@ -193,6 +193,7 @@ uses the annotation of the reaction and its components to identify the best matc
 When successful, rate laws, parameters, units, and annotations will be transferred from SABIO-RK to the local model.
 %
 Rate law generation and extraction from SABIO-RK can be performed for individual reactions (fig.~\ref{fig:SBMLsqueezer}) or for the entire model in a single step.
+%
 Optionally, SBMLsqueezer~2 can remove unused variables and units from the model (cleaning) and update annotations where required.
 The content of models can be summarized in a comprehensive human-readable PDF report.
 
@@ -202,7 +203,7 @@ The content of models can be summarized in a comprehensive human-readable PDF re
 \vspace{-.2cm}
 \end{figure}
 
-\vspace{-.1cm}
+\vspace{-.45cm}
 \begin{methods}
 \section{Implementation}
 SBMLsqueezer~2 is based on the data format SBML \citep{Hucka2004}.
@@ -216,6 +217,7 @@ The CellDesigner plug-in uses the communication interface between CellDesigner's
 Changes made by SBMLsqueezer~2 are synchronized with CellDesigner through a change listener interface.
 SBMLsqueezer~2 determines the type of reaction by interpreting SBO and MIRIAM annotations \citep{Courtot2011} of all components as well as the number and kind of reaction participants.
 Access to SABIO-RK \citep{Wittig2012} requires an active Internet connection and uses the RESTFUL API provided by SABIO-RK through a Java\texttrademark{} URL connection.
+For detailed description of the algorithms, see the Users' Guide.
 %SBMLsqueezer~2 has been internationalized and comes with language packs for German and English, and partially Chinese.
 \end{methods}
 
@@ -245,7 +247,7 @@ Based on SBMLsqueezer~2
 %this program, 
 complex try-and-evaluate cycles, in which the most suitable rate law for a certain reaction needs to be identified in repeated simulation runs \citep{Draeger2011} now become possible.
 
-\vspace{-.1cm}
+\vspace{-.2cm}
 \section*{Acknowledgments}
 
 The authors are grateful to Meike Aichele, Hannes Borch, Alexander D\"orr, Martin Golebiewski, Nadine Hassis, Marcel Kronfeld, Oliver Kohlbacher, Wolfgang M\"uller, Sarah R.~M\"uller vom Hagen, Sebastian Nagel, Leif J.~Pallesen, Alexander Peltzer, Julianus Pfeuffer, Sandra Saliger, Simon Sch\"afer, Adrian Schr\"oder, Jochen Supper, Dieudonn\'e M.~Wouamba, Shaowu Yang, Michael J.~Ziller.

@@ -658,8 +658,7 @@ public class ReactionType {
         stoichiometryIntLeft = false;
       }
       // Transcription or translation?
-      Species reactantSpecies = reaction.getReactant(i)
-          .getSpeciesInstance();
+      Species reactantSpecies = reaction.getReactant(i).getSpeciesInstance();
       if (SBO.isGeneOrGeneCodingRegion(reactantSpecies.getSBOTerm())) {
         reactionWithGenes = true;
       } else if (SBO.isRNAOrMessengerRNA(reactantSpecies.getSBOTerm())) {
@@ -696,10 +695,10 @@ public class ReactionType {
       identifyModifers(reaction, enzymes, activators, inhibitors,
         nonEnzymeCatalysts);
     }
-    nonEnzyme = ((!allReactionsAsEnzymeCatalyzed && enzymes.size() == 0)
+    nonEnzyme = (!allReactionsAsEnzymeCatalyzed && enzymes.size() == 0)
         || (nonEnzymeCatalysts.size() > 0)
         || (((reaction.getProductCount() == 0)
-            || (SBO.isEmptySet(reaction.getProduct(0).getSpeciesInstance().getSBOTerm()))) && reaction.isReversible()));
+            || (SBO.isEmptySet(reaction.getProduct(0).getSpeciesInstance().getSBOTerm()))) && reaction.isReversible());
     
     uniUni = (stoichiometryLeft == 1d) && (stoichiometryRight == 1d);
     biUni = (stoichiometryLeft == 2d) && (stoichiometryRight == 1d);
