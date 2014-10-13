@@ -450,7 +450,7 @@ in this tab correspond to the command line options described in
 should be replaced with newly generated rate equations, if a search in \SABIO
 should be performed etc. %and many more.
 Taking small molecules and ions into account often lead to complex kinetic equations.
-SBMLsqueezer offers you to give a list of \KEGG \acp{ID} for those reactive
+SBMLsqueezer offers you to give a list of \KEGG \citep{Kanehisa2000a} \acp{ID} for those reactive
 species that should be ignored when creating rate laws (see \vref{tab:MIRIAMignoreList}).
 For cases in which values are missing in the
 model, SBMLsqueezer will insert default values, which you can specify in this
@@ -808,7 +808,7 @@ If you confirm, the rate equations will be transferred to your model and all cha
 \Crefrange{fig:startAutomatic}{fig:changes} show how you can add kinetic equations from \SABIO to several reactions at once.
 As an example model we pick biomodel \numero~206 from \BioModels \citep{Li2010a, Wolf2000}.
 A wizard guides you through the selection of relevant reactions (\vref{fig:selectReations}) and provides several options to restrict the search in \SABIO (\vref{fig:searchTerms}), whose interface is similar to the database front end of \SABIO\footnote{\url{http://sabio.h-its.org}}.
-To ensure that entries for the reactions of interest can be found in \SABIO, it is important to annotate these reactions with \acp{ID} from the \KEGG database using the \MIRIAM registry.
+To ensure that entries for the reactions of interest can be found in \SABIO, it is important to annotate these reactions with \acp{ID} from the \KEGG database \citep{Kanehisa2000a} using the \MIRIAM registry \citep{Juty2012}.
 The \KEGG reaction \ac{ID} is then always included in the respective search in order to avoid adding kinetic laws referring to other reactions.
 To further restrict your search, change the bounds of pH, temperature, etc. in the right panel (see \vref{fig:searchTerms}).
 
@@ -941,7 +941,7 @@ SBMLsqueezer will notify you when it is connected to \Garuda by displaying a mes
 You do not have to do anything in SBMLsqueezer when you want to receive a file from another gadget.
 The program will automatically be notified as soon as it receives the file and will directly open it in a new tab, so that you can work with the file as if you have just regularly opened it within the application.
 
-It might, for instance, be an interesting idea to create a draft for a dynamic model directly based on information from the \KEGG database using \KEGGtranslator \citep{Wrzodek2011, Wrzodek2013} and to pass the model to SBMLsqueezer in order to assign kinetic equations. This model can then be forwarded to the application \SBMLsimulator \citep{Keller2013, Keller2014} that can be used to estimate the parameter values within the newly created kinetic laws, given that reference data are available.
+It might, for instance, be an interesting idea to create a draft for a dynamic model directly based on information from the \KEGG database \citep{Kanehisa2000a} using \KEGGtranslator \citep{Wrzodek2011, Wrzodek2013} and to pass the model to SBMLsqueezer in order to assign kinetic equations. This model can then be forwarded to the application \SBMLsimulator \citep{Keller2013, Keller2014} that can be used to estimate the parameter values within the newly created kinetic laws, given that reference data are available.
 A similar approach has been suggested for the generation of draft genome-scale metabolic models \citep{Buechel2013}.
 
 \begin{wrapfigure}{O}{.9cm}
@@ -1138,7 +1138,7 @@ This class is located in the package \texttt{org.sbml.squeezer.sabiork.wizard.co
 The following example shows how to query for rate equations in \SABIO by using SBMLsqueezer's \API.
 The search can either comprise all reactions or just the reactions in a model.
 All search terms that can be applied to the model are listed at the beginning of the source-code example.
-The \KEGG \ac{ID} of a reaction is automatically added to the search terms (compare \vref{sec:SABIOautomatic}).
+The \KEGG \citep{Kanehisa2000a} \ac{ID} of a reaction is automatically added to the search terms (compare \vref{sec:SABIOautomatic}).
 A found kinetic law is added to a reaction if all contained elements can be matched to \SBML elements in the model.
 \lstinputlisting[caption={\SABIO query for the reactions of a model}, label={lst:SBMLsqueezer2API3}, firstline={100}, lastline={141}]{../../../examples/src/org/sbml/squeezer/test/SABIORKApplication.java}
 
@@ -1383,8 +1383,8 @@ account when creating rate equations.
   given compound \acp{ID} when creating rate laws for reactions
   that involve these species. For instance, water or single protons
   can often be ignored when creating rate equations, hence simplifying
-  the resulting rate equations. Preselected are the \KEGG compound
-  \acp{ID} for several ions and small molecules, including water and
+  the resulting rate equations. Preselected are the \KEGG \citep{Kanehisa2000a}
+  compound \acp{ID} for several ions and small molecules, including water and
   protons. See \vref{tab:MIRIAMignoreList} for details.
   Default value: \texttt{C00001,} \texttt{C00038,} \texttt{C00070,}
   \texttt{C00076,} \texttt{C00080,} \texttt{C00175,} \texttt{C00238,}
@@ -2281,69 +2281,181 @@ For a correct use of the program an understanding of these methods is recommenda
 \section{Rate law selection}
 
 \MIRIAM \citep{Le2005, Laible2007, Juty2012, Juty2013} and \SBO annotations \citep{Courtot2011} constitute the main sources of information for SBMLsqueezer in order to make its choices.
-When used as \CellDesigner plug-in, \SBO terms are inferred from the specific annotations of modifiers.
-The user can define which kinds of species may be considered enzymes in the specific context.
 Models can also be evaluated if no such information is given.
 However, in these cases the program will most likely make different assignments compared to a fully annotated model.
+When used as \CellDesigner plug-in, \SBO terms are inferred from the specific annotations of modifiers.
 
-Several pre-processing steps are required:
-\begin{enumerate}
-  \item the algorithm creates a sub-model that only comprises those reactions for which rate laws are to be created.
+At first, the algorithm creates a sub-model that only comprises those reactions for which rate laws are to be created.
 All relevant model components, such as species, compartments, units etc. are copied into this sub-model.
-Operating on this trimmed copy of the full model has the advantage that changes of the algorithm doe not affect the original data structure and can be easily disregarded.
-All following steps are applied to each individual reaction in the sub-model.
-  \item If the user defines a list of KEGG identifiers \citep{Kanehisa2000a} for species whose contribution to rate laws should be neglected, species with such terms in their \MIRIAM \citep{Le2005} annotation \citep{Courtot2011} are removed.
-  \item The stoichiometry of each reaction participant is analyzed in order to obtain the accumulated stoichiometry of reactants and products and to answer the question if all values are integers.
-In this step the \SBO term \citep{Courtot2011} attribute of each reaction participant is analyzed in order to get hints if the reaction represents a transcription or translation.
-%If a reactant represents a gene or gene-coding region, the reaction could be a transcription.
-%If the reaction involves a reactant that stands for an RNA or mRNA molecule it could be a translation.
-%If at least one modifier represents a gene or RNA molecule, the reaction could represent a translation.
-  \item Based on their \SBO term \citep{Courtot2011} attribute all reaction modifiers are grouped into the following sets:
+Operating on this trimmed copy of the full model has the advantage that changes of the algorithm do not affect the original data structure and can be easily disregarded.
+When creating this sub-model, the algorithm also checks if fall-back units are defined for all components.
+This is crucial in order to avoid problems in later steps.
+Depending on which units are missing, it generates units for area, reaction extend, length, substance, time, and volume just as the default units in \SBML Level~2 Version~4 would be defined.
+All subsequent steps can hence assume that every model component has a defined unit. 
+
+The algorithm then iterates trough all reactions within the sub-model and performs several pre-processing steps, before an appropriate type of rate law can be selected:
+\begin{enumerate}
+
+  \item If the user defines a list of \KEGG \citep{Kanehisa2000a} \acp{ID} for species whose contribution to rate laws should be neglected, species with such terms in their \MIRIAM annotation \citep{Le2005} are removed.
+  \Cref{tab:MIRIAMignoreList} shows the predefined list of those entities.
+  \item Based on their \SBO term \citep{Courtot2011} attribute all modifiers of the reaction are grouped into the following sets:
   \begin{itemize}
-  \item enzymes,
-  \item activators,
-  \item inhibitors, and
-  \item non-enzyme catalysts.
+    \item enzymes
+    \item activators
+    \item inhibitors
+    \item non-enzyme catalysts.
   \end{itemize}
 %If the user has decided not to implicitly consider all reactions enzyme-catalyzed, a reaction is considered a \emph{non-enzyme reaction} if either the list of enzymes is empty or there is at least one non-enzyme catalyst, or the reaction is reversible and the set of products is empty.
+  Since it is not always clear if a catalyst of a reaction is an enzymatic catalyst, the user can define, which kinds of species may be considered enzymes in the specific context.
+  \Cref{tab:EnzymesAndSBO} presents a list of all kinds of species that the algorithm can potentially accept as enzymes of a reaction.
+The algorithm checks if any modifier of the reaction corresponds to a species with one of \SBO term from this list.
+If the modifier is annotated as \emph{catalyst} (\href{http://identifiers.org/biomodels.sbo/SBO:0000013}{\texttt{SBO:0000013}}) and its corresponding species belongs to the list of potential enzymes, the algorithm assigns the \SBO term \emph{enzymatic catalyst} (\href{http://identifiers.org/biomodels.sbo/SBO:0000460}{\texttt{SBO:0000460}}).
+Based on the user's selction the algorithm hence solves contraditions between the \SBO term of a modifier and the corresponding species.
+\begin{SCtable}[][tb]
+\begin{tabular}{ll}
+\toprule
+Material entity   & \SBO term\\
+\midrule
+\asRNA            & \href{http://identifiers.org/biomodels.sbo/SBO:0000317}{\texttt{SBO:0000317}}\\
+Complex           & \href{http://identifiers.org/biomodels.sbo/SBO:0000253}{\texttt{SBO:0000253}}\\
+Generic protein   & \href{http://identifiers.org/biomodels.sbo/SBO:0000252}{\texttt{SBO:0000252}}\\
+Macromolecule     & \href{http://identifiers.org/biomodels.sbo/SBO:0000245}{\texttt{SBO:0000245}}\\
+Receptor          & \href{http://identifiers.org/biomodels.sbo/SBO:0000244}{\texttt{SBO:0000244}}\\
+\RNA              & \href{http://identifiers.org/biomodels.sbo/SBO:0000250}{\texttt{SBO:0000250}}\\
+Simple molecule   & \href{http://identifiers.org/biomodels.sbo/SBO:0000247}{\texttt{SBO:0000247}}\\
+Truncated protein & \href{http://identifiers.org/biomodels.sbo/SBO:0000248}{\texttt{SBO:0000248}}\\
+Unknown molecule  & \href{http://identifiers.org/biomodels.sbo/SBO:0000285}{\texttt{SBO:0000285}}\\
+\bottomrule
+\end{tabular}
+\caption[Kinds of species that can potentially act as enzymes and their top-level \SBO terms]{Kinds of species that can potentially act as enzymes and their top-level \SBO terms.
+These \SBO terms correspond to the annotation of the actual species and therefore define the material classes of potential enzymes.
+The terms given in this table represent the top-level terms, i.e., the algorithm also accepts each more specialized term for a specific category.
+Note that the user can exclude elements from this list and therefore influence the algorithm's choices.}
+\protect\label{tab:EnzymesAndSBO}
+\end{SCtable}
+
+  \item The stoichiometry of each reaction participant is analyzed in order to obtain the accumulated stoichiometry of reactants and products and to answer the question if all values are integers.
+In this step the algorithm analyzes the \SBO term \citep{Courtot2011} attribute of each reaction participant.
+Further top-level \SBO terms with relevance to the algorithm can be found in \Cref{tab:FurtherRelevantSBOTerms}.
+In this step it is the aim to get hints if the reaction represents a transcription or translation:
+  \begin{itemize}
+    \item If a reactant represents a \gene or gene-coding region, the reaction could be a \transcription.
+    \item If the reaction involves a reactant that stands for an \RNA or \mRNA molecule it could be a \translation.
+    \item If at least one modifier represents a gene or \RNA molecule, the reaction could represent a \translation.
+  \end{itemize}
+  \Cref{fig:TranscriptionAndTranslation} depicts these processes in a simple schematic based on the \SBGN recommendations.
+  The algorithm recognizes these these reaction patterns only based on the \SBO term annotation of all participients.
+  \begin{SCfigure}
+    \includegraphics[width=.45\textwidth]{img/SBGN_gene-regulation}
+    \caption[Transcription and translation]{Transcription and translation.
+The first reaction \texttt{re1} assembles an \mRNA molecule from a source of bases.
+The presense of a specific gene enables this process.
+The resulting \mRNA molecule in turn enables the assembly of a protein from a source of amino acids.
+In a feedback inhibition loop, the protein interferes with the transcription of its corresponding gene.}
+    \label{fig:TranscriptionAndTranslation}
+  \end{SCfigure}
+
+  \item In order to ensure that the algorithm can process each reaction, the following semantic rules are checked:
+  \begin{itemize}
+    \item If a reaction involves a \gene or gene-coding region as reactant or its set of reactants is \emph{empty} and all products are \RNA molecules, the reaction is recognized as \transcription.
+    \item If the substrate species of a reaction are \RNA molecules or the reaction does not have any reactants and all products are forms of \protein, the reaction is recognized as \translation.
+    \item If the stoichiometry of reactants and products is unity, the reaction can only be categorized as \transcription if the only reactant is a \gene or gene-coding region and it is only a valid \translation if the only reactant is an \RNA molecule.
+Depending on user preferences, the algorithm can set the boundary condition for each \gene as part of this step.
+Note that a list of reactants or products is said to be \emph{empty} if either no element has been assigned to this list, the stoichiometry of each element is zero, or if each element in the list is annotated with the \SBO term for \emph{empty set} (\href{http://identifiers.org/biomodels.sbo/SBO:0000291}{\texttt{SBO:0000291}}).
+  \end{itemize}
 \end{enumerate}
 
-In order to ensure that the algorithm can process each reaction, several cases for semantic rules are checked:
-\begin{enumerate}
-  \item If a reaction involves genes or gene-coding regions as reactants or its set of reactants is empty and all products are RNA molecules, the reaction is recognized as \emph{transcription}.
-  \item If the substrate species of a reaction are RNA molecules or the reaction does not have any reactants and all products are forms of proteins, the reaction is recognized as \emph{translation}.
-  \item If the stoichiometry of reactants and products is unity, the reaction can only be categorized as transcription if the only reactant is a gene or gene-coding region and it is only a valid translation if the only reactant is an RNA molecule.
-Depending on user preferences, the algorithm can set the boundary condition for genes as part of this step.
-Note that a set of reactants or products is said to be \emph{empty} if either no element has been assigned to this set, the stoichiometry of each element is zero, or if each element in the set is annotated with the \SBO term for empty set.
-\end{enumerate}
-
-After having model preprocessing and semantic checking completed, the algorithm assigns a list of the following thirteen general categories to each reaction within the sub-model:
+After having reaction preprocessing and semantic checking completed, the algorithm assigns a list of the following thirteen general categories to each reaction within the sub-model:\\
+\noindent
+\begin{minipage}[t]{.5\textwidth}
+\raggedleft
 \begin{enumerate}
   \item gene-regulatory reactions,
-  \item zeroth reactant/product order reactions,
-  \item reversible/irreversible reactions with an optional non-enzyme catalyst,
-  \item reversible/irreversible enzyme-catalyzed reactions with an arbitrary number of reactants or products,
-  \item reversible/irreversible uni-uni type enzyme-catalyzed reactions,
-  \item reversible/irreversible bi-uni type enzyme-catalyzed reactions, and
-  \item reversible/irreversible bi-bi type enzyme-catalyzed reactions.
+  \item zeroth reactant order reactions,
+  \item zeroth product order reactions,
+  \item reversible reactions with an optional non-enzyme catalyst,
+  \item irreversible reactions with an optional non-enzyme catalyst,
+  \item reversible enzyme-catalyzed reactions with an arbitrary number of reactants or products,
+  \item irreversible enzyme-catalyzed reactions with an arbitrary number of reactants or products,
 \end{enumerate}
-This list may either contain all possible categories or just the category with highest priority.
-
+\end{minipage}% <---------------- Note the use of "%"
+\begin{minipage}[t]{.5\textwidth}
+\raggedleft
+\begin{enumerate}
+  \setcounter{enumi}{7}
+  \item reversible uni-uni type enzyme-catalyzed reactions,
+  \item irreversible uni-uni type enzyme-catalyzed reactions,
+  \item reversible bi-uni type enzyme-catalyzed reactions,
+  \item irreversible bi-uni type enzyme-catalyzed reactions,
+  \item reversible bi-bi type enzyme-catalyzed reactions, and
+  \item irreversible bi-bi type enzyme-catalyzed reactions.
+\end{enumerate}
+\end{minipage}\\[1em]
+%\begin{enumerate}
+%  \item gene-regulatory reactions,
+%  \item zeroth reactant/product order reactions,
+%  \item reversible/irreversible reactions with an optional non-enzyme catalyst,
+%  \item reversible/irreversible enzyme-catalyzed reactions with an arbitrary number of reactants or products,
+%  \item reversible/irreversible uni-uni type enzyme-catalyzed reactions,
+%  \item reversible/irreversible bi-uni type enzyme-catalyzed reactions, and
+%  \item reversible/irreversible bi-bi type enzyme-catalyzed reactions.
+%\end{enumerate}
+This list may either contain all applicable categories for the reaction or just the one category with highest priority.
+While the first method allows users to interactively select rate laws of choice, the latter option is important for the automatic selection of the most appropriate equation.
+\begin{SCtable}
+\begin{tabular}{ll}
+\toprule
+Definition & \SBO term\\
+\midrule
+catalyst                   & \href{http://identifiers.org/biomodels.sbo/SBO:0000013}{\texttt{SBO:0000013}}\\
+enzymatic catalyst         & \href{http://identifiers.org/biomodels.sbo/SBO:0000460}{\texttt{SBO:0000460}}\\
+transcriptional activation & \href{http://identifiers.org/biomodels.sbo/SBO:0000459}{\texttt{SBO:0000459}}\\
+transcriptional inhibition & \href{http://identifiers.org/biomodels.sbo/SBO:0000020}{\texttt{SBO:0000020}}\\
+inhibitior                 & \href{http://identifiers.org/biomodels.sbo/SBO:0000020}{\texttt{SBO:0000020}}\\
+inhibition                 & \href{http://identifiers.org/biomodels.sbo/SBO:0000169}{\texttt{SBO:0000169}}\\
+transcriptional activation & \href{http://identifiers.org/biomodels.sbo/SBO:0000459}{\texttt{SBO:0000459}}\\
+translational activation   & \href{http://identifiers.org/biomodels.sbo/SBO:0000459}{\texttt{SBO:0000459}}\\
+trigger                    & \href{http://identifiers.org/biomodels.sbo/SBO:0000461}{\texttt{SBO:0000461}}\\
+stimulator                 & \href{http://identifiers.org/biomodels.sbo/SBO:0000021}{\texttt{SBO:0000021}}\\
+stimulation                & \href{http://identifiers.org/biomodels.sbo/SBO:0000170}{\texttt{SBO:0000170}}\\
+necessary stimulation      & \href{http://identifiers.org/biomodels.sbo/SBO:0000171}{\texttt{SBO:0000171}}\\
+empty set                  & \href{http://identifiers.org/biomodels.sbo/SBO:0000291}{\texttt{SBO:0000291}}\\
+gene                       & \href{http://identifiers.org/biomodels.sbo/SBO:0000243}{\texttt{SBO:0000243}}\\
+gene-coding region         & \href{http://identifiers.org/biomodels.sbo/SBO:0000335}{\texttt{SBO:0000335}}\\
+\RNA                       & \href{http://identifiers.org/biomodels.sbo/SBO:0000250}{\texttt{SBO:0000250}}\\
+\mRNA                      & \href{http://identifiers.org/biomodels.sbo/SBO:0000278}{\texttt{SBO:0000278}}\\
+translation                & \href{http://identifiers.org/biomodels.sbo/SBO:0000184}{\texttt{SBO:0000184}}\\
+transcription              & \href{http://identifiers.org/biomodels.sbo/SBO:0000183}{\texttt{SBO:0000183}}\\
+protein                    & \href{http://identifiers.org/biomodels.sbo/SBO:0000297}{\texttt{SBO:0000297}}\\
+generic                    & \href{http://identifiers.org/biomodels.sbo/SBO:0000252}{\texttt{SBO:0000252}}\\
+\bottomrule
+\end{tabular}
+\caption[\SBO terms with relevance for the categorization of reactions]{\SBO terms with relevance for the categorization of reactions.
+The algorithm uses the \SBO terms listed in this table in order to distinguish between different types of species and modification in order to categorize a each reaction in the sub-model as well as the role of individual reaction participants.
+This also includes furhter relevant material entities of reaction participants.}
+\label{tab:FurtherRelevantSBOTerms}
+\end{SCtable}
+%
 The selection of one or multiple appropriate categories for a reaction is based on a set of defined rules, which are here summarized and simplified for the sake of better comprehensiveness.
+
+The algorithm distinguishes the following three basic cases, which are not necessarily exclusive:
 \begin{enumerate}
   \item The list of reactants is \emph{empty} or the reaction is reversible and the list of products is \emph{empty}.
-If the reaction does not involve genes, gene-coding regions, or RNA molecules, then the algorithm can assign it to the  zeroth reactant order reactions if also the list of reactants is \emph{empty}, and to the zeroth product order reactions if it is reversible with an empty list of products.
+If the reaction does not involve genes, gene-coding regions, or \RNA molecules, then the algorithm can assign it to the  zeroth reactant order reactions if also the list of reactants is \emph{empty}, and to the zeroth product order reactions if it is reversible with an empty list of products.
 If it does involve genetic components, it can be assigned to the gene-regulatory reactions depending on its directionality.
+
   \item The reaction has at least one reactant and if it is reversible also at least one product.
 If the reaction does not have an enzymatic catalyst or even a non-enzymatic catalyst, it is assigned to the category of non-enzyme reactions with respect to its directionality.
-In case of unity stoichiometry on both sides of the reaction, and if the reaction follows the pattern of transcription or translation reactions, it is added to this category.
-The pattern is satisfied if the reactant is a genetic element or an empty set and the product is an RNA molecule or protein.
+In case of unity stoichiometry on both sides of the reaction, and if the reaction follows the pattern of \transcription or \translation reactions, it is added to the category of gene-regulatory reactions.
+The pattern is satisfied if the reactant is a genetic element or an empty set and the product is an \RNA molecule or \protein.
+
   \item The preprocessing has revealed that the reaction belongs to enzyme kinetics.
+Depending on user preferences, a reaction can also be recognized as enzyme-catalyzed process if no catalytic modifier is assigned to it.
 If the reaction is reversible with at least one product, the category of arbitrary enzyme reactions is assigned.
-Next, the stoichiometry and directionality of the reaction are taken into account in order to determine if the reaction belongs to the uni-uni, bi-uni, or bi-bi reactions.
+Next, the stoichiometry and directionality of the reaction are taken into account in order to determine if the reaction also belongs to the uni-uni, bi-uni, or bi-bi reactions.
 \end{enumerate}
 The identification of the category with highest priority works very similar.
-For reactions with empty list of reactants a gene-regulatory reaction has higher priority than the zeroth reactant order.
+For reactions with empty list of reactants a gene-regulatory reaction has higher priority than the zeroth reactant order (but requires that the reaction follows the right pattern).
 Similarly, the algorithm first tries to assign a reaction to the gene-regulation category if it is reversible with an empty list of products, before assigning it to the zeroth product order reactions.
 Non-enzymatic reactions have higher priority than any enzymatic reaction.
 If the reaction is enzyme-catalyzed, the algorithm tries to first assign the most detailed category before it chooses an arbitrary enzyme reaction category.
@@ -2354,7 +2466,7 @@ For all categories that can be applied to a reaction, the algorithm then compile
 One post-processing step is required to modify the list of assignable rate laws.
 Not each equation can be applied to reactions that are modulated by activators or inhibitors.
 In this situation, inappropriate equations are subsequently removed from the list of equations.
-The group of those kinetic equations also implement a common interface and can therefore also be identified on run-time.
+The group of those kinetic equations also implements a common interface and can therefore also be identified on run-time.
 The list of applicable kinetic equations is hence generated on the fly and only based on the general reaction categories.
 In this way, the program can easily be extended, because additional kinetic equations only need to declare the categories to which they can be applied and will automatically be available when the program is executed.
 
@@ -2362,9 +2474,31 @@ The user can select one default rate law for each category.
 If one kinetic equation is to be created for all reactions in a given model, the algorithm determines one category for each reaction and applies the default rate law from this category to the reaction.
 When creating rate laws for individual reactions, a complete list of all applicable rate laws for the reaction of interest is compiled.
 
+Applying a rate law to the reaction means that the algorithm has to construct an abstract syntax tree, which symbolically represents the kinetic equation for the reaction.
+To this end, the reaction needs to be analyzed again and all of its components need to be taken into account as relevant for the selected rate law (irreversible equations, for instance, tend to ignore effects of products).
+In order to ensure unit consistency of the equation, it can be necessary to multiply or devide reactive species with/by their surrounding compartment.
+User preferences and the units of the species determine if and which of those operation is required, because in \SBML, each reaction should yield units of extent per time.
+Two cases need to be distinguished:
+\begin{enumerate}
+  \item If a species has only substance units and the user decides to bring all species to concentration units, the species must be divided by its surrounding compartment.
+  \item If a species is given in concentration units and the user wants to bring all species to substance units, then a multiplication of the species with its surrounding compartment is required.
+\end{enumerate}
+Depending on the type of rate law that is being created and the structural composition of the reaction, a certain number of parameters needs to be constructed.
+This can include forward or backward rate constants, limiting velocity rates, inhibition or stimulation constants, thermodynamic properties, and many more.
+These parameters can be incorporated as local or global parameters.
+To this end, the algorithm first collects all parameters in a separate list and transfers them to the sub-model only when a rate law is to be applied.
+Just as for species, parameter objects need to be equipped with appropriate units.
+The units of many parameters also depend on the structure of the reaction, for instance, the number and units of all reactants.
+Because of this connection, it can be necessary to also take the units of compartments into account when deriving the units of parameters in order to obtain extend by time units for the overall rate law.
+The algorithm equipps each newly created parameter with a meaningful name and identifier as well as an appropriate \SBO term.
+If during this step additional units or unit definitions need to be added to the sub-model, these are simplified as much as possible, annotated with a \MIRIAM identifier pointing to the Units Ontology, and equipped with meaningful names and identifiers as appropriate.
+The algorithm avoids creating duplicate unit definitions by checking the model for identical existing unit definitions before adding a new one.
+If possible, the newly created kinetic equation is also annotated with a corresponding \SBO term.
+Due to the large number of \SBO terms that can be created by the algorithm, a comprehensive list of all cases is omitted.
+
 Finally, all relevant changes in the sub-model are synchronized to the original model.
 This includes all newly created units and unit definitions, local and global parameters, annotations, mathematical equations, reversibility flags, and boundary condition flags.
-If species have been deleted from reactions, this change is not synchronized.
+If species have been deleted from reactions, because their \MIRIAM annotation was on the ignore list, this change is skipped and not synchronized, so that the structure of the model will remain identical.
 In the graphical user interface, the user can also disregard the changes.
 When being used as a \CellDesigner plug-in, a special observer class synchronizes all changes from the sub-model to the data model of \CellDesigner.
 

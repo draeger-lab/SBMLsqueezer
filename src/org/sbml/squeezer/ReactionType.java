@@ -716,8 +716,7 @@ public class ReactionType {
       boolean transcription = false;
       for (i = 0; i < reaction.getProductCount(); i++) {
         Species species = reaction.getProduct(i).getSpeciesInstance();
-        if (SBO.isRNA(species.getSBOTerm())
-            || SBO.isMessengerRNA(species.getSBOTerm())) {
+        if (SBO.isRNAOrMessengerRNA(species.getSBOTerm())) {
           transcription = reactionWithRNAs = true;
         }
       }
@@ -1000,12 +999,12 @@ public class ReactionType {
       if (uniUni) {
         Species reactant = reaction.getReactant(0).getSpeciesInstance();
         Species product = reaction.getProduct(0).getSpeciesInstance();
-        if ((reactionWithGenes || reactionWithRNAs || (SBO
-            .isGeneOrGeneCodingRegion(reactant.getSBOTerm()) || (SBO
-                .isEmptySet(reactant.getSBOTerm()) && (SBO
-                    .isRNAOrMessengerRNA(product.getSBOTerm())
-                    || SBO.isProtein(product.getSBOTerm()) || SBO
-                    .isGeneric(product.getSBOTerm())))))) {
+        if ((reactionWithGenes || reactionWithRNAs ||
+            (SBO.isGeneOrGeneCodingRegion(reactant.getSBOTerm()) ||
+                (SBO.isEmptySet(reactant.getSBOTerm()) &&
+                    (SBO.isRNAOrMessengerRNA(product.getSBOTerm())
+                        || SBO.isProtein(product.getSBOTerm()) ||
+                        SBO.isGeneric(product.getSBOTerm())))))) {
           for (Class<?> className : getKineticsGeneRegulatoryNetworks()) {
             if ((reaction.isReversible() && !notReversible.contains(className))
                 || (!reaction.isReversible() && !notIrreversible.contains(className))) {
