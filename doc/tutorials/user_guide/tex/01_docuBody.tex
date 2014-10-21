@@ -2504,7 +2504,48 @@ When being used as a \CellDesigner plug-in, a special observer class synchronize
 
 \section{Mapping of reactions to SABIO-RK}
 
-\TODO{Write.}
+\subsection{Rate laws from \SABIO for an entire network}
+When the user has selected the reactions to be equipped with kinetic laws as well as the search terms, the application creates a query URL for each reaction. 
+This URL comprises the search terms and the respective \KEGG reaction \ac{ID}. 
+Calling this URL returns an \SBML document containing all the kinetic laws found for the query. 
+The application now extracts all kinetic laws from the \SBML document and tries to match all elements contained in a kinetic law to elements in the network processed in SBMLsqueezer. 
+This matching involves
+\begin{enumerate}
+\item
+Searching a species in the model with similar annotation for each species in the kinetic law.
+\item
+Searching a compartment in the network with similar annotation for each compartment in the rate law.
+\item
+Searching a reaction in the network with similar annotation for each reaction in the rate law.
+\item
+Searching an appropriate species reference in the current reaction for each species reference in the rate law. 
+This species reference has to refer to a species with an annotation similar to that of the species referenced by the species reference in the found rate law.
+\end{enumerate}
+In all cases a similar annotation of two \SBML elements means that there are common \emph{cv terms} with qualifiers \emph{has version} or \emph{is} in both elements. 
+The first kinetic law in the query results for which all elements can be matched to respective elements in the model is added to a reaction. 
+This also involves
+\begin{enumerate}
+\item
+Substituting all elements in the found kinetic law with the matched elements in the model.
+\item
+Adding unit definitions, function definitions, global and local parameters contained in the kinetic law to the network.
+\end{enumerate}
+The selection of the first law with a successful matching will not always lead to a result with which the user will be satisfied. 
+In this case the kinetic law of the reaction can easily be changed by starting the application with just this reaction selected.
+
+\subsection{\SABIO for a selected reaction}
+After selection of the reaction and the search terms, the application creates the respective query URL for \SABIO. 
+Calling this URL returns an \SBML document containing all the kinetic laws found for the query. 
+The application extracts those rate laws and presents them to the user. 
+The user has to select one of these rate laws and then the application tries to match all \SBML elements in the rate law to elements in the network (see previous section). 
+After the user has confirmed or modified this matching, the rate law is added to the reaction. 
+This again involves
+\begin{enumerate}
+\item
+Substituting all elements in the found kinetic law with the matched elements in the model.
+\item
+Adding unit definitions, function definitions, global and local parameters in the kinetic law to the network.
+\end{enumerate}
 
 
 % 03_Troubleshooting
