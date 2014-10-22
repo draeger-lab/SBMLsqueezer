@@ -2508,9 +2508,14 @@ The extraction of rate laws from the database \SABIO requires an \SBML document 
 All possible values for the search terms can be found in \cref{sec:SABIO_search_options}.
 
 The algorithm then generates a \URL that is used to query \SABIO.
-\TODO{Wie wird die \URL genau zusammengebaut? Das ist genau der Schl\"ussel, um den es hier geht. Darum muss dazu unbedingt mehr geschrieben werden.}
-This \URL comprises the search terms and the respective \KEGG reaction \ac{ID}.
-This \URL points to an \XML document for download.
+This \URL comprises the search terms and the respective \KEGG reaction \ac{ID}. 
+The following \URL is the basis for extension by the search terms: \url{http://sabio.h-its.org/sabioRestWebServices/searchKineticLaws/sbml?q=}.
+For each search term and its given value the \URL is extended with \emph{Keyword:Value}.
+If a search term is associated with a range (e.g., the temperature), the \URL is extended with \emph{Keyword:[minimumValue TO maximumValue]}.
+The keywords for the terms are presented here: \url{http://sabio.h-its.org/layouts/content/docuRESTfulWeb/SearchKeyVoc.gsp}.
+An \emph{AND} is always introduced between the keyword-value pairs in the query. 
+
+The \URL for querying points to an \XML document for download.
 In the case of success, the \XML document will be an \SBML document with all kinetic laws found for the query.
 Otherwise, \SABIO returns an \XML document with an error message and the algorithm terminates with a user message.
 
@@ -2528,7 +2533,7 @@ This species reference needs to refer to a species with an annotation similar to
 In this context, an annotation of two \SBML elements is considered similar and hence these elements are considered a \emph{match} if both have \emph{controlled vocabulary terms} in common that are linked through qualifiers \emph{has version} or \emph{is}.
 
 In the batch mode, the algorithm always selects the first kinetic law in the query results for which all elements can be matched to respective elements in the model.
-The algorithm adds this rate law is to the reaction.
+The algorithm adds this rate law to the reaction.
 This merging involves
 \begin{enumerate}
   \item Substituting all elements in the found kinetic law with the matched elements in the model.
