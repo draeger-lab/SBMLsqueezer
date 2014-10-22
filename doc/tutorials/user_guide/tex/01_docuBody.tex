@@ -250,7 +250,7 @@ SBMLsqueezer has successfully been tested with
 \begin{itemize}
   \item Microsoft \WindowsSeven Professional (64~bit),
   \item Microsoft \WindowsSeven Professional (SP1, 64~bit),
-  \item \MacOSX (versions 10.8.2 through 10.9.3), and
+  \item \MacOSX (versions 10.8.2 through 10.10), and
   \item \UbuntuLinux (version 12.04, 64~bit).
 \end{itemize}
 See \vref{ch:faq} if you encounter any problems.
@@ -967,7 +967,7 @@ Alternatively, you can directly go to the service SBMLsqueezer\footnote{\url{htt
 \begin{figure}
 \shadowimage[width=\textwidth]{Webservice/SBMLsqueezerWebservice1}
 \caption[Starting the on-line version of SBMLsqueezer]{Starting the on-line version of SBMLsqueezer.
-This figure displays the Galaxy framework in the browser Firefox version 29.0.1 under \MacOSX version 10.9.3.
+This figure displays the Galaxy framework in the browser Firefox (version 29.0.1) under \MacOSX (version 10.9.3).
 You can start working with SBMLsqueezer by either clicking on the program's icon or the link ``Upload SBML file".}
 \label{fig:WebserviceLaunch}
 \end{figure}
@@ -2346,7 +2346,7 @@ In this step it is the aim to get hints if the reaction represents a transcripti
   \Cref{fig:TranscriptionAndTranslation} depicts these processes in a simple schematic based on the \SBGN recommendations.
   The algorithm recognizes these these reaction patterns only based on the \SBO term annotation of all participients.
   \begin{SCfigure}
-    \includegraphics[width=.45\textwidth]{img/SBGN_gene-regulation}
+    \includegraphics[width=.45\textwidth]{SBGN/gene-regulation}
     \caption[Transcription and translation]{Transcription and translation.
 The first reaction \texttt{re1} assembles an \mRNA molecule from a source of bases.
 The presense of a specific gene enables this process.
@@ -2370,7 +2370,7 @@ After having reaction preprocessing and semantic checking completed, the algorit
 \begin{minipage}[t]{.5\textwidth}
 \raggedleft
 \begin{enumerate}
-  \item gene-regulatory reactions,
+  \item gene-regulatory and transcriptional reactions,
   \item zeroth reactant order reactions,
   \item zeroth product order reactions,
   \item reversible reactions with an optional non-enzyme catalyst,
@@ -2502,50 +2502,41 @@ If species have been deleted from reactions, because their \MIRIAM annotation wa
 In the graphical user interface, the user can also disregard the changes.
 When being used as a \CellDesigner plug-in, a special observer class synchronizes all changes from the sub-model to the data model of \CellDesigner.
 
-\section{Mapping of reactions to SABIO-RK}
+\section{Extraction of rate laws from \SABIO}
 
-\subsection{Rate laws from \SABIO for an entire network}
-When the user has selected the reactions to be equipped with kinetic laws as well as the search terms, the application creates a query URL for each reaction. 
-This URL comprises the search terms and the respective \KEGG reaction \ac{ID}. 
-Calling this URL returns an \SBML document containing all the kinetic laws found for the query. 
-The application now extracts all kinetic laws from the \SBML document and tries to match all elements contained in a kinetic law to elements in the network processed in SBMLsqueezer. 
-This matching involves
-\begin{enumerate}
-\item
-Searching a species in the model with similar annotation for each species in the kinetic law.
-\item
-Searching a compartment in the network with similar annotation for each compartment in the rate law.
-\item
-Searching a reaction in the network with similar annotation for each reaction in the rate law.
-\item
-Searching an appropriate species reference in the current reaction for each species reference in the rate law. 
-This species reference has to refer to a species with an annotation similar to that of the species referenced by the species reference in the found rate law.
-\end{enumerate}
-In all cases a similar annotation of two \SBML elements means that there are common \emph{cv terms} with qualifiers \emph{has version} or \emph{is} in both elements. 
-The first kinetic law in the query results for which all elements can be matched to respective elements in the model is added to a reaction. 
-This also involves
-\begin{enumerate}
-\item
-Substituting all elements in the found kinetic law with the matched elements in the model.
-\item
-Adding unit definitions, function definitions, global and local parameters contained in the kinetic law to the network.
-\end{enumerate}
-The selection of the first law with a successful matching will not always lead to a result with which the user will be satisfied. 
-In this case the kinetic law of the reaction can easily be changed by starting the application with just this reaction selected.
+The extraction of rate laws from the database \SABIO requires an \SBML document and search terms as input.
+All possible values for the search terms can be found in \cref{sec:SABIO_search_options}.
 
-\subsection{\SABIO for a selected reaction}
-After selection of the reaction and the search terms, the application creates the respective query URL for \SABIO. 
-Calling this URL returns an \SBML document containing all the kinetic laws found for the query. 
-The application extracts those rate laws and presents them to the user. 
-The user has to select one of these rate laws and then the application tries to match all \SBML elements in the rate law to elements in the network (see previous section). 
-After the user has confirmed or modified this matching, the rate law is added to the reaction. 
-This again involves
+The algorithm then generates a \URL that is used to query \SABIO.
+\TODO{Wie wird die \URL genau zusammengebaut? Das ist genau der Schl\"ussel, um den es hier geht. Darum muss dazu unbedingt mehr geschrieben werden.}
+This \URL comprises the search terms and the respective \KEGG reaction \ac{ID}.
+This \URL points to an \XML document for download.
+In the case of success, the \XML document will be an \SBML document with all kinetic laws found for the query.
+Otherwise, \SABIO returns an \XML document with an error message and the algorithm terminates with a user message.
+
+Just like for the \emph{de novo} creation of rate laws the algorithm can either process all reactions within the \SBML document or one particular reaction.
+To this end, the algorithm creates one query \URL for each reaction, for which a rate law should be extracted from \SABIO.
+After obtaining an \SBML document from \SABIO, the algorithm extracts all kinetic laws from the \SBML document and tries to match all elements contained in a kinetic law to elements in the input network. 
+This matching is based on the \MIRIAM annotations of model components and involves the search for one corresponding
+\begin{itemize}
+  \item species in the local model for each species in the kinetic law.
+  \item compartment in the local model for each compartment addressed in the kinetic law (this can be the compartment of a participating species or the reaction itself can have a compartment assigned to it).
+  \item reaction in the local model for each reaction in the kinetic law.
+  \item species reference for each species reference in the kinetic law within each such identified local reaction. 
+This species reference needs to refer to a species with an annotation similar to that of the species referenced by the species reference in the found rate law.
+\end{itemize}
+In this context, an annotation of two \SBML elements is considered similar and hence these elements are considered a \emph{match} if both have \emph{controlled vocabulary terms} in common that are linked through qualifiers \emph{has version} or \emph{is}.
+
+In the batch mode, the algorithm always selects the first kinetic law in the query results for which all elements can be matched to respective elements in the model.
+The algorithm adds this rate law is to the reaction.
+This merging involves
 \begin{enumerate}
-\item
-Substituting all elements in the found kinetic law with the matched elements in the model.
-\item
-Adding unit definitions, function definitions, global and local parameters in the kinetic law to the network.
+  \item Substituting all elements in the found kinetic law with the matched elements in the model.
+  \item Adding unit definitions, function definitions, global and local parameters contained in the kinetic law to the network.
 \end{enumerate}
+
+When rate laws are obtained from \SABIO for individual reactions, the algorithms presents a list of all rate laws found for the given query to the user, who can then select the most appropriate equation.
+In cases when the selection of the first law with a successful matching does not lead to a satisfying result, the single reaction mode might lead to better results.
 
 
 % 03_Troubleshooting

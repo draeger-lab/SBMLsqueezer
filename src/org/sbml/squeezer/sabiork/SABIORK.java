@@ -50,7 +50,7 @@ import org.sbml.squeezer.sabiork.util.WebServiceResponseException;
 import org.sbml.squeezer.sabiork.util.XMLParser;
 
 /**
- * The SABIORK class provides access to the SABIO-RK database via their RESTful
+ * The SABIO-RK class provides access to the SABIO-RK database via their RESTful
  * Web Services.
  * 
  * @author Matthias Rall
@@ -59,24 +59,51 @@ import org.sbml.squeezer.sabiork.util.XMLParser;
  */
 public class SABIORK {
   
+  /**
+   * 
+   * @author Matthias Rall
+   * @version $Rev$
+   * @since 2.0
+   */
   public enum QueryField {
     
-    ENTRY_ID("EntryID"), PATHWAY("Pathway"), KEGG_REACTION_ID(
-        "KeggReactionID"), SABIO_REACTION_ID("SabioReactionID"), ANY_ROLE(
-            "AnyRole"), SUBSTRATE("Substrate"), PRODUCT("Product"), INHIBITOR(
-                "Inhibitor"), CATALYST("Catalyst"), COFACTOR("Cofactor"), ACTIVATOR(
-                    "Activator"), OTHER_MODIFIER("OtherModifier"), PUBCHEM_ID(
-                        "PubChemID"), KEGG_ID("KeggID"), CHEBI_ID("ChebiID"), SABIO_COMPOUND_ID(
-                            "SabioCompoundID"), ENZYMENAME("Enzymename"), EC_NUMBER(
-                                "ECNumber"), UNIPROT_ID("UniprotID"), TISSUE("Tissue"), ORGANISM(
-                                    "Organism"), CELLULAR_LOCATION("CellularLocation"), PARAMETERTYPE(
-                                        "Parametertype"), KINETIC_MECHANISM_TYPE("KineticMechanismType"), ASSOCIATED_SPECIES(
-                                            "AssociatedSpecies"), TITLE("Title"), AUTHOR("Author"), YEAR(
-                                                "Year"), PUBMED_ID("PubmedID"), EXPERIMENT_ID("ExperimentID"), ENZYME_TYPE(
-                                                    "enzymeType"), INFOSOURCE_TYPE("infosourceType"), HAS_KINETIC_DATA(
-                                                        "hasKineticData"), IS_RECOMBINANT("isRecombinant"), PH_VALUE_RANGE(
-                                                            "pHValueRange"), TEMPERATURE_RANGE("TemperatureRange"), DATE_SUBMITTED(
-                                                                "DateSubmitted");
+    ENTRY_ID("EntryID"),
+    PATHWAY("Pathway"),
+    KEGG_REACTION_ID("KeggReactionID"),
+    SABIO_REACTION_ID("SabioReactionID"),
+    ANY_ROLE("AnyRole"),
+    SUBSTRATE("Substrate"),
+    PRODUCT("Product"),
+    INHIBITOR("Inhibitor"),
+    CATALYST("Catalyst"),
+    COFACTOR("Cofactor"),
+    ACTIVATOR("Activator"),
+    OTHER_MODIFIER("OtherModifier"),
+    PUBCHEM_ID("PubChemID"),
+    KEGG_ID("KeggID"),
+    CHEBI_ID("ChebiID"),
+    SABIO_COMPOUND_ID("SabioCompoundID"),
+    ENZYMENAME("Enzymename"),
+    EC_NUMBER("ECNumber"),
+    UNIPROT_ID("UniprotID"),
+    TISSUE("Tissue"),
+    ORGANISM("Organism"),
+    CELLULAR_LOCATION("CellularLocation"),
+    PARAMETERTYPE("Parametertype"),
+    KINETIC_MECHANISM_TYPE("KineticMechanismType"),
+    ASSOCIATED_SPECIES("AssociatedSpecies"),
+    TITLE("Title"),
+    AUTHOR("Author"),
+    YEAR("Year"),
+    PUBMED_ID("PubmedID"),
+    EXPERIMENT_ID("ExperimentID"),
+    ENZYME_TYPE("enzymeType"),
+    INFOSOURCE_TYPE("infosourceType"),
+    HAS_KINETIC_DATA("hasKineticData"),
+    IS_RECOMBINANT("isRecombinant"),
+    PH_VALUE_RANGE("pHValueRange"),
+    TEMPERATURE_RANGE("TemperatureRange"),
+    DATE_SUBMITTED("DateSubmitted");
     
     private final String name;
     
@@ -88,8 +115,7 @@ public class SABIORK {
       this.name = name;
     }
     
-    /*
-     * (non-Javadoc)
+    /* (non-Javadoc)
      * @see java.lang.Enum#toString()
      */
     @Override
@@ -98,26 +124,32 @@ public class SABIORK {
     }
     
   }
+  
+  /**
+   * 
+   * @author Matthias Rall
+   * @version $Rev$
+   * @since 2.0
+   */
   public enum Resource {
     
-    ENTRY_IDS_BY_QUERY(
-        "http://sabio.h-its.org/sabioRestWebServices/searchKineticLaws/kinlaws?q="), SBML_MODEL_BY_ENTRY_ID(
-            "http://sabio.h-its.org/sabioRestWebServices/kineticLaws/"), SBML_MODEL_BY_ENTRY_IDS(
-                "http://sabio.h-its.org/sabioRestWebServices/kineticLaws?kinlawids="), SBML_MODEL_BY_QUERY(
-                    "http://sabio.h-its.org/sabioRestWebServices/searchKineticLaws/sbml?q="), SUGGESTIONS_COMPOUNDS(
-                        "http://sabio.h-its.org/sabioRestWebServices/suggestions/Compounds?searchCompounds="), SUGGESTIONS_ENZYMES(
-                            "http://sabio.h-its.org/sabioRestWebServices/suggestions/Enzymes?searchEnzymes="), SUGGESTIONS_ORGANISMS(
-                                "http://sabio.h-its.org/sabioRestWebServices/suggestions/Organisms?searchOrganisms="), SUGGESTIONS_PATHWAYS(
-                                    "http://sabio.h-its.org/sabioRestWebServices/suggestions/Pathways?searchPathways="), SUGGESTIONS_TISSUES(
-                                        "http://sabio.h-its.org/sabioRestWebServices/suggestions/Tissues?searchTissues="), SUGGESTIONS_UNIPROT_IDS(
-                                            "http://sabio.h-its.org/sabioRestWebServices/suggestions/UniprotIDs?searchUniprotIDs="), SUGGESTIONS_KEGG_COMPOUND_IDS(
-                                                "http://sabio.h-its.org/sabioRestWebServices/suggestions/KEGGCompoundIDs?searchKEGGCompoundIDs="), SUGGESTIONS_KEGG_REACTION_IDS(
-                                                    "http://sabio.h-its.org/sabioRestWebServices/suggestions/KEGGReactionIDs?searchKEGGReactionIDs="), SUGGESTIONS_SABIO_COMPOUND_IDS(
-                                                        "http://sabio.h-its.org/sabioRestWebServices/suggestions/SABIOCompoundIDs?searchSABIOCompoundIDs="), SUGGESTIONS_SABIO_REACTION_IDS(
-                                                            "http://sabio.h-its.org/sabioRestWebServices/suggestions/SABIOReactionIDs?searchSABIOReactionIDs="), SUGGESTIONS_CHEBI_COMPOUND_IDS(
-                                                                "http://sabio.h-its.org/sabioRestWebServices/suggestions/CHEBICompoundIDs?searchCHEBICompoundIDs="), SUGGESTIONS_PUBCHEM_COMPOUND_IDS(
-                                                                    "http://sabio.h-its.org/sabioRestWebServices/suggestions/PUBCHEMCompoundIDs?searchPUBCHEMCompoundIDs="), SUGGESTIONS_PUBMED_IDS(
-                                                                        "http://sabio.h-its.org/sabioRestWebServices/suggestions/PubmedIDs?searchPubmedIDs=");
+    ENTRY_IDS_BY_QUERY("http://sabio.h-its.org/sabioRestWebServices/searchKineticLaws/kinlaws?q="),
+    SBML_MODEL_BY_ENTRY_ID("http://sabio.h-its.org/sabioRestWebServices/kineticLaws/"),
+    SBML_MODEL_BY_ENTRY_IDS("http://sabio.h-its.org/sabioRestWebServices/kineticLaws?kinlawids="),
+    SBML_MODEL_BY_QUERY("http://sabio.h-its.org/sabioRestWebServices/searchKineticLaws/sbml?q="),
+    SUGGESTIONS_COMPOUNDS("http://sabio.h-its.org/sabioRestWebServices/suggestions/Compounds?searchCompounds="),
+    SUGGESTIONS_ENZYMES("http://sabio.h-its.org/sabioRestWebServices/suggestions/Enzymes?searchEnzymes="),
+    SUGGESTIONS_ORGANISMS("http://sabio.h-its.org/sabioRestWebServices/suggestions/Organisms?searchOrganisms="),
+    SUGGESTIONS_PATHWAYS("http://sabio.h-its.org/sabioRestWebServices/suggestions/Pathways?searchPathways="),
+    SUGGESTIONS_TISSUES("http://sabio.h-its.org/sabioRestWebServices/suggestions/Tissues?searchTissues="),
+    SUGGESTIONS_UNIPROT_IDS("http://sabio.h-its.org/sabioRestWebServices/suggestions/UniprotIDs?searchUniprotIDs="),
+    SUGGESTIONS_KEGG_COMPOUND_IDS("http://sabio.h-its.org/sabioRestWebServices/suggestions/KEGGCompoundIDs?searchKEGGCompoundIDs="),
+    SUGGESTIONS_KEGG_REACTION_IDS("http://sabio.h-its.org/sabioRestWebServices/suggestions/KEGGReactionIDs?searchKEGGReactionIDs="),
+    SUGGESTIONS_SABIO_COMPOUND_IDS("http://sabio.h-its.org/sabioRestWebServices/suggestions/SABIOCompoundIDs?searchSABIOCompoundIDs="),
+    SUGGESTIONS_SABIO_REACTION_IDS("http://sabio.h-its.org/sabioRestWebServices/suggestions/SABIOReactionIDs?searchSABIOReactionIDs="),
+    SUGGESTIONS_CHEBI_COMPOUND_IDS("http://sabio.h-its.org/sabioRestWebServices/suggestions/CHEBICompoundIDs?searchCHEBICompoundIDs="),
+    SUGGESTIONS_PUBCHEM_COMPOUND_IDS("http://sabio.h-its.org/sabioRestWebServices/suggestions/PUBCHEMCompoundIDs?searchPUBCHEMCompoundIDs="),
+    SUGGESTIONS_PUBMED_IDS("http://sabio.h-its.org/sabioRestWebServices/suggestions/PubmedIDs?searchPubmedIDs=");
     
     private final String url;
     
@@ -129,6 +161,12 @@ public class SABIORK {
       this.url = url;
     }
     
+    /**
+     * 
+     * @param query
+     * @return
+     * @throws UnsupportedEncodingException
+     */
     public String getURL(String query) throws UnsupportedEncodingException {
       return url + URLEncoder.encode(query, "UTF-8");
     }
