@@ -222,7 +222,6 @@ public class SBMLsqueezer<T> extends Launcher {
    */
   public SBMLsqueezer(String[] args) {
     super(args);
-    System.out.println(getId());
   }
   
   /* (non-Javadoc)

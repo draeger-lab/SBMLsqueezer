@@ -139,9 +139,7 @@ ChangeListener {
     search = null;
   }
   
-  /*
-   * (non-Javadoc)
-   * 
+  /* (non-Javadoc)
    * @see org.sbml.squeezer.sabiork.wizard.gui.Card#performBeforeShowing()
    */
   @Override
@@ -152,9 +150,7 @@ ChangeListener {
     startSearch();
   }
   
-  /*
-   * (non-Javadoc)
-   * 
+  /* (non-Javadoc)
    * @see org.sbml.squeezer.sabiork.wizard.gui.Card#getPreviousCardID()
    */
   @Override
@@ -162,9 +158,7 @@ ChangeListener {
     return CardID.SEARCH_M;
   }
   
-  /*
-   * (non-Javadoc)
-   * 
+  /* (non-Javadoc)
    * @see org.sbml.squeezer.sabiork.wizard.gui.Card#getNextCardID()
    */
   @Override
@@ -273,22 +267,15 @@ ChangeListener {
   }
   
   
-  /*
-   * (non-Javadoc)
-   * 
-   * @see
-   * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+  /* (non-Javadoc)
+   * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
    */
   @Override
   public void actionPerformed(ActionEvent e) {
   }
   
-  /*
-   * (non-Javadoc)
-   * 
-   * @see
-   * java.beans.PropertyChangeListener#propertyChange(java.beans.PropertyChangeEvent
-   * )
+  /* (non-Javadoc)
+   * @see java.beans.PropertyChangeListener#propertyChange(java.beans.PropertyChangeEvent)
    */
   @Override
   public void propertyChange(PropertyChangeEvent e) {
@@ -308,12 +295,8 @@ ChangeListener {
     }
   }
   
-  /*
-   * (non-Javadoc)
-   * 
-   * @see
-   * javax.swing.event.ListSelectionListener#valueChanged(javax.swing.event.
-   * ListSelectionEvent)
+  /* (non-Javadoc)
+   * @see javax.swing.event.ListSelectionListener#valueChanged(javax.swing.event.ListSelectionEvent)
    */
   @Override
   public void valueChanged(ListSelectionEvent e) {
@@ -325,9 +308,7 @@ ChangeListener {
   }
   
   
-  /*
-   * (non-Javadoc)
-   * 
+  /* (non-Javadoc)
    * @see org.sbml.squeezer.sabiork.wizard.gui.Card#performAfterPressingBack()
    */
   @Override
@@ -337,9 +318,7 @@ ChangeListener {
     search.cancel();
   }
   
-  /*
-   * (non-Javadoc)
-   * 
+  /* (non-Javadoc)
    * @see org.sbml.squeezer.sabiork.wizard.gui.Card#performAfterCancel()
    */
   @Override
@@ -349,9 +328,7 @@ ChangeListener {
     search.cancel();
   }
   
-  /*
-   * (non-Javadoc)
-   * 
+  /* (non-Javadoc)
    * @see org.sbml.squeezer.sabiork.wizard.gui.Card#performAfterNext()
    */
   @Override
@@ -405,9 +382,7 @@ ChangeListener {
       cancel(true);
     }
     
-    /*
-     * (non-Javadoc)
-     * 
+    /* (non-Javadoc)
      * @see javax.swing.SwingWorker#doInBackground()
      */
     @Override
@@ -455,9 +430,7 @@ ChangeListener {
       return null;
     }
     
-    /*
-     * (non-Javadoc)
-     * 
+    /* (non-Javadoc)
      * @see javax.swing.SwingWorker#process(java.util.List)
      */
     @Override
@@ -475,9 +448,7 @@ ChangeListener {
       }
     }
     
-    /*
-     * (non-Javadoc)
-     * 
+    /* (non-Javadoc)
      * @see javax.swing.SwingWorker#done()
      */
     @Override
@@ -495,12 +466,8 @@ ChangeListener {
     
   }
   
-  /*
-   * (non-Javadoc)
-   * 
-   * @see
-   * javax.swing.event.ChangeListener#stateChanged(javax.swing.event.ChangeEvent
-   * )
+  /* (non-Javadoc)
+   * @see javax.swing.event.ChangeListener#stateChanged(javax.swing.event.ChangeEvent)
    */
   @Override
   public void stateChanged(ChangeEvent e) {

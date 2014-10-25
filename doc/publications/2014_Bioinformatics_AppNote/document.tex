@@ -207,8 +207,9 @@ The content of models can be summarized in a comprehensive human-readable PDF re
 \begin{methods}
 \section{Implementation}
 SBMLsqueezer~2 is based on the data format SBML \citep{Hucka2004}.
-It is entirely implemented in Java\texttrademark{} and runs on every platform for which a JVM is available.
-\TODO{Reading and writing of SBML files is done with JSBML \citep{Draeger2011b}, which also acts as the internal data structure.}
+It is entirely implemented in Java\texttrademark{} and runs on every \textcolor{red}{platform for} which a JVM is available.
+%\textcolor{red}{Its internal data structure has lead to the development of the JSBML project \citep{Draeger2011b}.}
+Reading and writing of SBML files is done with JSBML \citep{Draeger2011b}, which also acts as the internal data structure.
 SBMLsqueezer~2 can also be launched using a libSBML \citep{Bornstein2008} back-end.
 The on-line program version is based on the command-line interface of the stand-alone tool, which is wrapped in a Galaxy \citep{Goecks2010} framework.
 For writing model reports, SBMLsqueezer~2 contains a development release of \SBMLLaTeX{} \citep{Draeger2009}.
@@ -217,7 +218,7 @@ The CellDesigner plug-in uses the communication interface between CellDesigner's
 Changes made by SBMLsqueezer~2 are synchronized with CellDesigner through a change listener interface.
 SBMLsqueezer~2 determines the type of reaction by interpreting SBO and MIRIAM annotations \citep{Courtot2011} of all components as well as the number and kind of reaction participants.
 Access to SABIO-RK \citep{Wittig2012} requires an active Internet connection and uses the RESTFUL API provided by SABIO-RK through a Java\texttrademark{} URL connection.
-For detailed description of the algorithms, see the Users' Guide.
+\textcolor{red}{For detailed description of the algorithms, see the Users' Guide.}
 %SBMLsqueezer~2 has been internationalized and comes with language packs for German and English, and partially Chinese.
 \end{methods}
 
@@ -245,7 +246,7 @@ The path2models project \citep{Buechel2013} has demonstrated the usefulness of a
 %Complex try-and-evaluate cycles, in which the most suitable rate law for a certain reaction needs to be identified in repeated simulation runs, also require such a method \citep{Draeger2011}.
 Based on SBMLsqueezer~2
 %this program, 
-complex try-and-evaluate cycles, in which the most suitable rate law for a certain reaction needs to be identified in repeated simulation runs \citep{Draeger2011}, now become possible.
+complex try-and-evaluate \textcolor{red}{cycles, in which the most suitable rate law for a certain reaction needs to be identified in repeated simulation runs \citep{Draeger2011},} now become possible.
 
 \vspace{-.2cm}
 \section*{Acknowledgments}

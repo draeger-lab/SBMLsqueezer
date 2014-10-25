@@ -94,7 +94,7 @@ Release date: July 31\textsuperscript{st} 2009.
 \begin{dinglist}{52}
 \itemcolor{blue}
 \item SBMLsqueezer now automatically checks for updates. If a newer version of
-SBMLsqueezer is available on-line, the user is notified by a message window in
+SBMLsqueezer is available online, the user is notified by a message window in
 the bottom right corner of the screen. Furthermore, the release notes of the
 most recent SBMLsqueezer version are shown to the user by clicking on \keys{show
 release notes}.
@@ -267,7 +267,7 @@ public static void main(String[] args) {
   squeezer.set(CfgKeys.KINETICS_OTHER_ENZYME_REACTIONS, ConvenienceKinetics.class.getName());
   try {
     // Create kinetic equations, parameters, units etc. and save the result
-    // args contains infile and outfile path
+    // args contains paths to input file and output file
     squeezer.squeeze(args[0], args[1]);
   } catch (Throwable e) {
     e.printStackTrace();
@@ -282,7 +282,7 @@ not require any local installation and is freely available at
 be created in which SBMLsqueezer can directly be linked to the full version of
 \SBMLLaTeX. The full version of \SBMLLaTeX contains many additional features
 that are not included in SBMLsqueezer's version of \SBMLLaTeX. Hence, it is
-highly recommended to make use of the on-line version of \SBMLLaTeX.
+highly recommended to make use of the online version of \SBMLLaTeX.
 
 
 \subsubsection{Configuration}
@@ -444,7 +444,7 @@ are distinct reactions that can be, e.g., modeled using a mass action rate law.
 Hence, no degradation terms can be found in gene-regulation kinetics anymore.
 
 \item The rate law corresponding to
-\href{identifiers.org/biomodels.sbo/SBO:0000266}{SBO:0000266} was not correct.
+\href{identifiers.org/biomodels.sbo/SBO:0000266}{\texttt{SBO:0000266}} was not correct.
 Earlier versions of SBMLsqueezer produced the fraction $K_{\mathrm{M}js}/K_{\mathrm{ib}j}\cdot I$, but
 correct is $S\cdot\nicefrac{I}{K_{\mathrm{ib}j}}$ (see Equation 10 in the supplementary material ``Kinetic
 Laws''; the correct version of this equation can be found at
@@ -459,11 +459,12 @@ was called $k_\mathrm{cat}$.
 
 \section{Version 2.0}
 
-Many concepts that have been introduced with version~1.3 have been revised and
-updated. The entire handling of user settings has been massively changed and now
-uses the concept of user preferences instead of configuration files. The source
-code has been cleaned and re-factored in many positions and lots of development
-time has been invested into with the library \JSBML.
+Release date: June 30\textsuperscript{th} 2014.
+
+Many concepts that have been introduced with version~1.3 have been revised and updated. The
+entire handling of user settings has been massively changed and now uses the concept of user
+preferences instead of configuration files. The source code has been cleaned and re-factored in
+many positions and lots of development time has been invested into with the library \JSBML.
 
 \subsection{New features}
 
@@ -551,3 +552,11 @@ correct. Please note that in this version the general unit handling has been
 extensively revised and improved and is in the vast majority of cases very
 reliable. SBMLsqueezer displays the derived units of equations, so that
 problematic equations can be easily identified.
+
+\section{Version 2.0.1}
+
+Release date: October 24\textsuperscript{th} 2014.
+
+This release has become necessary due to major changes in the \Garuda backend and also includes an updated version of \JSBML.
+
+

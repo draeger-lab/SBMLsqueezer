@@ -1,3 +1,4 @@
+\NeedsTeXFormat{LaTeX2e}
 \ProvidesPackage{UT}
 
 \RequirePackage{ifthen}
@@ -202,4 +203,14 @@ listOfProducts, listOfParameters, listOfModifiers, modifierSpeciesReference,
 \node[anchor=south west,inner sep=0] (image) at (0,0) {\includegraphics[#1]{#2}};
 \drawshadow{image}
 \end{tikzpicture}}
+
+
+%\makeatletter
+%\AtBeginDocument{
+%  \hypersetup{
+%    pdftitle = {\@title},
+%    pdfauthor = {\@author}
+%  }
+%}
+%\makeatother
 

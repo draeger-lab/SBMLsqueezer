@@ -34,6 +34,8 @@
 \usepackage{array}   %stellt den Befehl \newcolumntype bereit
 \usepackage[version=3]{mhchem}
 %\usepackage[utf8]{inputenc} %unicode support
+\usepackage[inline]{enumitem}
+\usepackage[caption=false,labelsep=space]{subfig}
 
 \usepackage[font=small,totoc]{idxlayout}
 
@@ -46,6 +48,7 @@
 \Crefname{lstlisting}{Listing}{Listings}
 
 \hypersetup{
+  backref,
 %  bookmarks={true},
   bookmarksopen={true},
   bookmarksopenlevel={0},
@@ -53,8 +56,8 @@
   breaklinks={true},
   colorlinks={false},
   pdfpagemode={UseOutlines},
-  pdftitle={SBMLsqueezer 2.0},
-  pdfauthor={Andreas Dr\"ager},
+  pdftitle={SBMLsqueezer 2: a context-based generator of kinetic equations for models in systems biology},
+  pdfauthor={{Andreas Dr\"ager} {Roland Keller} {Matthias Fall} {Johannes Eichner} {Bernhard \O.} {Andreas Zell}},
   pdfsubject={User's Guide},
 %  pdftex,
   pdffitwindow={true},
@@ -66,7 +69,7 @@
   plainpages={false},
   unicode={true},
   urlcolor={blue},
-  pdfkeywords={kinetics} {rate law} {enzyme kinetics} {SBML} {equation generation} {automatic} {generalized mass action} {gmak} {Michaelis-Menten} {convenience kinetics} {SBMLsqueezer}
+  pdfkeywords={{kinetics} {rate law} {enzyme kinetics} {SBML} {equation generation} {automatic} {generalized mass action} {gene-regulatory networks} {Michaelis-Menten} {convenience kinetics} {modular rate laws} {units} {SBMLsqueezer}}
 }
 
 \graphicspath{{../../snapshot/}{../../../resources/org/sbml/squeezer/resources/img/}{img/}{img/SABIO-RK/}{img/icons/}}
@@ -108,10 +111,10 @@ $^2$Center for Bioinformatics Tuebingen (ZBIT), University of Tuebingen, T\"ubin
     \tableofcontents
     \section*{Figures}%
     \@starttoc{lof}%
-    \smallskip %\bigskip
+    \bigskip
     \section*{Tables}%
     \@starttoc{lot}
-    \smallskip %\bigskip
+    \bigskip
     \section*{Listings}%
     \@starttoc{lol}
 }

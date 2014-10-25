@@ -66,6 +66,11 @@ PropertyChangeListener {
    */
   private static final long serialVersionUID = 3025182595373189918L;
   
+  /**
+   * @author Roland Keller
+   * @version $Rev$
+   * @since 2.0
+   */
   public enum SearchState {
     START, RESET
   }
@@ -134,9 +139,7 @@ PropertyChangeListener {
     
   }
   
-  /*
-   * (non-Javadoc)
-   * 
+  /* (non-Javadoc)
    * @see org.sbml.squeezer.sabiork.wizard.gui.Card#performBeforeShowing()
    */
   @Override
@@ -146,9 +149,7 @@ PropertyChangeListener {
     startSearch();
   }
   
-  /*
-   * (non-Javadoc)
-   * 
+  /* (non-Javadoc)
    * @see org.sbml.squeezer.sabiork.wizard.gui.Card#getPreviousCardID()
    */
   @Override
@@ -156,9 +157,7 @@ PropertyChangeListener {
     return CardID.SEARCH_A;
   }
   
-  /*
-   * (non-Javadoc)
-   * 
+  /* (non-Javadoc)
    * @see org.sbml.squeezer.sabiork.wizard.gui.Card#getNextCardID()
    */
   @Override
@@ -218,25 +217,18 @@ PropertyChangeListener {
     setSearchState(SearchState.START);
     search = new Search(searchTermsQuery, filterOptionsQuery);
     search.addPropertyChangeListener(this);
-    search.start();
+    search.execute();
   }
   
-  /*
-   * (non-Javadoc)
-   * 
-   * @see
-   * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+  /* (non-Javadoc)
+   * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
    */
   @Override
   public void actionPerformed(ActionEvent e) {
   }
   
-  /*
-   * (non-Javadoc)
-   * 
-   * @see
-   * java.beans.PropertyChangeListener#propertyChange(java.beans.PropertyChangeEvent
-   * )
+  /* (non-Javadoc)
+   * @see java.beans.PropertyChangeListener#propertyChange(java.beans.PropertyChangeEvent)
    */
   @Override
   public void propertyChange(PropertyChangeEvent e) {
@@ -253,9 +245,7 @@ PropertyChangeListener {
     }
   }
   
-  /*
-   * (non-Javadoc)
-   * 
+  /* (non-Javadoc)
    * @see org.sbml.squeezer.sabiork.wizard.gui.Card#performAfterPressingBack()
    */
   @Override
@@ -265,9 +255,7 @@ PropertyChangeListener {
     search.cancel();
   }
   
-  /*
-   * (non-Javadoc)
-   * 
+  /* (non-Javadoc)
    * @see org.sbml.squeezer.sabiork.wizard.gui.Card#performAfterCancel()
    */
   @Override
@@ -304,13 +292,6 @@ PropertyChangeListener {
     }
     
     /**
-     * Starts this search.
-     */
-    public void start() {
-      execute();
-    }
-    
-    /**
      * Cancels this search.
      */
     public void cancel() {
@@ -337,9 +318,20 @@ PropertyChangeListener {
             query.append(" AND " + searchTermsQuery);
           }
           query.append(filterOptionsQuery);
-          List<KineticLaw> kineticLaws = new ArrayList<KineticLaw>();
           try {
-            kineticLaws = SABIORK.getKineticLaws(query.toString());
+        	List<KineticLaw> kineticLaws = SABIORK.getKineticLaws(query.toString());
+            for (KineticLaw kineticLaw : kineticLaws) {
+              if (kineticLaw != null) {
+                KineticLawImporter kineticLawImporter = new KineticLawImporter(
+                  kineticLaw, selectedReaction);
+                totalKineticLawImporters.add(kineticLawImporter);
+                if (kineticLawImporter.isImportableKineticLaw()) {
+                  possibleKineticLawImporters.add(kineticLawImporter);
+                } else {
+                  impossibleKineticLawImporters.add(kineticLawImporter);
+                }
+              }
+            }
           } catch (WebServiceConnectException e) {
             JDialogWizard.showErrorDialog(e);
             e.printStackTrace();
@@ -351,25 +343,12 @@ PropertyChangeListener {
           } catch (XMLStreamException e) {
             e.printStackTrace();
           }
-          for (KineticLaw kineticLaw : kineticLaws) {
-            if (kineticLaw != null) {
-              KineticLawImporter kineticLawImporter = new KineticLawImporter(
-                kineticLaw, selectedReaction);
-              totalKineticLawImporters.add(kineticLawImporter);
-              if (kineticLawImporter.isImportableKineticLaw()) {
-                possibleKineticLawImporters.add(kineticLawImporter);
-              } else {
-                impossibleKineticLawImporters.add(kineticLawImporter);
-              }
-            }
-          }
         }
         if (!isCancelled()) {
           publish(tableResultsModel.createSearchAResult(selectedReaction,
             possibleKineticLawImporters, impossibleKineticLawImporters,
             totalKineticLawImporters));
-          setProgress(Math.round(Float.valueOf(i + 1) / selectedReactionCount
-            * 100));
+          setProgress(Math.round((i + 1f) / selectedReactionCount * 100f));
         } else {
           break;
         }
@@ -377,9 +356,7 @@ PropertyChangeListener {
       return null;
     }
     
-    /*
-     * (non-Javadoc)
-     * 
+    /* (non-Javadoc)
      * @see javax.swing.SwingWorker#process(java.util.List)
      */
     @Override
@@ -393,9 +370,7 @@ PropertyChangeListener {
       }
     }
     
-    /*
-     * (non-Javadoc)
-     * 
+    /* (non-Javadoc)
      * @see javax.swing.SwingWorker#done()
      */
     @Override
@@ -413,4 +388,5 @@ PropertyChangeListener {
     }
     
   }
+  
 }

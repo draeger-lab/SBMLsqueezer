@@ -1,10 +1,10 @@
 headings_flag 1
-%heading_prefix "\\textbf{"
-%heading_suffix "}\n"
+%heading_prefix "\\begin{center}\\textbf{"
+%heading_suffix "}\\end{center}\n"
 %
-%delim_0 "\\dotfill"
-%delim_1 "\\dotfill"
-%delim_2 "\\dotfill"
+delim_0 "\\dotfill"
+delim_1 "\\dotfill"
+delim_2 "\\dotfill"
 
 headings_flag 1
 heading_prefix "{\\bfseries\\large "
