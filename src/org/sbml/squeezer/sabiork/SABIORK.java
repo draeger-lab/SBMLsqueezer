@@ -66,7 +66,6 @@ public class SABIORK {
    * @since 2.0
    */
   public enum QueryField {
-    
     ENTRY_ID("EntryID"),
     PATHWAY("Pathway"),
     KEGG_REACTION_ID("KeggReactionID"),
@@ -646,16 +645,16 @@ public class SABIORK {
       hasKineticData = true;
     }
     if (lowerpHValue == null) {
-      lowerpHValue = 0.0;
+      lowerpHValue = 0d;
     }
     if (upperpHValue == null) {
-      upperpHValue = 14.0;
+      upperpHValue = 14d;
     }
     if (lowerTemperature == null) {
-      lowerTemperature = -10.0;
+      lowerTemperature = -10d;
     }
     if (upperTemperature == null) {
-      upperTemperature = 115.0;
+      upperTemperature = 115d;
     }
     if (isDirectSubmission == null) {
       isDirectSubmission = true;
