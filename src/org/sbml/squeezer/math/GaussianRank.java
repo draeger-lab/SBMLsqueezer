@@ -59,7 +59,7 @@ public class GaussianRank {
   /**
    * Initialize this object with the given matrix. This will also compute the
    * column rank and store it in an according field. The rank can be obtained
-   * by invoking the method {@see getColumnRank}.
+   * by invoking the method {@link #getColumnRank}.
    * 
    * @param matrix
    *            This double matrix has to have an equal number of columns for

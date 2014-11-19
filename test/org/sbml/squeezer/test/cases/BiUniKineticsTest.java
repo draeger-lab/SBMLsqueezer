@@ -53,9 +53,8 @@ public class BiUniKineticsTest extends KineticsTest {
    */
   private Reaction r1, r2;
   
-  /**
-   * Initialization of a model and basic reactions for this test class.
-   * @throws Throwable
+  /* (non-Javadoc)
+   * @see org.sbml.squeezer.test.cases.KineticsTest#initModel()
    */
   @Override
   protected Model initModel() {
@@ -169,7 +168,7 @@ public class BiUniKineticsTest extends KineticsTest {
   }
   
   /**
-   * Test for the {@link ForeDependentModularRateLaw} for A + B <=> C
+   * Test for the {@link ForceDependentModularRateLaw} for A + B <=> C
    * @throws Throwable
    */
   @Test
@@ -306,7 +305,7 @@ public class BiUniKineticsTest extends KineticsTest {
   }
   
   /**
-   * Test for the {@link ForeDependentModularRateLaw} for 2A -> C
+   * Test for the {@link ForceDependentModularRateLaw} for 2A -> C
    * @throws Throwable
    */
   @Test

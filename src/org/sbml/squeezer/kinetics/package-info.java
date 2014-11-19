@@ -25,7 +25,7 @@
 /**
  * This package contains one class for each supported kinetic law. There are
  * also specialized exceptions for cases, in which a kinetic law cannot be
- * applied to a certain reaction. This package also contains the {@see
+ * applied to a certain reaction. This package also contains the {@link
  * org.sbml.squeezer.KineticLawGenerator}, which assigns kinetic laws to
  * reactions within a model.
  * 

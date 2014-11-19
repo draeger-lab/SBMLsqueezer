@@ -494,9 +494,13 @@ public class ReactionType {
   }
   
   /**
-   * identify which Modifer is used
+   * Identify which Modifier is used.
    * 
-   * @param reactionNum
+   * @param reaction
+   * @param enzymes
+   * @param activators
+   * @param inhibitors
+   * @param nonEnzymeCatalysts
    */
   public static final void identifyModifers(Reaction reaction,
     List<String> enzymes, List<String> activators,
@@ -572,7 +576,7 @@ public class ReactionType {
    * 
    * Analyze properties of the reaction: compute stoichiometric properties.
    * 
-   * @param r
+   * @param reaction
    */
   public static double reactantOrder(Reaction reaction) {
     double stoichiometryLeft = 0d;
@@ -943,7 +947,6 @@ public class ReactionType {
    * @return Returns a sorted array of possible kinetic equations for the
    *         given reaction in the model (the names of the implementing
    *         classes).
-   * @throws RateLawNotApplicableException
    */
   public Class<?>[] identifyPossibleKineticLaws() {
     Set<Class> types = new HashSet<Class>();
@@ -1102,10 +1105,9 @@ public class ReactionType {
   
   /**
    * Returns true only if this reaction should be considered enzyme-catalyzed
-   * (independend of any settings, based on the SBO annotation of the current
+   * (independent of any settings, based on the SBO annotation of the current
    * model).
    * 
-   * @param reaction
    * @return
    */
   public boolean isEnzymeReaction() {
@@ -1130,7 +1132,6 @@ public class ReactionType {
    * Returns true only if given the current settings this reaction cannot be
    * considered enzyme-catalyzed.
    * 
-   * @param reaction
    * @return
    */
   public boolean isNonEnzymeReaction() {

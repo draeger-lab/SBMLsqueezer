@@ -419,7 +419,6 @@ InterfaceIrreversibleKinetics, InterfaceModulatedKinetics {
    * Returns the product of either all the activation or inhibition terms of a
    * reaction.
    * 
-   * @param reactionID
    * @param modifiers
    * @param type
    *            ACTIVATION or INHIBITION

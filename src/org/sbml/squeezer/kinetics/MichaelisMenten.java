@@ -226,20 +226,18 @@ InterfaceIrreversibleKinetics, InterfaceModulatedKinetics {
   }
   
   /**
-   * * Inhibition
+   * Inhibition
    * 
    * @param modInhib
    *            A list containing the ids of all inhibitors of this reaction
    * @param reaction
    *            The reaction for which a kinetic equation is to be created
-   * @param modE
-   *            A list containing the ids of all enzymes of this reaction
    * @param denominator
    *            The denominator of this kinetic equation created so far.
    * @param mr
    *            Michaelis constant of the substrate
-   * @param enzymeNum
-   *            Current index of the enzyme in the list of enzyme ids
+   * @param enzyme
+   *            Current enzyme in the list of enzyme ids
    * @return
    */
   private ASTNode createInihibitionTerms(List<String> modInhib,

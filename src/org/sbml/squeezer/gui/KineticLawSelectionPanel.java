@@ -128,7 +128,6 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
    * 
    * @param reaction
    * @param possibleLaws
-   * @param settings
    * @param selected
    * @throws RateLawNotApplicableException
    */
@@ -173,8 +172,8 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
   private static final transient Logger logger = Logger.getLogger(KineticLawSelectionPanel.class.getName());
   
   /**
-   * @param plugin
-   * @param model
+   * 
+   * @param klg
    * @param reaction
    * @throws Throwable
    */
@@ -559,8 +558,7 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
    * ordering of all other elements so the order is the same as in the simple
    * names array.
    * 
-   * @param laws
-   * @param typeNames
+   * @param classes
    * @param simpleNames
    * @param toolTips
    * @param laTeX
@@ -594,7 +592,6 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
   
   /**
    * 
-   * @param i
    * @throws RateLawNotApplicableException
    */
   private void updateView() throws RateLawNotApplicableException {

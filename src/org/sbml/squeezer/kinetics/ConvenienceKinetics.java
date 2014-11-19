@@ -50,7 +50,7 @@ import de.zbit.util.ResourceManager;
  * <p>
  * This is the thermodynamically independent form of the convenience kinetics.
  * In cases that the stochiometric matrix has full column rank the less
- * complicated {@link Convenience} can bee invoked.
+ * complicated {@link ConvenienceKinetics} can bee invoked.
  * </p>
  * <p>
  * Creates the Convenience kinetic's thermodynamically independent form. This
@@ -275,7 +275,7 @@ InterfaceIrreversibleKinetics, InterfaceModulatedKinetics {
    * form the species' factor in the product. The method is applicable for
    * both forward and backward reactions.
    * 
-   * @param reaction
+   * @param enzyme
    * @param forward
    *            true means forward, false backward.
    * @return

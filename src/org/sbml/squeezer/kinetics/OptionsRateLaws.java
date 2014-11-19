@@ -102,7 +102,7 @@ public interface OptionsRateLaws extends KeyProvider {
    * reactions that are identified to belong to gene-regulatory processes,
    * such as transcription or translation. The value is the class name of any
    * class that implements the
-   * {@link org.sbml.squeezer.kinetics.InterfaceGeneRegulatoryNetworks}.
+   * {@link InterfaceGeneRegulatoryKinetics}.
    */
   @SuppressWarnings("rawtypes")
   public static final Option<Class> KINETICS_GENE_REGULATION = new Option<Class>(

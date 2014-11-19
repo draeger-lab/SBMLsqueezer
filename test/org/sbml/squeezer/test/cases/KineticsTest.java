@@ -143,7 +143,8 @@ public abstract class KineticsTest {
   
   /**
    * 
-   * @param math
+   * @param formula
+   * @param reaction
    */
   private void showTestDialog(String formula, Reaction reaction) {
     JDialog d = new JDialog();
@@ -189,7 +190,8 @@ public abstract class KineticsTest {
   
   /**
    * 
-   * @param reaction
+   * @param rId
+   * @param math
    * @return
    */
   private String createEqnPreview(String rId, ASTNode math) {

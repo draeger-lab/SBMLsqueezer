@@ -504,8 +504,6 @@ public class SubmodelController {
   
   /**
    * Stores all units created in the mini model in the original model.
-   * 
-   * @param l
    */
   public void storeUnits() {
     for (UnitDefinition ud : submodel.getListOfUnitDefinitions()) {
@@ -707,7 +705,6 @@ public class SubmodelController {
    * 
    * @param kineticLaw
    * @param removeParametersAndStoreUnits
-   * @param l
    * @return
    */
   public Reaction storeKineticLaw(KineticLaw kineticLaw,
@@ -869,7 +866,7 @@ public class SubmodelController {
    * be unnecessary if and only if no kinetic law, no event assignment, no
    * rule and no function makes use of this parameter.
    * 
-   * @param selectedModel
+   * @param model
    */
   @SuppressWarnings("deprecation")
   private void removeUnnecessaryParameters(Model model) {
@@ -1039,7 +1036,7 @@ public class SubmodelController {
    * Sets the boundary condition of all species referenced by the list of
    * {@link SpeciesReference}s.
    * 
-   * @param numReactants
+   * @param listOf
    * @param setBoundary
    */
   private void setBoundaryCondition(ListOf<SpeciesReference> listOf,
@@ -1097,7 +1094,7 @@ public class SubmodelController {
    * 
    * @param species
    * @param initialValue
-   * @param compartmentInstance
+   * @param compartment
    * @param sizeValue
    */
   private void initializeSpeciesAndCompartmentIfNecessary(Species species,

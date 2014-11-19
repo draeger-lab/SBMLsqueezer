@@ -41,14 +41,12 @@ import de.zbit.util.prefs.SBPreferences;
 public class JPanelFilterOptions extends PreferencesPanelForKeyProvider{
   
   /**
-   * @param provider
    * @throws IOException
    */
   public JPanelFilterOptions()
       throws IOException {
     super(SABIORKPreferences.class);
   }
-  
   
   /**
    * Generated serial version identifier.

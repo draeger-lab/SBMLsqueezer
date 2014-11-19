@@ -30,6 +30,7 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -40,11 +41,12 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
+
+import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.util.ValuePair;
+import org.sbml.squeezer.sabiork.SABIORK;
 import org.sbml.squeezer.sabiork.wizard.gui.JDialogWizard.ButtonState;
 import org.sbml.squeezer.sabiork.wizard.gui.JDialogWizard.CardID;
-
-import org.sbml.squeezer.sabiork.SABIORK;
 import org.sbml.squeezer.sabiork.wizard.model.WizardModel;
 import org.sbml.squeezer.sabiork.wizard.model.WizardProperties;
 

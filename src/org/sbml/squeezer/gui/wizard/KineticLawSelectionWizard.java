@@ -72,7 +72,6 @@ public class KineticLawSelectionWizard extends Wizard {
    * 
    * @param owner
    * @param sbmlIO
-   * @param reactionID
    */
   public KineticLawSelectionWizard(Frame owner, SBMLio<?> sbmlIO) {
     super(owner);

@@ -285,12 +285,10 @@ public class KineticLawImporter {
   }
   
   /**
-   * Returns {@code true} if both {@link Compartment} can be considered a
-   * match.
-   * 
    * @param compartment1
    * @param compartment2
-   * @return
+   * @return {@code true} if both {@link Compartment} can be considered a
+   * match.
    */
   private boolean isMatch(Compartment compartment1, Compartment compartment2) {
     return (hasCommonCVTermResource(Qualifier.BQB_IS, compartment1,
@@ -298,12 +296,9 @@ public class KineticLawImporter {
   }
   
   /**
-   * Returns {@code true} if both {@link Reaction} can be considered a
-   * match.
-   * 
-   * @param compartment1
-   * @param compartment2
-   * @return
+   * @param reaction1
+   * @param reaction2
+   * @return {@code true} if both {@link Reaction} can be considered a match.
    */
   private boolean isMatch(Reaction reaction1, Reaction reaction2) {
     return hasCommonCVTermResource(Qualifier.BQB_IS, reaction1,
@@ -311,12 +306,9 @@ public class KineticLawImporter {
   }
   
   /**
-   * Returns {@code true} if both {@link Species} can be considered a
-   * match.
-   * 
-   * @param compartment1
-   * @param compartment2
-   * @return
+   * @param species1
+   * @param species2
+   * @return {@code true} if both {@link Species} can be considered a match.
    */
   private boolean isMatch(Species species1, Species species2) {
     return (hasCommonCVTermResource(Qualifier.BQB_IS, species1,
@@ -327,12 +319,10 @@ public class KineticLawImporter {
   }
   
   /**
-   * Returns {@code true} if both {@link SpeciesReference} can be
-   * considered a match.
-   * 
-   * @param compartment1
-   * @param compartment2
-   * @return
+   * @param speciesReference1
+   * @param speciesReference2
+   * @return {@code true} if both {@link SpeciesReference} can be considered a
+   * match.
    */
   private boolean isMatch(SpeciesReference speciesReference1,
     SpeciesReference speciesReference2) {

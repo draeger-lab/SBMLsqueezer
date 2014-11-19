@@ -101,8 +101,6 @@ public class JComboBoxSearchField extends JComboBox implements KeyListener {
   
   /**
    * Sets the text of the search field.
-   * 
-   * @return
    */
   public void setText(String text) {
     textFieldSearch.setText(text);
@@ -110,23 +108,19 @@ public class JComboBoxSearchField extends JComboBox implements KeyListener {
   
   /**
    * Sets the selected SABIO-RK query field for suggestions.
-   * 
-   * @return
    */
   public void setSuggestionQueryField(SABIORK.QueryField suggestionQueryField) {
     this.suggestionQueryField = suggestionQueryField;
   }
   
-  /*
-   * (non-Javadoc)
+  /* (non-Javadoc)
    * @see java.awt.event.KeyListener#keyPressed(java.awt.event.KeyEvent)
    */
   @Override
   public void keyPressed(KeyEvent e) {
   }
   
-  /*
-   * (non-Javadoc)
+  /* (non-Javadoc)
    * @see java.awt.event.KeyListener#keyReleased(java.awt.event.KeyEvent)
    */
   @Override
@@ -155,8 +149,7 @@ public class JComboBoxSearchField extends JComboBox implements KeyListener {
     }
   }
   
-  /*
-   * (non-Javadoc)
+  /* (non-Javadoc)
    * @see java.awt.event.KeyListener#keyTyped(java.awt.event.KeyEvent)
    */
   @Override
@@ -202,8 +195,7 @@ public class JComboBoxSearchField extends JComboBox implements KeyListener {
       cancel(true);
     }
     
-    /*
-     * (non-Javadoc)
+    /* (non-Javadoc)
      * @see javax.swing.SwingWorker#doInBackground()
      */
     @Override
@@ -225,8 +217,7 @@ public class JComboBoxSearchField extends JComboBox implements KeyListener {
       return suggestions;
     }
     
-    /*
-     * (non-Javadoc)
+    /* (non-Javadoc)
      * @see javax.swing.SwingWorker#done()
      */
     @Override

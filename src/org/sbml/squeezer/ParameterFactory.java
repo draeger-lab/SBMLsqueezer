@@ -142,7 +142,7 @@ public class ParameterFactory {
   }
   
   /**
-   * Equvivalent to {@see createOrGetParameter} but the parts of the id can be
+   * Equivalent to {@link #createOrGetParameter} but the parts of the id can be
    * given separately to this method and are concatenated.
    * 
    * @param idParts
@@ -297,8 +297,8 @@ public class ParameterFactory {
     }
     if (!p.isSetUnits()) {
       p.setUnits(unitFactory.unitSubstancePerTime(
-    	      model.getSubstanceUnitsInstance(),
-    	      model.getTimeUnitsInstance()));
+        model.getSubstanceUnitsInstance(),
+        model.getTimeUnitsInstance()));
     }
     if (!p.isSetName()) {
       p.setName(MESSAGES.getString("FOR_ADDITIVE_MODEL")
@@ -341,7 +341,7 @@ public class ParameterFactory {
   
   /**
    * 
-   * @param r
+   * @param kl
    * @return
    */
   public ASTNode parameterCStandard(KineticLaw kl) {
@@ -410,7 +410,7 @@ public class ParameterFactory {
       keq.setName(MessageFormat.format(MESSAGES.getString("EQUILIBRIUM_CONSTANT_OF_REACTION"), SBMLtools.getName(r)));
     }
     if (!keq.isSetUnits()) {
-      double stoichDiff = 0d;
+      //double stoichDiff = 0d;
       UnitDefinition udReac = null;
       if (r.isSetListOfReactants()) {
         for (SpeciesReference specRef : r.getListOfReactants()) {
@@ -420,7 +420,7 @@ public class ParameterFactory {
             if (specUd != null) {
               specUd = specUd.clone();
               if (specRef.isSetStoichiometry() || ((specRef.getLevel() < 3) && !specRef.isSetStoichiometryMath())) {
-                stoichDiff += specRef.getStoichiometry();
+                //stoichDiff += specRef.getStoichiometry();
                 specUd.raiseByThePowerOf(specRef.getStoichiometry());
               }
               Compartment compartment = spec.getCompartmentInstance();
@@ -447,7 +447,7 @@ public class ParameterFactory {
             if (specUd != null) {
               specUd = specUd.clone();
               if (specRef.isSetStoichiometry() || ((specRef.getLevel() < 3) && !specRef.isSetStoichiometryMath())) {
-                stoichDiff -= specRef.getStoichiometry();
+                //stoichDiff -= specRef.getStoichiometry();
                 specUd.raiseByThePowerOf(specRef.getStoichiometry());
               }
               Compartment compartment = spec.getCompartmentInstance();
@@ -1256,7 +1256,6 @@ public class ParameterFactory {
   /**
    * For space restricted reactions.
    * 
-   * @param object
    * @return
    */
   public LocalParameter parameterTimeOrder() {
@@ -1280,7 +1279,7 @@ public class ParameterFactory {
    * For the additive Model: weight parameter
    * 
    * @param name
-   * @param rid
+   * @param rId
    * @return weight for the weight matrix
    */
   public LocalParameter parameterV(String name, String rId) {
@@ -1351,7 +1350,7 @@ public class ParameterFactory {
    * For the additive Model: weight parameter
    * 
    * @param name
-   * @param rid
+   * @param rId
    * @return weight for the weight matrix
    */
   @SuppressWarnings("deprecation")

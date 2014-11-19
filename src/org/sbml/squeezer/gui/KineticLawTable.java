@@ -153,8 +153,8 @@ public class KineticLawTable extends JTable implements MouseInputListener {
    * TODO
    * 
    * @param klg
-   * @param maxEducts
-   * @param reversibility
+   * @param progressBar
+   * @param listener
    */
   public KineticLawTable(KineticLawGenerator klg, AbstractProgressBar progressBar, PropertyChangeListener listener) {
     super();
@@ -458,10 +458,8 @@ public class KineticLawTable extends JTable implements MouseInputListener {
   
   /**
    * 
+   * @param kineticLaw
    * @param rowIndex
-   * @param possibleTypes
-   * @param selectedKinetic
-   * @param possibleLaws
    */
   private void updateTable(KineticLaw kineticLaw, int rowIndex) {
     // Reaction Identifier, Kinetic Law, SBO, #Reactants,

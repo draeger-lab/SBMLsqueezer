@@ -81,10 +81,10 @@ public class UnitFactory {
     for (int i = unitdef.getUnitCount() - 1; i >= 0; i--) {
       Unit u = unitdef.getUnit(i);
       if (u.isDimensionless()) {
-    	u.removeScale();
-    	if (!u.isSetMultiplier() || (u.getMultiplier() == 1d)) {
+        u.removeScale();
+        if (!u.isSetMultiplier() || (u.getMultiplier() == 1d)) {
           unitdef.removeUnit(i);
-    	}
+        }
       }
     }
     UnitDefinition ud = model.findIdentical(unitdef);
@@ -250,7 +250,7 @@ public class UnitFactory {
    * @param scale
    * @return
    */
-  private static String exponent(int scale) {
+  public static String exponent(int scale) {
     StringBuffer sb = new StringBuffer();
     for (char num : Integer.toString(scale).toCharArray()) {
       switch (num) {
@@ -310,7 +310,7 @@ public class UnitFactory {
   
   /**
    * 
-   * @param lou
+   * @param ud
    * @param doc
    */
   private static void updateAnnotation(UnitDefinition ud, SBMLDocument doc) {
@@ -367,9 +367,7 @@ public class UnitFactory {
   
   /**
    * 
-   * @param specRef
-   * @param zerothOrder
-   * @param x
+   * @param species
    * @return
    */
   @SuppressWarnings("deprecation")
