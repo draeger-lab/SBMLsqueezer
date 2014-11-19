@@ -50,7 +50,6 @@ public interface SABIORKPreferences extends KeyProvider {
   /**
    * Helper variable that contains the
    * {@link Range} of possible pH values.
-   * @return
    */
   public static final Range<Double> PH_RANGE = new Range<Double>(Double.class, "{[0,14]}");
   

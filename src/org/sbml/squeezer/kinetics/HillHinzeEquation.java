@@ -149,7 +149,6 @@ InterfaceZeroReactants, InterfaceZeroProducts {
   /**
    * This method actually creates the Hill equation.
    * 
-   * @param reaction
    * @param modTActi
    * @param modTInhib
    * @return

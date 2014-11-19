@@ -341,7 +341,7 @@ public class SBMLsqueezer<T> extends Launcher {
    */
   @Override
   public String getVersionNumber() {
-    return "2.0.1";
+    return "2.0.2";
   }
   
   /* (non-Javadoc)
@@ -375,9 +375,8 @@ public class SBMLsqueezer<T> extends Launcher {
   /**
    * Does initialization for creating a SBMLsqueezer Object.
    * Checks if libSBML is available and initializes the Reader/Writer.
+   * 
    * @param tryLoadingLibSBML
-   * @param reader
-   * @param writer
    */
   private void initializeReaderAndWriter(boolean tryLoadingLibSBML) {
     if (tryLoadingLibSBML) {
@@ -734,7 +733,7 @@ public class SBMLsqueezer<T> extends Launcher {
   /**
    * Convenient method that writes a LaTeX file from the given SBML source.
    * 
-   * @param sbmlInfile
+   * @param sbmlSource
    * @param latexFile
    * @throws IOException
    * @throws SBMLException

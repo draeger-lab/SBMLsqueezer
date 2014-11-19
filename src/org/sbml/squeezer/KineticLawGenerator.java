@@ -728,12 +728,10 @@ public class KineticLawGenerator {
    * method weather the formula is for a reversible or for an irreversible
    * {@link Reaction} (in the user's {@link Preferences}). Afterwards all
    * parameters within this {@link KineticLaw} are also stored in the given
-   * {@link Model}. There is no need to call the
-   * {@link #storeParamters(Reaction)} method.
+   * {@link Model}.
    * 
    * @param kineticLaw
    *        A string with the formula to be assigned to the given reaction.
-   * @param l
    */
   public Reaction storeKineticLaw(KineticLaw kineticLaw) {
     if (progressBar != null) {

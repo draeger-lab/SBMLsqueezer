@@ -194,7 +194,7 @@ InterfaceModulatedKinetics {
   /**
    * The denominator of this kinetic law
    * 
-   * @param r
+   * @param enzyme
    * @return
    */
   ASTNode denominator(String enzyme) {
@@ -209,8 +209,6 @@ InterfaceModulatedKinetics {
    * Creates the summand for competitive inhibition in the denominator.
    * 
    * @param enzyme
-   * 
-   * @param r
    * @return
    */
   ASTNode specificModificationSummand(String enzyme) {
@@ -247,9 +245,6 @@ InterfaceModulatedKinetics {
    * Weg version of the numerator
    * 
    * @param enzyme
-   * 
-   * @param listOfReactants
-   * @param listOfProducts
    * @return
    */
   private ASTNode weg(String enzyme) {
@@ -334,9 +329,6 @@ InterfaceModulatedKinetics {
    * Hal version of the numerator
    * 
    * @param enzyme
-   * 
-   * @param listOfReactants
-   * @param listOfProducts
    * @return
    */
   private ASTNode hal(String enzyme) {
@@ -413,9 +405,6 @@ InterfaceModulatedKinetics {
    * Cat version of the numerator
    * 
    * @param enzyme
-   * 
-   * @param listOfReactants
-   * @param listOfProducts
    * @return
    */
   private ASTNode cat(String enzyme) {

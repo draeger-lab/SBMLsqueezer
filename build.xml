@@ -42,7 +42,7 @@
     </tstamp>
   	
     <property name="Name" value="SBMLsqueezer"/>
-    <property name="version" value="2.0.1"/>
+    <property name="version" value="2.0.2"/>
     <property name="api.version" value="2.0 beta"/>
 
     <property name="year" value="${YEAR}"/>
@@ -447,10 +447,11 @@
       <link href="http://sbml.org/Software/libSBML/docs/java-api/"/>
       <link href="http://www.cogsys.cs.uni-tuebingen.de/software/SBML2LaTeX/doc/api/"/>
     	
-      <tag name="sbml.deprecated" description="Deprecated in SBML since:"/>
+      <tag name="date" scope="all" description="Date:"/>
+      <tag name="doc.note" description="Documentation note"/>
       <tag name="jsbml.note" description="Note"/>
       <tag name="jsbml.warning"/>
-      <tag name="doc.note" description="Documentation note"/>
+      <tag name="sbml.deprecated" description="Deprecated in SBML since:"/>
     
     </javadoc>
 
@@ -866,6 +867,7 @@
     <property name="sysbio.lib" value="${sysbio.dir}/lib"/>
     <path id="sysbio.classpath">
       <fileset dir="${sysbio.lib}" includes="**.jar, **/*.jar, **.zip"/>
+      <!--<fileset dir="/System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Classes/" includes="**.jar"/>-->
     </path>
     <path id="sysbio.sourcepath">
       <fileset dir="${sysbio.dir}/src"/>

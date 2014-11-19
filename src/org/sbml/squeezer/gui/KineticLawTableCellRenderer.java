@@ -53,9 +53,7 @@ public class KineticLawTableCellRenderer extends JTextArea implements TableCellR
   private static final long serialVersionUID = -7760600735675079594L;
   
   /**
-   * TODO: Comment is missing
    * 
-   * @param maxSpecies
    */
   public KineticLawTableCellRenderer() {
     super();

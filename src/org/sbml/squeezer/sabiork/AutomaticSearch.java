@@ -116,7 +116,7 @@ public class AutomaticSearch {
    * 
    * @param rootFolder
    * @param taxonomyFile
-   * @param outputResultFile
+   * @param outputFolder
    * @throws XMLStreamException
    * @throws IOException
    * @throws WebServiceConnectException

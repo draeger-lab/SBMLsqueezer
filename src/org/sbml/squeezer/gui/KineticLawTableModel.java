@@ -73,16 +73,9 @@ public class KineticLawTableModel extends AbstractTableModel {
   private int maxNumReactants;
   
   /**
-   * TODO: add comment
-   * @param progressBar
    * 
-   * @param maxEducts
-   * @param reactionNumAndKinetic
-   * @param reacNumOfNotExistKinetics
-   * @param reactionNumAndParameters
-   * @param idOfReaction
-   * @param reactionNumAndKineticBezeichnung
-   * @param model
+   * @param klg
+   * @param progressBar
    */
   public KineticLawTableModel(KineticLawGenerator klg, AbstractProgressBar progressBar) {
     int reactionNum;

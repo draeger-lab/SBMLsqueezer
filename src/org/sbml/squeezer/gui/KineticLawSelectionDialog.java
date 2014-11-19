@@ -84,7 +84,6 @@ public class KineticLawSelectionDialog extends JDialog {
    * Creates an empty dialog with the given settings and sbml io object.
    * 
    * @param owner
-   * @param progressListener
    */
   private KineticLawSelectionDialog(Frame owner) {
     super(owner, System.getProperty("app.name"), true);
@@ -98,8 +97,9 @@ public class KineticLawSelectionDialog extends JDialog {
    * This constructor is necessary for the GUI to generate just one single
    * rate equation for the given reaction.
    * 
+   * @param owner
    * @param sbmlIO
-   * @param reaction
+   * @param reactionID
    * @throws Throwable
    */
   public KineticLawSelectionDialog(Frame owner, SBMLio<?> sbmlIO, String reactionID) throws Throwable {

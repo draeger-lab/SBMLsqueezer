@@ -78,12 +78,9 @@ ComponentListener, PropertyChangeListener {
   
   /**
    * 
-   * @param kineticLawSelectionDialog
-   * @param settings
+   * @param dialog
    * @param sbmlIO
    * @param reactionID
-   * @param progressListener
-   * @throws Throwable
    */
   public KineticLawWindowAdapter(JDialog dialog, SBMLio<?> sbmlIO, String reactionID) {
     super();

@@ -215,7 +215,8 @@ public class ConnectToSABIORK {
   }
   
   /**
-   * @param kl
+   * @param node
+   * @param current
    * @return
    */
   public Set<CallableSBase> getAllSBasesToAdd(ASTNode node, Set<CallableSBase> current) {

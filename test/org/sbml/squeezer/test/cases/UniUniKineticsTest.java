@@ -55,10 +55,8 @@ public class UniUniKineticsTest extends KineticsTest {
    */
   private Reaction r1, r2, r3, r4;
   
-  /**
-   * Initialization of a model and basic reactions for this test class.
-   * It handles reactions of the form A (<)-> B.
-   * @throws Throwable
+  /* (non-Javadoc)
+   * @see org.sbml.squeezer.test.cases.KineticsTest#initModel()
    */
   @Override
   public Model initModel() {

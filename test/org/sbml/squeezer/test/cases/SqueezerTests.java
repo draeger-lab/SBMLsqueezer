@@ -25,7 +25,6 @@ package org.sbml.squeezer.test.cases;
 
 
 import java.io.File;
-import java.net.MalformedURLException;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -43,8 +42,8 @@ import org.sbml.jsbml.UnitDefinition;
 import org.sbml.jsbml.xml.libsbml.LibSBMLReader;
 import org.sbml.jsbml.xml.libsbml.LibSBMLWriter;
 import org.sbml.squeezer.KineticLawGenerator;
-import org.sbml.squeezer.SBMLsqueezer;
 import org.sbml.squeezer.OptionsGeneral;
+import org.sbml.squeezer.SBMLsqueezer;
 import org.sbml.squeezer.UnitFactory;
 import org.sbml.squeezer.io.SqSBMLReader;
 import org.sbml.squeezer.io.SqSBMLWriter;
@@ -414,7 +413,6 @@ public class SqueezerTests extends TestCase {
   
   /**
    * test if the program can be started with default settings
-   * @throws MalformedURLException
    */
   @Test
   public void testProgramStart() {

@@ -75,7 +75,7 @@ public class ModelDialog extends JDialog {
   
   /**
    * 
-   * @param miniModel
+   * @param model
    */
   public ModelDialog(Model model) {
     super();
@@ -85,7 +85,7 @@ public class ModelDialog extends JDialog {
   
   /**
    * 
-   * @param miniModel
+   * @param model
    */
   public ModelDialog(String title, Model model) {
     super();
@@ -97,7 +97,6 @@ public class ModelDialog extends JDialog {
   /**
    * 
    * @param model
-   * @param settings
    */
   private void init(Model model) {
     setDefaultCloseOperation(DISPOSE_ON_CLOSE);
