@@ -170,7 +170,7 @@ public class SqueezerTests extends TestCase {
     
     KineticLawGenerator klg = null;		// KineticLawGenerator for the current model
     
-    for(int i=0; i<listOfFiles.size(); i++) {
+    for (int i=0; i<listOfFiles.size(); i++) {
       failed = false;
       // try to extract models from files
       f = listOfFiles.get(i);
@@ -238,7 +238,7 @@ public class SqueezerTests extends TestCase {
         logger.info("\n----------------------------------------------\n"+
             "           KineticLawGenerator for reactions"+
             "\n----------------------------------------------");
-        for(Reaction reac : squeezer.getSBMLIO().getSelectedModel().getListOfReactions()) {
+        for (Reaction reac : squeezer.getSBMLIO().getSelectedModel().getListOfReactions()) {
           try {
             logger.info("\n                Reaction: "+reac.getId()+
                 "\n----------------------------------------------");
@@ -328,7 +328,7 @@ public class SqueezerTests extends TestCase {
           
           // reset units
           newModel.setListOfUnitDefinitions(newModel.getListOfUnitDefinitions());
-          for(UnitDefinition ud : currentModel.getListOfUnitDefinitions()) {
+          for (UnitDefinition ud : currentModel.getListOfUnitDefinitions()) {
             UnitFactory.checkUnitDefinitions(ud, newModel);
           }
           
@@ -378,7 +378,7 @@ public class SqueezerTests extends TestCase {
           "\n----------------------------------------------");
       System.out.println(c_failed + " failed test(s)");
       
-      for(int i=0; i<listOfFiles.size(); i++) {
+      for (int i=0; i<listOfFiles.size(); i++) {
         if (arrayOfTestStatus[i] != "passed") {
           System.out.println(listOfFiles.get(i).getName());
           System.out.println("   ->    " + arrayOfTestStatus[i]);
@@ -477,7 +477,7 @@ public class SqueezerTests extends TestCase {
     SBMLsqueezer<?> squeezer = new SBMLsqueezer(reader, writer);
     
     logger.info("test squeezer.");
-    for(File file : listOfFiles) {
+    for (File file : listOfFiles) {
       // test models
       try {
         logger.info("(squeeze file): " + file.getAbsolutePath());

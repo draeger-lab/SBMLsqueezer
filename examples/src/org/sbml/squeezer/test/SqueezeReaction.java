@@ -35,8 +35,6 @@ import org.sbml.squeezer.UnitConsistencyType;
 import org.sbml.squeezer.kinetics.ConvenienceKinetics;
 import org.sbml.squeezer.kinetics.TypeStandardVersion;
 
-import de.zbit.util.progressbar.ProgressBar;
-
 /**
  * @author Andreas Dr&auml;ger
  * @version $Rev$

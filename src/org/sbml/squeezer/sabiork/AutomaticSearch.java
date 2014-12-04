@@ -38,7 +38,6 @@ import java.util.logging.Logger;
 
 import javax.xml.stream.XMLStreamException;
 
-import org.biojava.bio.seq.io.ParseException;
 import org.sbml.jsbml.AbstractSBase;
 import org.sbml.jsbml.CVTerm;
 import org.sbml.jsbml.CVTerm.Qualifier;
@@ -100,11 +99,9 @@ public class AutomaticSearch {
    * @throws IOException
    * @throws WebServiceConnectException
    * @throws WebServiceResponseException
-   * @throws ParseException
    */
   public static void main(String[] args) throws XMLStreamException,
-  IOException, WebServiceConnectException, WebServiceResponseException,
-  ParseException {
+  IOException, WebServiceConnectException, WebServiceResponseException {
     org.apache.log4j.LogManager.getLogger(SBMLCoreParser.class).setLevel(org.apache.log4j.Level.OFF);
     org.apache.log4j.LogManager.getLogger(AbstractSBase.class).setLevel(org.apache.log4j.Level.OFF);
     automaticSearch(args[0], args[1], args[2]);
@@ -121,11 +118,9 @@ public class AutomaticSearch {
    * @throws IOException
    * @throws WebServiceConnectException
    * @throws WebServiceResponseException
-   * @throws ParseException
    */
   public static void automaticSearch(String rootFolder, String taxonomyFile, String outputFolder)
-      throws XMLStreamException, IOException, WebServiceConnectException,
-      WebServiceResponseException, ParseException {
+      throws XMLStreamException, IOException, WebServiceConnectException, WebServiceResponseException {
     int matched = 0;
     int noReactionID = 0;
     int matchingNotPossible = 0;

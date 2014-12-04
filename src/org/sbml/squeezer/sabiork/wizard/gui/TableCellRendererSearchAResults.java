@@ -25,15 +25,17 @@ package org.sbml.squeezer.sabiork.wizard.gui;
 
 import java.awt.Color;
 import java.awt.Component;
+
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableModel;
-import org.sbml.jsbml.Reaction;
 
-import org.sbml.squeezer.sabiork.wizard.console.SearchAResult;
+import org.sbml.jsbml.Reaction;
+import org.sbml.squeezer.sabiork.wizard.gui.TableModelSearchAResults.SearchAResult;
 import org.sbml.squeezer.sabiork.wizard.model.WizardProperties;
+
 import de.zbit.sbml.gui.ReactionPanel;
 
 /**

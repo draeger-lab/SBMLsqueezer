@@ -39,7 +39,6 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.prefs.Preferences;
 
 import org.sbml.jsbml.KineticLaw;
 import org.sbml.jsbml.Model;
@@ -726,7 +725,7 @@ public class KineticLawGenerator {
    * the currently selected {@link Model} given by the user. The
    * {@link KineticLaw} is passed to this method. A boolean variable tells this
    * method weather the formula is for a reversible or for an irreversible
-   * {@link Reaction} (in the user's {@link Preferences}). Afterwards all
+   * {@link Reaction} (in the user's {@link SBPreferences}). Afterwards all
    * parameters within this {@link KineticLaw} are also stored in the given
    * {@link Model}.
    * 
