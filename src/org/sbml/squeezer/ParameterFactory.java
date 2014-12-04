@@ -400,6 +400,7 @@ public class ParameterFactory {
    * @param r
    * @return A new or an existing equilibrium constant for the reaction.
    */
+  @SuppressWarnings("deprecation")
   public LocalParameter parameterEquilibriumConstant(Reaction r) {
     String reactionID = r.getId();
     LocalParameter keq = createOrGetParameter("keq_", reactionID);

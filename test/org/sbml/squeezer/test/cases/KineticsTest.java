@@ -210,7 +210,7 @@ public abstract class KineticsTest {
   }
   
   /**
-   * Do the complete test, incl. unit checking with the JUnit 4 {@link Assert}.assertEquals method
+   * Do the complete test, incl. unit checking with the JUnit 4 {@link Assert#assertEquals} method
    * @param kl
    * @param formula
    * @throws Throwable

@@ -80,6 +80,7 @@ InterfaceIrreversibleKinetics, InterfaceModulatedKinetics {
   /**
    * 
    */
+  @SuppressWarnings("deprecation")
   private void setSBOTerm() {
     Reaction r = getParentSBMLObject();
     SBMLtools.setSBOTerm(this, 12);

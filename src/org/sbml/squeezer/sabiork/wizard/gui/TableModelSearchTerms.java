@@ -243,7 +243,7 @@ public class TableModelSearchTerms extends AbstractTableModel {
     boolean pathwaySet = false;
     boolean tissueSet = false;
     
-    for(ValuePair<SABIORK.QueryField, String> vp: searchTerms) {
+    for (ValuePair<SABIORK.QueryField, String> vp: searchTerms) {
       if (vp.getL().equals(SABIORK.QueryField.CELLULAR_LOCATION)) {
         prefs.put(SABIORKOptions.CELLULAR_LOCATION, vp.getV());
         cellularLocationSet = true;

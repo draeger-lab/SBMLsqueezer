@@ -2480,7 +2480,7 @@ catalyst                   & \href{http://identifiers.org/biomodels.sbo/SBO:0000
 empty set                  & \href{http://identifiers.org/biomodels.sbo/SBO:0000291}{\texttt{SBO:0000291}}\\
 enzymatic catalyst         & \href{http://identifiers.org/biomodels.sbo/SBO:0000460}{\texttt{SBO:0000460}}\\
 \gene                      & \href{http://identifiers.org/biomodels.sbo/SBO:0000243}{\texttt{SBO:0000243}}\\
-{\gene}-coding region         & \href{http://identifiers.org/biomodels.sbo/SBO:0000335}{\texttt{SBO:0000335}}\\
+{\gene}-coding region      & \href{http://identifiers.org/biomodels.sbo/SBO:0000335}{\texttt{SBO:0000335}}\\
 generic                    & \href{http://identifiers.org/biomodels.sbo/SBO:0000252}{\texttt{SBO:0000252}}\\
 inhibition                 & \href{http://identifiers.org/biomodels.sbo/SBO:0000169}{\texttt{SBO:0000169}}\\
 inhibitor                  & \href{http://identifiers.org/biomodels.sbo/SBO:0000020}{\texttt{SBO:0000020}}\\
@@ -2567,6 +2567,8 @@ To this end, the program calculates the rank of the stoichiometric matrix using 
 This rank check is performed only once for the given model and only executed if at least one reaction exists, for which a convenience rate law is selected.
 Note that the algorithm calculates the rank for the full stoichiometric matrix and not just for the current submodel.
 This is crucial, because in many cases submodels would only contain one reaction, and thus the rank would be full.
+
+\section{Rate law creation}
 
 Applying a rate law to the reaction means that the algorithm has to construct an abstract syntax tree, which symbolically represents the kinetic equation for the reaction.
 To this end, the reaction needs to be analyzed again and all of its components need to be taken into account as relevant for the selected rate law (irreversible equations, for instance, tend to ignore effects of products).
@@ -2729,7 +2731,7 @@ Each distributed version of SBMLsqueezer should contain a copy of the
 \section{Included third-party libraries}
 SBMLsqueezer includes and re-distributes the following third-party software libraries.
 \begin{itemize}
-  \item \JSBML (1.0$\beta$1, revision 1697) including all of its third-party libraries, see \url{http://sbml.org/Software/JSBML}.
+  \item \JSBML (1.0$\beta$1, revision 2094 with CellDesigner module revision 1697) including all of its third-party libraries, see \url{http://sbml.org/Software/JSBML}.
   \item \JUnit (version 4.8, Eclipse Public License), see \url{http://junit.org/}.
   \item \SBMLLaTeX (build 20140410-1447, \GPL), see \url{http://sourceforge.net/projects/sbml2latex/} and \url{http://www.cogsys.cs.uni-tuebingen.de/software/SBML2LaTeX/}.
   \item \libSBML (version 5.9.0, \LGPL), see \url{http://sbml.org/Software/libSBML}.

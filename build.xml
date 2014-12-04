@@ -450,7 +450,7 @@
       <tag name="date" scope="all" description="Date:"/>
       <tag name="doc.note" description="Documentation note"/>
       <tag name="jsbml.note" description="Note"/>
-      <tag name="jsbml.warning"/>
+      <tag name="jsbml.warning" description="Warning"/>
       <tag name="sbml.deprecated" description="Deprecated in SBML since:"/>
     
     </javadoc>
@@ -589,13 +589,13 @@
   	
   	
     <echo message="Determining the revision number of JSBML"/>
-    <exec executable="svn" outputproperty="${jsbml.dir}/svninfo.xml">
-      <arg line="info --xml ${jsbml.dir}"/>
-    </exec>
-    <xmlproperty collapseAttributes="true">
-      <propertyresource name="${jsbml.dir}/svninfo.xml"/>
-    </xmlproperty>
-	<property name="jsbml.revision" value="${info.entry.revision}"/>
+  	<exec executable="svn" outputproperty="${jsbml.dir}/svninfo.xml">
+  	  <arg line="info --xml ${jsbml.dir}"/>
+  	</exec>
+  	<xmlproperty collapseAttributes="true">
+  	  <propertyresource name="${jsbml.dir}/svninfo.xml"/>
+  	</xmlproperty>
+    <property name="jsbml.revision" value="${info.entry.revision}"/>
 
     <echo message="Compiling the entire JSBML project for revision ${jsbml.revision}"/>
     <delete dir="${jsbml.dir}/bin"/>
@@ -624,7 +624,9 @@
   	>
   	  <!-- Source -->
   	  <src path="${jsbml.dir}/core/src"/>
+  	  <src path="${jsbml.dir}/extensions/arrays/src"/>
   	  <src path="${jsbml.dir}/extensions/comp/src"/>
+  	  <src path="${jsbml.dir}/extensions/dyn/src"/>
   	  <src path="${jsbml.dir}/extensions/fbc/src"/>
   	  <src path="${jsbml.dir}/extensions/groups/src"/>
   	  <src path="${jsbml.dir}/extensions/layout/src"/>
@@ -636,7 +638,9 @@
   	  <!--<src path="${jsbml.dir}/examples/test/src"/>-->
   	  <!-- Resources -->
       <src path="${jsbml.dir}/core/resources"/>
+  	  <src path="${jsbml.dir}/extensions/arrays/resources"/>
       <src path="${jsbml.dir}/extensions/comp/resources"/>
+  	  <src path="${jsbml.dir}/extensions/dyn/resources"/>
       <src path="${jsbml.dir}/extensions/fbc/resources"/>
       <src path="${jsbml.dir}/extensions/groups/resources"/>
       <src path="${jsbml.dir}/extensions/layout/resources"/>
@@ -773,10 +777,11 @@
       <fileset dir="${jsbml.dir}/extensions/spatial/resources" includes="**.txt, **/*.txt, **.xml, **/*.xml, **.properties, **/*.properties, **.cfg, **/*.cfg, **.obo, **/*.obo"/>
       <fileset dir="${jsbml.dir}/modules/celldesigner/resources" includes="**.txt, **/*.txt, **.xml, **/*.xml, **.properties, **/*.properties, **.cfg, **/*.cfg, **.obo, **/*.obo"/>
       <fileset dir="${jsbml.dir}/modules/libSBMLio/resources" includes="**.txt, **/*.txt, **.xml, **/*.xml, **.properties, **/*.properties, **.cfg, **/*.cfg, **.obo, **/*.obo"/>
+      
       <!-- 3rd party libraries -->
-      <zipfileset excludes="META-INF/**, **/package-info.class, **/package.html, **/*.java readme.txt LICENSE" src="${jsbml.dir}/core/lib/biojava-1.7-ontology.jar"/>
       <zipfileset excludes="META-INF/**, **/package-info.class, **/package.html, **/*.java" src="${jsbml.dir}/core/lib/jigsaw-dateParser.jar"/>
-      <zipfileset excludes="META-INF/**, **/package-info.class, **/package.html, **/*.java" src="${jsbml.dir}/core/lib/log4j-1.2.8.jar"/>
+      <zipfileset excludes="META-INF/**, **/package-info.class, **/package.html, **/*.java readme.txt LICENSE" src="${jsbml.dir}/core/lib/biojava3-ontology-3.1.0.jar"/>
+      <zipfileset excludes="META-INF/**, **/package-info.class, **/package.html, **/*.java" src="${jsbml.dir}/core/lib/log4j-1.2.17.jar"/>
       <zipfileset excludes="META-INF/**, **/package-info.class, **/package.html, **/*.java" src="${jsbml.dir}/core/lib/stax-api-1.0.1.jar"/>
       <zipfileset excludes="META-INF/**, **/package-info.class, **/package.html, **/*.java" src="${jsbml.dir}/core/lib/stax2-api-3.0.3.jar"/>
       <zipfileset excludes="META-INF/**, **/package-info.class, **/package.html, **/*.java" src="${jsbml.dir}/core/lib/staxmate-2.0.0.jar"/>
@@ -877,13 +882,8 @@
     </path>
     
   	<echo message="Determining the revision number of SysBio"/>
-    <exec executable="svn" outputproperty="svninfo.xml">
-      <arg line="info --xml"/>
-    </exec>
-    <xmlproperty collapseAttributes="true">
-      <propertyresource name="svninfo.xml"/>
-    </xmlproperty>
-	<property name="sysbio.revision" value="${info.entry.revision}"/>
+    <exec executable="svnversion" outputproperty="svnversion"/>
+  	<property name="sysbio.revision" value="${svnversion}"/>
 
     <echo message="Deleting all previous versions of SysBio JAR files"/>
     <delete verbose="${verbose}">
