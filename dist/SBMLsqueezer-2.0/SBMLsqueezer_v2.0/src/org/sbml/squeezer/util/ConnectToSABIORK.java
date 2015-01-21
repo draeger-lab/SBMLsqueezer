@@ -5,7 +5,7 @@
  * This file is part of SBMLsqueezer, a Java program that creates rate
  * equations for reactions in SBML files (http://sbml.org).
  *
- * Copyright (C) 2006-2014  by the University of Tuebingen, Germany.
+ * Copyright (C) 2006-2015  by the University of Tuebingen, Germany.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -87,7 +87,7 @@ public class ConnectToSABIORK {
       SBMLDocument doc = SBMLReader.read(stream);
       List<Reaction> results = new LinkedList<Reaction>();
       
-      for(Reaction r: doc.getModel().getListOfReactions()) {
+      for (Reaction r: doc.getModel().getListOfReactions()) {
         results.add(r);
       }
       
@@ -112,7 +112,7 @@ public class ConnectToSABIORK {
     CVTermFilter filterHasVersion = new CVTermFilter(Qualifier.BQB_HAS_VERSION);
     CVTermFilter filterIsEncodedBy = new CVTermFilter(Qualifier.BQB_IS_ENCODED_BY);
     
-    for(CallableSBase sBase: getAllSBasesToAdd(kl.getMath(), new HashSet<CallableSBase>())) {
+    for (CallableSBase sBase: getAllSBasesToAdd(kl.getMath(), new HashSet<CallableSBase>())) {
       if (sBase instanceof FunctionDefinition) {
         FunctionDefinition copy = ((FunctionDefinition)sBase).clone();
         copy.setLevel(m.getLevel());
@@ -121,7 +121,7 @@ public class ConnectToSABIORK {
         if (copy.getMath().getRightChild().isNaN()) {
           return null;
         }
-        for(FunctionDefinition f: m.getListOfFunctionDefinitions()) {
+        for (FunctionDefinition f: m.getListOfFunctionDefinitions()) {
           if (f.equals(copy)) {
             add = false;
             break;
@@ -139,12 +139,12 @@ public class ConnectToSABIORK {
       }
     }
     
-    for(ASTNode speciesNode: getAllSpeciesNodes(kl.getMath(), new HashSet<ASTNode>())) {
+    for (ASTNode speciesNode: getAllSpeciesNodes(kl.getMath(), new HashSet<ASTNode>())) {
       //substitute ids in kinetic law by corresponding ids in our model
       
       Species s = (Species) speciesNode.getVariable();
       List<CVTerm> terms = new LinkedList<CVTerm>();
-      for(CVTerm ct: s.getCVTerms()) {
+      for (CVTerm ct: s.getCVTerms()) {
         if ((filterIs.accepts(ct)) || (filterHasVersion.accepts(ct)) || (filterIsEncodedBy.accepts(ct))) {
           terms.add(ct);
         }
@@ -152,8 +152,8 @@ public class ConnectToSABIORK {
       if (terms.size() != 0) {
         List<CVTermFilter> filterTerms = new LinkedList<CVTermFilter>();
         
-        for(CVTerm term: terms) {
-          for(String resource: term.getResources()) {
+        for (CVTerm term: terms) {
+          for (String resource: term.getResources()) {
             filterTerms.add(new CVTermFilter(term.getBiologicalQualifierType(), resource));
             if (term.getBiologicalQualifierType().equals(Qualifier.BQB_IS)) {
               filterTerms.add(new CVTermFilter(Qualifier.BQB_HAS_VERSION, resource));
@@ -165,8 +165,8 @@ public class ConnectToSABIORK {
         }
         
         Species foundSpecies = null;
-        for(Species sp: m.getListOfSpecies()) {
-          for(CVTermFilter currentFilter: filterTerms) {
+        for (Species sp: m.getListOfSpecies()) {
+          for (CVTermFilter currentFilter: filterTerms) {
             if (currentFilter.accepts(sp)) {
               foundSpecies = sp;
               break;
@@ -207,7 +207,7 @@ public class ConnectToSABIORK {
       }
     }
     else {
-      for(ASTNode child: node.getChildren()) {
+      for (ASTNode child: node.getChildren()) {
         getAllSpeciesNodes(child, current);
       }
     }
@@ -224,7 +224,7 @@ public class ConnectToSABIORK {
       if ((sb instanceof FunctionDefinition)) {
         current.add(sb);
       }
-      for(ASTNode child: node.getChildren()) {
+      for (ASTNode child: node.getChildren()) {
         getAllSBasesToAdd(child, current);
       }
     }
@@ -235,7 +235,7 @@ public class ConnectToSABIORK {
       }
     }
     else {
-      for(ASTNode child: node.getChildren()) {
+      for (ASTNode child: node.getChildren()) {
         getAllSBasesToAdd(child, current);
       }
     }
@@ -256,7 +256,7 @@ public class ConnectToSABIORK {
     CVTermFilter filterKEGG = new CVTermFilter(Qualifier.BQB_IS, "urn:miriam:kegg.reaction");
     String query = null;
     List<Reaction> annotatedReactions = new LinkedList<Reaction>();
-    for(Reaction r: model.getListOfReactions()) {
+    for (Reaction r: model.getListOfReactions()) {
       if (filterKEGG.accepts(r)) {
         annotatedReactions.add(r);
       }
