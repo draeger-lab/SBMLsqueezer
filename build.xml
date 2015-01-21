@@ -6,7 +6,7 @@
  * This file is part of SBMLsqueezer, a Java program that creates rate
  * equations for reactions in SBML files (http://sbml.org).
  *
- * Copyright (C) 2006-2014 by the University of Tuebingen, Germany.
+ * Copyright (C) 2006-2015 by the University of Tuebingen, Germany.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -396,7 +396,15 @@
    	description="Signs the JAR file"
   >
     <!-- Having an "keystore" file is required. Generate it with the "keytool" in the dist directory. -->  	
-	<signjar alias="${Name}" jar="${appJar}" keypass="d=dpfSBMLsqueezer!" keystore="${dist}/keystore" signedjar="${appJar}" storepass="d=dpfSBMLsqueezer!"/>
+	<signjar
+	  alias="${Name}"
+	  jar="${appJar}"
+  	  keypass="d=dpfSBMLsqueezer!"
+  	  keystore="${dist}/keystore"
+	  signedjar="${appJar}"
+  	  storepass="d=dpfSBMLsqueezer!"
+	  digestalg="SHA1"
+	/>
   </target>
 
   <!-- =================================================================== -->
@@ -767,13 +775,16 @@
       />
       <!-- Resources -->
       <fileset dir="${jsbml.dir}/core/resources" includes="**.txt, **/*.txt, **.xml, **/*.xml, **.properties, **/*.properties, **.cfg, **/*.cfg, **.obo, **/*.obo"/>
+      <fileset dir="${jsbml.dir}/extensions/arrays/resources" includes="**.txt, **/*.txt, **.xml, **/*.xml, **.properties, **/*.properties, **.cfg, **/*.cfg, **.obo, **/*.obo"/>
       <fileset dir="${jsbml.dir}/extensions/comp/resources" includes="**.txt, **/*.txt, **.xml, **/*.xml, **.properties, **/*.properties, **.cfg, **/*.cfg, **.obo, **/*.obo"/>
+      <fileset dir="${jsbml.dir}/extensions/dyn/resources" includes="**.txt, **/*.txt, **.xml, **/*.xml, **.properties, **/*.properties, **.cfg, **/*.cfg, **.obo, **/*.obo"/>
       <fileset dir="${jsbml.dir}/extensions/fbc/resources" includes="**.txt, **/*.txt, **.xml, **/*.xml, **.properties, **/*.properties, **.cfg, **/*.cfg, **.obo, **/*.obo"/>
       <fileset dir="${jsbml.dir}/extensions/groups/resources" includes="**.txt, **/*.txt, **.xml, **/*.xml, **.properties, **/*.properties, **.cfg, **/*.cfg, **.obo, **/*.obo"/>
       <fileset dir="${jsbml.dir}/extensions/layout/resources" includes="**.txt, **/*.txt, **.xml, **/*.xml, **.properties, **/*.properties, **.cfg, **/*.cfg, **.obo, **/*.obo"/>
       <fileset dir="${jsbml.dir}/extensions/multi/resources" includes="**.txt, **/*.txt, **.xml, **/*.xml, **.properties, **/*.properties, **.cfg, **/*.cfg, **.obo, **/*.obo"/>
       <fileset dir="${jsbml.dir}/extensions/qual/resources" includes="**.txt, **/*.txt, **.xml, **/*.xml, **.properties, **/*.properties, **.cfg, **/*.cfg, **.obo, **/*.obo"/>
       <fileset dir="${jsbml.dir}/extensions/render/resources" includes="**.txt, **/*.txt, **.xml, **/*.xml, **.properties, **/*.properties, **.cfg, **/*.cfg, **.obo, **/*.obo"/>
+      <fileset dir="${jsbml.dir}/extensions/req/resources" includes="**.txt, **/*.txt, **.xml, **/*.xml, **.properties, **/*.properties, **.cfg, **/*.cfg, **.obo, **/*.obo"/>
       <fileset dir="${jsbml.dir}/extensions/spatial/resources" includes="**.txt, **/*.txt, **.xml, **/*.xml, **.properties, **/*.properties, **.cfg, **/*.cfg, **.obo, **/*.obo"/>
       <fileset dir="${jsbml.dir}/modules/celldesigner/resources" includes="**.txt, **/*.txt, **.xml, **/*.xml, **.properties, **/*.properties, **.cfg, **/*.cfg, **.obo, **/*.obo"/>
       <fileset dir="${jsbml.dir}/modules/libSBMLio/resources" includes="**.txt, **/*.txt, **.xml, **/*.xml, **.properties, **/*.properties, **.cfg, **/*.cfg, **.obo, **/*.obo"/>
