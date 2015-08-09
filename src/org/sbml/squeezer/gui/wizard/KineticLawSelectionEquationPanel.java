@@ -60,6 +60,7 @@ import javax.swing.border.BevelBorder;
 
 import org.sbml.squeezer.KineticLawGenerator;
 import org.sbml.squeezer.OptionsGeneral;
+import org.sbml.squeezer.SBMLsqueezer;
 import org.sbml.squeezer.gui.KineticLawTable;
 import org.sbml.squeezer.gui.KineticLawTableModel;
 import org.sbml.squeezer.gui.SBMLsqueezerUI;
@@ -418,8 +419,8 @@ public class KineticLawSelectionEquationPanel extends JPanel implements ActionLi
       if (klg.getCreatedKineticsCount() == 0) {
         JEditorPane pane = new JEditorPane(
           sbmlIO.getSelectedModel().getReactionCount() > 0 ?
-              getClass().getResource("../../resources/html/NoNewKineticsCreated.html") :
-                getClass().getResource("../../resources/html/ModelDoesNotContainAnyReactions.html"));
+              SBMLsqueezer.class.getResource("resources/html/NoNewKineticsCreated.html") :
+                SBMLsqueezer.class.getResource("resources/html/ModelDoesNotContainAnyReactions.html"));
         pane.addHyperlinkListener(new SystemBrowser());
         pane.setBackground(Color.WHITE);
         pane.setEditable(false);
