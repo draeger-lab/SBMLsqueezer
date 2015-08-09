@@ -25,6 +25,7 @@ package org.sbml.squeezer;
 
 import java.text.MessageFormat;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Set;
@@ -284,7 +285,11 @@ public class SubmodelController {
     
     UnitDefinition extentUD = modelOrig.getExtentUnitsInstance();
     if (extentUD != null) {
-      submodel.setExtentUnits(extentUD.clone());
+      if (!submodel.containsUnitDefinition(extentUD.getId())) {
+        submodel.setExtentUnits(extentUD.clone());
+      } else {
+        submodel.setExtentUnits(extentUD.getId());
+      }
     } else if (level > 2) {
       submodel.setExtentUnits(submodel.getSubstanceUnits());
     }
@@ -320,7 +325,10 @@ public class SubmodelController {
          * Let us find all fast reactions. This feature is currently
          * ignored.
          */
-        if (reacOrig.getFast()) {
+        if (reacOrig.isFast()) {
+          if (listOfFastReactions == null) {
+            listOfFastReactions = new LinkedList<Reaction>();
+          }
           listOfFastReactions.add(reacOrig);
         }
         if (reactionID != null) {
@@ -352,7 +360,7 @@ public class SubmodelController {
             reac.getAnnotation().setAbout(reacOrig.getAnnotation().getAbout());
           }
           submodel.addReaction(reac);
-          reac.setFast(reacOrig.getFast());
+          reac.setFast(reacOrig.isFast());
           reac.setReversible(reacOrig.getReversible());
           if (reacOrig.isSetListOfReactants()) {
             for (SpeciesReference specRefOrig : reacOrig.getListOfReactants()) {
@@ -1101,7 +1109,7 @@ public class SubmodelController {
     double initialValue, Compartment compartment, double sizeValue) {
     if (!species.isSetInitialAmount()
         && !species.isSetInitialConcentration()) {
-      if (species.getHasOnlySubstanceUnits()) {
+      if (species.hasOnlySubstanceUnits()) {
         species.setInitialAmount(initialValue);
       } else {
         species.setInitialConcentration(initialValue);

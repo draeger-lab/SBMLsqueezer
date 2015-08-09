@@ -26,10 +26,10 @@
 -->
 <html>
 <head>
-<title>Release Notes of SBMLsqueezer version 2.0</title>
+<title>Release Notes of SBMLsqueezer version 2.1</title>
 </head>
 <body>
-<h1>Release Notes of SBMLsqueezer version 2.0</h1>
+<h1>Release Notes of SBMLsqueezer version 2.1</h1>
 <h2>Download of SBMLsquezeezer</h2>
 You can always download the latest version of SBMLsqueezer at
 <a
@@ -39,76 +39,21 @@ http://www.cogsys.cs.uni-tuebingen.de/software/SBMLsqueezer/downloads</a>.
 <h2>New Features</h2>
 
 <ul>
-    <li>SBMLsqueezer can now be used in several different ways:
-      <ul>
-        <li>As fully-featured stand-alone program without the need to install
-            any further software, based on the official JSBML version
-            1.0&#946;1</li>
-        <li>As a stand-alone program based on a libSBML back-end, which means
-            that real offline SBML validation is possible.</li>
-        <li>Irrespective of whether JSBML or libSBML is used as SBML library,
-            the stand-alone version provides both, a graphical user interface
-            as well as a fully-featured command-line version. For large-scale
-            rate law generation, this command-line interface has already proven
-            to be useful (as part of the path2models project).</li>
-        <li>SBMLsqueezer can be launched directly from the website
-            <a href="http://www.cogsys.cs.uni-tuebingen.de/software/SBMLsqueezer/">www.cogsys.cs.uni-tuebingen.de/software/SBMLsqueezer/</a>
-            as a Java&trade; Web Start program without the need of any local
-            installation.</li>
-        <li>As a plug-in for CellDesigner 4.3</li>
-        <li>As a Garuda gadget, as which it can communicate with further
-            Garuda gadgets</li>
-      </ul>
-      Hence, the usage of the program has been greatly simplified.
     <li>SBMLsqueezer fully supports all Levels and Versions of SBML up to the
-        most recent specification Level 3 Version 1.</li>
-    <li>A direct query wizard for SABIO-RK has been implemented and allows users
-        to extract experimentally obtained rate laws from this database together
-        with parameters, values, and units. The search engine provides several
-        settings for experimental conditions.</li>
-    <li>SBMLsqueezer includes now several JUnit test cases to check if the
-        generated kinetic equations are correct.</li>
-    <li>It includes now a full version of SBML2LaTeX and can directly open PDF
-        files that are generated to document the content of the model.</li>
-    <li>The renderer for equations and formula has been changed and provides
-        more capabilities. SBMLsqueezer windows and context menus are now
-        zoomable and resizable.</li>
-	<li>Improved user preferences menu and management for each individual
-	    operating system</li>
-	<li>The graphical user interface is bilingual (German and English), but
-	    models and their labels are only created in English for the sake of a
-	    better international re-usability.</li>
-	<li>A new search function allows users to query the model data structure in
-	    the graphical user interface.</li>
-	<li>Lots of effort has been put to better adapt SBMLsqueezer to individual
-	    platforms. The support for Mac OS X has been greatly improved, the
-	    program now provides many features of native apps for Mac OS.</li>
-	<li>The documentation of the application programming interface (API) has
-	    been improved.</li>
+        most recent specifications Level 2 Version 5 and Level 3 Version 1.</li>
+    <li>The CellDesigner plug-in version has been adapted to work with
+        CellDesigner version 4.4.</li>
+    <li>The Garuda backend has been updated.</li>
+    <li>The report generator SBML2LaTeX has been updated and the new version
+        is now part of this release of SBMLsqueezer.</li>
+    <li>SBMLsqueezer comes with the most recent version of JSBML (revision 2354),
+        which can read all current extension packages.</li>
 </ul>
 
 <h2>Bug Fixes</h2>
 
 <ul>
-  <li>The communication between SBMLsqueezer and CellDesigner was very
-      inefficient. The new plugin interface in JSBML provides a much better
-      performance.</li>
-  <li>Errors in kinetic equations and units of parameters have been detected
-      and solved:
-    <ul>
-      <li>Sometimes SBMLsqueezer created invalid identifiers for newly
-          introduced units.</li>
-      <li>The units of the association and dissociation constant in generalized
-          mass action kinetics could not be derived correctly if a catalyst
-          interfered with the reaction, because the units of the catalyst were
-          not taken into account.</li>
-      <li>The units of the half saturation constant in the (generalized) Hill
-          equation were not correctly derived. The derivation of units of
-          kinetic parameters has been improved</li>
-    </ul>
-  </li>
-  <li>Several minor issues with the graphical user interface have been
-      solved.</li>
+  <li>Several minor issues have been solved.</li>
 </ul>
 
 <h3>Known Issues</h3>

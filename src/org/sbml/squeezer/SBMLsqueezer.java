@@ -341,7 +341,7 @@ public class SBMLsqueezer<T> extends Launcher {
    */
   @Override
   public String getVersionNumber() {
-    return "2.0.2";
+    return "2.1";
   }
   
   /* (non-Javadoc)
@@ -349,7 +349,7 @@ public class SBMLsqueezer<T> extends Launcher {
    */
   @Override
   public short getYearOfProgramRelease() {
-    return (short) 2014;
+    return (short) 2015;
   }
   
   /* (non-Javadoc)

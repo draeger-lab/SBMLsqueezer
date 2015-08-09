@@ -78,8 +78,8 @@ public abstract class BasicKineticLaw extends KineticLaw {
   private List<String> activators;
   
   /**
-   * If true all species whose hasOnlySubstanceUnits attribute is true are
-   * divided by the size of their surrounding compartment. If false species
+   * If {@code true} all species whose hasOnlySubstanceUnits attribute is true
+   * are divided by the size of their surrounding compartment. If false species
    * whose hasOnlySubstanceUnits attribute is false are multiplied with the
    * size of their surrounding compartment.
    */

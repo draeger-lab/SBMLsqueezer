@@ -153,7 +153,7 @@ InterfaceZeroReactants, InterfaceZeroProducts {
           || SBO.isRNAOrMessengerRNA(modifierSpec.getSBOTerm()) || SBO
           .isGeneOrGeneCodingRegion(modifierSpec.getSBOTerm()))) {
         if (!modifier.isSetSBOTerm()) {
-          SBMLtools.setSBOTerm(modifier, 19);
+          SBMLtools.setSBOTerm(modifier, SBO.getModifier());
         }
         if (SBO.isModifier(modifier.getSBOTerm())) {
           ASTNode modnode = speciesTerm(modifier);
@@ -195,7 +195,7 @@ InterfaceZeroReactants, InterfaceZeroProducts {
           || SBO.isRNAOrMessengerRNA(modifierSpec.getSBOTerm())
           || SBO.isGeneOrGeneCodingRegion(modifierSpec.getSBOTerm())) {
         if (!modifier.isSetSBOTerm()) {
-          SBMLtools.setSBOTerm(modifier, 19);
+          SBMLtools.setSBOTerm(modifier, SBO.getModifier());
         }
         if (SBO.isModifier(modifier.getSBOTerm())) {
           LocalParameter p = parameterFactory.parameterW(modifier.getSpecies(), r.getId());
