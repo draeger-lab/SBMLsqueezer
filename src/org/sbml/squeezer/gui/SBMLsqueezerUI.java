@@ -479,7 +479,7 @@ ChangeListener, PropertyChangeListener, TabClosingListener {
     
     tree.addActionListener(this);
     JMenuItem sabioItem = GUITools.createJMenuItem(tree, Command.SABIO_RK, UIManager.getIcon("ICON_SABIO-RK_16"));
-    JMenuItem squeezeItem = GUITools.createJMenuItem(tree, Command.SQUEEZE, UIManager.getIcon("SBMLsqueezerLogo_16"));
+    JMenuItem squeezeItem = GUITools.createJMenuItem(tree, Command.SQUEEZE, UIManager.getIcon("SBMLsqueezerIcon_16"));
     JMenuItem latexItem = GUITools.createJMenuItem(tree,  Command.TO_LATEX, UIManager.getIcon("ICON_LATEX_16"));
     
     tree.addPopupMenuItem(sabioItem, Reaction.class, Model.class, SBMLDocument.class);
@@ -496,7 +496,7 @@ ChangeListener, PropertyChangeListener, TabClosingListener {
     items.add(GUITools.createJMenuItem(this,
       Command.SABIO_RK, UIManager.getIcon("ICON_SABIO-RK_16")));
     items.add(GUITools.createJMenuItem(this,
-      Command.SQUEEZE, UIManager.getIcon("SBMLsqueezerLogo_16"),
+      Command.SQUEEZE, UIManager.getIcon("SBMLsqueezerIcon_16"),
       KeyStroke.getKeyStroke('Q', InputEvent.CTRL_DOWN_MASK)));
     items.add(GUITools.createJMenuItem(this,
       Command.TO_LATEX, UIManager.getIcon("ICON_LATEX_16"),

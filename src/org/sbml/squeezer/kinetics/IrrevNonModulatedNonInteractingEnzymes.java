@@ -106,8 +106,7 @@ InterfaceArbitraryEnzymeKinetics, InterfaceIntegerStoichiometry {
     ASTNode enzymes[] = new ASTNode[Math.max(1, modE.size())];
     for (int enzymeNum = 0; enzymeNum < enzymes.length; enzymeNum++) {
       String enzyme = modE.size() == 0 ? null : modE.get(enzymeNum);
-      LocalParameter p_kcat = parameterFactory.parameterKcatOrVmax(
-        enzyme, true);
+      LocalParameter p_kcat = parameterFactory.parameterKcatOrVmax(enzyme, true);
       ASTNode numerator = new ASTNode(p_kcat, this);
       
       ASTNode[] denominator = new ASTNode[reaction.getReactantCount()];
@@ -117,10 +116,8 @@ InterfaceArbitraryEnzymeKinetics, InterfaceIntegerStoichiometry {
           throw new RateLawNotApplicableException(
             WARNINGS.getString("RATE_LAW_CAN_ONLY_APPLIED_IF_REACTANTS_HAVE_INTEGER_STOICHIOMETRIES"));
         }
-        LocalParameter p_kM = parameterFactory.parameterMichaelis(si
-          .getSpecies(), enzyme, true);
-        ASTNode frac = ASTNode.frac(speciesTerm(si), new ASTNode(p_kM,
-          this));
+        LocalParameter p_kM = parameterFactory.parameterMichaelis(si.getSpecies(), enzyme, true);
+        ASTNode frac = ASTNode.frac(speciesTerm(si), new ASTNode(p_kM, this));
         numerator = ASTNode.times(numerator, ASTNode.pow(ASTNode.frac(
           speciesTerm(si), new ASTNode(p_kM, this)), stoichiometryTerm(si)));
         
@@ -128,7 +125,7 @@ InterfaceArbitraryEnzymeKinetics, InterfaceIntegerStoichiometry {
         // divided by p_kM (SubstancePerSizeOrSubstance) = dimensionless
         ASTNode one = new ASTNode(1, this);
         SBMLtools.setUnits(one, Unit.Kind.DIMENSIONLESS);
-        denominator[i] = ASTNode.pow(ASTNode.sum(one,frac), stoichiometryTerm(si));
+        denominator[i] = ASTNode.pow(ASTNode.sum(one, frac), stoichiometryTerm(si));
       }
       
       if (modE.size() >= 1) {

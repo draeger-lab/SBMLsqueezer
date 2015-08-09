@@ -976,9 +976,9 @@ public class ReactionType {
       if (reactionWithGenes || reactionWithRNAs) {
         for (Class<?> className : getKineticsGeneRegulatoryNetworks()) {
           if (((reaction.isReversible() && !notReversible.contains(className))
-              || (!reaction.isReversible() && !notIrreversible.contains(className))
+              || (!reaction.isReversible() && !notIrreversible.contains(className)))
               && (!emptyListOfReactants || setOfKineticsForZeroReactants.contains(className))
-              && (!emptyListOfProducts || setOfKineticsForZeroProducts.contains(className)))) {
+              && (!emptyListOfProducts || setOfKineticsForZeroProducts.contains(className))) {
             types.add(className);
           }
         }

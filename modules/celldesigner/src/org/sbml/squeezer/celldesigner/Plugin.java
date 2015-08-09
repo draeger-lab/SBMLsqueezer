@@ -147,4 +147,12 @@ public class Plugin extends AbstractCellDesignerPlugin {
     return sbmlSqueezer;
   }
   
+  /* (non-Javadoc)
+   * @see java.lang.Runnable#run()
+   */
+  @Override
+  public void run() {
+    // TODO Auto-generated method stub
+  }
+  
 }

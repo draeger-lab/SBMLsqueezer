@@ -49,6 +49,9 @@ InterfaceGeneRegulatoryKinetics, InterfaceModulatedKinetics,
 InterfaceIrreversibleKinetics, InterfaceReversibleKinetics,
 InterfaceZeroReactants, InterfaceZeroProducts  {
   
+  /**
+   * Localization support.
+   */
   public static final transient ResourceBundle MESSAGES = ResourceManager.getBundle(Bundles.MESSAGES);
   
   /**
