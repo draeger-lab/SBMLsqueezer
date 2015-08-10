@@ -34,7 +34,7 @@ import org.sbml.jsbml.Model;
 import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.SBMLException;
 import org.sbml.jsbml.SBMLOutputConverter;
-import org.sbml.jsbml.SBMLWriter;
+import org.sbml.jsbml.TidySBMLWriter;
 import org.sbml.squeezer.util.Bundles;
 
 import de.zbit.util.ResourceManager;
@@ -92,7 +92,7 @@ public class SqSBMLWriter implements SBMLOutputConverter<Model> {
     // write SBML to file
     boolean success = true;
     try {
-      SBMLWriter.write(sbmlDocument, filename, programName, versionNumber);
+      TidySBMLWriter.write(sbmlDocument, filename, programName, versionNumber);
     } catch (XMLStreamException e) {
       success = false;
     }

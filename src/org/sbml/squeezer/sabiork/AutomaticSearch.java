@@ -45,7 +45,7 @@ import org.sbml.jsbml.KineticLaw;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.SBMLReader;
-import org.sbml.jsbml.SBMLWriter;
+import org.sbml.jsbml.TidySBMLWriter;
 import org.sbml.jsbml.util.filters.CVTermFilter;
 import org.sbml.jsbml.xml.parsers.SBMLCoreParser;
 import org.sbml.squeezer.sabiork.util.WebServiceConnectException;
@@ -279,10 +279,11 @@ public class AutomaticSearch {
            */
           String outputFile = file.getAbsolutePath().replace("\\", "/")
               .replace(parentFolder, sabioRootFolder);
-          SBMLWriter.write(sbmlDocument, new File(outputFile), ' ', (short) 4);
+          // TODO: use SBMLio!
+          TidySBMLWriter.write(sbmlDocument, new File(outputFile), ' ', (short) 2);
         }
       }
-      writer.write(organism+"\t" + matched_Organism + "\t" + noKineticLawFound_Organism + "\t" + + matchingNotPossible_Organism + "\t" + noReactionID_Organism);
+      writer.write(organism + "\t" + matched_Organism + "\t" + noKineticLawFound_Organism + "\t" + + matchingNotPossible_Organism + "\t" + noReactionID_Organism);
       writer.newLine();
       writer.newLine();
       

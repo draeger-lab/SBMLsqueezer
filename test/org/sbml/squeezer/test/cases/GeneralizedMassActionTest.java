@@ -35,8 +35,8 @@ import org.sbml.jsbml.Model;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.SBMLException;
-import org.sbml.jsbml.SBMLWriter;
 import org.sbml.jsbml.Species;
+import org.sbml.jsbml.TidySBMLWriter;
 import org.sbml.jsbml.UnitDefinition;
 import org.sbml.squeezer.OptionsGeneral;
 import org.sbml.squeezer.ReactionType;
@@ -182,7 +182,7 @@ public class GeneralizedMassActionTest extends KineticsTest {
     
     if (!printed) {
       try {
-        SBMLWriter.write(doc, System.out, ' ', (short) 2);
+        TidySBMLWriter.write(doc, System.out, ' ', (short) 2);
         System.out.println();
       } catch (SBMLException exc) {
         exc.printStackTrace();

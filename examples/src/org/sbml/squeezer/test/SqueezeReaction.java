@@ -29,7 +29,7 @@ import org.sbml.jsbml.Model;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.SBMLReader;
-import org.sbml.jsbml.SBMLWriter;
+import org.sbml.jsbml.TidySBMLWriter;
 import org.sbml.squeezer.KineticLawGenerator;
 import org.sbml.squeezer.UnitConsistencyType;
 import org.sbml.squeezer.kinetics.ConvenienceKinetics;
@@ -70,7 +70,7 @@ public class SqueezeReaction {
     klg.storeKineticLaws();
     
     // Save the result in another file
-    SBMLWriter.write(doc, new File(args[1]), ' ', (short) 2);
+    TidySBMLWriter.write(doc, new File(args[1]), ' ', (short) 2);
   }
   
 }
