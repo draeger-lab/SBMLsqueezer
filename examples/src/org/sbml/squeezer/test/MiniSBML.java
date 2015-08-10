@@ -30,8 +30,8 @@ import org.sbml.jsbml.Model;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.SBMLException;
-import org.sbml.jsbml.SBMLWriter;
 import org.sbml.jsbml.Species;
+import org.sbml.jsbml.TidySBMLWriter;
 
 /**
  * 
@@ -55,7 +55,7 @@ public class MiniSBML {
     Reaction r = model.createReaction("r1");
     r.createReactant("s1ref", s1);
     r.createProduct("s2Ref", s2);
-    SBMLWriter.write(doc, System.out, ' ', (short) 2);
+    TidySBMLWriter.write(doc, System.out, ' ', (short) 2);
   }
   
 }

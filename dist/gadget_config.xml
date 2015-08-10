@@ -29,7 +29,7 @@
   <Name>[GADGET_NAME]</Name>
   <LaunchCommand>cmd /c start javaw.exe -jar "gadgets/[GADGET_UUID]/[JAR_NAME]"</LaunchCommand>
   <LaunchCommandWin>cmd /c start javaw.exe -jar "gadgets/[GADGET_UUID]/[JAR_NAME]"</LaunchCommandWin>
-  <LaunchCommandMac>open "gadgets/[GADGET_UUID]/[JAR_NAME]"</LaunchCommandMac>
+  <LaunchCommandMac>java -jar "gadgets/[GADGET_UUID]/[JAR_NAME]"</LaunchCommandMac>
   <LaunchCommandLinux>java -jar "gadgets/[GADGET_UUID]/[JAR_NAME]"</LaunchCommandLinux>
   <IconPaths>
     <Icon32Path>icons/SBMLsqueezerIcon_64.png</Icon32Path>

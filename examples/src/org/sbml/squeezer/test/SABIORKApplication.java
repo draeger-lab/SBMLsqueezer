@@ -39,7 +39,7 @@ import javax.xml.stream.XMLStreamException;
 import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.SBMLException;
 import org.sbml.jsbml.SBMLReader;
-import org.sbml.jsbml.SBMLWriter;
+import org.sbml.jsbml.TidySBMLWriter;
 import org.sbml.squeezer.sabiork.wizard.SABIORKWizard;
 
 /**
@@ -81,7 +81,7 @@ public class SABIORKApplication {
         }
         try {
           if (result != null) {
-            SBMLWriter.write(result, output, ' ', (short) 2);
+            TidySBMLWriter.write(result, output, ' ', (short) 2);
           }
         } catch (SBMLException e1) {
           e1.printStackTrace();
@@ -137,7 +137,7 @@ public class SABIORKApplication {
       isEntriesInsertedSince, dateSubmitted);
     
     // Save the changed document
-    SBMLWriter.write(doc, new File(args[1]), ' ', (short) 2);
+    TidySBMLWriter.write(doc, new File(args[1]), ' ', (short) 2);
   }
   
 }

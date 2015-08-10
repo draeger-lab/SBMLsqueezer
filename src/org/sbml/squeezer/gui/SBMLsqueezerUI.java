@@ -208,7 +208,6 @@ ChangeListener, PropertyChangeListener, TabClosingListener {
         "SBMLsqueezerIcon_64.png",
         "SBMLsqueezerIcon_32.png",
         "SBMLsqueezerIcon_16.png",
-        "SBMLsqueezerLogo_16.png",
         "SBMLsqueezerWatermark.png"
     };
     String prefix = "resources/img/";
