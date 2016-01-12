@@ -2262,6 +2262,521 @@ Chemical formula & Common name   &\KEGG \ac{ID}\\
 \end{tabular}
 \end{table}
 
+\begin{table}[htbp]
+\caption[Reaction categories]{Reaction categories.
+This table lists and describes reaction categories with relevance to automatic rate law assignment.
+Graphical examples for each category can be seen in Figure~\ref{fig:ReactionCategories}.
+These categories are not mutually exclusive.
+A reaction can therefore belong to multiple categories.
+Similarly, all available rate laws are also assigned to these categories (see Table~\ref{tab:RateLaws}).
+Since also each rate law can belong to multiple categories, some of these categories are used to refine the selection of rate laws for a reaction, i.e., some categories are exclusive.
+A rate law may belong to the category of reversible (J) and irreversible (H) reactions if it is possible to apply the rate law to both types of reactions, but a rate law from category G can only be applied to a reaction in which all participants have a strictly integer stoichiometry.
+Rate laws that have mechanisms for modulation can also be applied to non-modulated reactions, but rate laws that do not belong to category I cannot be applied if activators or inhibitors interfere with the reaction.}
+\label{tab:ReactionCategories}
+\begin{tabular}{llp{.5\textwidth}}
+\toprule
+\numero & Category & Description \\
+\midrule
+A & Non-enzyme reactions            & Spontaneous reactions and reactions with a catalyst that is no enzyme. \\
+B & Gene-regulatory processes       & Reactions that produce \RNA or produce polypeptide molecules from an 
+                                      empty set of reactants or whose reactants are genes or \RNA molecules
+                                      and that have genes or \RNA molecules as modifiers. \\
+C & Uni-uni enzyme reactions        & Enzyme-catalyzed reactions with one reactant of stoichiometry one and if 
+                                      reversible also one product of stoichiometry one. \\
+D & Bi-uni enzyme reactions         & Enzyme-catalyzed reactions with two reactants, i.e., an integer
+                                      stoichiometry two on the reactant side, and if reversible one product
+                                      of stoichiometry one. \\
+E & Bi-bi enzyme reactions          & Enzyme-catalyzed reactions with two reactants, i.e., an integer
+                                      stoichiometry two on the reactant side, and if reversible two products
+                                      that also have a stoichiometry of two. \\
+F & Arbitrary enzyme reactions      & Enzyme-catalyzed reactions with an arbitrary number of reactants and
+                                      products. \\
+G & Integer stoichiometry reactions & Reactions whose participants have only integer stoichiometric values. \\
+H & Irreversible reactions          & Reactions whose net flux proceeds only in forward direction. \\
+I & Modulated reactions             & Reactions whose velocity is influenced by modifiers, such as activators
+                                      (stimulators), inhibitors, an (enzymatic) catalysts\\
+J & Reversible reactions            & Reactions that can proceed in forward and reverse direction. \\
+K & Zeroth reactant order reactions & Reactions in which the effects of reactants do not contribute
+                                      to the velocity. \\
+L & Zeroth product order reactions  & The effects of products do not influence the velocity of these reactions. \\
+\bottomrule
+\end{tabular}
+\end{table}
+\begin{figure}[htbp]
+\includegraphics[width=.95\textwidth]{img/ReactionCategories}
+\caption{Examples for general reaction categories.
+This figure displays example reactions in \SBGN for each of the twelve categories that are used to determine applicable rate equations.
+A) Reaction with a non-enzyme catalyst. The ion \texttt{I1} catalyzes this association reaction, which can therefore not be considered enzyme catalyzed. In addition, this reaction is also modulated in a feedback inhibition loop, has an integer stoichiometry, and two reactants.
+B) Gene-regulatory processes.
+Reaction \texttt{re2a} assembles an \ac{mRNA} molecule from a source of bases (transcription), enabled by the a specific gene.
+This \ac{mRNA} in turn (\texttt{re2b}) enables the assembly of a protein from a source of amino acids (translation).
+In a feedback inhibition loop, the protein interferes with the transcription of its own gene.
+C) Uni-uni enzyme reaction. This schematic conforms the classical Michaelis-Menten mechanism.
+D) Bi-uni enzyme reaction. This association reaction has an integer stoichiometry.
+E) Bi-bi enzyme reaction. In this example, two molecules of identical type act as reactants and also as products, respectively.
+F) Arbitrary enzyme reaction. This reversible reaction involves a feedback inhibition and a complex stoichiometry, in which an ion and two identical molecules are created from two distinct reactants.
+G) Integer stoichiometry. This reversible, enzyme-catalyzed reaction has two identical reactants and one product.
+H) Irreversible reaction. This reaction has no explicit catalyst assigned to it. Depending on user-settings, the algorithm can still consider this an enzyme-catalyzed reaction, assuming that the omission of the catalyst is for the sake of simplicity.
+I) Modulated reaction. Both, a stimulator and an inhibitor interfere with this reaction.
+J) Reversible reaction. This dissociation reaction can also be seen as an association when the equilibrium shifts to the reverse reaction.
+K) Zeroth reactant order reaction. The two product molecules lower the velocity of their own creation.
+L) Zeroth product order reaction. The reactant stimulates its own degradation.}
+\label{fig:ReactionCategories}%
+\end{figure}
+
+\begin{table}[htbp]
+\caption[Rate laws and their reaction categories]{Rate laws and their reaction categories.
+This table gives an overview of all rate laws that are currently implemented in the software SBMLsqueeezer~2.
+All rate laws are described in detail in \cite[p.~17-38]{Draeger2011a}.
+The key idea of the algorithm in this paper is to separate the list of available rate laws from more general reaction categories to which these rate laws can be applied.
+With this separation, extending this list and to add more specific rate laws becomes very straightforward to do as long as each such rate law specifies to which categories it can be assigned.
+Table~\ref{tab:ReactionCategories} provides a detailed overview of all categories.
+Example reactions for all categories can be seen in Figure~\ref{fig:ReactionCategories}.
+The rate laws mentioned in this table are again families of equations.
+The precise structure of the equation that is generated for a specific reaction can vary, depending on several reaction properties, e.g., how many and which kind of modifiers participate in this reaction, if it is reversible, etc.
+The creation of the specific equation including its parameters and required units is therefore the next step of the algorithm.}
+\label{tab:RateLaws}
+\begin{tabular}{p{.5\textwidth}ll}
+\toprule
+Rate laws & Categories & Citation \\
+\midrule
+Additive Model Linear                                  &B, H, I, J, K, L      &\cite{D'haeseleer1999}\\
+Additive Model Non Linear                              &B, H, I, J, K, L      &\cite{Toepfer2007}\\	
+Common Modular Rate Law (CM)                           &C, D, E, F, I, J      &\cite{Liebermeister2010}\\
+Convenience Kinetics                                   &C, D, E, F, H, I, J   &\cite{Liebermeister2006}\\
+Direct Binding Modular Rate Law (DM)                   &C, D, E, F, I, J      &\cite{Liebermeister2010}\\
+Enzymatic Rate Law for Competitive Inhibition of Irreversible Uni-reactant Enzymes by Non-Exclusive Non-Cooperative Inhibitors
+                                                       &C, H, I               &\SBO\\
+Enzymatic Rate Law for Irreversible Non-modulated Non-interacting Reactant Enzymes
+                                                       &C, D, E, F, G, H      &\SBO\\
+Force Dependent Modular Rate Law (FM)                  &C, D, E, F, I, J      &\cite{Liebermeister2010}\\
+Generalized Mass Action                                &A, H, I, J            &\cite{Guldberg1879}, \cite[p.~14-17]{Heinrich1996}\\
+Hill Equation                                          &B, C, G, H, I, J      &\cite{Hill1910}, \cite[p.~314]{Cornish-Bowden2004}\\
+Hill-Hinze Equation                                    &B, H, I, J, K, L      &\cite{Hinze2007}\\
+Hill-Radde Equation                                    &B, H, I, J, K, L      &\cite{Radde2007a, Radde2007}\\
+H-System                                               &B, H, I, J, K, L      &\cite{Spieth2006}\\
+Michaelis-Menten                                       &C, H, I, J            &\cite{Michaelis1913}\\
+Net\emph{Gene}rator Linear                             &B, H, I, J, K, L      &\cite{Toepfer2007}\\
+Net\emph{Gene}rator Non-Linear                         &B, H, I, J, K, L      &\cite{Toepfer2007}\\
+Ordered Mechanism (compulsory-order ternary-complex mechanism)
+                                                       &D, E, H, I, J &\cite{Segel1993, Bisswanger2000}, \cite[p.~167]{Cornish-Bowden2004}\\
+Ping-Pong Mechanism (substituted enzyme mechanism)     &E, H, I, J            &\cite{Segel1993, Bisswanger2000}, \cite[p.~169]{Cornish-Bowden2004}\\
+Power Law Modular Rate Law (PM)                        &C, D, E, F, I, J      &\cite{Liebermeister2010}\\
+Random Order Ternary-Complex Mechanism                 &D, E, H, I, J         &\cite{Segel1993, Bisswanger2000}, \cite[p.~169]{Cornish-Bowden2004}\\
+Simultaneous Binding Modular Rate Law (SM)             &C, D, E, F, I, J      &\cite{Liebermeister2010}\\
+S-System                                               &B, H, I, J, K, L      &\cite{Savageau1969, Tournier2005, spieth04optimizing, Spieth2006, Hecker2009}\\
+Vohradsk{\'y}'s equation                               &B, H, I, J, K, L      &\cite{Vohradsky2001, Vu2007}\\
+Weaver's equation                                      &B, H, I, J, K, L      &\cite{Weaver1999}\\
+Zeroth Order Forward Generalized Mass-Action           &A, H, I, J, K, L      &\cite[p.~6]{Cornish-Bowden2004}\\
+Zeroth Order Reverse Generalized Mass-Action           &A, H, I, J, K, L      &\cite[p.~6]{Cornish-Bowden2004}\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+
+\chapter{Algorithms}
+\label{chap:Algorithms}
+
+%\begin{abstract}
+This \namecref{chap:Algorithms} provides a short overview about the algorithms of the software SBMLsqueezer to group reactions into categories, generate kinetic equations, and to obtain rate laws from the online database \ac{SABIO-RK}. %Tables from the main article are repeated here to make this a stand-alone document.
+%\end{abstract}
+
+
+\begin{algorithm}[h]
+ \DontPrintSemicolon
+
+ \SetKwFunction{submodel}{submodel}
+ \SetKwFunction{Reaction}{Reaction}
+ \SetKwFunction{preprocess}{preprocess}
+ \SetKwFunction{selectRateLaws}{selectRateLaws}
+ \SetKwFunction{prioritize}{prioritize}
+ \SetKwFunction{createRateLaw}{createRateLaw}
+ \SetKwFunction{merge}{merge}
+ \SetKwInOut{Input}{Input}
+ \SetKwInOut{Parameter}{Parameter}
+ \SetKwInOut{Output}{Output}
+ 
+ \Indentp{-2.5ex}
+ \Input{Model $M$, Set $R$ of reactions in $M$ for which rate laws are to be created}
+ \Parameter{
+   Boolean $o$ decides if existing rate laws should be overwritten,
+   List $K_\mathrm{I}$ of KEGG compound identifiers to be skipped,
+   Boolean $e$ decides if enzyme catalysis should be assumed when unspecified,
+   Boolean $\varrho$ decides if irreversible reactions should become reversible,
+   Class $D$ default rate law per category}
+ \Output{Model $M$ with generated rate laws}
+ \Indentp{2.5ex}
+ 
+ $M^\prime \leftarrow$ \submodel($M$, $R$, $o$, $\varrho$)\;
+ \ForEach{\Reaction $r$ \emph{in} $M^\prime$}{
+   $R_\mathrm{Features} \leftarrow$ \preprocess{$r$, $K_\mathrm{I}$} \tcp{Obtain reaction features}
+   $K \leftarrow$ \selectRateLaws{$r$, $R_\mathrm{Features}$, $e$} \tcp{Obtain set of applicable rate laws}
+   $k \leftarrow$ \prioritize{$K$, $D$} \tcp{Select one rate law from $K$}
+   \createRateLaw{$k$, $M^\prime$} \tcp{Create this rate law and store it in $M^\prime$}
+ }
+ \KwRet{$M \leftarrow$ \merge{$M^\prime$, $M$}}
+ 
+ \caption{\emph{De novo} creation of kinetic equations}
+ \label{alg:DeNovo}
+\end{algorithm}
+\Vref{alg:DeNovo} shows how kinetic equations are created for an entire model in a single step.
+The \emph{de novo} creation of rate laws takes as inputs a structural model $M$, a set $R$ of reactions of interest within this model, and the user preferences $o$, $\varrho$, $K_\mathrm{I}$, $e$, and $D$.
+The Boolean value $o$ decides whether or not an already existing rate law should be overwritten or kept unchanged.
+The set of \KEGG compound identifiers $K_\mathrm{I}$ defines those species whose contribution to the rate law is to be neglected.
+If the Boolean variable $e$ is set to true, reactions without an explicit catalyst are considered enzyme-catalyzed reactions.
+The value $\varrho$ decides if irreversible reactions in $R$ should be set to reversible and rate laws should be accordingly created.
+In the first step, this algorithm creates a trimmed copy $M^\prime$ of the model, containing only components from $M$ that are required to fully specify the reactions from $R$.
+The set $D$ of default rate laws for each category is important for the automatic prioritization of rate laws.
+The algorithm iterates through all reactions in $M^\prime$.
+The preprocessing step creates a set $R_\mathrm{Features}$ of features for the current reaction $r$.
+These features are required to select a set $K$ of applicable rate laws for $r$.
+The rate laws in $K$ are subsequently prioritized in order to find the rate law $k$ to be assigned to $r$.
+Prioritizing can be done automatically or based on user input.
+After making this decision, an abstract syntax tree is assembled for the selected rate law and all parameters with their units are created and added to the submodel $M^\prime$.
+When all reactions have been processed the submodel $M^\prime$ is merged with the original model $M$ (optionally upon the user's approval).
+
+\Vref{alg:SABIO} explains how SBMLsqueezer extracts of rate laws from \SABIO.
+The algorithm again starts with a set $R$ of reactions of interest in model $M$, but instead of creating a submodel, it iteratively uses given query terms $Q$ to identify a matching model in \SABIO for each reaction $r \in R$.
+If the algorithm can download such a model $M^\prime$, it extracts the rate law for $r$ from this model and merges the result into $M$ upon the user's approval.
+Finally, both algorithms return the modified input model $M$.
+This algorithm can be applied in a batch mode that does not require further user input.
+\begin{algorithm}[t]
+ \DontPrintSemicolon
+  
+ \SetKwInOut{Input}{Input}
+ \SetKwInOut{Parameter}{Parameter}
+ \SetKwInOut{Output}{Output}
+ 
+ \SetKwFunction{Reaction}{Reaction}
+ \SetKwFunction{querySABIORK}{querySABIORK}
+ \SetKwFunction{extractRateLaw}{extractRateLaw}
+ 
+ \Indentp{-2.5ex}
+ \Input{Model $M$, Set $R$ of reactions in $M$ for which rate laws are to be extracted from \SABIO}
+ \Parameter{
+   Boolean $o$ decides if existing rate laws should be overwritten,
+   Set $Q$ of \SABIO query terms
+ }
+ \Output{Model $M$ with rate laws from \SABIO}
+ \Indentp{2.5ex}
+ 
+ \ForEach{\Reaction $r$ \emph{in} $R$}{
+   $M^\prime \leftarrow$ \querySABIORK{$r$, $Q$}\;
+   $k \leftarrow$ \extractRateLaw{$M$}\;
+   $M \leftarrow$ \merge{$k$, $M$, $o$}
+ }
+ \KwRet{$M$}
+ 
+ \caption{Extraction of rate laws from the online database \SABIO}
+  \label{alg:SABIO}
+\end{algorithm}
+
+
+%\includegraphics[width=.95\textwidth]{img/Preprocessing.pdf}
+
+Now let us take a closer look how the subroutines of \vref{alg:DeNovo} work.
+\Vref{alg:Preprocessing} provides details about the preprocessing of reactions, which is required before rate laws can be selected.
+This algorithm extracts features from reaction $r$ with an optional set of $K_\mathrm{I}$ \KEGG compound identifiers of species whose contribution to rate laws is to be neglected.
+The sets $R_r$ and $P_r$ contain all reactants and products of $r$ and are combined to the set $Y$.
+The values $r_\mathrm{Stoichiometry}$ and $p_\mathrm{Stoichiometry}$ give the accumulated stoichiometries of the reactants and products.
+Boolean variables determine several further reaction properties:
+if all stoichiometry coefficients are integers ($y_\mathrm{allInteger}$),
+if all reactants represent genes ($r_\mathrm{allGenes}$) or \RNA molecules ($r_\mathrm{allRNA}$),
+if all products represent \RNA molecules ($p_\mathrm{allRNA}$) or polypeptide chains ($p_\mathrm{allPolypeptides}$).
+Each participant $y \in Y$ has a stoichiometry value and a reference to an actual species $x$.
+If $x$ is annotated with a set $K_x$ of \KEGG identifiers that contains compound ids from the given ignore list, the element is removed from the reaction.
+This change does not affect the original model structure $M$, because this algorithm operates on the trimmed copy $M^\prime$.
+Next, the algorithm initializes sets of enzymes $E$, stimulators $A$, inhibitors $I$, and non-enzyme catalysts $C$.
+To decide to which of those categories a modifier $m$ belongs, it first looks at this modifier's \SBO term and then at the \SBO term of the species that corresponds to $m$. \Vref{tab:EnzymesAndSBO} and \vref{tab:FurtherRelevantSBOTerms} give an overview about relevant \SBO terms for this decision process.
+\begin{table}[htbp]
+\caption[Kinds of species that can potentially act as enzymes and their top-level \SBO terms]{Kinds of species that can potentially act as enzymes and their top-level \SBO terms.
+In the preprocessing step (see \vref{alg:Preprocessing}), the algorithm for the \emph{de novo} creation of kinetic equations categorizes reaction modifiers into four different groups: enzymes $E$, activators and stimulators $A$, inhibitors $I$, and non-enzyme catalysts $C$.
+To this end, it first analyzes the \SBO term assigned to the modifier itself (see \vref{tab:FurtherRelevantSBOTerms}).
+It then obtains the actual species that acts as a modifier in the current reaction and analyzes this species' \SBO terms, assuming that this annotation defines the material classes of the species.
+The \SBO terms in this table represent the top-level terms, i.e., the algorithm also accepts each more specialized term for a specific category.
+Note that the user can exclude elements from this list and therefore influence the algorithm's choices.
+If the material class of a modifier's species falls into one of the allowable \SBO categories, the algorithm will categorize this modifier as an enzyme and potential contradictions with the modifier's \SBO term will be resolved.}
+\protect\label{tab:EnzymesAndSBO}
+\begin{tabular}{ll}
+\toprule
+Material entity   & \SBO term\\
+\midrule
+\asRNA            & \href{http://identifiers.org/biomodels.sbo/SBO:0000317}{\texttt{SBO:0000317}}\\
+Complex           & \href{http://identifiers.org/biomodels.sbo/SBO:0000253}{\texttt{SBO:0000253}}\\
+Generic protein   & \href{http://identifiers.org/biomodels.sbo/SBO:0000252}{\texttt{SBO:0000252}}\\
+Macromolecule     & \href{http://identifiers.org/biomodels.sbo/SBO:0000245}{\texttt{SBO:0000245}}\\
+Receptor          & \href{http://identifiers.org/biomodels.sbo/SBO:0000244}{\texttt{SBO:0000244}}\\
+\RNA              & \href{http://identifiers.org/biomodels.sbo/SBO:0000250}{\texttt{SBO:0000250}}\\
+Simple molecule   & \href{http://identifiers.org/biomodels.sbo/SBO:0000247}{\texttt{SBO:0000247}}\\
+Truncated protein & \href{http://identifiers.org/biomodels.sbo/SBO:0000248}{\texttt{SBO:0000248}}\\
+Unknown molecule  & \href{http://identifiers.org/biomodels.sbo/SBO:0000285}{\texttt{SBO:0000285}}\\
+\bottomrule
+\end{tabular}
+\end{table}
+\begin{table}[htbp]
+\caption[\SBO terms with relevance for the categorization of reactions]{\SBO terms with relevance for the categorization of reactions.
+The preprocessing algorithm (see \vref{alg:Preprocessing}) uses the \SBO terms listed in this table in order to distinguish between different types of species and modification in order to categorize a each reaction in the submodel as well as the role of individual reaction participants.
+This also includes further relevant material entities of reaction participants.
+Note that the algorithm always checks if the \SBO term of an element is a child of a certain reference term in order to also include all more specific sub-terms.}
+\label{tab:FurtherRelevantSBOTerms}
+\begin{tabular}{ll}
+\toprule
+Definition & \SBO term\\
+\midrule
+catalyst                   & \href{http://identifiers.org/biomodels.sbo/SBO:0000013}{\texttt{SBO:0000013}}\\
+empty set                  & \href{http://identifiers.org/biomodels.sbo/SBO:0000291}{\texttt{SBO:0000291}}\\
+enzymatic catalyst         & \href{http://identifiers.org/biomodels.sbo/SBO:0000460}{\texttt{SBO:0000460}}\\
+\gene                      & \href{http://identifiers.org/biomodels.sbo/SBO:0000243}{\texttt{SBO:0000243}}\\
+{\gene}-coding region      & \href{http://identifiers.org/biomodels.sbo/SBO:0000335}{\texttt{SBO:0000335}}\\
+generic                    & \href{http://identifiers.org/biomodels.sbo/SBO:0000252}{\texttt{SBO:0000252}}\\
+inhibition                 & \href{http://identifiers.org/biomodels.sbo/SBO:0000169}{\texttt{SBO:0000169}}\\
+inhibitor                  & \href{http://identifiers.org/biomodels.sbo/SBO:0000020}{\texttt{SBO:0000020}}\\
+\mRNA                      & \href{http://identifiers.org/biomodels.sbo/SBO:0000278}{\texttt{SBO:0000278}}\\
+necessary stimulation      & \href{http://identifiers.org/biomodels.sbo/SBO:0000171}{\texttt{SBO:0000171}}\\
+protein                    & \href{http://identifiers.org/biomodels.sbo/SBO:0000297}{\texttt{SBO:0000297}}\\
+\RNA                       & \href{http://identifiers.org/biomodels.sbo/SBO:0000250}{\texttt{SBO:0000250}}\\
+stimulation                & \href{http://identifiers.org/biomodels.sbo/SBO:0000170}{\texttt{SBO:0000170}}\\
+stimulator                 & \href{http://identifiers.org/biomodels.sbo/SBO:0000021}{\texttt{SBO:0000021}}\\
+transcriptional activation & \href{http://identifiers.org/biomodels.sbo/SBO:0000459}{\texttt{SBO:0000459}}\\
+transcriptional inhibition & \href{http://identifiers.org/biomodels.sbo/SBO:0000020}{\texttt{SBO:0000020}}\\
+translational activation   & \href{http://identifiers.org/biomodels.sbo/SBO:0000459}{\texttt{SBO:0000459}}\\
+trigger (necessary stimulator) & \href{http://identifiers.org/biomodels.sbo/SBO:0000461}{\texttt{SBO:0000461}}\\
+translation                & \href{http://identifiers.org/biomodels.sbo/SBO:0000184}{\texttt{SBO:0000184}}\\
+transcription              & \href{http://identifiers.org/biomodels.sbo/SBO:0000183}{\texttt{SBO:0000183}}\\
+\bottomrule
+\end{tabular}
+\end{table}
+\begin{algorithm}[htbp]
+ \DontPrintSemicolon
+  
+ \SetKwInOut{Input}{Input}
+ \SetKwInOut{Parameter}{Parameter}
+ \SetKwInOut{Output}{Output}
+ 
+ \SetKw{True}{true}
+ 
+ \SetKwFunction{species}{species}
+ \SetKwFunction{getKEGGIDs}{getKEGGIDs}
+ \SetKwFunction{stoichiometry}{stoichiometry}
+ \SetKwFunction{isGene}{isGene}
+ \SetKwFunction{isRNA}{isRNA}
+ \SetKwFunction{isPolypeptide}{isPolypeptide}
+ \SetKwFunction{isEnzyme}{isEnzyme}
+ \SetKwFunction{isCatalyst}{isCatalyst}
+ \SetKwFunction{isStimulator}{isStimulator}
+ \SetKwFunction{isInhibitor}{isInhibitor}
+ 
+ \Indentp{-2.5ex}
+ \Input{Reaction $r$}
+ \Parameter{List $K_\mathrm{I}$ of KEGG compound identifiers to be skipped, can be empty}
+ \Output{Set $R_\mathrm{Features}$ of reaction features}
+ \Indentp{2.5ex}
+
+ $Y \leftarrow R_r \cup P_r$ \tcp{Build set of reactants and products}
+ $r_\mathrm{Stoichiometry} \leftarrow p_\mathrm{Stoichiometry} \leftarrow 0$ \tcp{Lumped stoichiometry of reactants and products}
+ $y_\mathrm{allInteger} \leftarrow$ \True \tcp{Only integer stoichiometry}
+ $r_\mathrm{allGenes} \leftarrow$ \True \tcp{All reactants represent genes}
+ $r_\mathrm{allRNA} \leftarrow$ \True \tcp{All reactants represent \RNA molecules}
+ $p_\mathrm{allRNA} \leftarrow$ \True \tcp{All products represent \RNA molecules}
+ $p_\mathrm{allPolypeptides} \leftarrow$ \True \tcp{All products represent polypeptide chains}
+ 
+ \ForEach{Reaction participant $y$ in $Y$}{
+   $x \leftarrow$ \species{y} \tcp{Lookup the species object for this participant}
+   $K_x \leftarrow$ \getKEGGIDs{x} \tcp{Collect all compound identifiers attached to $x$.}
+   \If{$K_x \cap K_\mathrm{I} = \varnothing$}{
+     \tcp{Neglect the contribution of this participant to the rate law.}
+     \If{$y \in R_r$}{
+       $R_r \leftarrow R_r\setminus \{y\}$ \tcp{Remove $y$ from reactants.}
+     }
+     \Else{
+       $P_r \leftarrow P_r\setminus \{y\}$ \tcp{Remove $y$ from products.}
+     }
+   }
+   \Else{
+     \If{$y \in R_r$}{
+       $r_\mathrm{Stoichiometry} \leftarrow r_\mathrm{Stoichiometry} + \stoichiometry{y}$\;
+       $y_\mathrm{allInteger} \leftarrow y_\mathrm{allInteger} \wedge \left(\{r_\mathrm{Stoichiometry}\} \cap \mathbb{Z} \neq \varnothing\right)$\;
+       $r_\mathrm{allGenes} \leftarrow r_\mathrm{allGenes} \wedge \isGene{x}$\;
+       $r_\mathrm{allRNA} \leftarrow r_\mathrm{allRNA} \wedge \isRNA{x}$\;
+     }
+     \Else{
+       $p_\mathrm{Stoichiometry} \leftarrow p_\mathrm{Stoichiometry} + \stoichiometry{y}$\;
+       $y_\mathrm{allInteger} \leftarrow y_\mathrm{allInteger} \wedge \left(\{p_\mathrm{Stoichiometry}\} \cap \mathbb{Z} \neq \varnothing\right)$\;
+       $p_\mathrm{allRNA} \leftarrow p_\mathrm{allRNA} \wedge \isRNA{x}$\;
+       $p_\mathrm{allPolypeptides} \leftarrow p_\mathrm{allPolypeptides} \wedge \isPolypeptide{x}$\;
+     }
+   }
+ }
+ 
+ $E \leftarrow A \leftarrow I \leftarrow C \leftarrow \{\}$\;
+ 
+ \ForEach{Modifier $m$ in $r$ \tcp{Analyze the \SBO term of the modifier}}{
+   \If{\isEnzyme{$m$}}{
+     $E = E \cup \{m\}$\;
+   }
+   \ElseIf{\isCatalyst{$m$}}{
+     $C = C \cup \{m\}$\;
+   }
+   \ElseIf{\isStimulator{$m$}}{
+     $A = A \cup \{m\}$\;
+   }
+   \ElseIf{\isInhibitor{$m$}}{
+     $I = I \cup \{m\}$\;
+   }
+   
+   \KwRet{$R_\mathrm{Features} \leftarrow \{r_\mathrm{Stoichiometry}, p_\mathrm{Stoichiometry}, r_\mathrm{allGenes}, r_\mathrm{allRNA}, p_\mathrm{allRNA}, p_\mathrm{allPolypeptides}, E, A, I, C\}$}
+ }
+
+ \caption{Preprocessing}
+ \label{alg:Preprocessing}
+\end{algorithm}
+
+%\includegraphics[width=.95\textwidth]{img/SelectRateLaws.pdf}
+\Vref{alg:SelectRateLaws} shows how SBMLsqueezer selects suitable rate laws.
+The algorithm obtains as input a reaction $r$, its features $R_\mathrm{Features}$, and the user's preference $e$ that decides whether or not in the absence of an explicitly declared enzyme the reaction could still be considered enzyme-catalyzed.
+This algorithm assumes that the reversibility preference $\varrho$ has already been incorporated into the model in an earlier step, i.e., as part of the construction of the submodel (see \vref{alg:DeNovo}).
+The output is the set $K$ of all applicable rate laws for $r$.
+The three major types of reactions are highlighted with background colors: the blue area contains decisions over non-enzyme and non-regulatory reactions, the yellow area comprises all regulatory rate laws, and the green area displays all decisions made about enzyme kinetics.
+In order to ensure that the set $K$ can never be empty, the algorithm only adds rate laws to $K$ but never removes any rate laws.
+In all situations, in which rate laws could be removed again, the set $B$ is used as a temporary set of applicable rate laws.
+All remaining elements of $B$ are finally added to $K$.
+The functions $\mathrm{A}(),\ldots, \mathrm{L}()$ return the set of all rate laws in their corresponding category (see \vref{tab:ReactionCategories} and \vref{fig:ReactionCategories}).
+\vref{alg:SelectGeneRegulationAndEnzymeKinetics} shows how rate laws for gene-regulatory and enzyme-catalyzed reactions are selected.
+\begin{algorithm}[htbp]
+ \DontPrintSemicolon
+  
+ \SetKwInOut{Input}{Input}
+ \SetKwInOut{Parameter}{Parameter}
+ \SetKwInOut{Output}{Output}
+ 
+ \SetKw{True}{true}
+ 
+ \Indentp{-2.5ex}
+ \Input{Reaction $r$}
+ \Parameter{Set $R_\mathrm{Features}$ of reaction features, Boolean $e$ to decide if reactions without explicit catalyst should be considered enzymatic reactions}
+ \Output{Set $K$ of applicable rate laws}
+ \Indentp{2.5ex}
+ 
+ \SetKwFunction{selectRateLaws}{selectRateLaws}
+ \SetKwFunction{isReversible}{isReversible}
+ \SetKwFunction{A}{A}
+ \SetKwFunction{B}{B}
+ \SetKwFunction{C}{C}
+ \SetKwFunction{D}{D}
+ \SetKwFunction{E}{E}
+ \SetKwFunction{F}{F}
+ \SetKwFunction{G}{G}
+ \SetKwFunction{H}{H}
+ \SetKwFunction{I}{I}
+ \SetKwFunction{J}{J}
+ \SetKwFunction{K}{K}
+ \SetKwFunction{L}{L}
+ 
+ \SetKwFunction{geneRegulation}{geneRegulation}
+ \SetKwFunction{enzymeKinetics}{enzymeKinetics}
+
+ \SetKwProg{myalg}{Algorithm}{}{}
+ \myalg{\selectRateLaws{}}{
+   $K \leftarrow B \leftarrow \{\}$ \tcp{Initialize sets of applicable rate laws}
+   
+   \If {$R_r \leftarrow \varnothing \vee \left(\isReversible{r} \wedge P_r = \varnothing\right)$}{
+     \If {$R_r \neq \varnothing$ \tcp{Any reactants present?}}{
+       \If{$\neg p_\mathrm{allRNA}$ \tcp{RNA produced?}}{
+         $K \leftarrow K \cup \K{}$ \tcp{Zeroth order reactant}
+       }
+     } \Else {
+       \If{$\neg p_\mathrm{allRNA}$ \tcp{RNA produced?}}{
+         $K \leftarrow K \cup \left(\J{} \cap \L\right)$ \tcp{Reversible zeroth order products}
+       }
+     }
+     $B \leftarrow$ \geneRegulation{$r$, $R_\mathrm{Features}$, $e$, $B$}\;
+   } \Else {
+     \If {
+     $\left((E = \varnothing) \wedge \neg e\right) \vee \left(C \neq \varnothing\right)$ \tcp{Non-enzyme catalyst?}
+     }{
+       $K \leftarrow K \cup \A{}$ \tcp{Non-enzyme kinetics}
+     } \Else{
+       $e \leftarrow \True$\;
+     }
+     \If {($r_\mathrm{Stoichiometry} = 1) \wedge (p_\mathrm{Stoichiometry} = 1)$ \tcp{Uni-uni stoichiometry?}}{
+       $B \leftarrow$ \enzymeKinetics{$r$, $R_\mathrm{Features}$, $e$, $B$}\;
+     } \Else {
+       $B \leftarrow$ \geneRegulation{$r$, $R_\mathrm{Features}$, $e$, $B$}\;
+     }
+   }
+ 
+   \If {\isReversible{$r$}}{
+     $B \leftarrow \left(B \setminus \H{}\right) \cup \left(B \cap \J{}\right)$ \tcp{Remove irreversible kinetics}
+   } \Else {
+     $B \leftarrow \left(B \setminus \J{}\right) \cup \left(B \cap \H{}\right)$ \tcp{Remove reversible kinetics}
+   }
+
+   \KwRet{$K \leftarrow K \cup B$}
+ }{}
+
+ \caption{Selection of rate laws based on a reaction and its features}
+\label{alg:SelectRateLaws}
+\end{algorithm}
+
+\Vref{alg:SelectGeneRegulationAndEnzymeKinetics} shows how the program selects rate laws for gene regulation and enzyme-catalyzed reactions.
+These routines are utilized by the function \texttt{selectRateLaws} and cannot be used independently.
+The functions $\mathrm{A}(),\ldots, \mathrm{L}()$ return all rate laws in their respective category (see \vref{fig:ReactionCategories}).
+\begin{algorithm}[htbp]
+ \DontPrintSemicolon
+  
+ \SetKwInOut{Input}{Input}
+ \SetKwInOut{Parameter}{Parameter}
+ \SetKwInOut{Output}{Output}
+ 
+ \SetKw{True}{true}
+ 
+ \Indentp{-2.5ex}
+ \Input{Reaction $r$, Set $B$ of potentially applicable rate laws}
+ \Parameter{Set $R_\mathrm{Features}$ of reaction features, Boolean $e$ to decide if reactions without explicit catalyst should be considered enzymatic reactions}
+ \Output{Set $B$ of potentially applicable rate laws}
+ \Indentp{2.5ex}
+ 
+ \SetKwFunction{geneRegulation}{geneRegulation}
+ \SetKwFunction{enzymeKinetics}{enzymeKinetics}
+
+\setcounter{AlgoLine}{0}
+ \SetKwProg{myproc}{Procedure}{}{}
+  \myproc{\geneRegulation{$r$, $R_\mathrm{Features}$, $e$, $B$}}{
+    \If {$r_\mathrm{allGenes} \vee r_\mathrm{allRNA} \vee p_\mathrm{allRNA} \vee p_\mathrm{allPolypeptides}$ \tcp{Genes, RNA, or polypeptides involved?}}{
+      $B \leftarrow \B{} \setminus \left(\K{} \cup \L{}\right)$ \tcp{Gene regulation without zeroth order kinetics}
+    }
+    \If {$\left((E = \varnothing) \wedge \neg e\right) \vee \left((C \neq \varnothing) \vee (R_r = \varnothing)\right)$ \tcp{Non-enzyme catalyst or no reactants?}}{
+      $B \leftarrow$ \enzymeKinetics{$r$, $R_\mathrm{Features}$, $e$, $B$}\;
+    } \Else {
+      $B \leftarrow$ \enzymeKinetics{$r$, $R_\mathrm{Features}$, \True, $B$}\;
+    }
+    \KwRet{$B$}
+ }
+ 
+ \setcounter{AlgoLine}{0}
+  \myproc{\enzymeKinetics{$r$, $R_\mathrm{Features}$, $e$, $B$}}{
+    \If {$e$ \tcp{Enzyme involved?}}{
+      $B \leftarrow B \cup \F{}$ \tcp{Arbitrary enzyme kinetics}
+      \If{$(r_\mathrm{Stoichiometry} = 1) \wedge \left(\neg\isReversible{$r$} \vee (p_\mathrm{Stoichiometry} = 1)\right)$}{
+        $B \leftarrow B \cup \C{}$ \tcp{Uni-uni enzyme kinetics}
+      } \ElseIf {$(r_\mathrm{Stoichiometry} = 2) \wedge \left(\neg\isReversible{r} \vee (p_\mathrm{Stoichiometry} = 1)\right)$} {
+        $B \leftarrow B \cup \D{}$ \tcp{Bi-uni enzyme kinetics}
+      } \ElseIf {$(r_\mathrm{Stoichiometry} = 2) \wedge \left(\neg\isReversible{r} \vee (p_\mathrm{Stoichiometry} = 2)\right)$} {
+        $B \leftarrow B \cup \E{}$ \tcp{Bi-bi enzyme kinetics}
+      }
+      \If {$\neg y_\mathrm{allInteger}$ \tcp{Non-integer stoichiometry?}}{
+        $B \leftarrow B \setminus \G{}$ \tcp{Remove integer kinetics}
+      }
+      \If {$(A \neq \varnothing) \vee (I \neq \varnothing)$ \tcp{Any activators or inhibitors?}}{
+        $B \leftarrow B \cap \I{}$ \tcp{Retain only modulated kinetics}
+      }
+    }
+    \KwRet{$B$}
+  }
+  \caption{Selection of rate laws for gene regulation and enzyme-catalyzed reactions}
+  \label{alg:SelectGeneRegulationAndEnzymeKinetics}
+\end{algorithm}
+
 \chapter{\acs{FAQ} and troubleshooting}
 \label{ch:faq}
 
@@ -2392,6 +2907,7 @@ order:
 Meike Aichele,
 Hannes Borch,
 Alexander D\"orr,
+Bin Du,
 Nadine Hassis,
 Marcel Kronfeld,
 Oliver Kohlbacher,
@@ -2407,7 +2923,7 @@ Jochen Supper,
 Dieudonn\'e M.~Wouamba,
 Michael J.~Ziller
 
-We also thank Shaowu Yang for providing the \Chinese language pack for this program.
+We also thank Shaowu Yang for providing the \Chinese language pack for this program and Michael R\"omer for maintaining the Galaxy framework and hence the online program version of SBMLsqueezer.
 
 
 \section{Collaborators and partners}
