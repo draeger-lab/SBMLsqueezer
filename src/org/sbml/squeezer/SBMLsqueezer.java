@@ -50,6 +50,8 @@ import org.sbml.jsbml.SBMLInputConverter;
 import org.sbml.jsbml.SBMLOutputConverter;
 import org.sbml.jsbml.xml.libsbml.LibSBMLReader;
 import org.sbml.jsbml.xml.libsbml.LibSBMLWriter;
+import org.sbml.squeezer.functionTermGenerator.FunctionTermGenerator;
+import org.sbml.squeezer.functionTermGenerator.FunctionTermOptions;
 import org.sbml.squeezer.gui.SBMLsqueezerUI;
 import org.sbml.squeezer.io.IOOptions;
 import org.sbml.squeezer.io.SBMLio;
@@ -280,6 +282,7 @@ public class SBMLsqueezer<T> extends Launcher {
     list.add(GUIOptions.class);
     list.add(LaTeXOptions.class);
     list.add(GarudaOptions.class);
+    list.add(FunctionTermOptions.class);
     return list;
   }
   
@@ -493,8 +496,7 @@ public class SBMLsqueezer<T> extends Launcher {
         progressBar = new ProgressBar(0);
         klg.setProgressBar(progressBar);
       }
-      
-      
+       
       long time = System.currentTimeMillis();
       logger.info(MESSAGES.getString("CREATING_KINETIC_LAWS"));
       klg.generateLaws();
@@ -505,6 +507,8 @@ public class SBMLsqueezer<T> extends Launcher {
         klg.setProgressBar(progressBar);
       }
       klg.storeKineticLaws();
+      
+      FunctionTermGenerator ftg = new FunctionTermGenerator(sbmlIo.getSelectedModel());
       
       time = System.currentTimeMillis();
       logger.info(MESSAGES.getString("SAVING_TO_FILE"));
