@@ -83,7 +83,7 @@ import de.zbit.util.progressbar.ProgressBar;
 /**
  * The main program of SBMLsqueezer. This class initializes all required
  * objects, starts the GUI if desired and loads all settings from the user.
- * 
+ *
  * @author Andreas Dr&auml;ger
  * @author Nadine Hassis
  * @author Hannes Borch
@@ -94,61 +94,61 @@ import de.zbit.util.progressbar.ProgressBar;
  */
 @SuppressWarnings("unchecked")
 public class SBMLsqueezer<T> extends Launcher {
-  
+
   private static Boolean libSBMLAvailable = null;
   /**
    * The {@link Logger} for this class.
    */
   private static final transient Logger logger = Logger.getLogger(SBMLsqueezer.class.getName());
-  
+
   /**
    * Localization support.
    */
   public static final transient ResourceBundle MESSAGES = ResourceManager.getBundle(Bundles.MESSAGES);
-  
+
   private static boolean sabiorkEnabled = true;
-  
+
   /**
    * Generated serial version identifier.
    */
   private static final long serialVersionUID = 8751196023375780898L;
-  
+
   /**
    * Localization support.
    */
   public static final transient ResourceBundle WARNINGS = ResourceManager.getBundle(Bundles.WARNINGS);
-  
+
   /**
-   * 
+   *
    * @return
    */
   public static List<Class<? extends KeyProvider>> getInteractiveConfigOptions() {
     return Arrays.asList(getInteractiveConfigOptionsArray());
   }
-  
+
   /**
-   * 
+   *
    * @return
    */
   public static Class<? extends KeyProvider>[] getInteractiveConfigOptionsArray() {
-	  List<Class<? extends KeyProvider>> list = new LinkedList<Class<? extends KeyProvider>>();
-	  list.add(OptionsGeneral.class);
-	  list.add(OptionsRateLaws.class);
-	  if (sabiorkEnabled) {
-		  list.add(SABIORKOptions.class);
-		  list.add(SABIORKPreferences.class);
-	  }
-	  list.add(LaTeXOptions.class);
-	  list.add(FunctionTermOptions.class);
-	  return list.toArray(new Class[0]);
+    List<Class<? extends KeyProvider>> list = new LinkedList<Class<? extends KeyProvider>>();
+    list.add(OptionsGeneral.class);
+    list.add(OptionsRateLaws.class);
+    if (sabiorkEnabled) {
+      list.add(SABIORKOptions.class);
+      list.add(SABIORKPreferences.class);
+    }
+    list.add(LaTeXOptions.class);
+    list.add(FunctionTermOptions.class);
+    return list.toArray(new Class[0]);
   }
-  
+
   /**
    * Returns an array of Strings that can be interpreted as enzymes. In
    * particular this array will contain those configuration keys as strings
    * for which in the current configuration the corresponding value is set to
    * {@code true}.
-   * 
+   *
    * @return
    */
   public static String[] getPossibleEnzymeTypes() {
@@ -167,14 +167,14 @@ public class SBMLsqueezer<T> extends Launcher {
     }
     return enzymeTypes.toArray(new String[] {});
   }
-  
+
   /**
    * @return the sabiorkEnabled
    */
   public static boolean isSABIORKEnabled() {
     return sabiorkEnabled;
   }
-  
+
   /**
    * @param args
    */
@@ -182,38 +182,38 @@ public class SBMLsqueezer<T> extends Launcher {
   public static void main(String[] args) {
     new SBMLsqueezer(args);
   }
-  
+
   /**
    * @param sabiorkEnabled the sabiorkEnabled to set
    */
   public static void setSABIORKEnabled(boolean sabiorkEnabled) {
     SBMLsqueezer.sabiorkEnabled = sabiorkEnabled;
   }
-  
+
   /**
-   * 
+   *
    */
   private AppConf appConf;
-  
+
   /**
-   * 
+   *
    */
   private SBMLio<T> sbmlIo;
-  
+
   private Sign sign;
-  
+
   private DefaultTerm defaultTerm;
   /**
-   * 
+   *
    */
   public SBMLsqueezer() {
     this(null, null);
   }
-  
+
   /**
    * This constructor allows the integration of SBMLsqueezer into third-party
    * programs, i.e., as a CellDesigner plug-in.
-   * 
+   *
    * @param sbmlReader
    * @param sbmlWriter
    */
@@ -224,15 +224,15 @@ public class SBMLsqueezer<T> extends Launcher {
       sbmlIo = new SBMLio<T>(sbmlReader, sbmlWriter);
     }
   }
-  
+
   /**
-   * 
+   *
    * @param args
    */
   public SBMLsqueezer(String[] args) {
     super(args);
   }
-  
+
   /* (non-Javadoc)
    * @see de.zbit.Launcher#commandLineMode(de.zbit.AppConf)
    */
@@ -268,7 +268,7 @@ public class SBMLsqueezer<T> extends Launcher {
       }
     }
   }
-  
+
   /* (non-Javadoc)
    * @see de.zbit.Launcher#getAppName()
    */
@@ -276,7 +276,7 @@ public class SBMLsqueezer<T> extends Launcher {
   public String getAppName() {
     return getClass().getSimpleName();
   }
-  
+
   /* (non-Javadoc)
    * @see de.zbit.Launcher#getCmdLineOptions()
    */
@@ -294,7 +294,7 @@ public class SBMLsqueezer<T> extends Launcher {
     list.add(FunctionTermOptions.class);
     return list;
   }
-  
+
   /* (non-Javadoc)
    * @see de.zbit.Launcher#getInteractiveOptions()
    */
@@ -302,8 +302,8 @@ public class SBMLsqueezer<T> extends Launcher {
   public List<Class<? extends KeyProvider>> getInteractiveOptions() {
     return getInteractiveConfigOptions();
   }
-  
-  
+
+
   /* (non-Javadoc)
    * @see de.zbit.Launcher#getLogPackages()
    */
@@ -311,15 +311,15 @@ public class SBMLsqueezer<T> extends Launcher {
   public String[] getLogPackages() {
     return new String[] {"org.sbml", "de.zbit"};
   }
-  
+
   /**
-   * 
+   *
    * @return
    */
   public SBMLio<T> getSBMLIO() {
     return sbmlIo;
   }
-  
+
   /* (non-Javadoc)
    * @see de.zbit.Launcher#getURLlicenseFile()
    */
@@ -333,7 +333,7 @@ public class SBMLsqueezer<T> extends Launcher {
     }
     return url;
   }
-  
+
   /* (non-Javadoc)
    * @see de.zbit.Launcher#getURLOnlineUpdate()
    */
@@ -347,7 +347,7 @@ public class SBMLsqueezer<T> extends Launcher {
     }
     return url;
   }
-  
+
   /* (non-Javadoc)
    * @see de.zbit.Launcher#getVersionNumber()
    */
@@ -355,7 +355,7 @@ public class SBMLsqueezer<T> extends Launcher {
   public String getVersionNumber() {
     return "2.1";
   }
-  
+
   /* (non-Javadoc)
    * @see de.zbit.Launcher#getYearOfProgramRelease()
    */
@@ -363,7 +363,7 @@ public class SBMLsqueezer<T> extends Launcher {
   public short getYearOfProgramRelease() {
     return (short) 2015;
   }
-  
+
   /* (non-Javadoc)
    * @see de.zbit.Launcher#getYearWhenProjectWasStarted()
    */
@@ -371,7 +371,7 @@ public class SBMLsqueezer<T> extends Launcher {
   public short getYearWhenProjectWasStarted() {
     return (short) 2006;
   }
-  
+
   /* (non-Javadoc)
    * @see de.zbit.Launcher#initGUI(de.zbit.AppConf)
    */
@@ -383,11 +383,11 @@ public class SBMLsqueezer<T> extends Launcher {
     }
     return new SBMLsqueezerUI(getSBMLIO(), appConf);
   }
-  
+
   /**
    * Does initialization for creating a SBMLsqueezer Object.
    * Checks if libSBML is available and initializes the Reader/Writer.
-   * 
+   *
    * @param tryLoadingLibSBML
    */
   private void initializeReaderAndWriter(boolean tryLoadingLibSBML) {
@@ -418,7 +418,7 @@ public class SBMLsqueezer<T> extends Launcher {
           new SqSBMLWriter());
     }
   }
-  
+
   /* (non-Javadoc)
    * @see de.zbit.Launcher#isGarudaEnabled()
    */
@@ -426,9 +426,9 @@ public class SBMLsqueezer<T> extends Launcher {
   public boolean isGarudaEnabled() {
     return true;
   }
-  
+
   /**
-   * 
+   *
    * @param sbmlSource
    */
   public Model readSBMLSource(Object sbmlSource) {
@@ -450,7 +450,7 @@ public class SBMLsqueezer<T> extends Launcher {
     }
     return model;
   }
-  
+
   /* (non-Javadoc)
    * @see de.zbit.Launcher#setUp()
    */
@@ -461,9 +461,9 @@ public class SBMLsqueezer<T> extends Launcher {
         IOOptions.TRY_LOADING_LIBSBML));
     }
   }
-  
+
   /**
-   * 
+   *
    * @param source
    * @param outFile
    * @param showProgress
@@ -485,11 +485,11 @@ public class SBMLsqueezer<T> extends Launcher {
     if (errorFatal) {
       throw new SBMLException(exception);
     } else if (!sbmlIo.getListOfOpenedFiles().isEmpty()) {
-      
+
       Set<Reaction> reactionsWithSABIOKinetics = null;
       if (searchSABIO) {
         boolean overwriteExistingRateLaws = false;
-        
+
         if (appConf.getCmdArgs().containsKey(OptionsGeneral.OVERWRITE_EXISTING_RATE_LAWS)) {
           overwriteExistingRateLaws = appConf.getCmdArgs().getBoolean(OptionsGeneral.OVERWRITE_EXISTING_RATE_LAWS);
         }
@@ -505,26 +505,26 @@ public class SBMLsqueezer<T> extends Launcher {
         progressBar = new ProgressBar(0);
         klg.setProgressBar(progressBar);
       }
-       
+
       long time = System.currentTimeMillis();
       logger.info(MESSAGES.getString("CREATING_KINETIC_LAWS"));
       klg.generateLaws();
       logger.info(MessageFormat.format(MESSAGES.getString("DONE_IN_MS"), (System.currentTimeMillis() - time)));
-      
+
       if (showProgress) {
         progressBar = new ProgressBar(0);
         klg.setProgressBar(progressBar);
       }
       klg.storeKineticLaws();
-      
+
       FunctionTermGenerator ftg = new FunctionTermGenerator(sbmlIo.getSelectedModel());
       ftg.setSign(sign);
       ftg.setDefaultTerm(defaultTerm);
-      
+
       time = System.currentTimeMillis();
       logger.info(MESSAGES.getString("SAVING_TO_FILE"));
-      if ((outFile != null)
-          && (SBFileFilter.hasFileType(outFile, SBFileFilter.FileType.SBML_FILES)) || SBFileFilter.createSBMLFileFilter().accept(outFile)) {
+      if (((outFile != null)
+          && (SBFileFilter.hasFileType(outFile, SBFileFilter.FileType.SBML_FILES))) || SBFileFilter.createSBMLFileFilter().accept(outFile)) {
         sbmlIo.writeSelectedModelToSBML(outFile.getAbsolutePath());
         logger.info(MessageFormat.format(MESSAGES.getString("DONE_IN_MS"), (System.currentTimeMillis() - time)));
         SBPreferences preferences = new SBPreferences(OptionsGeneral.class);
@@ -545,13 +545,13 @@ public class SBMLsqueezer<T> extends Launcher {
       (System.currentTimeMillis() - workTime)/1000d,
       source.getName()));
   }
-  
-  
+
+
   /**
    * Reads in the given SBML file, squeezes kinetic equations in and writes
    * the result back to the given SBML file. This method only works if
    * SBMLsqueezer is used as a stand-alone program.
-   * 
+   *
    * @param sbmlSource
    *            the path to a file that contains SBML code or another object
    *            that can be read by the current reader used by SBMLsqueezer.
@@ -588,7 +588,7 @@ public class SBMLsqueezer<T> extends Launcher {
       }
     }
   }
-  
+
   /**
    * @param absolutePath
    * @param outputPath
@@ -597,7 +597,7 @@ public class SBMLsqueezer<T> extends Launcher {
   public void squeeze(String absolutePath, String outputPath) throws Throwable {
     squeeze(absolutePath, outputPath, false);
   }
-  
+
   /**
    * Searches for SABIO-RK kinetics
    * @param sbmlDocument
@@ -610,9 +610,9 @@ public class SBMLsqueezer<T> extends Launcher {
     SBProperties properties = appConf.getCmdArgs();
     SBPreferences options = new SBPreferences(SABIORKOptions.class);
     SBPreferences prefs = new SBPreferences(SABIORKPreferences.class);
-    
-    
-    
+
+
+
     String pathway = null;
     if (properties.containsKey(SABIORKOptions.PATHWAY)) {
       pathway = properties.get(SABIORKOptions.PATHWAY);
@@ -620,7 +620,7 @@ public class SBMLsqueezer<T> extends Launcher {
     else {
       pathway = options.get(SABIORKOptions.PATHWAY);
     }
-    
+
     String tissue = null;
     if (properties.containsKey(SABIORKOptions.TISSUE)) {
       tissue = properties.get(SABIORKOptions.TISSUE);
@@ -628,7 +628,7 @@ public class SBMLsqueezer<T> extends Launcher {
     else {
       tissue = options.get(SABIORKOptions.TISSUE);
     }
-    
+
     String organism = null;
     if (properties.containsKey(SABIORKOptions.ORGANISM)) {
       organism = properties.get(SABIORKOptions.ORGANISM);
@@ -636,7 +636,7 @@ public class SBMLsqueezer<T> extends Launcher {
     else {
       organism = options.get(SABIORKOptions.ORGANISM);
     }
-    
+
     String cellularLocation = null;
     if (properties.containsKey(SABIORKOptions.CELLULAR_LOCATION)) {
       cellularLocation = properties.get(SABIORKOptions.CELLULAR_LOCATION);
@@ -644,7 +644,7 @@ public class SBMLsqueezer<T> extends Launcher {
     else {
       cellularLocation = options.get(SABIORKOptions.CELLULAR_LOCATION);
     }
-    
+
     Boolean isWildtype = null;
     if (properties.containsKey(SABIORKPreferences.IS_WILDTYPE)) {
       isWildtype = properties.getBoolean(SABIORKPreferences.IS_WILDTYPE);
@@ -652,7 +652,7 @@ public class SBMLsqueezer<T> extends Launcher {
     else {
       isWildtype = prefs.getBoolean(SABIORKPreferences.IS_WILDTYPE);
     }
-    
+
     Boolean isMutant = null;
     if (properties.containsKey(SABIORKPreferences.IS_MUTANT)) {
       isMutant = properties.getBoolean(SABIORKPreferences.IS_MUTANT);
@@ -660,7 +660,7 @@ public class SBMLsqueezer<T> extends Launcher {
     else {
       isMutant = prefs.getBoolean(SABIORKPreferences.IS_MUTANT);
     }
-    
+
     Boolean isRecombinant = null;
     if (properties.containsKey(SABIORKPreferences.IS_RECOMBINANT)) {
       isRecombinant = properties.getBoolean(SABIORKPreferences.IS_RECOMBINANT);
@@ -668,7 +668,7 @@ public class SBMLsqueezer<T> extends Launcher {
     else {
       isRecombinant = prefs.getBoolean(SABIORKPreferences.IS_RECOMBINANT);
     }
-    
+
     Boolean hasKineticData = null;
     if (properties.containsKey(SABIORKPreferences.HAS_KINETIC_DATA)) {
       hasKineticData = properties.getBoolean(SABIORKPreferences.HAS_KINETIC_DATA);
@@ -676,7 +676,7 @@ public class SBMLsqueezer<T> extends Launcher {
     else {
       hasKineticData = prefs.getBoolean(SABIORKPreferences.HAS_KINETIC_DATA);
     }
-    
+
     Boolean isDirectSubmission = null;
     if (properties.containsKey(SABIORKPreferences.IS_DIRECT_SUBMISSION)) {
       isDirectSubmission = properties.getBoolean(SABIORKPreferences.IS_DIRECT_SUBMISSION);
@@ -684,7 +684,7 @@ public class SBMLsqueezer<T> extends Launcher {
     else {
       isDirectSubmission = prefs.getBoolean(SABIORKPreferences.IS_DIRECT_SUBMISSION);
     }
-    
+
     Boolean isJournal = null;
     if (properties.containsKey(SABIORKPreferences.IS_JOURNAL)) {
       isJournal = properties.getBoolean(SABIORKPreferences.IS_JOURNAL);
@@ -692,7 +692,7 @@ public class SBMLsqueezer<T> extends Launcher {
     else {
       isJournal = prefs.getBoolean(SABIORKPreferences.IS_JOURNAL);
     }
-    
+
     Boolean isEntriesInsertedSince = null;
     if (properties.containsKey(SABIORKPreferences.IS_ENTRIES_INSERTED_SINCE)) {
       isEntriesInsertedSince = properties.getBoolean(SABIORKPreferences.IS_ENTRIES_INSERTED_SINCE);
@@ -700,7 +700,7 @@ public class SBMLsqueezer<T> extends Launcher {
     else {
       isEntriesInsertedSince = prefs.getBoolean(SABIORKPreferences.IS_ENTRIES_INSERTED_SINCE);
     }
-    
+
     Double lowerpHValue = null;
     if (properties.containsKey(SABIORKPreferences.LOWEST_PH_VALUE)) {
       lowerpHValue = properties.getDouble(SABIORKPreferences.LOWEST_PH_VALUE);
@@ -708,7 +708,7 @@ public class SBMLsqueezer<T> extends Launcher {
     else {
       lowerpHValue = prefs.getDouble(SABIORKPreferences.LOWEST_PH_VALUE);
     }
-    
+
     Double upperpHValue = null;
     if (properties.containsKey(SABIORKPreferences.HIGHEST_PH_VALUE)) {
       upperpHValue = properties.getDouble(SABIORKPreferences.HIGHEST_PH_VALUE);
@@ -716,7 +716,7 @@ public class SBMLsqueezer<T> extends Launcher {
     else {
       upperpHValue = prefs.getDouble(SABIORKPreferences.HIGHEST_PH_VALUE);
     }
-    
+
     Double lowerTemperature = null;
     if (properties.containsKey(SABIORKPreferences.LOWEST_TEMPERATURE_VALUE)) {
       lowerTemperature = properties.getDouble(SABIORKPreferences.LOWEST_TEMPERATURE_VALUE);
@@ -724,7 +724,7 @@ public class SBMLsqueezer<T> extends Launcher {
     else {
       lowerTemperature = prefs.getDouble(SABIORKPreferences.LOWEST_TEMPERATURE_VALUE);
     }
-    
+
     Double upperTemperature = null;
     if (properties.containsKey(SABIORKPreferences.HIGHEST_TEMPERATURE_VALUE)) {
       upperTemperature = properties.getDouble(SABIORKPreferences.HIGHEST_TEMPERATURE_VALUE);
@@ -732,7 +732,7 @@ public class SBMLsqueezer<T> extends Launcher {
     else {
       upperTemperature = prefs.getDouble(SABIORKPreferences.HIGHEST_TEMPERATURE_VALUE);
     }
-    
+
     String dateSubmitted = null;
     if (properties.containsKey(SABIORKPreferences.LOWEST_DATE)) {
       dateSubmitted = properties.get(SABIORKPreferences.LOWEST_DATE);
@@ -740,14 +740,14 @@ public class SBMLsqueezer<T> extends Launcher {
     else {
       dateSubmitted = prefs.get(SABIORKPreferences.LOWEST_DATE);
     }
-    
+
     Set<Reaction> changedReactions = SABIORKWizard.getResultConsole(sbmlDocument, overwriteExistingRateLaws, pathway, tissue, organism, cellularLocation, isWildtype, isMutant, isRecombinant, hasKineticData, lowerpHValue, upperpHValue, lowerTemperature, upperTemperature, isDirectSubmission, isJournal, isEntriesInsertedSince, dateSubmitted);
     return changedReactions;
   }
-  
+
   /**
    * Convenient method that writes a LaTeX file from the given SBML source.
-   * 
+   *
    * @param sbmlSource
    * @param latexFile
    * @throws IOException
@@ -780,5 +780,5 @@ public class SBMLsqueezer<T> extends Launcher {
       logger.log(Level.WARNING, WARNINGS.getString("NO_TEX_FILE_PROVIDED"));
     }
   }
-  
+
 }
