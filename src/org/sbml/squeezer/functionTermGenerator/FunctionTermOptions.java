@@ -16,5 +16,5 @@ public interface FunctionTermOptions extends KeyProvider{
 	 */
 	public static final ResourceBundle OPTIONS_BUNDLE = ResourceManager.getBundle(Bundles.OPTIONS);
 
-	public static final Option<Sign> DEFAULT_SIGN = new Option<>("DEFAULT_SIGN", Sign.class, OPTIONS_BUNDLE, Sign.positive);
+	public static final Option<Sign> DEFAULT_SIGN = new Option<Sign>("DEFAULT_SIGN", Sign.class, OPTIONS_BUNDLE, Sign.positive);
 }
