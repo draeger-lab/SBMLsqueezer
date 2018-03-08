@@ -10,7 +10,6 @@ import de.zbit.util.prefs.KeyProvider;
 import de.zbit.util.prefs.Option;
 
 public interface FunctionTermOptions extends KeyProvider{
-
 	/**
 	 * Localization support
 	 */

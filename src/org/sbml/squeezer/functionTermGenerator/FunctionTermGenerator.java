@@ -20,162 +20,162 @@ import org.sbml.jsbml.text.parser.FormulaParserLL3;
 import org.sbml.jsbml.text.parser.IFormulaParser;
 
 public class FunctionTermGenerator {
-	private Sign sign = null;
-	private static DefaultTerm defaultTerm = null;
+  private Sign sign = null;
+  private static DefaultTerm defaultTerm = null;
 
-	public DefaultTerm getDefaultTerm() {
-		return defaultTerm;
-	}
+  public DefaultTerm getDefaultTerm() {
+    return defaultTerm;
+  }
 
-	public void setDefaultTerm(DefaultTerm defaultTerm) {
-		FunctionTermGenerator.defaultTerm = defaultTerm;
-	}
-	
-	public boolean isSetDefaultTerm() {
-		return defaultTerm != null;
-	}
+  public void setDefaultTerm(DefaultTerm defaultTerm) {
+    FunctionTermGenerator.defaultTerm = defaultTerm;
+  }
 
-	public Sign getSign() {
-		return sign;
-	}
+  public boolean isSetDefaultTerm() {
+    return defaultTerm != null;
+  }
 
-	public void setSign(Sign sign) {
-		this.sign = sign;
-	}
-	
-	public boolean isSetSign() {
-		return sign != null;
-	}
+  public Sign getSign() {
+    return sign;
+  }
 
-	public FunctionTermGenerator (Model model) throws Exception {
-		if (!defaultTerm.equals(DefaultTerm.none)) {
-		QualModelPlugin qmp = (QualModelPlugin) model.getPlugin(QualConstants.shortLabel);
-		generateFunctionTerms(qmp);
-		}
-		System.out.println("FunctionTerm!!");		
-	}
-	
-	public static void generateFunctionTerms(QualModelPlugin qm) throws Exception {
-		for (Transition t : qm.getListOfTransitions()) {
-			ASTNode2 math;
-			// case or
-			if (defaultTerm.equals(DefaultTerm.oneActivatorAndNoInhibitor)) {
-				math = generateFunctionTermForOneTransition(t, ASTNode.Type.LOGICAL_OR);
-			}
-			// case and
-			else {
-				math = generateFunctionTermForOneTransition(t, ASTNode.Type.LOGICAL_AND);
-			}
-			
-			IFormulaParser parser = new FormulaParserLL3(new StringReader(""));
-			ASTNode node = ASTNode.parseFormula(math.toFormula(), parser);
-			
-			if (t.isSetListOfFunctionTerms()) {
-				t.getListOfFunctionTerms().get(t.getListOfFunctionTerms().size()).setMath(node);
-			}
-			else {
-				// can be deleted, because a transition must have a list of functionterms
-				t.createFunctionTerm(node);
-			}
-		}
-	}
+  public void setSign(Sign sign) {
+    this.sign = sign;
+  }
 
-	private static ASTFunction generateFunctionTermForOneTransition(Transition t, Type logicalJunction) {
+  public boolean isSetSign() {
+    return sign != null;
+  }
 
-		if (t.isSetListOfInputs()) {
+  public FunctionTermGenerator (Model model) throws Exception {
+    if (!defaultTerm.equals(DefaultTerm.none)) {
+      QualModelPlugin qmp = (QualModelPlugin) model.getPlugin(QualConstants.shortLabel);
+      generateFunctionTerms(qmp);
+    }
+    System.out.println("FunctionTerm!!");
+  }
 
-			ASTFunction ai = new ASTLogicalOperatorNode(logicalJunction);
-			ASTFunction ri = new ASTLogicalOperatorNode(ASTNode.Type.LOGICAL_AND);
-			ASTFunction singleA = null;
-			ASTFunction singleR = null;
-			ASTFunction functionTerm = new ASTLogicalOperatorNode(ASTNode.Type.LOGICAL_AND);
+  public static void generateFunctionTerms(QualModelPlugin qm) throws Exception {
+    for (Transition t : qm.getListOfTransitions()) {
+      ASTNode2 math;
+      // case or
+      if (defaultTerm.equals(DefaultTerm.oneActivatorAndNoInhibitor)) {
+        math = generateFunctionTermForOneTransition(t, ASTNode.Type.LOGICAL_OR);
+      }
+      // case and
+      else {
+        math = generateFunctionTermForOneTransition(t, ASTNode.Type.LOGICAL_AND);
+      }
 
-			for (Input i : t.getListOfInputs()) {		
+      IFormulaParser parser = new FormulaParserLL3(new StringReader(""));
+      ASTNode node = ASTNode.parseFormula(math.toFormula(), parser);
 
-				// concatenate all activators
-				if (i.getSign().name().equals("positive")) {
-					if (singleA != null) {
-						ai.addChild(singleA);
-					}
-					singleA = generateEquation(i, 1);
-				}
+      if (t.isSetListOfFunctionTerms()) {
+        t.getListOfFunctionTerms().get(t.getListOfFunctionTerms().size()).setMath(node);
+      }
+      else {
+        // can be deleted, because a transition must have a list of functionterms
+        t.createFunctionTerm(node);
+      }
+    }
+  }
 
-				// concatenate all inhibitors
-				if (i.getSign().name().equals("negative")) {
-					if (singleR != null) {
-						ri.addChild(singleR);
-					}
-					singleR = generateEquation(i, 0);
-				}
-			}
+  private static ASTFunction generateFunctionTermForOneTransition(Transition t, Type logicalJunction) {
 
-			//case 1:  more than one activator and more than one inhibitor
-			if (ai.getChildCount() != 0 && ri.getChildCount() != 0) {
-				ai.addChild(singleA);
-				functionTerm.addChild(ai);
-				ri.addChild(singleR);
-				functionTerm.addChild(ri);
-				return functionTerm;
-			}
+    if (t.isSetListOfInputs()) {
 
-			// all the cases, where activators and inhibitors are involved
-			if (singleA != null && singleR != null) {
-				if (ai.getChildCount() != 0) {
-					ai.addChild(singleA);
-					functionTerm.addChild(ai);}
-				else {
-					functionTerm.addChild(singleA);
-				}
-				if (ri.getChildCount() != 0) {
-					ri.addChild(singleR);
-					functionTerm.addChild(ri);
-				}
-				else {
-					functionTerm.addChild(singleR);
-				}
-				return functionTerm;
-			}
+      ASTFunction ai = new ASTLogicalOperatorNode(logicalJunction);
+      ASTFunction ri = new ASTLogicalOperatorNode(ASTNode.Type.LOGICAL_AND);
+      ASTFunction singleA = null;
+      ASTFunction singleR = null;
+      ASTFunction functionTerm = new ASTLogicalOperatorNode(ASTNode.Type.LOGICAL_AND);
 
-			// case no inhibitor
-			if (singleA == null) {
-				if (ri.getChildCount() != 0) {
-					ri.addChild(singleR);
-					return ri;
-				}
-				else {
-					return singleR;
-				}
-			}
+      for (Input i : t.getListOfInputs()) {
 
-			// case no activator
-			if (singleR == null) {
-				if (ai.getChildCount() != 0) {
-					ai.addChild(singleA);
-					return ai;
-				}
-				else {
-					return singleA;
-				}
-			}
-		}
-		return null;
+        // concatenate all activators
+        if (i.getSign().name().equals("positive")) {
+          if (singleA != null) {
+            ai.addChild(singleA);
+          }
+          singleA = generateEquation(i, 1);
+        }
 
-	}
+        // concatenate all inhibitors
+        if (i.getSign().name().equals("negative")) {
+          if (singleR != null) {
+            ri.addChild(singleR);
+          }
+          singleR = generateEquation(i, 0);
+        }
+      }
 
-	private static ASTFunction generateEquation(Input i, int value) {
+      //case 1:  more than one activator and more than one inhibitor
+      if ((ai.getChildCount() != 0) && (ri.getChildCount() != 0)) {
+        ai.addChild(singleA);
+        functionTerm.addChild(ai);
+        ri.addChild(singleR);
+        functionTerm.addChild(ri);
+        return functionTerm;
+      }
 
-		ASTRelationalOperatorNode eq = new ASTRelationalOperatorNode(ASTNode.Type.RELATIONAL_EQ);
+      // all the cases, where activators and inhibitors are involved
+      if ((singleA != null) && (singleR != null)) {
+        if (ai.getChildCount() != 0) {
+          ai.addChild(singleA);
+          functionTerm.addChild(ai);}
+        else {
+          functionTerm.addChild(singleA);
+        }
+        if (ri.getChildCount() != 0) {
+          ri.addChild(singleR);
+          functionTerm.addChild(ri);
+        }
+        else {
+          functionTerm.addChild(singleR);
+        }
+        return functionTerm;
+      }
 
-		// generate node with id
-		ASTCiNumberNode ci = new ASTCiNumberNode();
-		ci.setRefId(i.getId());
-		eq.addChild(ci);
+      // case no inhibitor
+      if (singleA == null) {
+        if (ri.getChildCount() != 0) {
+          ri.addChild(singleR);
+          return ri;
+        }
+        else {
+          return singleR;
+        }
+      }
 
-		//generate node with number
-		ASTCnIntegerNode cn = new ASTCnIntegerNode();	
-		cn.setNumber(value);
-		eq.addChild(cn);
+      // case no activator
+      if (singleR == null) {
+        if (ai.getChildCount() != 0) {
+          ai.addChild(singleA);
+          return ai;
+        }
+        else {
+          return singleA;
+        }
+      }
+    }
+    return null;
 
-		return eq;
-	}
+  }
+
+  private static ASTFunction generateEquation(Input i, int value) {
+
+    ASTRelationalOperatorNode eq = new ASTRelationalOperatorNode(ASTNode.Type.RELATIONAL_EQ);
+
+    // generate node with id
+    ASTCiNumberNode ci = new ASTCiNumberNode();
+    ci.setRefId(i.getId());
+    eq.addChild(ci);
+
+    //generate node with number
+    ASTCnIntegerNode cn = new ASTCnIntegerNode();
+    cn.setNumber(value);
+    eq.addChild(cn);
+
+    return eq;
+  }
 }
