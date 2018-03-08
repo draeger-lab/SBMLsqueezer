@@ -227,4 +227,6 @@
 	<entry key="FunctionTermOptions_TOOLTIP">...</entry>
 	<entry key="DEFAULT_SIGN">Default Sign</entry>
     <entry key="DEFAULT_SIGN_TOOLTIP">...</entry>
+    <entry key="DEFAULT_TERM">Default Term</entry>
+    <entry key="DEFAULT_TERM_TOOLTIP">...</entry>
 </properties>
