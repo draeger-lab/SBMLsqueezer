@@ -3,7 +3,6 @@ package org.sbml.squeezer.functionTermGenerator;
 import java.util.ResourceBundle;
 
 import org.sbml.jsbml.ext.qual.Sign;
-import org.sbml.libsbml.DefaultTerm;
 import org.sbml.squeezer.util.Bundles;
 
 import de.zbit.util.ResourceManager;
