@@ -52,6 +52,7 @@ import org.sbml.jsbml.SBMLOutputConverter;
 import org.sbml.jsbml.ext.qual.Sign;
 import org.sbml.jsbml.xml.libsbml.LibSBMLReader;
 import org.sbml.jsbml.xml.libsbml.LibSBMLWriter;
+import org.sbml.squeezer.functionTermGenerator.DefaultTerm;
 import org.sbml.squeezer.functionTermGenerator.FunctionTermGenerator;
 import org.sbml.squeezer.functionTermGenerator.FunctionTermOptions;
 import org.sbml.squeezer.gui.SBMLsqueezerUI;
@@ -201,6 +202,7 @@ public class SBMLsqueezer<T> extends Launcher {
   
   private Sign sign;
   
+  private DefaultTerm defaultTerm;
   /**
    * 
    */
@@ -259,6 +261,7 @@ public class SBMLsqueezer<T> extends Launcher {
         }
 //      sign = Sign.valueOf(properties.get(FunctionTermOptions.DEFAULT_SIGN).toUpperCase(Locale.ENGLISH));
         sign = Sign.valueOf(properties.get(FunctionTermOptions.DEFAULT_SIGN));
+        defaultTerm = DefaultTerm.valueOf(properties.get(FunctionTermOptions.DEFAULT_TERM));
         squeeze(properties.get(IOOptions.SBML_IN_FILE).toString(),
           properties.get(IOOptions.SBML_OUT_FILE).toString(), searchSABIO);
       } catch (Throwable e) {
@@ -517,6 +520,7 @@ public class SBMLsqueezer<T> extends Launcher {
       
       FunctionTermGenerator ftg = new FunctionTermGenerator(sbmlIo.getSelectedModel());
       ftg.setSign(sign);
+      ftg.setDefaultTerm(defaultTerm);
       
       time = System.currentTimeMillis();
       logger.info(MESSAGES.getString("SAVING_TO_FILE"));

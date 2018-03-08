@@ -21,6 +21,19 @@ import org.sbml.jsbml.text.parser.IFormulaParser;
 
 public class FunctionTermGenerator {
 	private Sign sign = null;
+	private DefaultTerm defaultTerm = null;
+
+	public DefaultTerm getDefaultTerm() {
+		return defaultTerm;
+	}
+
+	public void setDefaultTerm(DefaultTerm defaultTerm) {
+		this.defaultTerm = defaultTerm;
+	}
+	
+	public boolean isSetDefaultTerm() {
+		return defaultTerm != null;
+	}
 
 	public Sign getSign() {
 		return sign;
