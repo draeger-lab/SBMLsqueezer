@@ -131,7 +131,7 @@ public class SBMLsqueezer<T> extends Launcher {
    * @return
    */
   public static Class<? extends KeyProvider>[] getInteractiveConfigOptionsArray() {
-	  List<Class<? extends KeyProvider>> list = new LinkedList<>();
+	  List<Class<? extends KeyProvider>> list = new LinkedList<Class<? extends KeyProvider>>();
 	  list.add(OptionsGeneral.class);
 	  list.add(OptionsRateLaws.class);
 	  if (sabiorkEnabled) {
