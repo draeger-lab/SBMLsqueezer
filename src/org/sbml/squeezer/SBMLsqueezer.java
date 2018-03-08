@@ -52,7 +52,7 @@ import org.sbml.jsbml.SBMLOutputConverter;
 import org.sbml.jsbml.ext.qual.Sign;
 import org.sbml.jsbml.xml.libsbml.LibSBMLReader;
 import org.sbml.jsbml.xml.libsbml.LibSBMLWriter;
-import org.sbml.libsbml.DefaultTerm;
+import org.sbml.squeezer.functionTermGenerator.DefaultTerm;
 import org.sbml.squeezer.functionTermGenerator.FunctionTermGenerator;
 import org.sbml.squeezer.functionTermGenerator.FunctionTermOptions;
 import org.sbml.squeezer.gui.SBMLsqueezerUI;

@@ -18,7 +18,6 @@ import org.sbml.jsbml.math.ASTNode2;
 import org.sbml.jsbml.math.ASTRelationalOperatorNode;
 import org.sbml.jsbml.text.parser.FormulaParserLL3;
 import org.sbml.jsbml.text.parser.IFormulaParser;
-import org.sbml.libsbml.DefaultTerm;
 
 public class FunctionTermGenerator {
   private Sign sign = null;
