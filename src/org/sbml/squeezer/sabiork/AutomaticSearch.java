@@ -57,21 +57,21 @@ import de.zbit.io.filefilter.SBFileFilter;
 /**
  * In this class the searching of kinetic equations in SABIO-RK for several
  * models is implemented.
- * 
+ *
  * @author Matthias Rall
  * @author Roland Keller
  * @version $Rev$
  * @since 2.0
  */
 public class AutomaticSearch {
-  
+
   /**
    * A {@link Logger} for this class.
    */
   private static final transient Logger logger = Logger.getLogger(AutomaticSearch.class.getName());
-  
+
   /**
-   * 
+   *
    * @param reaction
    * @return keggReactionID the KEGG id of the given reaction
    */
@@ -91,7 +91,7 @@ public class AutomaticSearch {
     }
     return keggReactionID;
   }
-  
+
   /**
    * usage: model folder, file "names.dmp", output file
    * @param args
@@ -102,15 +102,15 @@ public class AutomaticSearch {
    */
   public static void main(String[] args) throws XMLStreamException,
   IOException, WebServiceConnectException, WebServiceResponseException {
-    org.apache.log4j.LogManager.getLogger(SBMLCoreParser.class).setLevel(org.apache.log4j.Level.OFF);
-    org.apache.log4j.LogManager.getLogger(AbstractSBase.class).setLevel(org.apache.log4j.Level.OFF);
+    ((org.apache.logging.log4j.simple.SimpleLogger) org.apache.logging.log4j.LogManager.getLogger(SBMLCoreParser.class)).setLevel(org.apache.logging.log4j.Level.OFF);
+    ((org.apache.logging.log4j.simple.SimpleLogger) org.apache.logging.log4j.LogManager.getLogger(AbstractSBase.class)).setLevel(org.apache.logging.log4j.Level.OFF);
     automaticSearch(args[0], args[1], args[2]);
   }
-  
+
   /**
    * Automatic search for kinetic equations in SABIO-RK for several models in
    * the rootFolder.
-   * 
+   *
    * @param rootFolder
    * @param taxonomyFile
    * @param outputFolder
@@ -125,7 +125,7 @@ public class AutomaticSearch {
     int noReactionID = 0;
     int matchingNotPossible = 0;
     int noKineticLawFound = 0;
-    
+
     File rootFile = new File(rootFolder);
     File parent = rootFile.getParentFile();
     String parentFolder = parent.getAbsolutePath().replace("\\", "/");
@@ -133,9 +133,9 @@ public class AutomaticSearch {
     (new File(sabioRootFolder)).mkdir();
     BufferedWriter writer = new BufferedWriter(new FileWriter(outputFolder + "/result.txt", true));
     LinkedList<File> directoryList = new LinkedList<File>();
-    
+
     File[] files = rootFile.listFiles();
-    
+
     if ((files.length > 0) && (files[0].isDirectory())) {
       for (File file : files) {
         directoryList.add(file);
@@ -143,12 +143,12 @@ public class AutomaticSearch {
     } else {
       directoryList.add(rootFile);
     }
-    
+
     BufferedReader reader = new BufferedReader(new InputStreamReader(
       new FileInputStream(taxonomyFile)));
-    
+
     HashMap<Integer, String> taxonToName = new HashMap<Integer, String>();
-    
+
     String line = reader.readLine();
     line = reader.readLine();
     while (line != null) {
@@ -161,9 +161,9 @@ public class AutomaticSearch {
       line = reader.readLine();
     }
     reader.close();
-    
+
     SBFileFilter sbmlFilter = SBFileFilter.createSBMLFileFilter();
-    
+
     for (File dir : directoryList) {
       String folder = dir.getAbsolutePath().replace("\\", "/")
           .replace(parentFolder, sabioRootFolder);
@@ -187,7 +187,7 @@ public class AutomaticSearch {
           }
           CVTermFilter filter = new CVTermFilter(Qualifier.BQB_OCCURS_IN,
               "urn:miriam:taxonomy");
-          
+
           for (CVTerm cv : sbmlDocument.getModel().getAnnotation()
               .getListOfCVTerms()) {
             if (filter.accepts(cv)) {
@@ -203,10 +203,10 @@ public class AutomaticSearch {
           /*
            * Constraints (Falls du bestimmte zusätzliche Bedingungen an die
            * Suche stellen willst)
-           * 
+           *
            * Der Constraint: " AND " + SABIORK.QueryField.HAS_KINETIC_DATA +
            * ":true"
-           * 
+           *
            * sollte aber immer verwendet werden, da SABIO-RK dann nur
            * KineticLaws, die eine kinetische Gleichung besitzen, auswählt.
            */
@@ -226,7 +226,7 @@ public class AutomaticSearch {
               String query = SABIORK.QueryField.KEGG_REACTION_ID + ":"
                   + keggReactionID + constraints;
               List<KineticLaw> kineticLaws = SABIORK.getKineticLaws(query);
-              
+
               if ((kineticLaws.size() == 0) && (organism != null)) {
                 if (alternativeOrganism == null) {
                   String[] splits = organism.split(" ");
@@ -245,7 +245,7 @@ public class AutomaticSearch {
                   kineticLaws = SABIORK.getKineticLaws(query);
                 }
               }
-              
+
               boolean imported = false;
               for (KineticLaw kineticLaw : kineticLaws) {
                 KineticLawImporter importer = new KineticLawImporter(
@@ -268,7 +268,7 @@ public class AutomaticSearch {
                   noKineticLawFound_Organism++;
                 }
               }
-              
+
             } else {
               noReactionID++;
               noReactionID_Organism++;
@@ -286,7 +286,7 @@ public class AutomaticSearch {
       writer.write(organism + "\t" + matched_Organism + "\t" + noKineticLawFound_Organism + "\t" + + matchingNotPossible_Organism + "\t" + noReactionID_Organism);
       writer.newLine();
       writer.newLine();
-      
+
       logger.info("Organism: " + organism);
       if (matched_Organism == 0) {
         logger.warning("No matches!");
@@ -296,7 +296,7 @@ public class AutomaticSearch {
       logger.info("Matching not possible: " + matchingNotPossible_Organism);
       logger.info("No KEGG id given: " + noReactionID_Organism);
     }
-    
+
     //		writer.append("Matched: " + matched);
     //		writer.newLine();
     //		writer.append("Law not found " + noKineticLawFound);
@@ -307,7 +307,7 @@ public class AutomaticSearch {
     //		writer.append("No KEGG id given " + noReactionID);
     //		writer.newLine();
     writer.close();
-    
+
     logger.info("matched: " + matched);
     logger.info("no reaction id: " + noReactionID);
     logger.info("matching not possible: " + matchingNotPossible);
@@ -317,7 +317,7 @@ public class AutomaticSearch {
     //		logger.info("Law not found " + noKineticLawFound);
     //		logger.info("Matching not possible " + matchingNotPossible);
     //		logger.info("No KEGG id given " + noReactionID);
-    
+
   }
-  
+
 }
