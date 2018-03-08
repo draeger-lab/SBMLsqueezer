@@ -259,7 +259,6 @@ public class SBMLsqueezer<T> extends Launcher {
             searchSABIO = true;
           }
         }
-//      sign = Sign.valueOf(properties.get(FunctionTermOptions.DEFAULT_SIGN).toUpperCase(Locale.ENGLISH));
         sign = Sign.valueOf(properties.get(FunctionTermOptions.DEFAULT_SIGN));
         defaultTerm = DefaultTerm.valueOf(properties.get(FunctionTermOptions.DEFAULT_TERM));
         squeeze(properties.get(IOOptions.SBML_IN_FILE).toString(),

@@ -21,14 +21,14 @@ import org.sbml.jsbml.text.parser.IFormulaParser;
 
 public class FunctionTermGenerator {
 	private Sign sign = null;
-	private DefaultTerm defaultTerm = null;
+	private static DefaultTerm defaultTerm = null;
 
 	public DefaultTerm getDefaultTerm() {
 		return defaultTerm;
 	}
 
 	public void setDefaultTerm(DefaultTerm defaultTerm) {
-		this.defaultTerm = defaultTerm;
+		FunctionTermGenerator.defaultTerm = defaultTerm;
 	}
 	
 	public boolean isSetDefaultTerm() {
@@ -48,21 +48,25 @@ public class FunctionTermGenerator {
 	}
 
 	public FunctionTermGenerator (Model model) throws Exception {
-		
+		if (!defaultTerm.equals(DefaultTerm.none)) {
 		QualModelPlugin qmp = (QualModelPlugin) model.getPlugin(QualConstants.shortLabel);
 		generateFunctionTerms(qmp);
-		
+		}
 		System.out.println("FunctionTerm!!");		
 	}
 	
 	public static void generateFunctionTerms(QualModelPlugin qm) throws Exception {
 		for (Transition t : qm.getListOfTransitions()) {
+			ASTNode2 math;
 			// case or
-			ASTNode2 math = generateFunctionTermForOneTransition(t, ASTNode.Type.LOGICAL_OR);
-			
+			if (defaultTerm.equals(DefaultTerm.oneActivatorAndNoInhibitor)) {
+				math = generateFunctionTermForOneTransition(t, ASTNode.Type.LOGICAL_OR);
+			}
 			// case and
-			// ASTNode2 math = generateFunctionTermForOneTransition(t, ASTNode.Type.LOGICAL_AND);
-
+			else {
+				math = generateFunctionTermForOneTransition(t, ASTNode.Type.LOGICAL_AND);
+			}
+			
 			IFormulaParser parser = new FormulaParserLL3(new StringReader(""));
 			ASTNode node = ASTNode.parseFormula(math.toFormula(), parser);
 			
