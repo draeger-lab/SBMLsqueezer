@@ -1,8 +1,6 @@
 package org.sbml.squeezer.functionTermGenerator;
 
-import java.io.IOException;
-
-import javax.xml.stream.XMLStreamException;
+import java.io.StringReader;
 
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.ASTNode.Type;
@@ -10,29 +8,58 @@ import org.sbml.jsbml.Model;
 import org.sbml.jsbml.ext.qual.Input;
 import org.sbml.jsbml.ext.qual.QualConstants;
 import org.sbml.jsbml.ext.qual.QualModelPlugin;
+import org.sbml.jsbml.ext.qual.Sign;
 import org.sbml.jsbml.ext.qual.Transition;
 import org.sbml.jsbml.math.ASTCiNumberNode;
 import org.sbml.jsbml.math.ASTCnIntegerNode;
 import org.sbml.jsbml.math.ASTFunction;
 import org.sbml.jsbml.math.ASTLogicalOperatorNode;
+import org.sbml.jsbml.math.ASTNode2;
 import org.sbml.jsbml.math.ASTRelationalOperatorNode;
+import org.sbml.jsbml.text.parser.FormulaParserLL3;
+import org.sbml.jsbml.text.parser.IFormulaParser;
 
 public class FunctionTermGenerator {
+	private Sign sign = null;
 
-	public FunctionTermGenerator (Model model) throws ClassNotFoundException, XMLStreamException, IOException {
+	public Sign getSign() {
+		return sign;
+	}
+
+	public void setSign(Sign sign) {
+		this.sign = sign;
+	}
+	
+	public boolean isSetSign() {
+		return sign != null;
+	}
+
+	public FunctionTermGenerator (Model model) throws Exception {
 		
 		QualModelPlugin qmp = (QualModelPlugin) model.getPlugin(QualConstants.shortLabel);
 		generateFunctionTerms(qmp);
 		
 		System.out.println("FunctionTerm!!");		
 	}
-
-	public void generateFunctionTerms(QualModelPlugin qm) {
+	
+	public static void generateFunctionTerms(QualModelPlugin qm) throws Exception {
 		for (Transition t : qm.getListOfTransitions()) {
 			// case or
-			generateFunctionTermForOneTransition(t, ASTNode.Type.LOGICAL_OR);
+			ASTNode2 math = generateFunctionTermForOneTransition(t, ASTNode.Type.LOGICAL_OR);
+			
 			// case and
-			// generateFunctionTermForOneTransition(t, ASTNode.Type.LOGICAL_AND);
+			// ASTNode2 math = generateFunctionTermForOneTransition(t, ASTNode.Type.LOGICAL_AND);
+
+			IFormulaParser parser = new FormulaParserLL3(new StringReader(""));
+			ASTNode node = ASTNode.parseFormula(math.toFormula(), parser);
+			
+			if (t.isSetListOfFunctionTerms()) {
+				t.getListOfFunctionTerms().get(t.getListOfFunctionTerms().size()).setMath(node);
+			}
+			else {
+				// can be deleted, because a transition must have a list of functionterms
+				t.createFunctionTerm(node);
+			}
 		}
 	}
 

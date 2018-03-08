@@ -220,4 +220,11 @@
   <entry key="GROUP_GENERAL_OPTIONS">General options</entry>
   <entry key="GROUP_GENERAL_OPTIONS_TOOLTIP">Define key options to restrict the results of your search for reaction kinetics in SABIO-RK.</entry> 
 
+
+	<!--  FunctionTermOptions -->
+	
+	<entry key="FunctionTermOptions">Function Term Options</entry>
+	<entry key="FunctionTermOptions_TOOLTIP">...</entry>
+	<entry key="DEFAULT_SIGN">Default Sign</entry>
+    <entry key="DEFAULT_SIGN_TOOLTIP">...</entry>
 </properties>

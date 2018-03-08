@@ -33,6 +33,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -48,6 +49,7 @@ import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.SBMLException;
 import org.sbml.jsbml.SBMLInputConverter;
 import org.sbml.jsbml.SBMLOutputConverter;
+import org.sbml.jsbml.ext.qual.Sign;
 import org.sbml.jsbml.xml.libsbml.LibSBMLReader;
 import org.sbml.jsbml.xml.libsbml.LibSBMLWriter;
 import org.sbml.squeezer.functionTermGenerator.FunctionTermGenerator;
@@ -128,15 +130,16 @@ public class SBMLsqueezer<T> extends Launcher {
    * @return
    */
   public static Class<? extends KeyProvider>[] getInteractiveConfigOptionsArray() {
-    Class<? extends KeyProvider>[] list = new Class[sabiorkEnabled ? 5 : 3];
-    list[0] = OptionsGeneral.class;
-    list[1] = OptionsRateLaws.class;
-    if (sabiorkEnabled) {
-      list[2] = SABIORKOptions.class;
-      list[3] = SABIORKPreferences.class;
-    }
-    list[sabiorkEnabled ? 4 : 2] = LaTeXOptions.class;
-    return list;
+	  List<Class<? extends KeyProvider>> list = new LinkedList<>();
+	  list.add(OptionsGeneral.class);
+	  list.add(OptionsRateLaws.class);
+	  if (sabiorkEnabled) {
+		  list.add(SABIORKOptions.class);
+		  list.add(SABIORKPreferences.class);
+	  }
+	  list.add(LaTeXOptions.class);
+	  list.add(FunctionTermOptions.class);
+	  return list.toArray(new Class[0]);
   }
   
   /**
@@ -196,6 +199,8 @@ public class SBMLsqueezer<T> extends Launcher {
    */
   private SBMLio<T> sbmlIo;
   
+  private Sign sign;
+  
   /**
    * 
    */
@@ -252,6 +257,8 @@ public class SBMLsqueezer<T> extends Launcher {
             searchSABIO = true;
           }
         }
+//      sign = Sign.valueOf(properties.get(FunctionTermOptions.DEFAULT_SIGN).toUpperCase(Locale.ENGLISH));
+        sign = Sign.valueOf(properties.get(FunctionTermOptions.DEFAULT_SIGN));
         squeeze(properties.get(IOOptions.SBML_IN_FILE).toString(),
           properties.get(IOOptions.SBML_OUT_FILE).toString(), searchSABIO);
       } catch (Throwable e) {
@@ -509,6 +516,7 @@ public class SBMLsqueezer<T> extends Launcher {
       klg.storeKineticLaws();
       
       FunctionTermGenerator ftg = new FunctionTermGenerator(sbmlIo.getSelectedModel());
+      ftg.setSign(sign);
       
       time = System.currentTimeMillis();
       logger.info(MESSAGES.getString("SAVING_TO_FILE"));
