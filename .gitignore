@@ -4,3 +4,4 @@ build/
 .settings
 doc/api
 .project
+*.log
