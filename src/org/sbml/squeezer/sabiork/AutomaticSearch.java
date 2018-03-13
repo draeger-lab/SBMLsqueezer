@@ -102,8 +102,8 @@ public class AutomaticSearch {
    */
   public static void main(String[] args) throws XMLStreamException,
   IOException, WebServiceConnectException, WebServiceResponseException {
-    ((org.apache.logging.log4j.simple.SimpleLogger) org.apache.logging.log4j.LogManager.getLogger(SBMLCoreParser.class)).setLevel(org.apache.logging.log4j.Level.OFF);
-    ((org.apache.logging.log4j.simple.SimpleLogger) org.apache.logging.log4j.LogManager.getLogger(AbstractSBase.class)).setLevel(org.apache.logging.log4j.Level.OFF);
+    org.apache.log4j.LogManager.getLogger(SBMLCoreParser.class).setLevel(org.apache.log4j.Level.OFF);
+    org.apache.log4j.LogManager.getLogger(AbstractSBase.class).setLevel(org.apache.log4j.Level.OFF);
     automaticSearch(args[0], args[1], args[2]);
   }
 
