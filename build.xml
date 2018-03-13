@@ -6,7 +6,7 @@
  * This file is part of SBMLsqueezer, a Java program that creates rate
  * equations for reactions in SBML files (http://sbml.org).
  *
- * Copyright (C) 2006-2015 by the University of Tuebingen, Germany.
+ * Copyright (C) 2006-2018 by the University of Tuebingen, Germany.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -63,6 +63,7 @@
 
     <property name="src"                    value="${basedir}/src"/>
   	<property name="classes"                location="${basedir}/bin"/>
+  	<property name="excludes"               value="META-INF/MANIFEST.MF, META-INF/LICENSE*, META-INF/COPYING*, META-INF/INDEX.LIST, COPYING.txt, licenses/**, package.html, package-info.class, overview.html, AUTHORS.txt"/>
     <property name="test"                   value="${basedir}/test"/>
     <property name="build.dir"              value="${basedir}/build"/>
     <property name="build.src"              value="${basedir}/build/src"/>
@@ -95,7 +96,6 @@
   	
     <path id="classpath">
       <fileset dir="${lib}"         includes="*.jar, *.zip"/>
-      <fileset dir="${lib}/garuda"  includes="*.jar, *.zip"/>
       <fileset dir="${celldesigner}/lib" includes="${celldesigner.version}.jar, sbmlj.jar"/>
     </path>
 	<path id="sourcepath">
@@ -266,9 +266,9 @@
       <attribute name="Built-Date"             value="${TODAY}"/>
       <section name="${Name}">
 	    <attribute name="Implementation-Title"   value="${Name}"/>
-	    <attribute name="Implementation-Vendor"  value="University of Tuebingen"/>
+	    <attribute name="Implementation-Vendor"  value="University of Tübingen"/>
 	    <attribute name="Implementation-Version" value="Revision ${repository.revision} (Build ${build.number})"/>
-        <attribute name="Implementation-URL"     value="http://www.cogsys.cs.uni-tuebingen.de/software/${Name}/"/>
+        <attribute name="Implementation-URL"     value="https://github.com/draeger-lab/${Name}/"/>
         <attribute name="Specification-Title"    value="${Name}"/>
         <attribute name="Specification-Version"  value="${api.version}"/>
         <attribute name="Specification-Vendor"   value="Center for Bioinformatics Tuebingen (ZBIT)"/>
@@ -276,7 +276,7 @@
       <attribute name="Bundle-Name"            value="${Name}"/> 
       <attribute name="Bundle-SymbolicName"    value="${UUID}"/>
       <attribute name="Bundle-Revision"        value="${repository.revision}"/>
-      <attribute name="Bundle-Vendor"          value="University of California, San Diego"/>
+      <attribute name="Bundle-Vendor"          value="University of Tübingen"/>
       <attribute name="Bundle-RequiredExecutionEnvironment" value="JavaSE-1.6"/>
       <attribute name="Bundle-Version"         value="${version}"/>
       <attribute name="Provide-Package"        value="org.sbml.squeezer,org.sbml.squeezer.celldesigner,org.sbml.squeezer.gui,org.sbml.squeezer.gui.locales,org.sbml.squeezer.gui.wizard,org.sbml.squeezer.io,org.sbml.squeezer.kinetics,org.sbml.squeezer.math,org.sbml.squeezer.resources,org.sbml.squeezer.resources.html,org.sbml.squeezer.resources.img,org.sbml.squeezer.sabiork,org.sbml.squeezer.sabiork.util,org.sbml.squeezer.sabiork.wizard,org.sbml.squeezer.sabiork.wizard.console,org.sbml.squeezer.test,org.sbml.squeezer.test.cases,org.sbml.squeezer.test.data,org.sbml.squeezer.test.gui,org.sbml.squeezer.test.sabiork,org.sbml.squeezer.util"/>
@@ -324,13 +324,7 @@
             includes="**/*.png **/*.gif **/*.xsd **/*.tmpl **/data/* **/*.xml **/*.cfg **/*.obo **/*.properties **/*.java" >
       </fileset>
     </copy>
-    <jar
-    	jarfile="${build.dir}/${Name}-${version}-full.jar"
-        basedir="${build.dest}"
-    	manifest="${build.dest}/META-INF/MANIFEST.MF"
-    >
-      <zipgroupfileset dir="${lib}" includes="*.jar"/>
-    </jar>
+  	<antcall target="jar_incl-libs"/>
   </target>
   
   <!-- =================================================================== -->
@@ -360,6 +354,7 @@
    description="Creates a JAR file including all class files and all third-party libraries, but no source files."
   >
     <jar
+    	  basedir="${build.dest}"
       compress="true"
       duplicate="preserve"
       filesetmanifest="mergewithoutmain"
@@ -396,14 +391,16 @@
       </zipfileset>
       
       <!-- These libraries are required by most classes -->
-      <zipfileset excludes="META-INF/**, COPYING.txt, licenses/**, package.html, package-info.class, overview.html, AUTHORS.txt" src="${lib}/SBML2LaTeX_v1.0_slim.jar"/>
-      <zipfileset excludes="META-INF/**, COPYING.txt, licenses/**, package.html, package-info.class, overview.html, AUTHORS.txt" src="${lib}/jlatexmath-1.0.0.jar"/>
-      <zipfileset excludes="META-INF/INDEX.LIST META-INF/MANIFEST.MF, COPYING.txt, package.html, package-info.class, licenses/**, overview.html, AUTHORS.txt" src="${lib}/jsbml-${jsbml.version}-incl-libs.jar"/>
-      <zipfileset excludes="META-INF/**, COPYING.txt, licenses/**, package.html, package-info.class, overview.html, AUTHORS.txt" src="${lib}/SysBio.jar"/>
-      <zipfileset excludes="META-INF/**, COPYING.txt, licenses/**, package.html, package-info.class, overview.html, AUTHORS.txt" src="${lib}/quaqua-filechooser-only.jar"/>
-      <zipfileset excludes="META-INF/**, COPYING.txt, licenses/**, package.html, package-info.class, overview.html, AUTHORS.txt" src="${lib}/garuda/GarudaBackend.jar"/>
-      <zipfileset excludes="META-INF/**, COPYING.txt, licenses/**, package.html, package-info.class, overview.html, AUTHORS.txt" src="${lib}/garuda/garuda-csr.jar"/>
-      <zipfileset excludes="META-INF/**, COPYING.txt, licenses/**, package.html, package-info.class, overview.html, AUTHORS.txt" src="${lib}/garuda/jsonic-1.2.10.jar"/>
+      <zipfileset excludes="${excludes}" src="${lib}/SBML2LaTeX_v1.0_slim.jar"/>
+      <zipfileset excludes="${excludes}" src="${lib}/jlatexmath-1.0.0.jar"/>
+      <zipfileset excludes="${excludes}" src="${lib}/jsbml-${jsbml.version}-incl-libs.jar"/>
+      <zipfileset excludes="${excludes}" src="${lib}/SysBio.jar"/>
+      <zipfileset excludes="${excludes}" src="${lib}/quaqua-filechooser-only.jar"/>
+  	  <zipfileset excludes="${excludes}" src="${lib}/garuda/commons-io-2.4.jar"/>
+  	  <zipfileset excludes="${excludes}" src="${lib}/garuda/garuda-csr.jar"/>
+  	  <zipfileset excludes="${excludes}" src="${lib}/garuda/GarudaBackend.jar"/>
+  	  <zipfileset excludes="${excludes}" src="${lib}/garuda/jsonic-1.2.10.jar"/>
+  	  <zipfileset excludes="${excludes}" src="${lib}/garuda/swingx-core-1.6.2-2.jar"/>
     </jar>
     
   </target>
@@ -469,7 +466,7 @@
     >
       <link href="http://docs.oracle.com/javase/6/docs/api/"/>
       <link href="http://www.biojava.org/docs/api17"/>
-      <link href="http://javasourcecode.org/html/open-source/junit/junit-4.8/"/>
+      <link href="https://junit.org/junit5/docs/current/api/"/>
       <link href="http://sbml.org/Special/Software/JSBML/latest-stable/build/apidocs/"/>
       <link href="http://celldesigner.org/help/plugin/"/>
       <link href="http://www.jarvana.com/jarvana/view/org/scilab/forge/jlatexmath/0.9.6/jlatexmath-0.9.6-javadoc.jar!/"/>
@@ -531,10 +528,7 @@
 
     <!-- Creates the jar file including all the dependencies -->
 
-    <antcall target="bigjar"/>
-
-    <copy todir="${dist.dir}" file="${build.dir}/${Name}-${version}-full.jar"/>
-    <copy todir="${dist}" file="${build.dir}/${Name}-${version}-full.jar"/>
+    <antcall target="jar_incl-libs"/>
 
     <!-- Creates and copy the generated javadoc -->
     <antcall target="jar-javadoc"/>
@@ -614,8 +608,6 @@
   	<echo message="Defining basic properties of the JSBML project"/>
   	<property name="jsbml.dir" value="${basedir}/../JSBML"/>
   	<property name="jsbml.name" value="JSBML"/>
-  	<property name="excludes" value="META-INF/**, **/package-info.class, **/package.html, **/*.java"/>
-  	
   	
     <echo message="Determining the revision number of JSBML"/>
   	<!--<exec executable="svn" outputproperty="${jsbml.dir}/svninfo.xml">
@@ -824,7 +816,7 @@
       <zipfileset excludes="${excludes}" src="${jsbml.dir}/core/lib/log4j-api-2.3.jar"/>
     	  <zipfileset excludes="${excludes}" src="${jsbml.dir}/core/lib/log4j-core-2.3.jar"/>
     	  <zipfileset excludes="${excludes}" src="${jsbml.dir}/core/lib/log4j-slf4j-impl-2.3.jar"/>
-    	  <zipfileset excludes="${excludes}" src="${jsbml.dir}/core/lib/slf4-api-1.7.21.jar"/>
+    	  <zipfileset excludes="${excludes}" src="${jsbml.dir}/core/lib/slf4j-api-1.7.21.jar"/>
       <zipfileset excludes="${excludes}" src="${jsbml.dir}/core/lib/spi-full-0.2.4.jar"/>
       <zipfileset excludes="${excludes}" src="${jsbml.dir}/core/lib/stax2-api-3.1.4.jar"/>
       <zipfileset excludes="${excludes}" src="${jsbml.dir}/core/lib/staxmate-2.3.0.jar"/>
@@ -983,7 +975,7 @@
           <attribute name="Specification-Vendor"   value="Center for Bioinformatics Tuebingen (ZBIT)"/>
           <attribute name="Implementation-Title"   value="SysBio"/>
           <attribute name="Implementation-Version" value="Revision ${sysbio.revision} ${TODAY} (Build ${DSTAMP}-${TSTAMP})"/>
-          <attribute name="Implementation-Vendor"  value="University of Tuebingen"/>
+          <attribute name="Implementation-Vendor"  value="University of Tübingen"/>
         </section>
       </manifest>
       <zipfileset dir="${sysbio.dir}" prefix="META-INF/">
@@ -1034,8 +1026,8 @@
         <include name="de/zbit/locales/**.xml"/>
         <include name="de/zbit/sbml/locales/**.xml"/>
       </fileset>
-      <zipfileset excludes="META-INF/*" src="${sysbio.dir}/lib/sysbio-osx-support.jar"/>
-      <zipfileset excludes="META-INF/*" src="${sysbio.dir}/lib/argparser.jar"/>
+      <zipfileset excludes="${excludes}" src="${sysbio.dir}/lib/sysbio-osx-support.jar"/>
+      <zipfileset excludes="${excludes}" src="${sysbio.dir}/lib/argparser.jar"/>
     </jar>
 
   </target>
