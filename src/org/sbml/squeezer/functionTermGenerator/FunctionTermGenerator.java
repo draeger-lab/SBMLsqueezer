@@ -52,34 +52,40 @@ public class FunctionTermGenerator {
   }
 
   public void generateFunctionTerms(Model m) throws Exception {
-	  
-	QualModelPlugin qm = (QualModelPlugin) m.getPlugin(QualConstants.shortLabel);
-	
-	if (defaultTerm.equals(DefaultTerm.none)) {
-		return;
-	}
-	
-    for (Transition t : qm.getListOfTransitions()) {
-      ASTNode2 math;
-      // case or
-      if (defaultTerm.equals(DefaultTerm.oneActivatorAndNoInhibitor)) {
-        math = generateFunctionTermForOneTransition(t, ASTNode.Type.LOGICAL_OR);
-      }
-      // case and
-      else {
-        math = generateFunctionTermForOneTransition(t, ASTNode.Type.LOGICAL_AND);
-      }
 
-      IFormulaParser parser = new FormulaParserLL3(new StringReader(""));
-      ASTNode node = ASTNode.parseFormula(math.toFormula(), parser);
-      
-      if (t.isSetListOfFunctionTerms() && t.getListOfFunctionTerms().size() >= 0) {
-       continue;
-      }
-      else {
-        t.createFunctionTerm(node);
-      }
-    }
+	  QualModelPlugin qm = (QualModelPlugin) m.getPlugin(QualConstants.shortLabel);
+
+	  if (defaultTerm.equals(DefaultTerm.none)) {
+		  return;
+	  }
+
+	  for (Transition t : qm.getListOfTransitions()) {
+
+		  if (!t.isSetListOfFunctionTerms() || (t.isSetListOfFunctionTerms() && 
+				  ((t.getListOfFunctionTerms().size() == 1 && t.getListOfFunctionTerms().get(0).isDefaultTerm()) ||
+						  t.getListOfFunctionTerms().isEmpty()))) {
+			  
+			  ASTNode2 math;
+
+			  // case or
+			  if (defaultTerm.equals(DefaultTerm.oneActivatorAndNoInhibitor)) {
+				  math = generateFunctionTermForOneTransition(t, ASTNode.Type.LOGICAL_OR);
+			  }
+			  // case and
+			  else {
+				  math = generateFunctionTermForOneTransition(t, ASTNode.Type.LOGICAL_AND);
+			  }
+
+			  IFormulaParser parser = new FormulaParserLL3(new StringReader(""));
+			  ASTNode node = ASTNode.parseFormula(math.toFormula(), parser);
+			  
+			  // math.to Formula = ((Superoxide == 1) || (LIP == 1) || (ROS == 1)) && ((SOD == 0) && (Cat == 0) && (ThP == 0))
+			  
+			  // node.toFormula = (((Superoxide == 1) || (LIP == 1)) || (ROS == 1)) && (((SOD == 0) && (Cat == 0)) && (ThP == 0))
+
+			  t.createFunctionTerm(node);
+		  }
+	  }
   }
 
   private static ASTFunction generateFunctionTermForOneTransition(Transition t, Type logicalJunction) {
@@ -170,7 +176,7 @@ public class FunctionTermGenerator {
 
     // generate node with id
     ASTCiNumberNode ci = new ASTCiNumberNode();
-    ci.setRefId(i.getId());
+    ci.setRefId(i.getQualitativeSpecies());
     eq.addChild(ci);
 
     //generate node with number
