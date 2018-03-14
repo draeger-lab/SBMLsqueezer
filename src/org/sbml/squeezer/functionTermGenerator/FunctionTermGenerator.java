@@ -47,15 +47,18 @@ public class FunctionTermGenerator {
     return sign != null;
   }
 
-  public FunctionTermGenerator (Model model) throws Exception {
-    if (!defaultTerm.equals(DefaultTerm.none)) {
-      QualModelPlugin qmp = (QualModelPlugin) model.getPlugin(QualConstants.shortLabel);
-      generateFunctionTerms(qmp);
-    }
-    System.out.println("FunctionTerm!!");
+  public FunctionTermGenerator() {
+
   }
 
-  public static void generateFunctionTerms(QualModelPlugin qm) throws Exception {
+  public void generateFunctionTerms(Model m) throws Exception {
+	  
+	QualModelPlugin qm = (QualModelPlugin) m.getPlugin(QualConstants.shortLabel);
+	
+	if (defaultTerm.equals(DefaultTerm.none)) {
+		return;
+	}
+	
     for (Transition t : qm.getListOfTransitions()) {
       ASTNode2 math;
       // case or
@@ -69,12 +72,11 @@ public class FunctionTermGenerator {
 
       IFormulaParser parser = new FormulaParserLL3(new StringReader(""));
       ASTNode node = ASTNode.parseFormula(math.toFormula(), parser);
-
-      if (t.isSetListOfFunctionTerms()) {
-        t.getListOfFunctionTerms().get(t.getListOfFunctionTerms().size()).setMath(node);
+      
+      if (t.isSetListOfFunctionTerms() && t.getListOfFunctionTerms().size() >= 0) {
+       continue;
       }
       else {
-        // can be deleted, because a transition must have a list of functionterms
         t.createFunctionTerm(node);
       }
     }

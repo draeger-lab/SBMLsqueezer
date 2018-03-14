@@ -517,9 +517,10 @@ public class SBMLsqueezer<T> extends Launcher {
       }
       klg.storeKineticLaws();
 
-      FunctionTermGenerator ftg = new FunctionTermGenerator(sbmlIo.getSelectedModel());
+      FunctionTermGenerator ftg = new FunctionTermGenerator();
       ftg.setSign(sign);
       ftg.setDefaultTerm(defaultTerm);
+      ftg.generateFunctionTerms(sbmlIo.getSelectedModel());
 
       time = System.currentTimeMillis();
       logger.info(MESSAGES.getString("SAVING_TO_FILE"));
