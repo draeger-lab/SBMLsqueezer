@@ -224,9 +224,9 @@
 	<!--  FunctionTermOptions -->
 	
 	<entry key="FunctionTermOptions">Function Term Options</entry>
-	<entry key="FunctionTermOptions_TOOLTIP">...</entry>
+	<entry key="FunctionTermOptions_TOOLTIP">Here you can define the options depending the Function Term </entry>
 	<entry key="DEFAULT_SIGN">Default Sign</entry>
-    <entry key="DEFAULT_SIGN_TOOLTIP">...</entry>
+    <entry key="DEFAULT_SIGN_TOOLTIP">Define the default sign, when no sign is set to the Input object of a Transition</entry>
     <entry key="DEFAULT_TERM">Default Term</entry>
-    <entry key="DEFAULT_TERM_TOOLTIP">...</entry>
+    <entry key="DEFAULT_TERM_TOOLTIP">Define the kind of default term you want to apply</entry>
 </properties>
