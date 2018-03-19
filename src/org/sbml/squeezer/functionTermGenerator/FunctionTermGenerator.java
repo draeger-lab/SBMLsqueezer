@@ -167,7 +167,7 @@ public DefaultTerm getDefaultTerm() {
       }
 
       // case no inhibitor
-      if (singleA == null) {
+      if (singleA == null && singleR != null) {
     	  if (ri.getChildCount() != 0) {
     		  ri.addChild(singleR);
     		  if (ari.getChildCount() > 0) {
@@ -188,7 +188,7 @@ public DefaultTerm getDefaultTerm() {
       }
 
       // case no activator
-      if (singleR == null) {
+      if (singleR == null && singleA !=null) {
     	  if (ai.getChildCount() != 0) {
     		  ai.addChild(singleA);
     		  if (ari.getChildCount() > 0) {
