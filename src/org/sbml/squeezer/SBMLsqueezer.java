@@ -528,6 +528,7 @@ public class SBMLsqueezer<T> extends Launcher {
       FunctionTermGenerator ftg = new FunctionTermGenerator();
       ftg.setSign(sign);
       ftg.setDefaultTerm(defaultTerm);
+      ftg.setDefaultSign(sbmlIo.getSelectedModel());
       ftg.generateFunctionTerms(sbmlIo.getSelectedModel());
 
       time = System.currentTimeMillis();
