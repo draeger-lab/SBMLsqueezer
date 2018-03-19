@@ -147,7 +147,6 @@ public DefaultTerm getDefaultTerm() {
 
       // all the cases, where activators and inhibitors are involved
       if ((singleA != null) && (singleR != null)) {
-    	  System.out.println("2");
         if (ai.getChildCount() != 0) {
           ai.addChild(singleA);
           functionTerm.addChild(ai);}
@@ -168,11 +167,10 @@ public DefaultTerm getDefaultTerm() {
       }
 
       // case no inhibitor
-      if (singleA == null && ari.getChildCount() == 0) {
+      if (singleA == null) {
     	  if (ri.getChildCount() != 0) {
     		  ri.addChild(singleR);
     		  if (ari.getChildCount() > 0) {
-    			  System.out.println("hier");
     			  functionTerm.addChild(ri);
     			  functionTerm.addChild(ari);
     			  return functionTerm;
@@ -190,7 +188,7 @@ public DefaultTerm getDefaultTerm() {
       }
 
       // case no activator
-      if (singleR == null && ari.getChildCount() == 0) {
+      if (singleR == null) {
     	  if (ai.getChildCount() != 0) {
     		  ai.addChild(singleA);
     		  if (ari.getChildCount() > 0) {
@@ -204,11 +202,13 @@ public DefaultTerm getDefaultTerm() {
     		  if (ari.getChildCount() > 0) {
     			  functionTerm.addChild(singleA);
     			  functionTerm.addChild(ari);
+    			  return functionTerm;
     		  }
     		  return singleA;
     	  }
       }
       
+      // case there is only a species with a dual sign
       if (ari.getChildCount() > 0) {
     	  return ari;
       }
