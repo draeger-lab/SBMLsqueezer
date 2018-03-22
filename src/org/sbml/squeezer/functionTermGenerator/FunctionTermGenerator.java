@@ -23,7 +23,7 @@ public class FunctionTermGenerator {
   private Sign sign = null;
   private static DefaultTerm defaultTerm = null;
 
-  public DefaultTerm getDefaultTerm() {
+public DefaultTerm getDefaultTerm() {
     return defaultTerm;
   }
 
@@ -49,6 +49,19 @@ public class FunctionTermGenerator {
 
   public FunctionTermGenerator() {
 
+  }
+  
+  public void setDefaultSign (Model m) {
+
+	  QualModelPlugin qm = (QualModelPlugin) m.getPlugin(QualConstants.shortLabel);
+
+	  for (Transition t : qm.getListOfTransitions()) {
+		  for (Input i : t.getListOfInputs()) {
+			  if (!i.isSetSign() || i.getSign().equals(Sign.unknown)) {
+				  i.setSign(sign);
+			  }
+		  }
+	  }	  
   }
 
   public void generateFunctionTerms(Model m) throws Exception {
@@ -78,22 +91,19 @@ public class FunctionTermGenerator {
 
 			  IFormulaParser parser = new FormulaParserLL3(new StringReader(""));
 			  ASTNode node = ASTNode.parseFormula(math.toFormula(), parser);
-			  
-			  // math.to Formula = ((Superoxide == 1) || (LIP == 1) || (ROS == 1)) && ((SOD == 0) && (Cat == 0) && (ThP == 0))
-			  
-			  // node.toFormula = (((Superoxide == 1) || (LIP == 1)) || (ROS == 1)) && (((SOD == 0) && (Cat == 0)) && (ThP == 0))
 
 			  t.createFunctionTerm(node);
 		  }
 	  }
   }
-
-  private static ASTFunction generateFunctionTermForOneTransition(Transition t, Type logicalJunction) {
+  
+  private ASTFunction generateFunctionTermForOneTransition(Transition t, Type logicalJunction) {
 
     if (t.isSetListOfInputs()) {
 
       ASTFunction ai = new ASTLogicalOperatorNode(logicalJunction);
       ASTFunction ri = new ASTLogicalOperatorNode(ASTNode.Type.LOGICAL_AND);
+      ASTFunction ari = new ASTLogicalOperatorNode(ASTNode.Type.LOGICAL_XOR);
       ASTFunction singleA = null;
       ASTFunction singleR = null;
       ASTFunction functionTerm = new ASTLogicalOperatorNode(ASTNode.Type.LOGICAL_AND);
@@ -114,15 +124,24 @@ public class FunctionTermGenerator {
             ri.addChild(singleR);
           }
           singleR = generateEquation(i, 0);
+        }   
+        
+  	  // activator vs inhibitor depending on the co-factors
+        if (i.getSign().name().equals("dual")) {
+        	ari.addChild(generateEquation(i, 0));   
+        	ari.addChild(generateEquation(i, 1));
         }
       }
-
+      
       //case 1:  more than one activator and more than one inhibitor
       if ((ai.getChildCount() != 0) && (ri.getChildCount() != 0)) {
         ai.addChild(singleA);
         functionTerm.addChild(ai);
         ri.addChild(singleR);
         functionTerm.addChild(ri);
+        if (ari.getChildCount() > 0) {
+        	functionTerm.addChild(ari);
+        }
         return functionTerm;
       }
 
@@ -141,33 +160,60 @@ public class FunctionTermGenerator {
         else {
           functionTerm.addChild(singleR);
         }
+        if (ari.getChildCount() > 0) {
+        	functionTerm.addChild(ari);
+        }
         return functionTerm;
       }
 
       // case no inhibitor
-      if (singleA == null) {
-        if (ri.getChildCount() != 0) {
-          ri.addChild(singleR);
-          return ri;
-        }
-        else {
-          return singleR;
-        }
+      if (singleA == null && singleR != null) {
+    	  if (ri.getChildCount() != 0) {
+    		  ri.addChild(singleR);
+    		  if (ari.getChildCount() > 0) {
+    			  functionTerm.addChild(ri);
+    			  functionTerm.addChild(ari);
+    			  return functionTerm;
+    		  }
+    		  return ri;
+    	  }
+    	  else {
+    		  if (ari.getChildCount() > 0) {
+    			  functionTerm.addChild(singleR);
+    			  functionTerm.addChild(ari);
+    			  return functionTerm;
+    		  }
+    		  return singleR;
+    	  }
       }
 
       // case no activator
-      if (singleR == null) {
-        if (ai.getChildCount() != 0) {
-          ai.addChild(singleA);
-          return ai;
-        }
-        else {
-          return singleA;
-        }
+      if (singleR == null && singleA !=null) {
+    	  if (ai.getChildCount() != 0) {
+    		  ai.addChild(singleA);
+    		  if (ari.getChildCount() > 0) {
+    			  functionTerm.addChild(ai);
+    			  functionTerm.addChild(ari);
+    			  return functionTerm;
+    		  }
+    		  return ai;
+    	  }
+    	  else {
+    		  if (ari.getChildCount() > 0) {
+    			  functionTerm.addChild(singleA);
+    			  functionTerm.addChild(ari);
+    			  return functionTerm;
+    		  }
+    		  return singleA;
+    	  }
+      }
+      
+      // case there is only a species with a dual sign
+      if (ari.getChildCount() > 0) {
+    	  return ari;
       }
     }
     return null;
-
   }
 
   private static ASTFunction generateEquation(Input i, int value) {
