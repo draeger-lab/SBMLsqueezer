@@ -259,8 +259,16 @@ public class SBMLsqueezer<T> extends Launcher {
             searchSABIO = true;
           }
         }
-        sign = Sign.valueOf(properties.get(FunctionTermOptions.DEFAULT_SIGN));
-        defaultTerm = DefaultTerm.valueOf(properties.get(FunctionTermOptions.DEFAULT_TERM));
+        try {
+        	sign = Sign.valueOf(properties.get(FunctionTermOptions.DEFAULT_SIGN));
+        } catch (NullPointerException e) {
+        	sign = Sign.unknown;
+        }
+        try {
+        	defaultTerm = DefaultTerm.valueOf(properties.get(FunctionTermOptions.DEFAULT_TERM));
+        } catch (NullPointerException e) {
+        	defaultTerm = DefaultTerm.none;
+        }
         squeeze(properties.get(IOOptions.SBML_IN_FILE).toString(),
           properties.get(IOOptions.SBML_OUT_FILE).toString(), searchSABIO);
       } catch (Throwable e) {
@@ -520,6 +528,7 @@ public class SBMLsqueezer<T> extends Launcher {
       FunctionTermGenerator ftg = new FunctionTermGenerator();
       ftg.setSign(sign);
       ftg.setDefaultTerm(defaultTerm);
+      ftg.setDefaultSign(sbmlIo.getSelectedModel());
       ftg.generateFunctionTerms(sbmlIo.getSelectedModel());
 
       time = System.currentTimeMillis();
