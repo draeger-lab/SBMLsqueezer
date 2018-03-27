@@ -23,7 +23,7 @@ import org.sbml.jsbml.text.parser.IFormulaParser;
  * This class generates default function terms for 
  * each transition in the selected model.
  * 
- * @author Andreas Dräger
+ * @author Andreas Dr&auml;ger
  * @author Lisa Falk
  * @since 2.1.1
  * @version $Rev$
