@@ -19,11 +19,21 @@ import org.sbml.jsbml.math.ASTRelationalOperatorNode;
 import org.sbml.jsbml.text.parser.FormulaParserLL3;
 import org.sbml.jsbml.text.parser.IFormulaParser;
 
+/**
+ * This class generates default function terms for 
+ * each transition in the selected model.
+ * 
+ * @author Andreas Dräger
+ * @author Lisa Falk
+ * @since 2.1.1
+ * @version $Rev$
+ */
+
 public class FunctionTermGenerator {
   private Sign sign = null;
   private static DefaultTerm defaultTerm = null;
 
-public DefaultTerm getDefaultTerm() {
+  public DefaultTerm getDefaultTerm() {
     return defaultTerm;
   }
 
@@ -51,12 +61,16 @@ public DefaultTerm getDefaultTerm() {
 
   }
   
-  public void setDefaultSign (Model m) {
+  /**
+   * @param model, that a default sign should be assigned
+   */
+  public void setDefaultSign (Model model) {
 
-	  QualModelPlugin qm = (QualModelPlugin) m.getPlugin(QualConstants.shortLabel);
+	  QualModelPlugin qm = (QualModelPlugin) model.getPlugin(QualConstants.shortLabel);
 
 	  for (Transition t : qm.getListOfTransitions()) {
 		  for (Input i : t.getListOfInputs()) {
+			  // if no sign or sign=unknown the default sign is set
 			  if (!i.isSetSign() || i.getSign().equals(Sign.unknown)) {
 				  i.setSign(sign);
 			  }
@@ -64,10 +78,15 @@ public DefaultTerm getDefaultTerm() {
 	  }	  
   }
 
-  public void generateFunctionTerms(Model m) throws Exception {
+  /**
+   * @param model, that a default function term should be assigned
+   * @return the kineticsGeneRegulation
+   */
+  public void generateFunctionTerms(Model model) throws Exception {
 
-	  QualModelPlugin qm = (QualModelPlugin) m.getPlugin(QualConstants.shortLabel);
+	  QualModelPlugin qm = (QualModelPlugin) model.getPlugin(QualConstants.shortLabel);
 
+	  // exit the method if no default function term scheme is applied
 	  if (defaultTerm.equals(DefaultTerm.none)) {
 		  return;
 	  }
@@ -80,19 +99,25 @@ public DefaultTerm getDefaultTerm() {
 			  
 			  ASTNode2 math;
 
-			  // case or
+			  // scheme oneActivatorAndNoInhibitor
 			  if (defaultTerm.equals(DefaultTerm.oneActivatorAndNoInhibitor)) {
 				  math = generateFunctionTermForOneTransition(t, ASTNode.Type.LOGICAL_OR);
 			  }
-			  // case and
+			  // scheme allActivatorsAndNoInhibitor
 			  else {
 				  math = generateFunctionTermForOneTransition(t, ASTNode.Type.LOGICAL_AND);
 			  }
 
+			  // beta solution to use a parser to convert from ASTNode2 to ASTNode 
+			  // TODO: implementation converter in JSBML
 			  IFormulaParser parser = new FormulaParserLL3(new StringReader(""));
-			  ASTNode node = ASTNode.parseFormula(math.toFormula(), parser);
+			  String helper = math.toFormula().replace("xor", "Xor");
+			  ASTNode node = ASTNode.parseFormula(helper, parser);
 
 			  t.createFunctionTerm(node);
+			  
+			  //set the resultLevel of the newly created default function term
+			  t.getListOfFunctionTerms().get(t.getFunctionTermCount()-1).setResultLevel(1);
 		  }
 	  }
   }
@@ -126,7 +151,7 @@ public DefaultTerm getDefaultTerm() {
           singleR = generateEquation(i, 0);
         }   
         
-  	  // activator vs inhibitor depending on the co-factors
+  	  // activator or inhibitor depending on the co-factors
         if (i.getSign().name().equals("dual")) {
         	ari.addChild(generateEquation(i, 0));   
         	ari.addChild(generateEquation(i, 1));

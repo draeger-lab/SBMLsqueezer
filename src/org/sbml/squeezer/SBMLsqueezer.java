@@ -88,6 +88,7 @@ import de.zbit.util.progressbar.ProgressBar;
  * @author Nadine Hassis
  * @author Hannes Borch
  * @author Sarah R. M&uuml;ller vom Hagen
+ * @author Lisa Falk
  * @since 1.0
  * @version $Rev$
  * @param <T> the type of SBML documents that can be treated by this controller.
@@ -200,9 +201,16 @@ public class SBMLsqueezer<T> extends Launcher {
    */
   private SBMLio<T> sbmlIo;
 
+  /**
+  * stores the user input which default sign should be applied
+  */
   private Sign sign;
 
+  /**
+  * stores the user input which default term should be applied
+  */
   private DefaultTerm defaultTerm;
+  
   /**
    *
    */
