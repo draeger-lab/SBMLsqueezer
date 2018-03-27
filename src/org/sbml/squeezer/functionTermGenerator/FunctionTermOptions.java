@@ -12,7 +12,7 @@ import de.zbit.util.prefs.Option;
  * This is a list of possible command line options and configuration of
  * SBMLsqueezer, concerning the generation of default function terms.
  * 
- * @author Andreas Dräger
+ * @author Andreas Dr&auml;ger
  * @author Lisa Falk
  * @since 2.1.1
  * @version $Rev$
