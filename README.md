@@ -1,5 +1,15 @@
 # SBMLsqueezer
-Context-sensitive creation of kinetic equations in biochemical networks
+<img align="right" src="https://github.com/draeger-lab/SBMLsqueezer/blob/master/resources/org/sbml/squeezer/resources/img/SBMLsqueezerIcon_64.png"/>
+
+**Context-sensitive creation of kinetic equations in biochemical networks**
+
+[![License (GPL version 3)](https://img.shields.io/badge/license-GPLv3.0-blue.svg?style=plastic)](http://opensource.org/licenses/GPL-3.0)
+[![Stable version](https://img.shields.io/badge/Stable_version-2.1-brightgreen.svg?style=plastic)](https://github.com/draeger-lab/SBMLsqueezer/releases/)
+[![DOI](http://img.shields.io/badge/DOI-10.1186%20%2F%20s12918-015-0212-9-blue.svg?style=plastic)](http://dx.doi.org/10.1186/s12918-015-0212-9)
+[![Build Status](https://travis-ci.org/draeger-lab/SBMLsqueezer.svg?branch=master&style=plastic)](https://travis-ci.org/draeger-lab/SBMLsqueezer)
+
+*Authors:* [Andreas Dräger](https://github.com/draeger/), [Sebastian Nagel](https://github.com/nagel86/), [Sarah R. Müller vom Hagen](https://github.com/mvhsara/), [Johannes Pfeuffer](https://github.com/jpfeuffer/), [Lisa Falk](https://github.com/LisaFalk/), [Thomas M. Hamm](https://github.com/tmHamm/), [Clemens Wrzodek](https://github.com/Clemens82/)
+___________________________________________________________________________________________________________
 
 ### Short description
 SBMLsqueezer generates kinetic equations for biochemical networks according to context of
@@ -14,7 +24,8 @@ contextual menus. All newly created parameters are equipped with the derived uni
 if available and meaningful textual names. MathML is inserted directly into the SBML file. LaTeX or text export
 of ordinary differential equations is provided.
 
-### Please cite:
+### Please cite
+
 1. Andreas Dräger, Daniel C. Zielinski, Roland Keller, Matthias Rall, Johannes Eichner, Bernhard O. Palsson,
    and Andreas Zell. SBMLsqueezer 2: Context-sensitive creation of kinetic equations in biochemical networks.
    _BMC Systems Biology_, 9(1):1-17, September 2015. [ [DOI](http://dx.doi.org/10.1186/s12918-015-0212-9) |
