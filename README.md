@@ -1,10 +1,10 @@
 # SBMLsqueezer
-<img align="right" src="https://github.com/draeger-lab/SBMLsqueezer/blob/master/resources/org/sbml/squeezer/resources/img/SBMLsqueezerIcon_64.png"/>
+<img align="right" src="resources/org/sbml/squeezer/resources/img/SBMLsqueezerIcon_64.png"/>
 
 **Context-sensitive creation of kinetic equations in biochemical networks**
 
 [![License (GPL version 3)](https://img.shields.io/badge/license-GPLv3.0-blue.svg?style=plastic)](http://opensource.org/licenses/GPL-3.0)
-[![Stable version](https://img.shields.io/badge/Stable_version-2.1-brightgreen.svg?style=plastic)](https://github.com/draeger-lab/SBMLsqueezer/releases/)
+[![Latest version](https://img.shields.io/badge/Latest_version-2.1-brightgreen.svg?style=plastic)](https://github.com/draeger-lab/SBMLsqueezer/releases/)
 [![DOI](http://img.shields.io/badge/DOI-10.1186%20%2F%20s12918-015-0212-9-blue.svg?style=plastic)](http://dx.doi.org/10.1186/s12918-015-0212-9)
 [![Build Status](https://travis-ci.org/draeger-lab/SBMLsqueezer.svg?branch=master&style=plastic)](https://travis-ci.org/draeger-lab/SBMLsqueezer)
 
