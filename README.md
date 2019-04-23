@@ -5,10 +5,10 @@
 
 [![License (GPL version 3)](https://img.shields.io/badge/license-GPLv3.0-blue.svg?style=plastic)](http://opensource.org/licenses/GPL-3.0)
 [![Latest version](https://img.shields.io/badge/Latest_version-2.1-brightgreen.svg?style=plastic)](https://github.com/draeger-lab/SBMLsqueezer/releases/)
-[![DOI](http://img.shields.io/badge/DOI-10.1186%20%2F%20s12918-015-0212-9-blue.svg?style=plastic)](http://dx.doi.org/10.1186/s12918-015-0212-9)
+[![DOI:10.1186/s12918-015-0212-9](https://zenodo.org/badge/DOI/10.1186/s12918-015-0212-9.svg)](https://doi.org/10.1186/s12918-015-0212-9)
 [![Build Status](https://travis-ci.org/draeger-lab/SBMLsqueezer.svg?branch=master&style=plastic)](https://travis-ci.org/draeger-lab/SBMLsqueezer)
 
-*Authors:* [Andreas Dräger](https://github.com/draeger/), [Sebastian Nagel](https://github.com/nagel86/), [Sarah R. Müller vom Hagen](https://github.com/mvhsara/), [Johannes Pfeuffer](https://github.com/jpfeuffer/), [Lisa Falk](https://github.com/LisaFalk/), [Thomas M. Hamm](https://github.com/tmHamm/), [Clemens Wrzodek](https://github.com/Clemens82/)
+*Authors:* [Andreas Dräger](https://github.com/draeger/), [Alexander Dörr](https://github.com/alexander-doerr),  [Sebastian Nagel](https://github.com/nagel86/), [Roland Keller](https://github.com/RolandKeller5), Sandra Saliger, Simon Schäfer, [Sarah R. Müller vom Hagen](https://github.com/mvhsara/), [Johannes Pfeuffer](https://github.com/jpfeuffer/), Hannes Borch, Dieudonné Motsou Wouamba, [Lisa Falk](https://github.com/LisaFalk/), [Thomas M. Hamm](https://github.com/tmHamm/), [Clemens Wrzodek](https://github.com/Clemens82/), Stefanie Hoffmann
 ___________________________________________________________________________________________________________
 
 ### Short description
