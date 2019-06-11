@@ -1,0 +1,191 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>org.sbml</groupId>
+  <artifactId>squeezer</artifactId>
+  <packaging>pom</packaging>
+
+  <!-- =================================================================== -->
+  <!-- General project information                                         -->
+  <!-- =================================================================== -->
+  
+  <name>${project.artifactId}</name>
+  <version>2.1</version>
+  <url>https://github.com/draeger-lab/SBMLsqueezer</url>
+  <inceptionYear>2008</inceptionYear>
+  <description>Context-sensitive creation of kinetic equations in biochemical networks</description>
+  
+  <properties>
+    <jdk.version>1.8</jdk.version>
+    <maven.build.timestamp.format>yyyy</maven.build.timestamp.format>
+    <year>${maven.build.timestamp}</year><!-- This property is used for filtering the variable ${year} in some resource files -->
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.license.url>https://opensource.org/licenses/GPL-3.0</project.license.url>
+    <junit.version>4.8</junit.version>
+    <sysbio.version>1403</sysbio.version> <!-- SVN revision -->
+    <quaqua.version>9</quaqua.version>
+    <organization.name>University of Tuebingen, Germany</organization.name>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <jsbml.version>${project.version}</jsbml.version>
+    <jsbml.basedir>${basedir}</jsbml.basedir> <!-- will be reset on each sub-pom to be the directory of the pom -->
+    <jsbml.build.javac.source>1.7</jsbml.build.javac.source>
+<jsbml.build.javac.target>1.7</jsbml.build.javac.target>
+  </properties>
+  
+ 	<issueManagement>
+		<system>GitHub Issues</system>
+		<url>https://github.com/draeger-lab/SBMLsqueezer/issues</url>
+	</issueManagement>
+  
+  <developers>
+    <developer>
+      <email>draeger@informatik.uni-tuebingen.de</email>
+      <name>Andreas Dräger</name>
+      <url>https://github.com/draeger/</url>
+      <id>draeger</id>
+    </developer>
+</developers>
+
+  <build>
+  <sourceDirectory>src</sourceDirectory>
+    <testSourceDirectory>test</testSourceDirectory>
+    <resources>
+      <resource>
+		    <directory>resources</directory>
+      </resource>
+    </resources>
+    <testResources>
+      <testResource>
+	      <directory>test</directory>
+      </testResource>
+</testResources>
+
+  <plugins>
+        <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.5.1</version>
+        <configuration>
+          <source>${jsbml.build.javac.source}</source>
+          <target>${jsbml.build.javac.target}</target>
+        </configuration>
+</plugin>
+</plugins>
+
+</build> 
+ 
+ <modules>
+    <module>modules</module>
+</modules>
+    
+
+	<repositories>
+		<!-- Adding repository to download latest jlibSBML -->
+		<repository>
+			<id>JSBML-SNAPSHOT</id>
+			<name>The JSBML Snapshot repository</name>
+			<url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+		</repository>
+    	<!-- Local libraries are an in-project repository -->
+    	<!-- Add the dependencies and put them in -->
+    	<!-- ${project.basedir}/lib/groupId/artifactId/version/ -->
+    	<repository>
+      		<id>libs</id>
+      		<url>file://${project.basedir}/lib</url>
+    	</repository>
+    	<repository>
+    		<id>celldesigner</id>
+    		<url>file://${project.basedir}/modules</url>
+		</repository>
+    	
+	</repositories>
+
+  <dependencies>
+  
+  	<!-- https://mvnrepository.com/artifact/org.scilab.forge/jlatexmath -->
+	<dependency>
+    	<groupId>org.scilab.forge</groupId>
+    	<artifactId>jlatexmath</artifactId>
+    	<version>1.0.2</version>
+	</dependency>
+	
+	<dependency>
+    	<groupId>org.sbml</groupId>
+    	<artifactId>jsbml</artifactId>
+    	<version>1.4</version>
+	</dependency>
+	
+	<dependency>
+    	<groupId>org.sbml.xml</groupId>
+    	<artifactId>libsbmlj</artifactId>
+    	<version>5.15.0</version>
+	</dependency>
+
+	<dependency>
+      <groupId>ch.randelshofer</groupId>
+      <artifactId>quaqua</artifactId>
+      <version>${quaqua.version}</version>
+	</dependency>
+	
+	<!-- https://mvnrepository.com/artifact/net.arnx/jsonic -->
+	<dependency>
+    	<groupId>net.arnx</groupId>
+    	<artifactId>jsonic</artifactId>
+    	<version>1.2.10</version>
+	</dependency>
+	
+	<dependency>
+      <groupId>de.zbit</groupId>
+      <artifactId>SysBio</artifactId>
+      <version>1403</version>
+	</dependency>
+
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.8</version>
+      <scope>test</scope>
+    </dependency>
+    
+    <dependency>
+  		<groupId>commons-io</groupId>
+  		<artifactId>commons-io</artifactId>
+  		<version>2.4</version>
+	</dependency>
+	
+	<dependency>
+  		<groupId>org.swinglabs</groupId>
+  		<artifactId>swingx-core</artifactId>
+  		<version>1.6.2-2</version>
+	</dependency>
+	
+	<!-- https://mvnrepository.com/artifact/org.sbml.jsbml/jsbml -->
+	<dependency>
+    	<groupId>org.sbml</groupId>
+    	<artifactId>tolatex</artifactId>
+    	<version>1.0</version>
+	</dependency>
+	
+	<dependency>
+    	<groupId>jp.sbi</groupId>
+    	<artifactId>garuda</artifactId>
+    	<version>1.0</version>
+	</dependency>
+	
+	<dependency>
+    	<groupId>de.zbit</groupId>
+    	<artifactId>GarudaBackend</artifactId>
+    	<version>1.0</version>
+	</dependency>
+	
+	<dependency>
+    	<groupId>org.sbml</groupId>
+    	<artifactId>celldesigner</artifactId>
+    	<version>4.4</version>
+	</dependency>
+
+	
+  </dependencies>
+</project>

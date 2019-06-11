@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.sbml.squeezer</groupId>
+		<artifactId>modules</artifactId>
+		<version>2.1</version>
+		<relativePath>../pom.xml</relativePath>
+	</parent>
+
+    <groupId>org.sbml.squeezer.modules</groupId>
+    <artifactId>celldesigner</artifactId>
+    <packaging>jar</packaging>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.sbml</groupId>
+			<artifactId>celldesigner</artifactId>
+			<version>4.4</version>
+		</dependency>
+		<dependency>
+			<groupId>org.sbml.xml</groupId>
+			<artifactId>libsbmlj</artifactId>
+			<version>5.15.0</version> <!-- TODO: versions are not up to date -->
+		</dependency>
+
+	</dependencies>
+
+
+
+</project>
