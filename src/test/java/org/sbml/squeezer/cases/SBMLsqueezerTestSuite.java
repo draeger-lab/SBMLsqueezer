@@ -21,7 +21,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  * ---------------------------------------------------------------------
  */
-package org.sbml.squeezer.test.cases;
+package org.sbml.squeezer.cases;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;

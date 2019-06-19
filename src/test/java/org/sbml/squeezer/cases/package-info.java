@@ -29,4 +29,4 @@
  * @version $Rev$
  * @since 2.0
  */
-package org.sbml.squeezer.test.cases;
+package org.sbml.squeezer.cases;

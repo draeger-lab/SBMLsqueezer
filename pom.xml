@@ -4,7 +4,7 @@
 
   <groupId>org.sbml</groupId>
   <artifactId>squeezer</artifactId>
-  <packaging>pom</packaging>
+  <packaging>jar</packaging>
 
   <!-- =================================================================== -->
   <!-- General project information                                         -->
@@ -28,10 +28,10 @@
     <organization.name>University of Tuebingen, Germany</organization.name>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <jsbml.version>${project.version}</jsbml.version>
-    <jsbml.basedir>${basedir}</jsbml.basedir> <!-- will be reset on each sub-pom to be the directory of the pom -->
-    <jsbml.build.javac.source>1.7</jsbml.build.javac.source>
-<jsbml.build.javac.target>1.7</jsbml.build.javac.target>
+    <squeezer.version>${project.version}</squeezer.version>
+    <squeezer.basedir>${basedir}</squeezer.basedir> <!-- will be reset on each sub-pom to be the directory of the pom -->
+    <squeezer.build.javac.source>1.7</squeezer.build.javac.source>
+<squeezer.build.javac.target>1.7</squeezer.build.javac.target>
   </properties>
   
  	<issueManagement>
@@ -49,8 +49,8 @@
 </developers>
 
   <build>
-  <sourceDirectory>src</sourceDirectory>
-    <testSourceDirectory>test</testSourceDirectory>
+<!-- <sourceDirectory>src</sourceDirectory> -->
+    <testSourceDirectory>src/test/java</testSourceDirectory>
     <resources>
       <resource>
 		    <directory>resources</directory>
@@ -68,18 +68,55 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.5.1</version>
         <configuration>
-          <source>${jsbml.build.javac.source}</source>
-          <target>${jsbml.build.javac.target}</target>
+          <source>${squeezer.build.javac.source}</source>
+          <target>${squeezer.build.javac.target}</target>
         </configuration>
+</plugin>
+<plugin>
+        <!-- NOTE: We don't need a groupId specification because the group is
+             org.apache.maven.plugins ...which is assumed by default.
+         -->
+        <artifactId>maven-assembly-plugin</artifactId>
+        <version>3.1.1</version>
+        <configuration>
+          <descriptorRefs>
+            <descriptorRef>jar-with-dependencies</descriptorRef>
+          </descriptorRefs>
+          <archive>
+            <manifest>
+              <mainClass>org.sbml.squeezer.SBMLsqueezer</mainClass>
+            </manifest>
+          </archive>
+        </configuration>
+        </plugin>
+<plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <appendAssemblyId>false</appendAssemblyId>
+                            <descriptors>
+                                <descriptor>src/main/assembly/garuda_zip.xml</descriptor>
+                            </descriptors>
+					          <target>${squeezer.build.javac.target}</target>
+                        </configuration>
+                    </execution>
+                </executions>
 </plugin>
 </plugins>
 
 </build> 
- 
+
+<!-- 
  <modules>
     <module>modules</module>
 </modules>
-    
+   -->
 
 	<repositories>
 		<!-- Adding repository to download latest jlibSBML -->

@@ -21,7 +21,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  * ---------------------------------------------------------------------
  */
-package org.sbml.squeezer.test.gui;
+package org.sbml.squeezer.gui;
 
 import java.awt.Dialog;
 import java.awt.Frame;
