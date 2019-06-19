@@ -10,28 +10,28 @@
     <fileSets>
         <fileSet>
             <directory>dist</directory>
-            <outputDirectory>uuid</outputDirectory>
+            <outputDirectory>${squeezer.uuid}</outputDirectory>
             <includes>
                 <include>gadget_config.xml</include>
             </includes>
         </fileSet>
         <fileSet>
-            <directory>dist</directory>
-            <outputDirectory>uuid</outputDirectory>
+            <directory>target</directory>
+            <outputDirectory>${squeezer.uuid}</outputDirectory>
             <includes>
-                <include>target/squeezer-${project.version}.jar</include>
+                <include>squeezer-${project.version}_incl-libs.jar</include>
             </includes>
         </fileSet>
         <fileSet>
             <directory>${project.basedir}/src/main/resources/org/sbml/squeezer/resources/img</directory>
-            <outputDirectory>uuid/icons/</outputDirectory>
+            <outputDirectory>${squeezer.uuid}/icons/</outputDirectory>
             <includes>
                 <include>SBMLsqueezerIcon_64.png</include>
             </includes>
         </fileSet>
         <fileSet>
             <directory>dist</directory>
-            <outputDirectory>uuid/snapshot/</outputDirectory>
+            <outputDirectory>${squeezer.uuid}/snapshot/</outputDirectory>
             <includes>
                 <include>Screenshot_*.png</include>
             </includes>

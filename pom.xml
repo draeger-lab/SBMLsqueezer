@@ -1,131 +1,155 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
 
-  <groupId>org.sbml</groupId>
-  <artifactId>squeezer</artifactId>
-  <packaging>jar</packaging>
+	<groupId>org.sbml</groupId>
+	<artifactId>squeezer</artifactId>
+	<packaging>jar</packaging>
 
-  <!-- =================================================================== -->
-  <!-- General project information                                         -->
-  <!-- =================================================================== -->
-  
-  <name>${project.artifactId}</name>
-  <version>2.1</version>
-  <url>https://github.com/draeger-lab/SBMLsqueezer</url>
-  <inceptionYear>2008</inceptionYear>
-  <description>Context-sensitive creation of kinetic equations in biochemical networks</description>
-  
-  <properties>
-    <jdk.version>1.8</jdk.version>
-    <maven.build.timestamp.format>yyyy</maven.build.timestamp.format>
-    <year>${maven.build.timestamp}</year><!-- This property is used for filtering the variable ${year} in some resource files -->
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <project.license.url>https://opensource.org/licenses/GPL-3.0</project.license.url>
-    <junit.version>4.8</junit.version>
-    <sysbio.version>1403</sysbio.version> <!-- SVN revision -->
-    <quaqua.version>9</quaqua.version>
-    <organization.name>University of Tuebingen, Germany</organization.name>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <squeezer.version>${project.version}</squeezer.version>
-    <squeezer.basedir>${basedir}</squeezer.basedir> <!-- will be reset on each sub-pom to be the directory of the pom -->
-    <squeezer.build.javac.source>1.7</squeezer.build.javac.source>
-<squeezer.build.javac.target>1.7</squeezer.build.javac.target>
-  </properties>
-  
- 	<issueManagement>
+	<!-- =================================================================== -->
+	<!-- General project information -->
+	<!-- =================================================================== -->
+
+	<name>${project.artifactId}</name>
+	<version>2.1</version>
+	<url>https://github.com/draeger-lab/SBMLsqueezer</url>
+	<inceptionYear>2008</inceptionYear>
+	<description>Context-sensitive creation of kinetic equations in biochemical networks</description>
+
+	<properties>
+		<jdk.version>1.8</jdk.version>
+		<maven.build.timestamp.format>yyyy</maven.build.timestamp.format>
+		<year>${maven.build.timestamp}</year><!-- This property is used for filtering 
+			the variable ${year} in some resource files -->
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.license.url>https://opensource.org/licenses/GPL-3.0</project.license.url>
+		<junit.version>4.8</junit.version>
+		<sysbio.version>1403</sysbio.version> <!-- SVN revision -->
+		<quaqua.version>9</quaqua.version>
+		<organization.name>University of Tuebingen, Germany</organization.name>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<squeezer.version>${project.version}</squeezer.version>
+		<squeezer.basedir>${basedir}</squeezer.basedir> <!-- will be reset on each sub-pom to be the directory of the pom -->
+		<squeezer.build.javac.source>1.7</squeezer.build.javac.source>
+		<squeezer.build.javac.target>1.7</squeezer.build.javac.target>
+		<maven.test.skip>true</maven.test.skip>
+		<maven.test.failure.ignore>true</maven.test.failure.ignore>
+		<squeezer.uuid>b3048f09-e26d-3d28-b0da-4e708c2dd6ec</squeezer.uuid>
+	</properties>
+
+	<issueManagement>
 		<system>GitHub Issues</system>
 		<url>https://github.com/draeger-lab/SBMLsqueezer/issues</url>
 	</issueManagement>
-  
-  <developers>
-    <developer>
-      <email>draeger@informatik.uni-tuebingen.de</email>
-      <name>Andreas Dräger</name>
-      <url>https://github.com/draeger/</url>
-      <id>draeger</id>
-    </developer>
-</developers>
 
-  <build>
- <sourceDirectory>src/main</sourceDirectory>
-    <testSourceDirectory>src/test/java</testSourceDirectory>
-    <resources>
-      <resource>
-		    <directory>src/main/resources</directory>
-      </resource>
-    </resources>
-    <testResources>
-      <testResource>
-	      <directory>src/main/resources</directory>
-      </testResource>
-</testResources>
+	<developers>
+		<developer>
+			<email>draeger@informatik.uni-tuebingen.de</email>
+			<name>Andreas Dräger</name>
+			<url>https://github.com/draeger/</url>
+			<id>draeger</id>
+		</developer>
+	</developers>
 
-  <plugins>
-        <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.5.1</version>
-        <configuration>
-          <source>${squeezer.build.javac.source}</source>
-          <target>${squeezer.build.javac.target}</target>
-        </configuration>
-</plugin>
-<plugin>
-        <!-- NOTE: We don't need a groupId specification because the group is
-             org.apache.maven.plugins ...which is assumed by default.
-         -->
-        <artifactId>maven-assembly-plugin</artifactId>
-        <version>3.1.1</version>
-        <configuration>
-          <descriptorRefs>
-            <descriptorRef>jar-with-dependencies</descriptorRef>
-          </descriptorRefs>
-          <archive>
-            <manifest>
-              <mainClass>org.sbml.squeezer.SBMLsqueezer</mainClass>
-            </manifest>
-          </archive>
-        </configuration>
-        </plugin>
-<plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-                        <configuration>
-                            <appendAssemblyId>false</appendAssemblyId>
-                            <descriptors>
-                                <descriptor>src/main/assembly/garuda_zip.xml</descriptor>
-                            </descriptors>
-					          <target>${squeezer.build.javac.target}</target>
-                        </configuration>
-                    </execution>
-                </executions>
-</plugin>
-<plugin>
-    <groupId>org.apache.maven.plugins</groupId>
-    <artifactId>maven-surefire-plugin</artifactId>
-    <version>2.16</version>
-    <configuration>
-        <reuseForks>false</reuseForks>
-        <forkCount>1</forkCount>
-    </configuration>
-</plugin>
-</plugins>
+	<build>
+		<sourceDirectory>src/main</sourceDirectory>
+		<testSourceDirectory>src/test/java</testSourceDirectory>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+			</resource>
+		</resources>
+		<testResources>
+			<testResource>
+				<directory>src/main/resources</directory>
+			</testResource>
+		</testResources>
 
-</build> 
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.5.1</version>
+				<configuration>
+					<source>${squeezer.build.javac.source}</source>
+					<target>${squeezer.build.javac.target}</target>
+				</configuration>
+			</plugin>
+			<!-- disable default jar -->
+			<plugin>
+				<artifactId>maven-jar-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>default-jar</id>
+						<phase>never</phase>
+						<configuration>
+							<finalName>unwanted</finalName>
+							<classifier>unwanted</classifier>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<!-- NOTE: We don't need a groupId specification because the group is 
+					org.apache.maven.plugins ...which is assumed by default. -->
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>3.1.1</version>
+				<executions>
+					<!-- first execution: the executable jar -->
+					<execution>
+						<id>jar</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+						<configuration>
 
-<!-- 
- <modules>
-    <module>modules</module>
-</modules>
-   -->
+							<descriptorRefs>
+								<descriptorRef>jar-with-dependencies</descriptorRef>
+							</descriptorRefs>
+							<appendAssemblyId>false</appendAssemblyId>
+							<finalName>squeezer-${project.version}_incl-libs</finalName>
+							<archive>
+								<manifest>
+									<mainClass>org.sbml.squeezer.SBMLsqueezer</mainClass>
+								</manifest>
+							</archive>
+						</configuration>
+					</execution>
+					<!-- second execution: the garude zip file -->
+					<execution>
+						<id>garuda-zip</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+						<configuration>
+							<finalName>squeezer-${project.version}_Garuda</finalName>
+							<appendAssemblyId>false</appendAssemblyId>
+							<descriptors>
+								<descriptor>src/main/assembly/garuda_zip.xml</descriptor>
+							</descriptors>
+							<target>${squeezer.build.javac.target}</target>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.16</version>
+				<configuration>
+					<reuseForks>false</reuseForks>
+					<forkCount>1</forkCount>
+				</configuration>
+			</plugin>
+		</plugins>
+
+	</build>
+
+	<!-- <modules> <module>modules</module> </modules> -->
 
 	<repositories>
 		<!-- Adding repository to download latest jlibSBML -->
@@ -134,104 +158,104 @@
 			<name>The JSBML Snapshot repository</name>
 			<url>https://oss.sonatype.org/content/repositories/snapshots/</url>
 		</repository>
-    	<!-- Local libraries are an in-project repository -->
-    	<!-- Add the dependencies and put them in -->
-    	<!-- ${project.basedir}/lib/groupId/artifactId/version/ -->
-    	<repository>
-      		<id>libs</id>
-      		<url>file://${project.basedir}/lib</url>
-    	</repository>
-    	<repository>
-    		<id>celldesigner</id>
-    		<url>file://${project.basedir}/modules</url>
+		<!-- Local libraries are an in-project repository -->
+		<!-- Add the dependencies and put them in -->
+		<!-- ${project.basedir}/lib/groupId/artifactId/version/ -->
+		<repository>
+			<id>libs</id>
+			<url>file://${project.basedir}/lib</url>
 		</repository>
-    	
+		<repository>
+			<id>celldesigner</id>
+			<url>file://${project.basedir}/modules</url>
+		</repository>
+
 	</repositories>
 
-  <dependencies>
-  
-  	<!-- https://mvnrepository.com/artifact/org.scilab.forge/jlatexmath -->
-	<dependency>
-    	<groupId>org.scilab.forge</groupId>
-    	<artifactId>jlatexmath</artifactId>
-    	<version>1.0.2</version>
-	</dependency>
-	
-	<dependency>
-    	<groupId>org.sbml</groupId>
-    	<artifactId>jsbml</artifactId>
-    	<version>1.4</version>
-	</dependency>
-	
-	<dependency>
-    	<groupId>org.sbml.xml</groupId>
-    	<artifactId>libsbmlj</artifactId>
-    	<version>5.15.0</version>
-	</dependency>
+	<dependencies>
 
-	<dependency>
-      <groupId>ch.randelshofer</groupId>
-      <artifactId>quaqua</artifactId>
-      <version>${quaqua.version}</version>
-	</dependency>
-	
-	<!-- https://mvnrepository.com/artifact/net.arnx/jsonic -->
-	<dependency>
-    	<groupId>net.arnx</groupId>
-    	<artifactId>jsonic</artifactId>
-    	<version>1.2.10</version>
-	</dependency>
-	
-	<dependency>
-      <groupId>de.zbit</groupId>
-      <artifactId>SysBio</artifactId>
-      <version>1403</version>
-	</dependency>
+		<!-- https://mvnrepository.com/artifact/org.scilab.forge/jlatexmath -->
+		<dependency>
+			<groupId>org.scilab.forge</groupId>
+			<artifactId>jlatexmath</artifactId>
+			<version>1.0.2</version>
+		</dependency>
 
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.8</version>
-      <scope>test</scope>
-    </dependency>
-    
-    <dependency>
-  		<groupId>commons-io</groupId>
-  		<artifactId>commons-io</artifactId>
-  		<version>2.4</version>
-	</dependency>
-	
-	<dependency>
-  		<groupId>org.swinglabs</groupId>
-  		<artifactId>swingx-core</artifactId>
-  		<version>1.6.2-2</version>
-	</dependency>
-	
-	<!-- https://mvnrepository.com/artifact/org.sbml.jsbml/jsbml -->
-	<dependency>
-    	<groupId>org.sbml</groupId>
-    	<artifactId>tolatex</artifactId>
-    	<version>1.0</version>
-	</dependency>
-	
-	<dependency>
-    	<groupId>jp.sbi</groupId>
-    	<artifactId>garuda</artifactId>
-    	<version>1.0</version>
-	</dependency>
-	
-	<dependency>
-    	<groupId>de.zbit</groupId>
-    	<artifactId>GarudaBackend</artifactId>
-    	<version>1.0</version>
-	</dependency>
-	
-	<dependency>
-    	<groupId>org.sbml</groupId>
-    	<artifactId>celldesigner</artifactId>
-    	<version>4.4</version>
-	</dependency>
+		<dependency>
+			<groupId>org.sbml</groupId>
+			<artifactId>jsbml</artifactId>
+			<version>1.4</version>
+		</dependency>
 
-	
-  </dependencies>
+		<dependency>
+			<groupId>org.sbml.xml</groupId>
+			<artifactId>libsbmlj</artifactId>
+			<version>5.15.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>ch.randelshofer</groupId>
+			<artifactId>quaqua</artifactId>
+			<version>${quaqua.version}</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/net.arnx/jsonic -->
+		<dependency>
+			<groupId>net.arnx</groupId>
+			<artifactId>jsonic</artifactId>
+			<version>1.2.10</version>
+		</dependency>
+
+		<dependency>
+			<groupId>de.zbit</groupId>
+			<artifactId>SysBio</artifactId>
+			<version>1403</version>
+		</dependency>
+
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.8</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>2.4</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.swinglabs</groupId>
+			<artifactId>swingx-core</artifactId>
+			<version>1.6.2-2</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.sbml.jsbml/jsbml -->
+		<dependency>
+			<groupId>org.sbml</groupId>
+			<artifactId>tolatex</artifactId>
+			<version>1.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>jp.sbi</groupId>
+			<artifactId>garuda</artifactId>
+			<version>1.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>de.zbit</groupId>
+			<artifactId>GarudaBackend</artifactId>
+			<version>1.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.sbml</groupId>
+			<artifactId>celldesigner</artifactId>
+			<version>4.4</version>
+		</dependency>
+
+
+	</dependencies>
 </project>
