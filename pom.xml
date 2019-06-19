@@ -49,11 +49,11 @@
 </developers>
 
   <build>
-<!-- <sourceDirectory>src</sourceDirectory> -->
+ <sourceDirectory>src/main</sourceDirectory>
     <testSourceDirectory>src/test/java</testSourceDirectory>
     <resources>
       <resource>
-		    <directory>resources</directory>
+		    <directory>src/main/resources</directory>
       </resource>
     </resources>
     <testResources>
