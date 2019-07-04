@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<!-- 
+ * $Id$
+ * $URL$
+ *********************************************************************** 
+ * This file is part of SBMLsqueezer, a Java program that creates rate 
+ * equations for reactions in SBML files (http://sbml.org).
+ *
+ * Copyright (C) 2006-2016 by the University of Tuebingen, Germany.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see http://www.gnu.org/licenses/.
+ ***********************************************************************
+ *
+ * Version: $Rev$
+-->
+<properties>
+  <comment>
+	This configuration describes the labels of options in SBMLsqueezer-related 
+	(graphical) user interfaces.
+	Although the preferred way would be to have separate key-value pairs for
+	actual labels and their corresponding tooltips, you may want to use just 
+	one key-value pair, in which the tooltip is located after the separator 
+	";". Otherwise, please use the suffix "_TOOLTIP" to indicate a tooltip 
+	for some label.
+	
+	Please see the JavaDoc for MessageFormatter and Formatter. 
+  </comment>
+  
+  <!-- IOOptions -->
+  
+  <entry key="IOOptions">Einstellungen für Ein- und Ausgabe</entry>
+  <entry key="SBML_IN_FILE">SBML-Eingabedatei</entry>
+  <entry key="SBML_IN_FILE_TOOLTIP">Geben Sie hiermit die SBML-Datei an, die als Eingabe dienen soll.</entry>
+  <entry key="SBML_OUT_FILE">SBML-Ausgabedatei</entry>
+  <entry key="SBML_OUT_FILE_TOOLTIP">Geben Sie an, in welche Datei SBMLsqueezer seine Ausgabe schreiben soll.</entry>
+  <entry key="TRY_LOADING_LIBSBML">Versuche, libSBML zu laden</entry>
+  <entry key="TRY_LOADING_LIBSBML_TOOLTIP">Die übliche SBML-Bibliothek, die SBMLsqueezer im Hintergrund verwendet, ist JSBML. Mit dieser Option können Sie SBMLsqueezer jedoch mit der traditionellen libSBML-Bibliothek verwenden. Der Vorteil besteht darin, dass es eine eingebaute SBML-Validierung gibt, wohingegen die Validierung mit JSBML durch einen Webservice über das Netzwerk erfolgt. Dafür müssen alle Datenstrukturen aufwändig kopiert und prozessiert werden, weil SBMLsqueezer intern dennoch alle Modelle in JSBML-Datenstrukturen bereithält. Hiermit können Sie also lediglich wählen, wie SBMLsqueezer seine Modelle lesen, schreiben und validieren soll. Die Verwendung von libSBML wird generell nicht empfohlen, weil diese zu einer aufwändigen Installation und Plattformabhängigkeit führt, was bei der Verwendung von JSBML nicht der Fall ist.</entry>
+  
+  <!-- OptionsGeneral -->
+  
+  <entry key="OptionsGeneral">Grundkonfiguration</entry>
+  
+  <entry key="ALL_REACTIONS_AS_ENZYME_CATALYZED">Betrachte alle Reaktionen als enzymkatalysiert</entry>
+  <entry key="ALL_REACTIONS_AS_ENZYME_CATALYZED_TOOLTIP">Wird diese Option gewählt, so interpretiert SBMLsqueezer jede Reaktion als eine implizit enzymkatalysierte Reaktion, die lediglich nicht explizit als solche kenntlich gemacht wurde. Das heißt, dass die Auswahl kinetischer Gleichungen auf Enzymkinetiken beschränkt wird (falls möglich). Die in den Gleichungen vorkommenden Enzyme werden durch maximale Ratenparameter (Vm) verborgen, falls der Reaktion kein explizites Enzym zugewiesen ist.. Wird diese Einstellung nicht gewählt, so interpretiert SBMLsqueezer eine Reaktion nur dann als enzymkatalysiert, wenn dies explizit durch einen entsprechenden Modifikator (inklusive SBO-Annotation) kenntlich gemacht wurde.</entry>
+  <entry key="DEFAULT_COMPARTMENT_SPATIAL_DIM">Standard Raumdimensionen für Kompartimente</entry>
+  <entry key="DEFAULT_COMPARTMENT_SPATIAL_DIM_TOOLTIP">Sollten für ein Kompartiment keine Raumdimensionen angegeben worden sein, so setzt SBMLsqueezer dessen Raumdimensionen auf den hier angegebenen Wert. Dies ist sehr wichtig, um ein konsistentes Modell zu erhalten. Im Einzelfall kann jedoch die Verwendung solcher Standardwerte bedenklich sein und muss daher anschließend sorgfältig überprüft werden.</entry>
+  <entry key="DEFAULT_COMPARTMENT_SIZE">Standardgröße für Kompartimente</entry>
+  <entry key="DEFAULT_COMPARTMENT_SIZE_TOOLTIP">Kompartimente, denen bislang keine Anfangsgröße zugewiesen wurde, setzt SBMLsqueezer auf den hier angegebenen Wert. Da Kompartimente häufig in kinetischen Gleichungen referenziert werden, sollten diese mit einem numerischen Wert ausgestattet sein, um ein konsistentes Modell zu erhalten.</entry>
+  <entry key="DEFAULT_NEW_PARAMETER_VAL">Standardwert für Parameter</entry>
+  <entry key="DEFAULT_NEW_PARAMETER_VAL_TOOLTIP">Hier kann für neu zu erzeugende Parameter ein Standardwert definiert werden. Man beachte, dass die Einheit der Parameter von der kinetischen Gleichung abhängt und stark variieren kann. Der hier anzugebende numerische Wert besitzt also ggf. keine besonders hohe Aussagekraft, sondern wird lediglich dazu benutzt, die Konsitzenz des Modells sicher zu stellen. Die Ermittlung sinnvoller Parameterwerte liegt außerhalb des Umfanges dieses Programms.</entry>
+  <entry key="DEFAULT_SPECIES_HAS_ONLY_SUBSTANCE_UNITS">Spezies sind in Substanzeinheiten angegebene Größen, falls nicht anderweitig spezifiziert.</entry>
+  <entry key="DEFAULT_SPECIES_HAS_ONLY_SUBSTANCE_UNITS_TOOLTIP">Mit dieser Option kann festgelegt werden, ob der numerische Wert einer Spezies in Substanzeinheiten interpretiert werden soll, sofern nicht anderweitig definiert. Falls diese Option nicht gewählt wird, so werden Spezies mit undefiniertem Eintrag als Konzentrationen interpretiert.</entry>
+  <entry key="DEFAULT_SPECIES_INIT_VAL">Standardanfangswert für Spezies</entry>
+  <entry key="DEFAULT_SPECIES_INIT_VAL_TOOLTIP">Ist der Anfangswert einer Spezies nicht angegeben, so wird SBMLsqueezer diesen Wert als initiale Menge oder initiale Konzentration dieser Spezies benutzen. Welche Art von Größe benutzt wird, hängt davon ab, ob die Spezies generell in Substanzeinheiten interpretiert werden soll. Das heißt, für Spezies, die als Konzentration angesehen werden, wird auch eine initiale Konzentration gesetz, wohingegen eine initiale Menge gesetzt wird, falls die Spezies als Molekülezahl angesehen wird.</entry>
+  <entry key="OVERWRITE_EXISTING_RATE_LAWS">Überschreibe bereits vorhandene Ratengleichungen</entry>
+  <entry key="OVERWRITE_EXISTING_RATE_LAWS_TOOLTIP">Wird diese Option gewählt, so wird für jede Reaktion des Netzwerkes eine kinetische Gleichung erzeugt - unabhängig davon, ob bereits eine Gleichung definiert ist. Mit anderen Worten, die bisherige Gleichung wird gelöscht und durch eine neu erstellte Gleichung ersetzt.</entry>
+  <entry key="IGNORE_THESE_SPECIES_WHEN_CREATING_LAWS">Ignoriere diese Spezies in Gleichungen</entry>
+  <entry key="IGNORE_THESE_SPECIES_WHEN_CREATING_LAWS_TOOLTIP">Hier können die KEGG-Compound-Identifikatoren für solche Stoffe angegeben werden, die von SBMLsqueezer während der Erstellung kinetischer Gleichungen unbeachteg gelassen werden sollen. Dies kann zu einer erheblichen Vereinfachung der erzeugten Gleichungen führen, wenn beispielsweise die Konzentration von Metallionen oder Wassermolekülen nicht in die Gleichungen einfließen. Da in den meisten Gleichungen zu jedem einbezogenen Stoff auch weitere Parameter zur Gleichung hinzukommen, kann das Ignorieren mancher Stoffe auch die Zahl der Modellparameter deutlich reduzieren. Man beachte jedoch, dass in manchen Fällen die hier genannten Substanzen die Hauptagentien darstellen können.</entry>
+
+  <entry key="MAX_NUMBER_OF_REACTANTS">Maximale Anzahl von Edukten</entry>
+  <entry key="MAX_NUMBER_OF_REACTANTS_TOOLTIP">Da eine simultane Kollision einer hohen Anzahl von Stoffen, die einzig auf dem Zufallsprinzip basiert, als unwahrscheinlich angesehen werden kann, erlaubt SBMLsqueezer hier, eine Anzahl von Eduktmolekülen (oder -ionen) festzulegen, deren zufällige Kollision noch als realistisch betrachtet werden kann. Typischerweise liegt diese Zahl bei drei. Allerdings zeigt SBMLsqueezer bei Überschreiten dieser Anzahl lediglich eine Warnung an, erzeugt die kinetische Gleichung aber dennoch.</entry>
+  <entry key="NEW_PARAMETERS_GLOBAL">Füge alle neuen Parameter global dem Modell hinzu</entry>
+  <entry key="NEW_PARAMETERS_GLOBAL_TOOLTIP">Bei Auswahl dieser Einstellung werden alle neu erstellten Parameter dem Modell global hinzugefügt, also nicht lokal sichtbar nur in der betroffenen Reaktion. Damit sind die Parameter modellweit sichtbar. Allerdings erfordert diese Methode eine deutlich höhere Laufzeit, da die Überprüfung, wo diese Parameter im Modell aufgerufen werden, deutlich umfangreicher ist.</entry>
+  <entry key="POSSIBLE_ENZYME_ANTISENSE_RNA">asRNA</entry>
+  <entry key="POSSIBLE_ENZYME_ANTISENSE_RNA_TOOLTIP">Mit der Auswahl dieser Option werden Antisense-RNA-Moleküle als Enzyme angesehen, wenn diese eine Reaktion katalysieren. Andernfalls werden von Antisense-RNA-Molekülen katalysierte Reaktionen nicht als enzyme-katalysierte Reaktionen betrachtet.</entry>
+  <entry key="POSSIBLE_ENZYME_COMPLEX">Komplex</entry>
+  <entry key="POSSIBLE_ENZYME_COMPLEX_TOOLTIP">Die Auswahl dieser Option bewirkt, dass Komplexmoleküle als Enzyme behandelt werden, wenn diese eine Reaktion katalysieren. Andernfalls werden von Komplexen katalysierte Reaktionen nicht als Enzymreaktionen betrachtet.</entry>
+  <entry key="POSSIBLE_ENZYME_GENERIC">Generische Proteine</entry>
+  <entry key="POSSIBLE_ENZYME_GENERIC_TOOLTIP">Mit der Wahl dieser Option werden generische Proteine als Enzyme angesehen, wenn diese eine Reaktion katalysieren. Ansonsten werden von generischen Proteinen katalysierte Reaktionen nicht als Enzymreaktionen behandelt.</entry>
+  <entry key="POSSIBLE_ENZYME_MACROMOLECULE">Makromoleüle</entry>
+  <entry key="POSSIBLE_ENZYME_MACROMOLECULE_TOOLTIP">Die Auswahl dieser Option bewirkt, dass Makromoleküle als Enzyme behandelt werden, wenn diese eine Reaktion katalysieren. Andernfalls reduziert SBMLsqueezer von Makromolekülen katalysierte Reaktionen zu einfachen katalytischen Vorgängen.</entry>
+  <entry key="POSSIBLE_ENZYME_RECEPTOR">Rezeptor</entry>
+  <entry key="POSSIBLE_ENZYME_RECEPTOR_TOOLTIP">Hier kann entschieden werden, ob SBMLsqueezer Rezeptoren als Enzyme betrachten soll, falls diese eine Reaktion katalysieren.</entry>
+  <entry key="POSSIBLE_ENZYME_RNA">RNA</entry>
+  <entry key="POSSIBLE_ENZYME_RNA_TOOLTIP">Wird diese Einstellung gesetzt, so werden als RNA annotierte Spezies als Enzyme behandelt, wenn diese eine Reaktion katalysieren.</entry>
+  <entry key="POSSIBLE_ENZYME_SIMPLE_MOLECULE">Einfache Moleküle</entry>
+  <entry key="POSSIBLE_ENZYME_SIMPLE_MOLECULE_TOOLTIP">Die Auswahl dieser Option bewirkt, dass einfache Moleküle als Enzyme behandelt werden, wenn diese eine Reaktion katalysieren. Andernfalls reduziert SBMLsqueezer von einfache Moleküle katalysierte Reaktionen zu einfachen katalytischen Vorgängen.</entry>
+  <entry key="POSSIBLE_ENZYME_TRUNCATED">Abgeschnittene Proteine</entry>
+  <entry key="POSSIBLE_ENZYME_TRUNCATED_TOOLTIP">Durch das Auswählen dieser Option können solche Proteine als enzymatische Katalysatoren angesehen werden, die durch biochemische Vorgänge abgeschnitten sind, also nicht vollständig sind.</entry>
+  <entry key="POSSIBLE_ENZYME_UNKNOWN">Unbekannt</entry>
+  <entry key="POSSIBLE_ENZYME_UNKNOWN_TOOLTIP">Wird diese Einstellung gewählt, so werden auch unbekannte Moleküle als enzymatische Katalysatoren behandelt, sollten diese als entsprechender Modifkator einer Reaktion zugewiesen sein.</entry>
+  <entry key="REMOVE_UNNECESSARY_PARAMETERS_AND_UNITS">Entferne nicht verwendete Parameter und Einheiten</entry>
+  <entry key="REMOVE_UNNECESSARY_PARAMETERS_AND_UNITS_TOOLTIP">Wird diese Einstellung gewählt, so werden Parameter und Einheiten, die an keiner Stelle im Modell benutzt (also addressiert) werden, aus dem Modell gelöscht. Dies hat Vor- und Nachteile. Einerseits erzeugt SBMLsqueezer bei jeder Erstellung kinetischer Gleichungen neue Parameterobjekte. Wird dieser Vorgang mehrfach durchgeführt, so können sich zahlreiche unbenutzte Parameter im Modell ansammeln. Allerdings speichern manche Programme bestimmte Konstanten im Modell als Parameter ab, die in Gleichungen nicht benutzt werden, aber einen gewissen Informationsgehalt bieten. Hier muss nun entschieden werden, wie mit derartigen Größen umgegangen werden soll.</entry>
+  <entry key="SET_BOUNDARY_CONDITION_FOR_GENES">Setze die Randbedingung für genkodierende Spezies</entry>
+  <entry key="SET_BOUNDARY_CONDITION_FOR_GENES_TOOLTIP">Diese Option sollte gesetzt werden, um die sogenannte Randbedingung für solche Spezies im Modell automatisch zu setzen, die als genkodierend gekennzeichnet sind. Die Randbedingung bedeutet, dass dieses Spezies zwar an Reaktionen teilnehmen, in diesen jedoch nicht verbraucht werden können, weil ein virtueller Pool vorliegt, aus dem diese Spezies quasi geschöpft werden können. Typischerweise werden Abschnitte der DNA, die als genkodierende Bereiche dienen, während der Transkription nicht verbraucht. Es kann daher sinnvoll sein, für derartige Spezies die Randbedingung zu setzen. SBMLsqueezer kann solche Spezies im Modell finden und Ihnen so die Arbeit abnehmen.</entry>
+  <entry key="SHOW_SBML_WARNINGS">Zeige SBML-Warnungen</entry>
+  <entry key="SHOW_SBML_WARNINGS_TOOLTIP">Entscheiden Sie, ob SBMLsqueezer Warnungen, die von der Lese-/Schreibbibliothek gemeldet werden, anzeigen soll. Diese Warnungen gehen aus einer (hauptsächlich syntaktischen) Konsistenzprüfung des Modells hervor und werden nicht durch dieses Programm erstellt, sondern höchstens angezeigt. SBMLsqueezer hat also keinen Einfluss auf den Inhalt der Meldungen. Außerdem funktioniert diese Option nur dann richtig, wenn libSBML als SBML-Bibliothek gewählt wird, da JSBML diese Funktionalität nicht anbietet.</entry>
+  <entry key="TYPE_UNIT_CONSISTENCY">Bringe Spezies zu Substanzeinheiten</entry>
+  <entry key="TYPE_UNIT_CONSISTENCY_TOOLTIP">Diese Einstellung sichert die Einheitenkonsistenz des Modells, indem zwischen zwei Möglichkeiten ausgewählt werden kann: Wählen Sie Mokelülzahl, um jedes Vorkommen einer teilnehmenden Spezies in eine Substanzeinheit zu überführen. Abhängig davon, ob die betroffene Spezies als Substanzeinheit angesehen wird, kann es nötig sein, diese mit der Größe ihres umgebenden Kompartiments zu multiplizieren. Wählen Sie Konzentration, um jede Spezies in Konzentrationseinheiten zu überführen. Dazu kann es nötig sein, durch die Größe des umgebenen Kompartiments zu dividieren, sollte die betroffene Spezies als in Substanzeinheiten angegebene Größe angesehen werden. Die Einheiten der mit diesen Spezies in Zusammenhang stehenden Parametern werden automatisch und dementsprechend hergeleitet.</entry>
+  <entry key="TYPE_UNITS_COMPARTMENT">Bringe Spezies zu Koncentrationseinheiten</entry>
+  <entry key="TYPE_UNITS_COMPARTMENT_TOOLTIP">Mit der Auswahl dieser Einstellung werden alle Spezies, die als Größe in Substanzeinheiten angegeben sind, durch Division durch das umgebene Kompartiment in Konzentrationseinheiten überführt. Die Einheiten neu herzuleitender Parameter werden dementsprechend gesetzt.</entry>
+  <entry key="WARNINGS_FOR_TOO_MANY_REACTANTS">Warnung für zu viele Edukte</entry>
+  <entry key="WARNINGS_FOR_TOO_MANY_REACTANTS_TOOLTIP">Wird diese Einstellung gesetzt, so zeigt SBMLsqueezer für jede Reaktion mit einer unrealistischen Anzahl an Edukten eine Warnung an. Dazu wird die maximal erlaubte Anzahl von Edukten benutzt, die ebenfalls eingestellt werden kann.</entry>
+  <entry key="READ_FROM_SABIO_RK">Ließ kinetische Gleichungen von SABIO-RK</entry>
+  <entry key="READ_FROM_SABIO_RK_TOOLTIP">Diese Option ermöglicht zu entscheiden, ob nach experimentell ermittelten kinetischen Gleichungen in der SABIO-RK-Datenbank gesucht werden soll. Bitte beachten Sie, dass hierfür eine aktive Internetverbindung benötigt wird.</entry>
+  
+  <entry key="GROUP_GENERAL">Generelle Einstellungen</entry>
+  <entry key="GROUP_GENERAL_TOOLTIP">Die grundlegende Konfiguration von SBMLsqueezer</entry>
+  <entry key="GROUP_DEFAULT_VALUES">Standardwerte</entry>
+  <entry key="GROUP_DEFAULT_VALUES_TOOLTIP">An dieser Stelle kann festgelegt werden, wie SBMLsqueezer mit unbekannten oder undefinierten Werten umgehen soll, wie viele Reaktionspartner noch als realistisch betrachtet werden sollen, oder welche Spezies in kinetischen Gleichungen ignoriert werden sollen.</entry>
+  <entry key="GROUP_UNIT_CONSISTENCY">Einheitenkonsistenz</entry>
+  <entry key="GROUP_UNIT_CONSISTENCY_TOOLTIP">Hier kann eingestellt werden, wie die Einheitenkonsistenz des Modell erzielt werden soll. Spezies können entweder zu Konzentrations- oder Substanzeinheiten gebracht werden. In diesem Abschnitt kann also beeinflusst werden, ob und wie die Kompartimentgröße in kinetische Gleichungen einfließen soll.</entry>
+  <entry key="GROUP_ENZYMES">Spezies, die als Enzyme behandelt werden sollen</entry>
+  <entry key="GROUP_ENZYMES_TOOLTIP">Da es nicht in jedem Falle eindeutig ist, welche Spezies als Enzyme betrachtet werden können, also als ein Biokatalysator mit entsprechenden speziellen Eigenschaften, bietet SBMLsqueezer hier mehrere Auswahlmöglichkeiten an. Dadurch kann je nach Zweck des Modells eingestellt werden, welche grundlegenden Arten von Molekülen noch als Enzym aufgefasst werden sollen.</entry> 
+  
+  <!-- OptionsRateLaws -->
+  
+  <entry key="OptionsRateLaws">Ratengleichungen</entry>
+  
+  <entry key="TREAT_ALL_REACTIONS_REVERSIBLE">Modelliere alle Reaktionen als reversibel</entry>
+  <entry key="TREAT_ALL_REACTIONS_REVERSIBLE_TOOLTIP">Wenn diese Einstellung ausgewählt wird, so werden alle Reaktionen zunächst auf reversibel gesetzt, für die kinetische Gleichungen erzeugt werden sollen, bevor SBMLsqueezer die eigentlichen Gleichungen erzeugt. Im mikroskopischen Sinne ist grundsätzlich jede Reaktion reversibel, allerdings kann die Rückreaktion ggf. um ein vielfaches langsamer verlaufen als die Hinreaktion. Da Kinetiken für reversible Reaktionen wegen ihrer zumeist höheren Parameterzahl häufig einen deutlich höheren Freiheitsgrad besitzen, kann es vorteilhaft sein, alle Reaktionen grundsätzlich als reversibel zu modellieren. Wird diese Option gewählt, ändert sich also auch die in der SBML-Datei gegebene Information über die Reversibilität. Soll diese Information unverändert beibehalten bleiben, so ist von dieser Einstellungsmöglichkeit abzuraten.</entry>
+  
+  <entry key="TREAT_REACTIONS_REVERSIBLE_AS_GIVEN">Benutze gegebene Information</entry>
+  <entry key="TREAT_REACTIONS_REVERSIBLE_AS_GIVEN_TOOLTIP">Ist diese Option eingestellt, so wird die gegebene Information über die Reversiblität so verwendet, wie sie ist.</entry>
+  <entry key="TYPE_STANDARD_VERSION">Wählen Sie eine Version der modularen Ratengleichungen</entry>
+  <entry key="TYPE_STANDARD_VERSION_TOOLTIP">Diese Option ermöglicht die Auswahl der Version von modularen Ratengleichungen, die von SBMLsqueezer verwendet werden soll, und kann die drei Werte cat, hal und weg annehmen, die in der Publikation von Liebermeister et al. (2010) beschrieben sind. Diese Option kann ausschließlich dann verwendet werden, wenn alle Reactionen reversibel modelliert werden (weil ansonsten die modularen Ratengleichungen nicht allgemein anwendbar sind).</entry>
+
+  <entry key="KINETICS_IRREVERSIBLE_ARBITRARY_ENZYME_REACTIONS">Beliebige Enzymreaktionen</entry>
+  <entry key="KINETICS_IRREVERSIBLE_ARBITRARY_ENZYME_REACTIONS_TOOLTIP">Beliebige irreversible Enzymreaktionen</entry>
+  <entry key="KINETICS_IRREVERSIBLE_BI_BI_TYPE">Bi-bi-Typ</entry>
+  <entry key="KINETICS_IRREVERSIBLE_BI_BI_TYPE_TOOLTIP">Wählen Sie die Art von Standard-Kinetik für irreversible Bi-bi-Reaktionen (zwei Edukte, zwei Produkte).</entry>
+  <entry key="KINETICS_IRREVERSIBLE_BI_UNI_TYPE">Bi-uni-Typ</entry>
+  <entry key="KINETICS_IRREVERSIBLE_BI_UNI_TYPE_TOOLTIP">Wählen Sie die Art von Standard-Kinetik für irreversible Bi-uni-Reaktionen (zwei Edukte, ein Produkt).</entry>
+  <entry key="KINETICS_IRREVERSIBLE_NON_ENZYME_REACTIONS">Nicht-Enzym-Reaktionen</entry>
+  <entry key="KINETICS_IRREVERSIBLE_NON_ENZYME_REACTIONS_TOOLTIP">Diese Option bestimmt die Standard-Kinetik, die für Reaktionen genutzt werden soll, die von Stoffen katalysiert werden, die keine Enzyme sind, oder gar nicht katalysiert werden. Der Wert kann eine beliebige Ratengleichung sein.</entry>
+  <entry key="KINETICS_IRREVERSIBLE_UNI_UNI_TYPE">Uni-uni-Typ</entry>
+  <entry key="KINETICS_IRREVERSIBLE_UNI_UNI_TYPE_TOOLTIP">Diese Option definiert die Standard-Kinetik für Enzyme-katalysierte Reaktionen mit einem Edukt und einem Produkt.</entry>
+
+  <entry key="KINETICS_REVERSIBLE_ARBITRARY_ENZYME_REACTIONS">Beliebige Enzymreaktionen</entry>
+  <entry key="KINETICS_REVERSIBLE_ARBITRARY_ENZYME_REACTIONS_TOOLTIP">Wählen Sie die Art von Kinetik aus, die für beliebige reversible Enzymreaktionen verwendet werden soll.</entry>
+  <entry key="KINETICS_REVERSIBLE_BI_BI_TYPE">Bi-bi-Typ</entry>
+  <entry key="KINETICS_REVERSIBLE_BI_BI_TYPE_TOOLTIP">Wählen Sie die Art von Standard-Kinetik für reversible Bi-bi-Reaktionen aus (zwei Edukte, zwei Produkte).</entry>
+  <entry key="KINETICS_REVERSIBLE_BI_UNI_TYPE">Bi-uni-Typ</entry>
+  <entry key="KINETICS_REVERSIBLE_BI_UNI_TYPE_TOOLTIP">Wählen Sie die Art von Standard-Kinetik für reversible Bi-uni-Reaktionen (zwei Edukte, ein Produkt).</entry>
+  <entry key="KINETICS_REVERSIBLE_NON_ENZYME_REACTIONS">Nicht-Enzym-Reaktionen</entry>
+  <entry key="KINETICS_REVERSIBLE_NON_ENZYME_REACTIONS_TOOLTIP">Diese Option bestimmt, welche reversible kinetich für Reaktionen benutzt werden soll, die entweder gar nicht katalysisert werden, oder deren Katalysator kein Enzym ist.</entry>
+  <entry key="KINETICS_REVERSIBLE_UNI_UNI_TYPE">Uni-uni-Typ</entry>
+  <entry key="KINETICS_REVERSIBLE_UNI_UNI_TYPE_TOOLTIP">Diese Option bestimmt, welche Standard-Kinetik für Enzymkatalysierte Reaktionen mit einem Edukt und einem Produkt verwendet werden soll.</entry>
+  
+  <entry key="KINETICS_GENE_REGULATION">Gene-Regulation</entry>
+  <entry key="KINETICS_GENE_REGULATION_TOOLTIP">Geben Sie bitte die Standard-Kinetik an, die für Reaktionen benutzt werden soll, die als genregulatorische Prozesse identifiziert werden (Reaktionen, an denen Gene, RNA oder Proteine beteiligt sind). Dies sind beispielsweise Transkription oder Translation.</entry>
+  <entry key="KINETICS_ZERO_REACTANTS">Reaktionen nullter Ordnung (Edukte)</entry>
+  <entry key="KINETICS_ZERO_REACTANTS_TOOLTIP">Standard-Ratengleichung mit Edukten nullter Ordnung.</entry>
+  <entry key="KINETICS_ZERO_PRODUCTS">Reaktionen nullter Ordnung (Produkte)</entry>
+  <entry key="KINETICS_ZERO_PRODUCTS_TOOLTIP">Die Standard-Ratengleichung für Reaktionen mit Produkten nullter Ordnung.</entry>
+  
+  <entry key="GROUP_IRREVERSIBLE_KINETICS">Irreversible Ratengleichungen</entry>
+  <entry key="GROUP_IRREVERSIBLE_KINETICS_TOOLTIP">Wählen Sie die Standard-Ratengleichung für irreversible Mechanismen.</entry>
+  <entry key="GROUP_REVERSIBLE_KINETICS">Reversible Ratengleichungen</entry>
+  <entry key="GROUP_REVERSIBLE_KINETICS_TOOLTIP">Wählen Sie die Standard-Ratengleichung für reversible Mechanismen.</entry>
+  <entry key="GROUP_GENE_REGULATION_KINETICS">Genregulatorische Prozesse</entry>
+  <entry key="GROUP_GENE_REGULATION_KINETICS_TOOLTIP">Wählen Sie die Standard-Ratengleichung, mit der genregulatorische Prozesse modelliert werden sollen.</entry>
+  <entry key="GROUP_REVERSIBILITY">Reversibilität</entry>
+  <entry key="GROUP_REVERSIBILITY_TOOLTIP">In einigen Studien wurde festgestellt, dass ein Modell realitätsnäher sein kann, werden alle Reaktionen als reversible Prozesse betrachtet. Hier können Sie auswählen, ob Sie die Information über die Reversibilität der Reaktionen unverändert beibehalten möchten, oder alle Reaktionen auf reversibel umstellen wollen. Im jedem Fall werden alle kinetischen Gleichungen entsprechend dieser Einstellung erzeugt.</entry>
+ 
+  
+  
+  
+  
+  
+  
+  
+  <!-- HIER!!! -->
+  
+  
+  
+
+
+
+   
+  <!-- SABIORKOptions -->
+  
+  <entry key="SABIORKPreferences">SABIO-RK search preferences</entry>
+  <entry key="SABIORKPreferences_TOOLTIP">Here you can constrain your search for reaction kinetics in the online database SABIO-RK (System for the Analysis of Biochemical Pathways&#8212;Reaction Kinetics).</entry>
+  
+  <entry key="IS_WILDTYPE">Wildtype kinetics</entry>
+  <entry key="IS_WILDTYPE_TOOLTIP">Search for wildtype kinetics</entry>
+  <entry key="IS_MUTANT">Mutant kinetics</entry>
+  <entry key="IS_MUTANT_TOOLTIP">Search for kinetics of mutants</entry>
+  <entry key="IS_RECOMBINANT">Recombinant kinetics</entry>
+  <entry key="IS_RECOMBINANT_TOOLTIP">Search for kinetics of recombinant organisms</entry>
+  <entry key="HAS_KINETIC_DATA">Entries with kinetic data</entry>
+  <entry key="HAS_KINETIC_DATA_TOOLTIP">Search for entries containing kinetic data</entry>
+  <entry key="IS_DIRECT_SUBMISSION">Direct submission</entry>
+  <entry key="IS_DIRECT_SUBMISSION_TOOLTIP">Search for entries directly submitted</entry>
+  <entry key="IS_JOURNAL">Journal entries</entry>
+  <entry key="IS_JOURNAL_TOOLTIP">Search for entries referring to journal publications</entry>
+  <entry key="LOWEST_PH_VALUE">Lower pH value</entry>
+  <entry key="LOWEST_PH_VALUE_TOOLTIP">The lowest possible pH value for entries</entry>
+  <entry key="HIGHEST_PH_VALUE">Upper ph value</entry>
+  <entry key="HIGHEST_PH_VALUE_TOOLTIP">The highest possible pH value for entries</entry>
+  <entry key="LOWEST_TEMPERATURE_VALUE">Lower temperature (in &#176;C)</entry>
+  <entry key="LOWEST_TEMPERATURE_VALUE_TOOLTIP">The lowest possible temperature for entries (in &#176;C).</entry>
+  <entry key="HIGHEST_TEMPERATURE_VALUE">Upper temperature (in &#176;C)</entry>
+  <entry key="HIGHEST_TEMPERATURE_VALUE_TOOLTIP">The highest possible temperature for entries (in &#176;C).</entry>
+  <entry key="IS_ENTRIES_INSERTED_SINCE">Consider earliest date </entry>
+  <entry key="IS_ENTRIES_INSERTED_SINCE_TOOLTIP">Consider only entries inserted after the specified date</entry>
+  <entry key="LOWEST_DATE">Date of insertion</entry>
+  <entry key="LOWEST_DATE_TOOLTIP">Define the earliest acceptable date when the entries have been inserted into SABIO-RK.</entry>  
+  
+  <entry key="GROUP_DATE">Date</entry>
+  <entry key="GROUP_GENERAL_PROPERTIES">General properties</entry>
+  <entry key="GROUP_GENERAL_PROPERTIES_TOOLTIP">Define key features to restrict the results of your search for reaction kinetics in SABIO-RK.</entry>
+  <entry key="GROUP_TEMPERATURE">Temperature</entry>
+  <entry key="GROUP_TEMPERATURE_TOOLTIP">Define a plausible temperature range for your reaction system.</entry>
+  <entry key="GROUP_PH_VALUE">Range of pH values</entry>
+  <entry key="GROUP_PH_VALUE_TOOLTIP">Constrict the selection of reaction kinetics to plausible conditions by selecting a meaningful range of pH values.</entry>
+ 
+  
+  <!-- SABIORKOptions -->
+  
+  <entry key="SABIORKOptions">SABIO-RK search options</entry>
+  <entry key="SABIORKOptions_TOOLTIP">Here you can constrain your search for reaction kinetics in the online database SABIO-RK (System for the Analysis of Biochemical Pathways&#8212;Reaction Kinetics).</entry>
+  
+  <entry key="PATHWAY">Pathway</entry>
+  <entry key="PATHWAY_TOOLTIP">Define the pathway for which the kinetics are to be determined.</entry>
+  <entry key="TISSUE">Tissue</entry>
+  <entry key="TISSUE_TOOLTIP">Define the tissue for which the kinetics are to be determined.</entry>
+  <entry key="CELLULAR_LOCATION">Cellular location</entry>
+  <entry key="CELLULAR_LOCATION_TOOLTIP">Define the cellular location for which the kinetics are to be determined.</entry>
+  <entry key="ORGANISM">Organism</entry>
+  <entry key="ORGANISM_TOOLTIP">Define the organism for which the kinetics are to be determined.</entry>
+   
+  <entry key="GROUP_GENERAL_OPTIONS">General options</entry>
+  <entry key="GROUP_GENERAL_OPTIONS_TOOLTIP">Define key options to restrict the results of your search for reaction kinetics in SABIO-RK.</entry> 
+
+</properties>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+ * $Id$
+ * $URL$
+ * =================================================================== 
+ * This file is part of SBMLsqueezer, a Java program that creates rate
+ * equations for reactions in SBML files (http://sbml.org).
+ *
+ * Copyright (C) 2006-2018 by the University of Tuebingen, Germany.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see http://www.gnu.org/licenses/.
+ * =================================================================== 
+ *
+ * Author: Andreas Dräger
+ * Version: $Rev$
+-->
+<jnlp spec="1.0+" codebase="http://www.cogsys.cs.uni-tuebingen.de/software/SBMLsqueezer/downloads" href="SBMLsqueezer.jnlp">
+    <information>
+        <title>SBMLsqueezer</title>
+        <vendor>Center for Bioinformatics Tuebingen (ZBIT)</vendor>
+        <description>SBMLsqueezer - a generator of kinetic rate equations for biological models</description>
+        <description kind="short">SBMLsqueezer</description>
+        <homepage href="http://www.cogsys.cs.uni-tuebingen.de/software/SBMLsqueezer"/>
+        <icon href="http://www.cogsys.cs.uni-tuebingen.de/software/SBMLsqueezer/img/SBMLsqueezerIcon_48.png"/>
+        <icon kind="shortcut" href="http://www.cogsys.cs.uni-tuebingen.de/software/SBMLsqueezer/img/SBMLsqueezerIcon_16.png" width="16" height="16"/>
+        <icon kind="splash" href="http://www.cogsys.cs.uni-tuebingen.de/software/SBMLsqueezer/img/SBMLsqueezerSplash.gif"/>
+        <offline-allowed/>
+    </information>
+    <security>
+      <all-permissions/>
+    </security>
+    <resources>
+      <j2se version="1.6+" initial-heap-size="64m" max-heap-size="256m" java-vm-args="-splash:org/sbml/squeezer/resources/img/SBMLsqueezerSplash.gif" href="http://java.sun.com/products/autodl/j2se"/>
+      <jar href="[JAR_NAME]" main="true"/>
+    </resources>
+    <application-desc name="SBMLsqueezer" main-class="org.sbml.squeezerr.SBMLsqueezer"/>
+    <update check="background"/>
+</jnlp>

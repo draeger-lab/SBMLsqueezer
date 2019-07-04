@@ -13,6 +13,91 @@
     <artifactId>celldesigner</artifactId>
     <packaging>jar</packaging>
 
+	<build>
+
+	<sourceDirectory>src/main</sourceDirectory>
+		<testSourceDirectory>src/test/java</testSourceDirectory>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+			</resource>
+		</resources>
+    <plugins>
+    	<plugin>
+        <artifactId>maven-jar-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>default-jar</id>
+            <phase>never</phase>
+            <configuration>
+              <finalName>unwanted</finalName>
+              <classifier>unwanted</classifier>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    	
+			
+		<!--	<plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-shade-plugin</artifactId>
+            <version>2.4.3</version>
+            <configuration>
+            	<filters>
+                    <filter>
+		                <artifact>*:*</artifact>
+		                <excludes>
+		                    <exclude>celldesigner*.java</exclude>
+		                </excludes>
+		            </filter>
+                </filters>
+                <shadedArtifactAttached>true</shadedArtifactAttached>
+				<shadedClassifierName>project-classifier</shadedClassifierName>
+            </configuration>
+            <executions>
+                <execution>
+                    <phase>package</phase>
+                    <goals>
+                        <goal>shade</goal>
+                    </goals>
+                </execution>
+            </executions>
+        </plugin> -->
+
+        <plugin>
+				<!-- NOTE: We don't need a groupId specification because the group is 
+					org.apache.maven.plugins ...which is assumed by default. -->
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>3.1.1</version>
+				<executions>
+					<!-- first execution: the executable jar -->
+					<execution>
+						<id>jar</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+						<configuration>
+
+							<descriptorRefs>
+								<descriptorRef>jar-with-dependencies</descriptorRef>
+							</descriptorRefs>
+							<appendAssemblyId>false</appendAssemblyId>
+							<finalName>SBMLsqueezer-Celldesigner-${project.version}</finalName>
+							<archive>
+								<manifest>
+									<mainClass>org.sbml.squeezer.SBMLsqueezer</mainClass>
+								</manifest>
+							</archive>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+
+	</build>
+
+
 	<dependencies>
 		<dependency>
 			<groupId>org.sbml</groupId>
@@ -24,6 +109,17 @@
 			<artifactId>libsbmlj</artifactId>
 			<version>5.15.0</version> <!-- TODO: versions are not up to date -->
 		</dependency>
+        <dependency>
+            <groupId>org.sbml</groupId>
+            <artifactId>squeezer-core</artifactId>
+            <version>2.1</version>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.10</version>
+            <scope>test</scope>
+        </dependency>
 
 	</dependencies>
 

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+ * $Id$
+ * $URL$
+ *
+ * This file is part of SBMLsqueezer, a Java program that creates rate
+ * equations for reactions in SBML files (http://sbml.org).
+ *
+ * Copyright (C) 2006-2018 by the University of Tuebingen, Germany.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ *
+ *
+ * Version: $Rev$
+-->
+<Gadget>
+  <UUID>[GADGET_UUID]</UUID>
+  <Name>[GADGET_NAME]</Name>
+  <LaunchCommand>cmd /c start javaw.exe -jar "gadgets/[GADGET_UUID]/[JAR_NAME]"</LaunchCommand>
+  <LaunchCommandWin>cmd /c start javaw.exe -jar "gadgets/[GADGET_UUID]/[JAR_NAME]"</LaunchCommandWin>
+  <LaunchCommandMac>java -jar "gadgets/[GADGET_UUID]/[JAR_NAME]"</LaunchCommandMac>
+  <LaunchCommandLinux>java -jar "gadgets/[GADGET_UUID]/[JAR_NAME]"</LaunchCommandLinux>
+  <IconPaths>
+    <Icon32Path>icons/SBMLsqueezerIcon_64.png</Icon32Path>
+  </IconPaths>
+  <Snapshots>
+    <SnapshotPath>snapshot/Screenshot_1.png</SnapshotPath>
+    <SnapshotPath>snapshot/Screenshot_2.png</SnapshotPath>
+    <SnapshotPath>snapshot/Screenshot_3.png</SnapshotPath>
+    <SnapshotPath>snapshot/Screenshot_4.png</SnapshotPath>
+  </Snapshots>
+  <Categories>
+    <Category>Analytics</Category>
+    <Category>Kinetic modeling</Category>
+    <Category>Rate equations</Category>
+  </Categories>
+  <Provider>University of Tuebingen</Provider>
+  <Description>SBMLsqueezer generates kinetic equations for biochemical networks according to context of each reaction. When used as a plug-in for CellDesigner it uses the information from the SBGN representation of all network components. In the stand-alone mode, SBMLsqueezer evaluates the Systems Biology Ontology (SBO) annotations to extract this information. An online version of SBMLsqueezer is available that runs without installation of any software on the local machine. The rate laws that can be produced by SBMLsqueezer include several types of generalized mass action; detailed and generalized enzyme kinetics, various types of Hill equations, S- and H-systems, and additive models for gene regulation. User defined settings specify which equation to apply for any type of reaction and how to ensure unit consistency of the model. Equations can be created using contextual menus. All newly created parameters are equipped with the derived unit and annotated with SBO terms if available and meaningful textual names. MathML is inserted directly into the SBML file. LaTeX or text export of ordinary differential equations is provided.</Description>
+  <LoadableKeys>
+    <InputFileFormat>
+      <FileExtension>xml</FileExtension>
+      <FileFormat>SBML</FileFormat>
+    </InputFileFormat>
+    <InputFileFormat>
+      <FileExtension>sbml</FileExtension>
+      <FileFormat>SBML</FileFormat>
+    </InputFileFormat>
+    <InputFileFormat>
+      <FileExtension>xml</FileExtension>
+      <FileFormat>sbml</FileFormat>
+    </InputFileFormat>
+    <InputFileFormat>
+      <FileExtension>sbml</FileExtension>
+      <FileFormat>sbml</FileFormat>
+    </InputFileFormat>
+    <OutputFileFormat>
+      <FileExtension>xml</FileExtension>
+      <FileFormat>SBML</FileFormat>
+    </OutputFileFormat>
+    <OutputFileFormat>
+      <FileExtension>sbml</FileExtension>
+      <FileFormat>SBML</FileFormat>
+    </OutputFileFormat>
+    <OutputFileFormat>
+      <FileExtension>xml</FileExtension>
+      <FileFormat>sbml</FileFormat>
+    </OutputFileFormat>
+    <OutputFileFormat>
+      <FileExtension>sbml</FileExtension>
+      <FileFormat>sbml</FileFormat>
+    </OutputFileFormat>
+  </LoadableKeys>
+  <LaunchEnv>
+    <Id>f22aa6a2-beff-4487-b838-03b8275a4361</Id>
+  </LaunchEnv>
+</Gadget>

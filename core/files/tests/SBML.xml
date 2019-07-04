@@ -1,0 +1,482 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sbml xmlns="http://www.sbml.org/sbml/level2/version4" level="2" version="4">
+<model id="Module9">
+<listOfCompartments>
+<compartment id="default" size="1"/>
+</listOfCompartments>
+
+<listOfSpecies>
+  <species id="MGENE0" name="MG Module10" compartment="default" initialAmount="0" SBOTerm="SBO:0000335"/>
+  <species id="MRNA0" name="MR Module10" compartment="default" initialAmount="0" SBOTerm="SBO:0000278"/>
+  <species id="MDEG0" name="MD Module10" compartment="default" initialAmount="0" SBOTerm="SBO:0000291"/>
+  <species id="TGENE0" name="TG PHO2 (SCPD..." compartment="default" initialAmount="0" SBOTerm="SBO:0000335"/>
+  <species id="TRNA0" name="TR PHO2 (SCPD..." compartment="default" initialAmount="0" SBOTerm="SBO:0000278"/>
+  <species id="TDEG0" name="TD PHO2 (SCPD..." compartment="default" initialAmount="0" SBOTerm="SBO:0000291"/>
+  <species id="TGENE1" name="TG GCN4 (GCN4..." compartment="default" initialAmount="0" SBOTerm="SBO:0000335"/>
+  <species id="TRNA1" name="TR GCN4 (GCN4..." compartment="default" initialAmount="0" SBOTerm="SBO:0000278"/>
+  <species id="TDEG1" name="TD GCN4 (GCN4..." compartment="default" initialAmount="0" SBOTerm="SBO:0000291"/>
+  <species id="TGENE2" name="TG RTG3 (YEAS..." compartment="default" initialAmount="0" SBOTerm="SBO:0000335"/>
+  <species id="TRNA2" name="TR RTG3 (YEAS..." compartment="default" initialAmount="0" SBOTerm="SBO:0000278"/>
+  <species id="TDEG2" name="TD RTG3 (YEAS..." compartment="default" initialAmount="0" SBOTerm="SBO:0000291"/>
+  <species id="TGENE3" name="TG XBP1 (XBP1..." compartment="default" initialAmount="0" SBOTerm="SBO:0000335"/>
+  <species id="TRNA3" name="TR XBP1 (XBP1..." compartment="default" initialAmount="0" SBOTerm="SBO:0000278"/>
+  <species id="TDEG3" name="TD XBP1 (XBP1..." compartment="default" initialAmount="0" SBOTerm="SBO:0000291"/>
+  <species id="TGENE4" name="TG hmlalpha2 ..." compartment="default" initialAmount="0" SBOTerm="SBO:0000335"/>
+  <species id="TRNA4" name="TR hmlalpha2 ..." compartment="default" initialAmount="0" SBOTerm="SBO:0000278"/>
+  <species id="TDEG4" name="TD hmlalpha2 ..." compartment="default" initialAmount="0" SBOTerm="SBO:0000291"/>
+  <species id="MGENE5" name="MG Module2" compartment="default" initialAmount="0" SBOTerm="SBO:0000335"/>
+  <species id="MRNA5" name="MR Module2" compartment="default" initialAmount="0" SBOTerm="SBO:0000278"/>
+  <species id="MDEG5" name="MD Module2" compartment="default" initialAmount="0" SBOTerm="SBO:0000291"/>
+  <species id="TGENE7" name="TG STE12 (STE..." compartment="default" initialAmount="0" SBOTerm="SBO:0000335"/>
+  <species id="TRNA7" name="TR STE12 (STE..." compartment="default" initialAmount="0" SBOTerm="SBO:0000278"/>
+  <species id="TDEG7" name="TD STE12 (STE..." compartment="default" initialAmount="0" SBOTerm="SBO:0000291"/>
+  <species id="MGENE10" name="MG Module3" compartment="default" initialAmount="0" SBOTerm="SBO:0000335"/>
+  <species id="MRNA10" name="MR Module3" compartment="default" initialAmount="0" SBOTerm="SBO:0000278"/>
+  <species id="MDEG10" name="MD Module3" compartment="default" initialAmount="0" SBOTerm="SBO:0000291"/>
+  <species id="TGENE12" name="TG RTG1 (YEAS..." compartment="default" initialAmount="0" SBOTerm="SBO:0000335"/>
+  <species id="TRNA12" name="TR RTG1 (YEAS..." compartment="default" initialAmount="0" SBOTerm="SBO:0000278"/>
+  <species id="TDEG12" name="TD RTG1 (YEAS..." compartment="default" initialAmount="0" SBOTerm="SBO:0000291"/>
+  <species id="TGENE14" name="TG BAS1 (YEAS..." compartment="default" initialAmount="0" SBOTerm="SBO:0000335"/>
+  <species id="TRNA14" name="TR BAS1 (YEAS..." compartment="default" initialAmount="0" SBOTerm="SBO:0000278"/>
+  <species id="TDEG14" name="TD BAS1 (YEAS..." compartment="default" initialAmount="0" SBOTerm="SBO:0000291"/>
+  <species id="MGENE15" name="MG Module5" compartment="default" initialAmount="0" SBOTerm="SBO:0000335"/>
+  <species id="MRNA15" name="MR Module5" compartment="default" initialAmount="0" SBOTerm="SBO:0000278"/>
+  <species id="MDEG15" name="MD Module5" compartment="default" initialAmount="0" SBOTerm="SBO:0000291"/>
+  <species id="TGENE16" name="TG HAC1 (HAC1..." compartment="default" initialAmount="0" SBOTerm="SBO:0000335"/>
+  <species id="TRNA16" name="TR HAC1 (HAC1..." compartment="default" initialAmount="0" SBOTerm="SBO:0000278"/>
+  <species id="TDEG16" name="TD HAC1 (HAC1..." compartment="default" initialAmount="0" SBOTerm="SBO:0000291"/>
+  <species id="TGENE19" name="TG hmlalpha2 ..." compartment="default" initialAmount="0" SBOTerm="SBO:0000335"/>
+  <species id="TRNA19" name="TR hmlalpha2 ..." compartment="default" initialAmount="0" SBOTerm="SBO:0000278"/>
+  <species id="TDEG19" name="TD hmlalpha2 ..." compartment="default" initialAmount="0" SBOTerm="SBO:0000291"/>
+  <species id="MGENE20" name="MG Module6" compartment="default" initialAmount="0" SBOTerm="SBO:0000335"/>
+  <species id="MRNA20" name="MR Module6" compartment="default" initialAmount="0" SBOTerm="SBO:0000278"/>
+  <species id="MDEG20" name="MD Module6" compartment="default" initialAmount="0" SBOTerm="SBO:0000291"/>
+  <species id="MGENE25" name="MG Module8" compartment="default" initialAmount="0" SBOTerm="SBO:0000335"/>
+  <species id="MRNA25" name="MR Module8" compartment="default" initialAmount="0" SBOTerm="SBO:0000278"/>
+  <species id="MDEG25" name="MD Module8" compartment="default" initialAmount="0" SBOTerm="SBO:0000291"/>
+  <species id="TGENE28" name="TG MSN2 (MSN2..." compartment="default" initialAmount="0" SBOTerm="SBO:0000335"/>
+  <species id="TRNA28" name="TR MSN2 (MSN2..." compartment="default" initialAmount="0" SBOTerm="SBO:0000278"/>
+  <species id="TDEG28" name="TD MSN2 (MSN2..." compartment="default" initialAmount="0" SBOTerm="SBO:0000291"/>
+  <species id="MGENE30" name="MG Module9" compartment="default" initialAmount="0" SBOTerm="SBO:0000335"/>
+  <species id="MRNA30" name="MR Module9" compartment="default" initialAmount="0" SBOTerm="SBO:0000278"/>
+  <species id="MDEG30" name="MD Module9" compartment="default" initialAmount="0" SBOTerm="SBO:0000291"/>
+  <species id="TGENE31" name="TG HSF1 (HSF1..." compartment="default" initialAmount="0" SBOTerm="SBO:0000335"/>
+  <species id="TRNA31" name="TR HSF1 (HSF1..." compartment="default" initialAmount="0" SBOTerm="SBO:0000278"/>
+  <species id="TDEG31" name="TD HSF1 (HSF1..." compartment="default" initialAmount="0" SBOTerm="SBO:0000291"/>
+  <species id="TGENE32" name="TG GCR1" compartment="default" initialAmount="0" SBOTerm="SBO:0000335"/>
+  <species id="TRNA32" name="TR GCR1" compartment="default" initialAmount="0" SBOTerm="SBO:0000278"/>
+  <species id="TDEG32" name="TD GCR1" compartment="default" initialAmount="0" SBOTerm="SBO:0000291"/>
+  <species id="TGENE33" name="TG YRR1 (YEAS..." compartment="default" initialAmount="0" SBOTerm="SBO:0000335"/>
+  <species id="TRNA33" name="TR YRR1 (YEAS..." compartment="default" initialAmount="0" SBOTerm="SBO:0000278"/>
+  <species id="TDEG33" name="TD YRR1 (YEAS..." compartment="default" initialAmount="0" SBOTerm="SBO:0000291"/>
+  <species id="TGENE34" name="TG PDR3" compartment="default" initialAmount="0" SBOTerm="SBO:0000335"/>
+  <species id="TRNA34" name="TR PDR3" compartment="default" initialAmount="0" SBOTerm="SBO:0000278"/>
+  <species id="TDEG34" name="TD PDR3" compartment="default" initialAmount="0" SBOTerm="SBO:0000291"/>
+</listOfSpecies>
+
+<listOfReactions>
+  <reaction id="D1TR0" reversible="false" SBOTerm="SBO:0000183">
+    <listOfReactants>
+      <speciesReference species="TGENE0"/>
+    </listOfReactants>
+    <listOfProducts>
+      <speciesReference species="TRNA0"/>
+    </listOfProducts>
+  </reaction>
+  <reaction id="D2TR0" reversible="false" SBOTerm="SBO:0000179">
+    <listOfReactants>
+      <speciesReference species="TRNA0"/>
+    </listOfReactants>
+    <listOfProducts>
+      <speciesReference species="TDEG0"/>
+    </listOfProducts>
+  </reaction>
+  <reaction id="D1TR1" reversible="false" SBOTerm="SBO:0000183">
+    <listOfReactants>
+      <speciesReference species="TGENE1"/>
+    </listOfReactants>
+    <listOfProducts>
+      <speciesReference species="TRNA1"/>
+    </listOfProducts>
+  </reaction>
+  <reaction id="D2TR1" reversible="false" SBOTerm="SBO:0000179">
+    <listOfReactants>
+      <speciesReference species="TRNA1"/>
+    </listOfReactants>
+    <listOfProducts>
+      <speciesReference species="TDEG1"/>
+    </listOfProducts>
+  </reaction>
+  <reaction id="D1TR2" reversible="false" SBOTerm="SBO:0000183">
+    <listOfReactants>
+      <speciesReference species="TGENE2"/>
+    </listOfReactants>
+    <listOfProducts>
+      <speciesReference species="TRNA2"/>
+    </listOfProducts>
+  </reaction>
+  <reaction id="D2TR2" reversible="false" SBOTerm="SBO:0000179">
+    <listOfReactants>
+      <speciesReference species="TRNA2"/>
+    </listOfReactants>
+    <listOfProducts>
+      <speciesReference species="TDEG2"/>
+    </listOfProducts>
+  </reaction>
+  <reaction id="D1TR3" reversible="false" SBOTerm="SBO:0000183">
+    <listOfReactants>
+      <speciesReference species="TGENE3"/>
+    </listOfReactants>
+    <listOfProducts>
+      <speciesReference species="TRNA3"/>
+    </listOfProducts>
+  </reaction>
+  <reaction id="D2TR3" reversible="false" SBOTerm="SBO:0000179">
+    <listOfReactants>
+      <speciesReference species="TRNA3"/>
+    </listOfReactants>
+    <listOfProducts>
+      <speciesReference species="TDEG3"/>
+    </listOfProducts>
+  </reaction>
+  <reaction id="D1TR4" reversible="false" SBOTerm="SBO:0000183">
+    <listOfReactants>
+      <speciesReference species="TGENE4"/>
+    </listOfReactants>
+    <listOfProducts>
+      <speciesReference species="TRNA4"/>
+    </listOfProducts>
+  </reaction>
+  <reaction id="D2TR4" reversible="false" SBOTerm="SBO:0000179">
+    <listOfReactants>
+      <speciesReference species="TRNA4"/>
+    </listOfReactants>
+    <listOfProducts>
+      <speciesReference species="TDEG4"/>
+    </listOfProducts>
+  </reaction>
+  <reaction id="D1TR7" reversible="false" SBOTerm="SBO:0000183">
+    <listOfReactants>
+      <speciesReference species="TGENE7"/>
+    </listOfReactants>
+    <listOfProducts>
+      <speciesReference species="TRNA7"/>
+    </listOfProducts>
+  </reaction>
+  <reaction id="D2TR7" reversible="false" SBOTerm="SBO:0000179">
+    <listOfReactants>
+      <speciesReference species="TRNA7"/>
+    </listOfReactants>
+    <listOfProducts>
+      <speciesReference species="TDEG7"/>
+    </listOfProducts>
+  </reaction>
+  <reaction id="D1TR12" reversible="false" SBOTerm="SBO:0000183">
+    <listOfReactants>
+      <speciesReference species="TGENE12"/>
+    </listOfReactants>
+    <listOfProducts>
+      <speciesReference species="TRNA12"/>
+    </listOfProducts>
+  </reaction>
+  <reaction id="D2TR12" reversible="false" SBOTerm="SBO:0000179">
+    <listOfReactants>
+      <speciesReference species="TRNA12"/>
+    </listOfReactants>
+    <listOfProducts>
+      <speciesReference species="TDEG12"/>
+    </listOfProducts>
+  </reaction>
+  <reaction id="D1TR14" reversible="false" SBOTerm="SBO:0000183">
+    <listOfReactants>
+      <speciesReference species="TGENE14"/>
+    </listOfReactants>
+    <listOfProducts>
+      <speciesReference species="TRNA14"/>
+    </listOfProducts>
+  </reaction>
+  <reaction id="D2TR14" reversible="false" SBOTerm="SBO:0000179">
+    <listOfReactants>
+      <speciesReference species="TRNA14"/>
+    </listOfReactants>
+    <listOfProducts>
+      <speciesReference species="TDEG14"/>
+    </listOfProducts>
+  </reaction>
+  <reaction id="D1TR16" reversible="false" SBOTerm="SBO:0000183">
+    <listOfReactants>
+      <speciesReference species="TGENE16"/>
+    </listOfReactants>
+    <listOfProducts>
+      <speciesReference species="TRNA16"/>
+    </listOfProducts>
+  </reaction>
+  <reaction id="D2TR16" reversible="false" SBOTerm="SBO:0000179">
+    <listOfReactants>
+      <speciesReference species="TRNA16"/>
+    </listOfReactants>
+    <listOfProducts>
+      <speciesReference species="TDEG16"/>
+    </listOfProducts>
+  </reaction>
+  <reaction id="D1TR19" reversible="false" SBOTerm="SBO:0000183">
+    <listOfReactants>
+      <speciesReference species="TGENE19"/>
+    </listOfReactants>
+    <listOfProducts>
+      <speciesReference species="TRNA19"/>
+    </listOfProducts>
+  </reaction>
+  <reaction id="D2TR19" reversible="false" SBOTerm="SBO:0000179">
+    <listOfReactants>
+      <speciesReference species="TRNA19"/>
+    </listOfReactants>
+    <listOfProducts>
+      <speciesReference species="TDEG19"/>
+    </listOfProducts>
+  </reaction>
+  <reaction id="D1TR28" reversible="false" SBOTerm="SBO:0000183">
+    <listOfReactants>
+      <speciesReference species="TGENE28"/>
+    </listOfReactants>
+    <listOfProducts>
+      <speciesReference species="TRNA28"/>
+    </listOfProducts>
+  </reaction>
+  <reaction id="D2TR28" reversible="false" SBOTerm="SBO:0000179">
+    <listOfReactants>
+      <speciesReference species="TRNA28"/>
+    </listOfReactants>
+    <listOfProducts>
+      <speciesReference species="TDEG28"/>
+    </listOfProducts>
+  </reaction>
+  <reaction id="D1TR31" reversible="false" SBOTerm="SBO:0000183">
+    <listOfReactants>
+      <speciesReference species="TGENE31"/>
+    </listOfReactants>
+    <listOfProducts>
+      <speciesReference species="TRNA31"/>
+    </listOfProducts>
+  </reaction>
+  <reaction id="D2TR31" reversible="false" SBOTerm="SBO:0000179">
+    <listOfReactants>
+      <speciesReference species="TRNA31"/>
+    </listOfReactants>
+    <listOfProducts>
+      <speciesReference species="TDEG31"/>
+    </listOfProducts>
+  </reaction>
+  <reaction id="D1TR32" reversible="false" SBOTerm="SBO:0000183">
+    <listOfReactants>
+      <speciesReference species="TGENE32"/>
+    </listOfReactants>
+    <listOfProducts>
+      <speciesReference species="TRNA32"/>
+    </listOfProducts>
+  </reaction>
+  <reaction id="D2TR32" reversible="false" SBOTerm="SBO:0000179">
+    <listOfReactants>
+      <speciesReference species="TRNA32"/>
+    </listOfReactants>
+    <listOfProducts>
+      <speciesReference species="TDEG32"/>
+    </listOfProducts>
+  </reaction>
+  <reaction id="D1TR33" reversible="false" SBOTerm="SBO:0000183">
+    <listOfReactants>
+      <speciesReference species="TGENE33"/>
+    </listOfReactants>
+    <listOfProducts>
+      <speciesReference species="TRNA33"/>
+    </listOfProducts>
+  </reaction>
+  <reaction id="D2TR33" reversible="false" SBOTerm="SBO:0000179">
+    <listOfReactants>
+      <speciesReference species="TRNA33"/>
+    </listOfReactants>
+    <listOfProducts>
+      <speciesReference species="TDEG33"/>
+    </listOfProducts>
+  </reaction>
+  <reaction id="D1TR34" reversible="false" SBOTerm="SBO:0000183">
+    <listOfReactants>
+      <speciesReference species="TGENE34"/>
+    </listOfReactants>
+    <listOfProducts>
+      <speciesReference species="TRNA34"/>
+    </listOfProducts>
+  </reaction>
+  <reaction id="D2TR34" reversible="false" SBOTerm="SBO:0000179">
+    <listOfReactants>
+      <speciesReference species="TRNA34"/>
+    </listOfReactants>
+    <listOfProducts>
+      <speciesReference species="TDEG34"/>
+    </listOfProducts>
+  </reaction>
+  <reaction id="R0" reversible="false" SBOTerm="SBO:0000183">
+    <listOfReactants>
+      <speciesReference species="MGENE0"/>
+    </listOfReactants>
+    <listOfProducts>
+      <speciesReference species="MRNA0"/>
+    </listOfProducts>
+    <listOfModifiers>
+      <modifierSpeciesReference species="TRNA0"/>
+      <modifierSpeciesReference species="TRNA1"/>
+      <modifierSpeciesReference species="TRNA2"/>
+      <modifierSpeciesReference species="TRNA3"/>
+      <modifierSpeciesReference species="TRNA4"/>
+    </listOfModifiers>
+  </reaction>
+  <reaction id="RD0" reversible="false" SBOTerm="SBO:0000179">
+    <listOfReactants>
+      <speciesReference species="MRNA0"/>
+    </listOfReactants>
+    <listOfProducts>
+      <speciesReference species="MDEG0"/>
+    </listOfProducts>
+  </reaction>
+  <reaction id="R5" reversible="false" SBOTerm="SBO:0000183">
+    <listOfReactants>
+      <speciesReference species="MGENE5"/>
+    </listOfReactants>
+    <listOfProducts>
+      <speciesReference species="MRNA5"/>
+    </listOfProducts>
+    <listOfModifiers>
+      <modifierSpeciesReference species="TRNA7"/>
+      <modifierSpeciesReference species="TRNA1"/>
+      <modifierSpeciesReference species="TRNA2"/>
+      <modifierSpeciesReference species="TRNA3"/>
+      <modifierSpeciesReference species="TRNA4"/>
+    </listOfModifiers>
+  </reaction>
+  <reaction id="RD5" reversible="false" SBOTerm="SBO:0000179">
+    <listOfReactants>
+      <speciesReference species="MRNA5"/>
+    </listOfReactants>
+    <listOfProducts>
+      <speciesReference species="MDEG5"/>
+    </listOfProducts>
+  </reaction>
+  <reaction id="R10" reversible="false" SBOTerm="SBO:0000183">
+    <listOfReactants>
+      <speciesReference species="MGENE10"/>
+    </listOfReactants>
+    <listOfProducts>
+      <speciesReference species="MRNA10"/>
+    </listOfProducts>
+    <listOfModifiers>
+      <modifierSpeciesReference species="TRNA12"/>
+      <modifierSpeciesReference species="TRNA14"/>
+      <modifierSpeciesReference species="TRNA1"/>
+      <modifierSpeciesReference species="TRNA3"/>
+      <modifierSpeciesReference species="TRNA4"/>
+    </listOfModifiers>
+  </reaction>
+  <reaction id="RD10" reversible="false" SBOTerm="SBO:0000179">
+    <listOfReactants>
+      <speciesReference species="MRNA10"/>
+    </listOfReactants>
+    <listOfProducts>
+      <speciesReference species="MDEG10"/>
+    </listOfProducts>
+  </reaction>
+  <reaction id="R15" reversible="false" SBOTerm="SBO:0000183">
+    <listOfReactants>
+      <speciesReference species="MGENE15"/>
+    </listOfReactants>
+    <listOfProducts>
+      <speciesReference species="MRNA15"/>
+    </listOfProducts>
+    <listOfModifiers>
+      <modifierSpeciesReference species="TRNA16"/>
+      <modifierSpeciesReference species="TRNA19"/>
+      <modifierSpeciesReference species="TRNA1"/>
+      <modifierSpeciesReference species="TRNA3"/>
+      <modifierSpeciesReference species="TRNA12"/>
+    </listOfModifiers>
+  </reaction>
+  <reaction id="RD15" reversible="false" SBOTerm="SBO:0000179">
+    <listOfReactants>
+      <speciesReference species="MRNA15"/>
+    </listOfReactants>
+    <listOfProducts>
+      <speciesReference species="MDEG15"/>
+    </listOfProducts>
+  </reaction>
+  <reaction id="R20" reversible="false" SBOTerm="SBO:0000183">
+    <listOfReactants>
+      <speciesReference species="MGENE20"/>
+    </listOfReactants>
+    <listOfProducts>
+      <speciesReference species="MRNA20"/>
+    </listOfProducts>
+    <listOfModifiers>
+      <modifierSpeciesReference species="TRNA0"/>
+      <modifierSpeciesReference species="TRNA1"/>
+      <modifierSpeciesReference species="TRNA3"/>
+      <modifierSpeciesReference species="TRNA4"/>
+      <modifierSpeciesReference species="TRNA12"/>
+    </listOfModifiers>
+  </reaction>
+  <reaction id="RD20" reversible="false" SBOTerm="SBO:0000179">
+    <listOfReactants>
+      <speciesReference species="MRNA20"/>
+    </listOfReactants>
+    <listOfProducts>
+      <speciesReference species="MDEG20"/>
+    </listOfProducts>
+  </reaction>
+  <reaction id="R25" reversible="false" SBOTerm="SBO:0000183">
+    <listOfReactants>
+      <speciesReference species="MGENE25"/>
+    </listOfReactants>
+    <listOfProducts>
+      <speciesReference species="MRNA25"/>
+    </listOfProducts>
+    <listOfModifiers>
+      <modifierSpeciesReference species="TRNA28"/>
+      <modifierSpeciesReference species="TRNA1"/>
+      <modifierSpeciesReference species="TRNA2"/>
+      <modifierSpeciesReference species="TRNA3"/>
+      <modifierSpeciesReference species="TRNA4"/>
+    </listOfModifiers>
+  </reaction>
+  <reaction id="RD25" reversible="false" SBOTerm="SBO:0000179">
+    <listOfReactants>
+      <speciesReference species="MRNA25"/>
+    </listOfReactants>
+    <listOfProducts>
+      <speciesReference species="MDEG25"/>
+    </listOfProducts>
+  </reaction>
+  <reaction id="R30" reversible="false" SBOTerm="SBO:0000183">
+    <listOfReactants>
+      <speciesReference species="MGENE30"/>
+    </listOfReactants>
+    <listOfProducts>
+      <speciesReference species="MRNA30"/>
+    </listOfProducts>
+    <listOfModifiers>
+      <modifierSpeciesReference species="TRNA31"/>
+      <modifierSpeciesReference species="TRNA32"/>
+      <modifierSpeciesReference species="TRNA33"/>
+      <modifierSpeciesReference species="TRNA34"/>
+      <modifierSpeciesReference species="TRNA4"/>
+    </listOfModifiers>
+  </reaction>
+  <reaction id="RD30" reversible="false" SBOTerm="SBO:0000179">
+    <listOfReactants>
+      <speciesReference species="MRNA30"/>
+    </listOfReactants>
+    <listOfProducts>
+      <speciesReference species="MDEG30"/>
+    </listOfProducts>
+  </reaction>
+</listOfReactions>
+
+</model>
+</sbml>

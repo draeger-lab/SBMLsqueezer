@@ -1,0 +1,45 @@
+SBMLsqueezer generated and transfered values
+--------------------------------------------
+Reaction: PIPSyn, PIPSyn
+Kinetic: v_PIPSyn = *
+Reaction: PIP2_hyd, PIP2_hyd
+Kinetic: v_PIP2_hyd = *
+Reaction: IP3_uncaging, IP3_uncaging
+Kinetic: v_IP3_uncaging = *
+Reaction: PLCact, PLCact
+Kinetic: v_PLCact = *
+Reaction: PIP2_PH_hyd, PIP2_PH_hyd
+Kinetic: v_PIP2_PH_hyd = *
+Reaction: PIP2_PH, PIP2_PH
+Kinetic: v_PIP2_PH = *
+Reaction: IP3deg, IP3deg
+Kinetic: v_IP3deg = *
+Reaction: PIP2Syn, PIP2Syn
+Kinetic: v_PIP2Syn = *
+Reaction: IP3_PHGFP, IP3_PHGFP
+Kinetic: v_IP3_PHGFP = *
+
+Species: PIP2_PHGFP_PM ODE: d[PIP2_PHGFP_PM]/dt = -v_PIP2_PH_hyd+v_PIP2_PH
+ 
+Species: PH_GFP_Cyt ODE: d[PH_GFP_Cyt]/dt = 9.224E-4 v_PIP2_PH_hyd-v_PIP2_PH-v_IP3_PHGFP
+ 
+Species: PI_PM ODE: d[PI_PM]/dt = -v_PIPSyn
+ 
+Species: IP3_PHGFP_Cyt ODE: d[IP3_PHGFP_Cyt]/dt = v_IP3_PHGFP
+ 
+Species: PIP2_PM ODE: d[PIP2_PM]/dt = -v_PIP2_hyd-v_PIP2_PH+v_PIP2Syn
+ 
+Species: PIP_PM ODE: d[PIP_PM]/dt = v_PIPSyn-v_PIP2Syn
+ 
+Species: DAG_PM ODE: d[DAG_PM]/dt = v_PIP2_hyd+v_PIP2_PH_hyd
+ 
+Species: hv_Cytosol ODE: d[hv_Cytosol]/dt = 
+ 
+Species: IP3X_Cytosol ODE: d[IP3X_Cytosol]/dt = -v_IP3_uncaging
+ 
+Species: PLC_PM ODE: d[PLC_PM]/dt = -v_PLCact
+ 
+Species: PLC_act_PM ODE: d[PLC_act_PM]/dt = v_PLCact
+ 
+Species: IP3_Cyt ODE: d[IP3_Cyt]/dt = 9.224E-4 v_PIP2_hyd+v_IP3_uncaging+9.224E-4 v_PIP2_PH_hyd-v_IP3deg-v_IP3_PHGFP
+ 

@@ -1,0 +1,1383 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sbml xmlns="http://www.sbml.org/sbml/level2" level="2" version="3">
+  <model name="Glycolysis ICSB Tutorial">
+    <notes>
+      <body xmlns="http://www.w3.org/1999/xhtml">
+<p>
+This model has been created with the help of the SABIO-RK Database
+(http://sabio.villa-bosch.de/SABIORK)
+</p>
+</body>
+    </notes>
+    <listOfFunctionDefinitions>
+      <functionDefinition id="kl_0">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <lambda>
+            <bvar>
+              <ci> Vf </ci>
+            </bvar>
+            <bvar>
+              <ci> P </ci>
+            </bvar>
+            <bvar>
+              <ci> Kms </ci>
+            </bvar>
+            <bvar>
+              <ci> Vr </ci>
+            </bvar>
+            <bvar>
+              <ci> Kmp </ci>
+            </bvar>
+            <bvar>
+              <ci> S </ci>
+            </bvar>
+            <apply>
+              <divide/>
+              <apply>
+                <minus/>
+                <apply>
+                  <divide/>
+                  <apply>
+                    <times/>
+                    <ci> Vf </ci>
+                    <ci> S </ci>
+                  </apply>
+                  <ci> Kms </ci>
+                </apply>
+                <apply>
+                  <divide/>
+                  <apply>
+                    <times/>
+                    <ci> Vr </ci>
+                    <ci> P </ci>
+                  </apply>
+                  <ci> Kmp </ci>
+                </apply>
+              </apply>
+              <apply>
+                <plus/>
+                <cn type="integer"> 1 </cn>
+                <apply>
+                  <divide/>
+                  <ci> S </ci>
+                  <ci> Kms </ci>
+                </apply>
+                <apply>
+                  <divide/>
+                  <ci> P </ci>
+                  <ci> Kmp </ci>
+                </apply>
+              </apply>
+            </apply>
+          </lambda>
+        </math>
+      </functionDefinition>
+      <functionDefinition id="kl_1">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <lambda>
+            <bvar>
+              <ci> S </ci>
+            </bvar>
+            <bvar>
+              <ci> Vr </ci>
+            </bvar>
+            <bvar>
+              <ci> P </ci>
+            </bvar>
+            <bvar>
+              <ci> Vf </ci>
+            </bvar>
+            <bvar>
+              <ci> Kmp </ci>
+            </bvar>
+            <bvar>
+              <ci> Kms </ci>
+            </bvar>
+            <apply>
+              <divide/>
+              <apply>
+                <minus/>
+                <apply>
+                  <divide/>
+                  <apply>
+                    <times/>
+                    <ci> Vf </ci>
+                    <ci> S </ci>
+                  </apply>
+                  <ci> Kms </ci>
+                </apply>
+                <apply>
+                  <divide/>
+                  <apply>
+                    <times/>
+                    <ci> Vr </ci>
+                    <ci> P </ci>
+                  </apply>
+                  <ci> Kmp </ci>
+                </apply>
+              </apply>
+              <apply>
+                <plus/>
+                <cn type="integer"> 1 </cn>
+                <apply>
+                  <divide/>
+                  <ci> S </ci>
+                  <ci> Kms </ci>
+                </apply>
+                <apply>
+                  <divide/>
+                  <ci> P </ci>
+                  <ci> Kmp </ci>
+                </apply>
+              </apply>
+            </apply>
+          </lambda>
+        </math>
+      </functionDefinition>
+      <functionDefinition id="kl_2">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <lambda>
+            <bvar>
+              <ci> Kmp </ci>
+            </bvar>
+            <bvar>
+              <ci> Vr </ci>
+            </bvar>
+            <bvar>
+              <ci> P </ci>
+            </bvar>
+            <bvar>
+              <ci> S </ci>
+            </bvar>
+            <bvar>
+              <ci> Kms </ci>
+            </bvar>
+            <bvar>
+              <ci> Vf </ci>
+            </bvar>
+            <apply>
+              <divide/>
+              <apply>
+                <minus/>
+                <apply>
+                  <divide/>
+                  <apply>
+                    <times/>
+                    <ci> Vf </ci>
+                    <ci> S </ci>
+                  </apply>
+                  <ci> Kms </ci>
+                </apply>
+                <apply>
+                  <divide/>
+                  <apply>
+                    <times/>
+                    <ci> Vr </ci>
+                    <ci> P </ci>
+                  </apply>
+                  <ci> Kmp </ci>
+                </apply>
+              </apply>
+              <apply>
+                <plus/>
+                <cn type="integer"> 1 </cn>
+                <apply>
+                  <divide/>
+                  <ci> S </ci>
+                  <ci> Kms </ci>
+                </apply>
+                <apply>
+                  <divide/>
+                  <ci> P </ci>
+                  <ci> Kmp </ci>
+                </apply>
+              </apply>
+            </apply>
+          </lambda>
+        </math>
+      </functionDefinition>
+      <functionDefinition id="kl_3">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <lambda>
+            <bvar>
+              <ci> Vr </ci>
+            </bvar>
+            <bvar>
+              <ci> Vf </ci>
+            </bvar>
+            <bvar>
+              <ci> Kms </ci>
+            </bvar>
+            <bvar>
+              <ci> Kmp </ci>
+            </bvar>
+            <bvar>
+              <ci> P </ci>
+            </bvar>
+            <bvar>
+              <ci> S </ci>
+            </bvar>
+            <apply>
+              <divide/>
+              <apply>
+                <minus/>
+                <apply>
+                  <divide/>
+                  <apply>
+                    <times/>
+                    <ci> Vf </ci>
+                    <ci> S </ci>
+                  </apply>
+                  <ci> Kms </ci>
+                </apply>
+                <apply>
+                  <divide/>
+                  <apply>
+                    <times/>
+                    <ci> Vr </ci>
+                    <ci> P </ci>
+                  </apply>
+                  <ci> Kmp </ci>
+                </apply>
+              </apply>
+              <apply>
+                <plus/>
+                <cn type="integer"> 1 </cn>
+                <apply>
+                  <divide/>
+                  <ci> S </ci>
+                  <ci> Kms </ci>
+                </apply>
+                <apply>
+                  <divide/>
+                  <ci> P </ci>
+                  <ci> Kmp </ci>
+                </apply>
+              </apply>
+            </apply>
+          </lambda>
+        </math>
+      </functionDefinition>
+      <functionDefinition id="kl_4">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <lambda>
+            <bvar>
+              <ci> Vf </ci>
+            </bvar>
+            <bvar>
+              <ci> S </ci>
+            </bvar>
+            <bvar>
+              <ci> P </ci>
+            </bvar>
+            <bvar>
+              <ci> Kms </ci>
+            </bvar>
+            <bvar>
+              <ci> Kmp </ci>
+            </bvar>
+            <bvar>
+              <ci> Vr </ci>
+            </bvar>
+            <apply>
+              <divide/>
+              <apply>
+                <minus/>
+                <apply>
+                  <divide/>
+                  <apply>
+                    <times/>
+                    <ci> Vf </ci>
+                    <ci> S </ci>
+                  </apply>
+                  <ci> Kms </ci>
+                </apply>
+                <apply>
+                  <divide/>
+                  <apply>
+                    <times/>
+                    <ci> Vr </ci>
+                    <ci> P </ci>
+                  </apply>
+                  <ci> Kmp </ci>
+                </apply>
+              </apply>
+              <apply>
+                <plus/>
+                <cn type="integer"> 1 </cn>
+                <apply>
+                  <divide/>
+                  <ci> S </ci>
+                  <ci> Kms </ci>
+                </apply>
+                <apply>
+                  <divide/>
+                  <ci> P </ci>
+                  <ci> Kmp </ci>
+                </apply>
+              </apply>
+            </apply>
+          </lambda>
+        </math>
+      </functionDefinition>
+      <functionDefinition id="kl_5">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <lambda>
+            <bvar>
+              <ci> Km </ci>
+            </bvar>
+            <bvar>
+              <ci> S </ci>
+            </bvar>
+            <bvar>
+              <ci> V </ci>
+            </bvar>
+            <apply>
+              <divide/>
+              <apply>
+                <times/>
+                <ci> V </ci>
+                <ci> S </ci>
+              </apply>
+              <apply>
+                <plus/>
+                <ci> Km </ci>
+                <ci> S </ci>
+              </apply>
+            </apply>
+          </lambda>
+        </math>
+      </functionDefinition>
+      <functionDefinition id="kl_6">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <lambda>
+            <bvar>
+              <ci> V </ci>
+            </bvar>
+            <bvar>
+              <ci> Km </ci>
+            </bvar>
+            <bvar>
+              <ci> S </ci>
+            </bvar>
+            <apply>
+              <divide/>
+              <apply>
+                <times/>
+                <ci> V </ci>
+                <ci> S </ci>
+              </apply>
+              <apply>
+                <plus/>
+                <ci> Km </ci>
+                <ci> S </ci>
+              </apply>
+            </apply>
+          </lambda>
+        </math>
+      </functionDefinition>
+      <functionDefinition id="kl_7">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <lambda>
+            <bvar>
+              <ci> Km </ci>
+            </bvar>
+            <bvar>
+              <ci> V </ci>
+            </bvar>
+            <bvar>
+              <ci> S </ci>
+            </bvar>
+            <apply>
+              <divide/>
+              <apply>
+                <times/>
+                <ci> V </ci>
+                <ci> S </ci>
+              </apply>
+              <apply>
+                <plus/>
+                <ci> Km </ci>
+                <ci> S </ci>
+              </apply>
+            </apply>
+          </lambda>
+        </math>
+      </functionDefinition>
+      <functionDefinition id="kl_8">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <lambda>
+            <bvar>
+              <ci> Km </ci>
+            </bvar>
+            <bvar>
+              <ci> S </ci>
+            </bvar>
+            <bvar>
+              <ci> V </ci>
+            </bvar>
+            <apply>
+              <divide/>
+              <apply>
+                <times/>
+                <ci> V </ci>
+                <ci> S </ci>
+              </apply>
+              <apply>
+                <plus/>
+                <ci> Km </ci>
+                <ci> S </ci>
+              </apply>
+            </apply>
+          </lambda>
+        </math>
+      </functionDefinition>
+      <functionDefinition id="kl_9">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <lambda>
+            <bvar>
+              <ci> S </ci>
+            </bvar>
+            <bvar>
+              <ci> Kms </ci>
+            </bvar>
+            <bvar>
+              <ci> Kmp </ci>
+            </bvar>
+            <bvar>
+              <ci> P </ci>
+            </bvar>
+            <bvar>
+              <ci> Vf </ci>
+            </bvar>
+            <bvar>
+              <ci> Vr </ci>
+            </bvar>
+            <apply>
+              <divide/>
+              <apply>
+                <minus/>
+                <apply>
+                  <divide/>
+                  <apply>
+                    <times/>
+                    <ci> Vf </ci>
+                    <ci> S </ci>
+                  </apply>
+                  <ci> Kms </ci>
+                </apply>
+                <apply>
+                  <divide/>
+                  <apply>
+                    <times/>
+                    <ci> Vr </ci>
+                    <ci> P </ci>
+                  </apply>
+                  <ci> Kmp </ci>
+                </apply>
+              </apply>
+              <apply>
+                <plus/>
+                <cn type="integer"> 1 </cn>
+                <apply>
+                  <divide/>
+                  <ci> S </ci>
+                  <ci> Kms </ci>
+                </apply>
+                <apply>
+                  <divide/>
+                  <ci> P </ci>
+                  <ci> Kmp </ci>
+                </apply>
+              </apply>
+            </apply>
+          </lambda>
+        </math>
+      </functionDefinition>
+    </listOfFunctionDefinitions>
+    <listOfUnitDefinitions>
+      <unitDefinition id="mMdivmin" name="mMdivmin">
+        <listOfUnits>
+          <unit kind="litre" exponent="-1" multiplier="1" offset="0"/>
+          <unit kind="second" exponent="-1" multiplier="60" offset="0"/>
+          <unit kind="mole" scale="-3" multiplier="1" offset="0"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition id="mM" name="mM">
+        <listOfUnits>
+          <unit kind="litre" exponent="-1" multiplier="1" offset="0"/>
+          <unit kind="mole" scale="-3" multiplier="1" offset="0"/>
+        </listOfUnits>
+      </unitDefinition>
+    </listOfUnitDefinitions>
+    <listOfCompartments>
+      <compartment id="compart_1" name="Cell" size="1"/>
+    </listOfCompartments>
+    <listOfSpecies>
+      <species metaid="meta_spc_1" id="spc_1" name="alpha-D-Glucose" compartment="compart_1">
+        <annotation>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
+<rdf:Description rdf:about="#meta_spc_1"
+><bqbiol:is> 
+<rdf:Bag> 
+<rdf:li rdf:resource="http://www.ebi.ac.uk/chebi/#CHEBI:17925"/>
+<rdf:li rdf:resource="http://www.genome.jp/kegg/compound/#C00267"/>
+</rdf:Bag>
+ </bqbiol:is>
+</rdf:Description>
+</rdf:RDF> 
+</annotation>
+      </species>
+      <species metaid="meta_spc_2" id="spc_2" name="ATP" compartment="compart_1">
+        <annotation>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
+<rdf:Description rdf:about="#meta_spc_2"
+><bqbiol:is> 
+<rdf:Bag> 
+<rdf:li rdf:resource="http://www.ebi.ac.uk/chebi/#CHEBI:15422"/>
+<rdf:li rdf:resource="http://www.genome.jp/kegg/compound/#C00002"/>
+</rdf:Bag>
+ </bqbiol:is>
+</rdf:Description>
+</rdf:RDF> 
+</annotation>
+      </species>
+      <species metaid="meta_spc_3" id="spc_3" name="alpha-D-Glucose 6-phosphate" compartment="compart_1">
+        <annotation>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
+<rdf:Description rdf:about="#meta_spc_3"
+><bqbiol:is> 
+<rdf:Bag> 
+<rdf:li rdf:resource="http://www.ebi.ac.uk/chebi/#CHEBI:17665"/>
+<rdf:li rdf:resource="http://www.genome.jp/kegg/compound/#C00668"/>
+</rdf:Bag>
+ </bqbiol:is>
+</rdf:Description>
+</rdf:RDF> 
+</annotation>
+      </species>
+      <species metaid="meta_spc_4" id="spc_4" name="ADP" compartment="compart_1">
+        <annotation>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
+<rdf:Description rdf:about="#meta_spc_4"
+><bqbiol:is> 
+<rdf:Bag> 
+<rdf:li rdf:resource="http://www.ebi.ac.uk/chebi/#CHEBI:16761"/>
+<rdf:li rdf:resource="http://www.genome.jp/kegg/compound/#C00008"/>
+</rdf:Bag>
+ </bqbiol:is>
+</rdf:Description>
+</rdf:RDF> 
+</annotation>
+      </species>
+      <species metaid="meta_enz_1" id="enz_1" name="Hexokinase(Enzyme)" compartment="compart_1"/>
+      <species metaid="meta_spc_5" id="spc_5" name="Phosphoenolpyruvate" compartment="compart_1" sboTerm="SBO:0000245">
+        <annotation>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
+<rdf:Description rdf:about="#meta_spc_5"
+><bqbiol:is> 
+<rdf:Bag> 
+<rdf:li rdf:resource="http://www.ebi.ac.uk/chebi/#CHEBI:18021"/>
+<rdf:li rdf:resource="http://www.ebi.ac.uk/chebi/#CHEBI:44897"/>
+<rdf:li rdf:resource="http://www.genome.jp/kegg/compound/#C00074"/>
+</rdf:Bag>
+ </bqbiol:is>
+</rdf:Description>
+</rdf:RDF> 
+</annotation>
+      </species>
+      <species metaid="meta_spc_6" id="spc_6" name="Pyruvate" compartment="compart_1">
+        <annotation>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
+<rdf:Description rdf:about="#meta_spc_6"
+><bqbiol:is> 
+<rdf:Bag> 
+<rdf:li rdf:resource="http://www.ebi.ac.uk/chebi/#CHEBI:15361"/>
+<rdf:li rdf:resource="http://www.ebi.ac.uk/chebi/#CHEBI:32816"/>
+<rdf:li rdf:resource="http://www.genome.jp/kegg/compound/#C00022"/>
+</rdf:Bag>
+ </bqbiol:is>
+</rdf:Description>
+</rdf:RDF> 
+</annotation>
+      </species>
+      <species metaid="meta_enz_2" id="enz_2" name="Pyruvate kinase(Enzyme)" compartment="compart_1"/>
+      <species metaid="meta_spc_7" id="spc_7" name="2-Phospho-D-glycerate" compartment="compart_1" sboTerm="SBO:0000245">
+        <annotation>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
+<rdf:Description rdf:about="#meta_spc_7"
+><bqbiol:is> 
+<rdf:Bag> 
+<rdf:li rdf:resource="http://www.ebi.ac.uk/chebi/#CHEBI:17835"/>
+<rdf:li rdf:resource="http://www.ebi.ac.uk/chebi/#CHEBI:24344"/>
+<rdf:li rdf:resource="http://www.genome.jp/kegg/compound/#C00631"/>
+</rdf:Bag>
+ </bqbiol:is>
+</rdf:Description>
+</rdf:RDF> 
+</annotation>
+      </species>
+      <species metaid="meta_spc_8" id="spc_8" name="H2O" compartment="compart_1" sboTerm="SBO:0000245">
+        <annotation>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
+<rdf:Description rdf:about="#meta_spc_8"
+><bqbiol:is> 
+<rdf:Bag> 
+<rdf:li rdf:resource="http://www.ebi.ac.uk/chebi/#CHEBI:15377"/>
+<rdf:li rdf:resource="http://www.genome.jp/kegg/compound/#C00001"/>
+</rdf:Bag>
+ </bqbiol:is>
+</rdf:Description>
+</rdf:RDF> 
+</annotation>
+      </species>
+      <species metaid="meta_enz_3" id="enz_3" name="Phosphopyruvate hydratase(Enzyme)" compartment="compart_1" sboTerm="SBO:0000245"/>
+      <species metaid="meta_spc_9" id="spc_9" name="Glycerate 3-phosphate" compartment="compart_1">
+        <annotation>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
+<rdf:Description rdf:about="#meta_spc_9"
+><bqbiol:is> 
+<rdf:Bag> 
+<rdf:li rdf:resource="http://www.ebi.ac.uk/chebi/#CHEBI:17050"/>
+<rdf:li rdf:resource="http://www.genome.jp/kegg/compound/#C00597"/>
+</rdf:Bag>
+ </bqbiol:is>
+</rdf:Description>
+</rdf:RDF> 
+</annotation>
+      </species>
+      <species metaid="meta_enz_4" id="enz_4" name="Phosphoglycerate mutase(Enzyme)" compartment="compart_1"/>
+      <species metaid="meta_spc_10" id="spc_10" name="Glycerate 1,3-bisphosphate" compartment="compart_1"/>
+      <species metaid="meta_enz_5" id="enz_5" name="Phosphoglycerate kinase(Enzyme)" compartment="compart_1"/>
+      <species metaid="meta_spc_11" id="spc_11" name="NAD+" compartment="compart_1">
+        <annotation>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
+<rdf:Description rdf:about="#meta_spc_11"
+><bqbiol:is> 
+<rdf:Bag> 
+<rdf:li rdf:resource="http://www.ebi.ac.uk/chebi/#CHEBI:13389"/>
+<rdf:li rdf:resource="http://www.ebi.ac.uk/chebi/#CHEBI:44215"/>
+<rdf:li rdf:resource="http://www.ebi.ac.uk/chebi/#CHEBI:15846"/>
+<rdf:li rdf:resource="http://www.genome.jp/kegg/compound/#C00003"/>
+</rdf:Bag>
+ </bqbiol:is>
+</rdf:Description>
+</rdf:RDF> 
+</annotation>
+      </species>
+      <species metaid="meta_spc_12" id="spc_12" name="D-Glyceraldehyde 3-phosphate" compartment="compart_1">
+        <annotation>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
+<rdf:Description rdf:about="#meta_spc_12"
+><bqbiol:is> 
+<rdf:Bag> 
+<rdf:li rdf:resource="http://www.ebi.ac.uk/chebi/#CHEBI:29052"/>
+<rdf:li rdf:resource="http://www.genome.jp/kegg/compound/#C00118"/>
+</rdf:Bag>
+ </bqbiol:is>
+</rdf:Description>
+</rdf:RDF> 
+</annotation>
+      </species>
+      <species metaid="meta_spc_13" id="spc_13" name="Phosphate" compartment="compart_1">
+        <annotation>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
+<rdf:Description rdf:about="#meta_spc_13"
+><bqbiol:is> 
+<rdf:Bag> 
+<rdf:li rdf:resource="http://www.ebi.ac.uk/chebi/#CHEBI:26078"/>
+<rdf:li rdf:resource="http://www.ebi.ac.uk/chebi/#CHEBI:18367"/>
+<rdf:li rdf:resource="http://www.genome.jp/kegg/compound/#C00009"/>
+</rdf:Bag>
+ </bqbiol:is>
+</rdf:Description>
+</rdf:RDF> 
+</annotation>
+      </species>
+      <species metaid="meta_spc_14" id="spc_14" name="H+" compartment="compart_1">
+        <annotation>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
+<rdf:Description rdf:about="#meta_spc_14"
+><bqbiol:is> 
+<rdf:Bag> 
+<rdf:li rdf:resource="http://www.ebi.ac.uk/chebi/#CHEBI:15378"/>
+<rdf:li rdf:resource="http://www.genome.jp/kegg/compound/#C00080"/>
+</rdf:Bag>
+ </bqbiol:is>
+</rdf:Description>
+</rdf:RDF> 
+</annotation>
+      </species>
+      <species metaid="meta_spc_15" id="spc_15" name="NADH" compartment="compart_1">
+        <annotation>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
+<rdf:Description rdf:about="#meta_spc_15"
+><bqbiol:is> 
+<rdf:Bag> 
+<rdf:li rdf:resource="http://www.ebi.ac.uk/chebi/#CHEBI:16908"/>
+<rdf:li rdf:resource="http://www.genome.jp/kegg/compound/#C00004"/>
+</rdf:Bag>
+ </bqbiol:is>
+</rdf:Description>
+</rdf:RDF> 
+</annotation>
+      </species>
+      <species metaid="meta_enz_6" id="enz_6" name="Glyceraldehyde-3-phosphate dehydrogenase(Enzyme)" compartment="compart_1"/>
+      <species metaid="meta_spc_16" id="spc_16" name="Glycerone phosphate" compartment="compart_1">
+        <annotation>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
+<rdf:Description rdf:about="#meta_spc_16"
+><bqbiol:is> 
+<rdf:Bag> 
+<rdf:li rdf:resource="http://www.ebi.ac.uk/chebi/#CHEBI:16108"/>
+<rdf:li rdf:resource="http://www.genome.jp/kegg/compound/#C00111"/>
+</rdf:Bag>
+ </bqbiol:is>
+</rdf:Description>
+</rdf:RDF> 
+</annotation>
+      </species>
+      <species metaid="meta_enz_7" id="enz_7" name="Triose-phosphate isomerase(Enzyme)" compartment="compart_1"/>
+      <species metaid="meta_spc_17" id="spc_17" name="beta-D-Fructose 1,6-bisphosphate" compartment="compart_1">
+        <annotation>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
+<rdf:Description rdf:about="#meta_spc_17"
+><bqbiol:is> 
+<rdf:Bag> 
+<rdf:li rdf:resource="http://www.ebi.ac.uk/chebi/#CHEBI:28013"/>
+<rdf:li rdf:resource="http://www.genome.jp/kegg/compound/#C05378"/>
+</rdf:Bag>
+ </bqbiol:is>
+</rdf:Description>
+</rdf:RDF> 
+</annotation>
+      </species>
+      <species metaid="meta_enz_8" id="enz_8" name="Fructose-bisphosphate aldolase(Enzyme)" compartment="compart_1"/>
+      <species metaid="meta_spc_18" id="spc_18" name="beta-D-Fructose 6-phosphate" compartment="compart_1">
+        <annotation>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
+<rdf:Description rdf:about="#meta_spc_18"
+><bqbiol:is> 
+<rdf:Bag> 
+<rdf:li rdf:resource="http://www.ebi.ac.uk/chebi/#CHEBI:16084"/>
+<rdf:li rdf:resource="http://www.genome.jp/kegg/compound/#C05345"/>
+</rdf:Bag>
+ </bqbiol:is>
+</rdf:Description>
+</rdf:RDF> 
+</annotation>
+      </species>
+      <species metaid="meta_enz_9" id="enz_9" name="6-Phosphofructokinase(Enzyme)" compartment="compart_1"/>
+      <species metaid="meta_enz_10" id="enz_10" name="Glucose-6-phosphate isomerase(Enzyme)" compartment="compart_1"/>
+    </listOfSpecies>
+    <listOfReactions>
+      <reaction metaid="meta_reac_0" id="reac_0">
+        <annotation>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
+<rdf:Description rdf:about="#meta_reac_0"
+><bqbiol:isVersionOf> 
+<rdf:Bag> 
+<rdf:li rdf:resource="http://www.ec-code.org/#2.7.1.1"/>
+</rdf:Bag>
+ </bqbiol:isVersionOf>
+<bqbiol:is>
+<rdf:Bag>
+<rdf:li rdf:resource="http://www.genome.jp/kegg/reaction/#R01786"/>
+</rdf:Bag>
+ </bqbiol:is>
+</rdf:Description>
+</rdf:RDF> 
+</annotation>
+        <listOfReactants>
+          <speciesReference species="spc_1"/>
+          <speciesReference species="spc_2"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="spc_3"/>
+          <speciesReference species="spc_4"/>
+        </listOfProducts>
+        <listOfModifiers>
+          <modifierSpeciesReference species="enz_1"/>
+        </listOfModifiers>
+        <kineticLaw metaid="meta_kl_0">
+          <annotation>
+<rdf:RDF xmlns:bqbiol="http://biomodels.net/biology-qualifiers/"
+xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#/">
+<rdf:Description rdf:about="#meta_kl_0"
+><bqbiol:isDescribedBy>
+<rdf:Bag>
+<rdf:li rdf:resource="http://www.pubmed.gov/#7929251"/>
+</rdf:Bag>
+ </bqbiol:isDescribedBy>
+</rdf:Description>
+</rdf:RDF> 
+</annotation>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <ci> kl_0 </ci>
+              <ci> Vf </ci>
+              <ci> spc_3 </ci>
+              <ci> Kms_spc_1 </ci>
+              <ci> Vr </ci>
+              <ci> Kmp_spc_3 </ci>
+              <ci> spc_1 </ci>
+            </apply>
+          </math>
+          <listOfParameters>
+            <parameter id="Vf" value="33" units="mMdivmin"/>
+            <parameter id="Kms_spc_1" value="0.072" units="mM"/>
+            <parameter id="Vr" value="0.00637" units="mMdivmin"/>
+            <parameter id="Kmp_spc_3" value="0.042" units="mM"/>
+          </listOfParameters>
+        </kineticLaw>
+      </reaction>
+      <reaction metaid="meta_reac_1" id="reac_1">
+        <annotation>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
+<rdf:Description rdf:about="#meta_reac_1"
+><bqbiol:isVersionOf> 
+<rdf:Bag> 
+<rdf:li rdf:resource="http://www.ec-code.org/#2.7.1.40"/>
+</rdf:Bag>
+ </bqbiol:isVersionOf>
+<bqbiol:is>
+<rdf:Bag>
+<rdf:li rdf:resource="http://www.genome.jp/kegg/reaction/#R00200"/>
+</rdf:Bag>
+ </bqbiol:is>
+</rdf:Description>
+</rdf:RDF> 
+</annotation>
+        <listOfReactants>
+          <speciesReference species="spc_5"/>
+          <speciesReference species="spc_4"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="spc_6"/>
+          <speciesReference species="spc_2"/>
+        </listOfProducts>
+        <listOfModifiers>
+          <modifierSpeciesReference species="enz_2"/>
+        </listOfModifiers>
+        <kineticLaw metaid="meta_kl_1">
+          <annotation>
+<rdf:RDF xmlns:bqbiol="http://biomodels.net/biology-qualifiers/"
+xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#/">
+<rdf:Description rdf:about="#meta_kl_1"
+><bqbiol:isDescribedBy>
+<rdf:Bag>
+<rdf:li rdf:resource="http://www.pubmed.gov/#7929251"/>
+</rdf:Bag>
+ </bqbiol:isDescribedBy>
+</rdf:Description>
+</rdf:RDF> 
+</annotation>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <ci> kl_1 </ci>
+              <ci> spc_5 </ci>
+              <ci> Vr </ci>
+              <ci> spc_6 </ci>
+              <ci> Vf </ci>
+              <ci> Kmp_spc_6 </ci>
+              <ci> Kms_spc_5 </ci>
+            </apply>
+          </math>
+          <listOfParameters>
+            <parameter id="Vr" value="0.63" units="mMdivmin"/>
+            <parameter id="Vf" value="566" units="mMdivmin"/>
+            <parameter id="Kmp_spc_6" value="10" units="mM"/>
+            <parameter id="Kms_spc_5" value="0.11" units="mM"/>
+          </listOfParameters>
+        </kineticLaw>
+      </reaction>
+      <reaction metaid="meta_reac_2" id="reac_2">
+        <annotation>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
+<rdf:Description rdf:about="#meta_reac_2"
+><bqbiol:isVersionOf> 
+<rdf:Bag> 
+<rdf:li rdf:resource="http://www.ec-code.org/#4.2.1.11"/>
+</rdf:Bag>
+ </bqbiol:isVersionOf>
+<bqbiol:is>
+<rdf:Bag>
+<rdf:li rdf:resource="http://www.genome.jp/kegg/reaction/#R00658"/>
+</rdf:Bag>
+ </bqbiol:is>
+</rdf:Description>
+</rdf:RDF> 
+</annotation>
+        <listOfReactants>
+          <speciesReference species="spc_7"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="spc_5"/>
+          <speciesReference species="spc_8"/>
+        </listOfProducts>
+        <listOfModifiers>
+          <modifierSpeciesReference species="enz_3"/>
+        </listOfModifiers>
+        <kineticLaw metaid="meta_kl_2">
+          <annotation>
+<rdf:RDF xmlns:bqbiol="http://biomodels.net/biology-qualifiers/"
+xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#/">
+<rdf:Description rdf:about="#meta_kl_2"
+><bqbiol:isDescribedBy>
+<rdf:Bag>
+<rdf:li rdf:resource="http://www.pubmed.gov/#7929251"/>
+</rdf:Bag>
+ </bqbiol:isDescribedBy>
+</rdf:Description>
+</rdf:RDF> 
+</annotation>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <ci> kl_2 </ci>
+              <ci> Kmp_spc_5 </ci>
+              <ci> Vr </ci>
+              <ci> spc_5 </ci>
+              <ci> spc_7 </ci>
+              <ci> Kms_spc_7 </ci>
+              <ci> Vf </ci>
+            </apply>
+          </math>
+          <listOfParameters>
+            <parameter id="Kmp_spc_5" value="0.089" units="mM"/>
+            <parameter id="Vr" value="120" units="mMdivmin"/>
+            <parameter id="Kms_spc_7" value="0.045" units="mM"/>
+            <parameter id="Vf" value="111" units="mMdivmin"/>
+          </listOfParameters>
+        </kineticLaw>
+      </reaction>
+      <reaction metaid="meta_reac_3" id="reac_3">
+        <annotation>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
+<rdf:Description rdf:about="#meta_reac_3"
+><bqbiol:isVersionOf> 
+<rdf:Bag> 
+<rdf:li rdf:resource="http://www.ec-code.org/#5.4.2.1"/>
+</rdf:Bag>
+ </bqbiol:isVersionOf>
+<bqbiol:is>
+<rdf:Bag>
+<rdf:li rdf:resource="http://www.genome.jp/kegg/reaction/#R01518"/>
+</rdf:Bag>
+ </bqbiol:is>
+</rdf:Description>
+</rdf:RDF> 
+</annotation>
+        <listOfReactants>
+          <speciesReference species="spc_9"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="spc_7"/>
+        </listOfProducts>
+        <listOfModifiers>
+          <modifierSpeciesReference species="enz_4"/>
+        </listOfModifiers>
+        <kineticLaw metaid="meta_kl_3">
+          <annotation>
+<rdf:RDF xmlns:bqbiol="http://biomodels.net/biology-qualifiers/"
+xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#/">
+<rdf:Description rdf:about="#meta_kl_3"
+><bqbiol:isDescribedBy>
+<rdf:Bag>
+<rdf:li rdf:resource="http://www.pubmed.gov/#7929251"/>
+</rdf:Bag>
+ </bqbiol:isDescribedBy>
+</rdf:Description>
+</rdf:RDF> 
+</annotation>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <ci> kl_3 </ci>
+              <ci> Vr </ci>
+              <ci> Vf </ci>
+              <ci> Kms_spc_9 </ci>
+              <ci> Kmp_spc_7 </ci>
+              <ci> spc_7 </ci>
+              <ci> spc_9 </ci>
+            </apply>
+          </math>
+          <listOfParameters>
+            <parameter id="Vr" value="2880" units="mMdivmin"/>
+            <parameter id="Vf" value="674" units="mMdivmin"/>
+            <parameter id="Kms_spc_9" value="0.145" units="mM"/>
+            <parameter id="Kmp_spc_7" value="0.139" units="mM"/>
+          </listOfParameters>
+        </kineticLaw>
+      </reaction>
+      <reaction metaid="meta_reac_4" id="reac_4">
+        <annotation>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
+<rdf:Description rdf:about="#meta_reac_4"
+><bqbiol:isVersionOf> 
+<rdf:Bag> 
+<rdf:li rdf:resource="http://www.ec-code.org/#2.7.2.3"/>
+</rdf:Bag>
+ </bqbiol:isVersionOf>
+<bqbiol:is>
+<rdf:Bag>
+<rdf:li rdf:resource="http://www.genome.jp/kegg/reaction/#R01512"/>
+</rdf:Bag>
+ </bqbiol:is>
+</rdf:Description>
+</rdf:RDF> 
+</annotation>
+        <listOfReactants>
+          <speciesReference species="spc_10"/>
+          <speciesReference species="spc_4"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="spc_9"/>
+          <speciesReference species="spc_2"/>
+        </listOfProducts>
+        <listOfModifiers>
+          <modifierSpeciesReference species="enz_5"/>
+        </listOfModifiers>
+        <kineticLaw metaid="meta_kl_4">
+          <annotation>
+<rdf:RDF xmlns:bqbiol="http://biomodels.net/biology-qualifiers/"
+xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#/">
+<rdf:Description rdf:about="#meta_kl_4"
+><bqbiol:isDescribedBy>
+<rdf:Bag>
+<rdf:li rdf:resource="http://www.pubmed.gov/#7929251"/>
+</rdf:Bag>
+ </bqbiol:isDescribedBy>
+</rdf:Description>
+</rdf:RDF> 
+</annotation>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <ci> kl_4 </ci>
+              <ci> Vf </ci>
+              <ci> spc_10 </ci>
+              <ci> spc_9 </ci>
+              <ci> Kms_spc_10 </ci>
+              <ci> Kmp_spc_9 </ci>
+              <ci> Vr </ci>
+            </apply>
+          </math>
+          <listOfParameters>
+            <parameter id="Vf" value="15060" units="mMdivmin"/>
+            <parameter id="Kms_spc_10" value="0.021" units="mM"/>
+            <parameter id="Kmp_spc_9" value="0.51" units="mM"/>
+            <parameter id="Vr" value="959" units="mMdivmin"/>
+          </listOfParameters>
+        </kineticLaw>
+      </reaction>
+      <reaction metaid="meta_reac_5" id="reac_5">
+        <annotation>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
+<rdf:Description rdf:about="#meta_reac_5"
+><bqbiol:isVersionOf> 
+<rdf:Bag> 
+<rdf:li rdf:resource="http://www.ec-code.org/#1.2.1.12"/>
+</rdf:Bag>
+ </bqbiol:isVersionOf>
+<bqbiol:is>
+<rdf:Bag>
+<rdf:li rdf:resource="http://www.genome.jp/kegg/reaction/#R01061"/>
+</rdf:Bag>
+ </bqbiol:is>
+</rdf:Description>
+</rdf:RDF> 
+</annotation>
+        <listOfReactants>
+          <speciesReference species="spc_11"/>
+          <speciesReference species="spc_12"/>
+          <speciesReference species="spc_13"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="spc_10"/>
+          <speciesReference species="spc_14"/>
+          <speciesReference species="spc_15"/>
+        </listOfProducts>
+        <listOfModifiers>
+          <modifierSpeciesReference species="enz_6"/>
+        </listOfModifiers>
+        <kineticLaw metaid="meta_kl_5">
+          <annotation>
+<rdf:RDF xmlns:bqbiol="http://biomodels.net/biology-qualifiers/"
+xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#/">
+<rdf:Description rdf:about="#meta_kl_5"
+><bqbiol:isDescribedBy>
+<rdf:Bag>
+<rdf:li rdf:resource="http://www.pubmed.gov/#7929251"/>
+</rdf:Bag>
+ </bqbiol:isDescribedBy>
+</rdf:Description>
+</rdf:RDF> 
+</annotation>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <ci> kl_5 </ci>
+              <ci> Km_spc_12 </ci>
+              <ci> spc_12 </ci>
+              <ci> V </ci>
+            </apply>
+          </math>
+          <listOfParameters>
+            <parameter id="Km_spc_12" value="0.042" units="mM"/>
+            <parameter id="V" value="321" units="mMdivmin"/>
+          </listOfParameters>
+        </kineticLaw>
+      </reaction>
+      <reaction metaid="meta_reac_6" id="reac_6">
+        <annotation>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
+<rdf:Description rdf:about="#meta_reac_6"
+><bqbiol:isVersionOf> 
+<rdf:Bag> 
+<rdf:li rdf:resource="http://www.ec-code.org/#5.3.1.1"/>
+</rdf:Bag>
+ </bqbiol:isVersionOf>
+<bqbiol:is>
+<rdf:Bag>
+<rdf:li rdf:resource="http://www.genome.jp/kegg/reaction/#R01015"/>
+</rdf:Bag>
+ </bqbiol:is>
+</rdf:Description>
+</rdf:RDF> 
+</annotation>
+        <listOfReactants>
+          <speciesReference species="spc_16"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="spc_12"/>
+        </listOfProducts>
+        <listOfModifiers>
+          <modifierSpeciesReference species="enz_7"/>
+        </listOfModifiers>
+        <kineticLaw metaid="meta_kl_6">
+          <annotation>
+<rdf:RDF xmlns:bqbiol="http://biomodels.net/biology-qualifiers/"
+xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#/">
+<rdf:Description rdf:about="#meta_kl_6"
+><bqbiol:isDescribedBy>
+<rdf:Bag>
+<rdf:li rdf:resource="http://www.pubmed.gov/#7929251"/>
+</rdf:Bag>
+ </bqbiol:isDescribedBy>
+</rdf:Description>
+</rdf:RDF> 
+</annotation>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <ci> kl_6 </ci>
+              <ci> V </ci>
+              <ci> Km_spc_16 </ci>
+              <ci> spc_16 </ci>
+            </apply>
+          </math>
+          <listOfParameters>
+            <parameter id="V" value="356" units="mMdivmin"/>
+            <parameter id="Km_spc_16" value="1.53" units="mM"/>
+          </listOfParameters>
+        </kineticLaw>
+      </reaction>
+      <reaction metaid="meta_reac_7" id="reac_7">
+        <annotation>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
+<rdf:Description rdf:about="#meta_reac_7"
+><bqbiol:isVersionOf> 
+<rdf:Bag> 
+<rdf:li rdf:resource="http://www.ec-code.org/#4.1.2.13"/>
+</rdf:Bag>
+ </bqbiol:isVersionOf>
+<bqbiol:is>
+<rdf:Bag>
+<rdf:li rdf:resource="http://www.genome.jp/kegg/reaction/#R01070"/>
+</rdf:Bag>
+ </bqbiol:is>
+</rdf:Description>
+</rdf:RDF> 
+</annotation>
+        <listOfReactants>
+          <speciesReference species="spc_17"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="spc_16"/>
+          <speciesReference species="spc_12"/>
+        </listOfProducts>
+        <listOfModifiers>
+          <modifierSpeciesReference species="enz_8"/>
+        </listOfModifiers>
+        <kineticLaw metaid="meta_kl_7">
+          <annotation>
+<rdf:RDF xmlns:bqbiol="http://biomodels.net/biology-qualifiers/"
+xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#/">
+<rdf:Description rdf:about="#meta_kl_7"
+><bqbiol:isDescribedBy>
+<rdf:Bag>
+<rdf:li rdf:resource="http://www.pubmed.gov/#7929251"/>
+</rdf:Bag>
+ </bqbiol:isDescribedBy>
+</rdf:Description>
+</rdf:RDF> 
+</annotation>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <ci> kl_7 </ci>
+              <ci> Km_spc_17 </ci>
+              <ci> V </ci>
+              <ci> spc_17 </ci>
+            </apply>
+          </math>
+          <listOfParameters>
+            <parameter id="Km_spc_17" value="0.038" units="mM"/>
+            <parameter id="V" value="59.5" units="mMdivmin"/>
+          </listOfParameters>
+        </kineticLaw>
+      </reaction>
+      <reaction metaid="meta_reac_8" id="reac_8">
+        <annotation>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
+<rdf:Description rdf:about="#meta_reac_8"
+><bqbiol:isVersionOf> 
+<rdf:Bag> 
+<rdf:li rdf:resource="http://www.ec-code.org/#2.7.1.11"/>
+</rdf:Bag>
+ </bqbiol:isVersionOf>
+<bqbiol:is>
+<rdf:Bag>
+<rdf:li rdf:resource="http://www.genome.jp/kegg/reaction/#R04779"/>
+</rdf:Bag>
+ </bqbiol:is>
+</rdf:Description>
+</rdf:RDF> 
+</annotation>
+        <listOfReactants>
+          <speciesReference species="spc_2"/>
+          <speciesReference species="spc_18"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="spc_17"/>
+          <speciesReference species="spc_4"/>
+        </listOfProducts>
+        <listOfModifiers>
+          <modifierSpeciesReference species="enz_9"/>
+        </listOfModifiers>
+        <kineticLaw metaid="meta_kl_8">
+          <annotation>
+<rdf:RDF xmlns:bqbiol="http://biomodels.net/biology-qualifiers/"
+xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#/">
+<rdf:Description rdf:about="#meta_kl_8"
+><bqbiol:isDescribedBy>
+<rdf:Bag>
+<rdf:li rdf:resource="http://www.pubmed.gov/#7929251"/>
+</rdf:Bag>
+ </bqbiol:isDescribedBy>
+</rdf:Description>
+</rdf:RDF> 
+</annotation>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <ci> kl_8 </ci>
+              <ci> Km_spc_18 </ci>
+              <ci> spc_18 </ci>
+              <ci> V </ci>
+            </apply>
+          </math>
+          <listOfParameters>
+            <parameter id="Km_spc_18" value="0.224" units="mM"/>
+            <parameter id="V" value="79.7" units="mMdivmin"/>
+          </listOfParameters>
+        </kineticLaw>
+      </reaction>
+      <reaction metaid="meta_reac_9" id="reac_9">
+        <annotation>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
+<rdf:Description rdf:about="#meta_reac_9"
+><bqbiol:isVersionOf> 
+<rdf:Bag> 
+<rdf:li rdf:resource="http://www.ec-code.org/#5.3.1.9"/>
+</rdf:Bag>
+ </bqbiol:isVersionOf>
+<bqbiol:is>
+<rdf:Bag>
+<rdf:li rdf:resource="http://www.genome.jp/kegg/reaction/#R02740"/>
+</rdf:Bag>
+ </bqbiol:is>
+</rdf:Description>
+</rdf:RDF> 
+</annotation>
+        <listOfReactants>
+          <speciesReference species="spc_3"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="spc_18"/>
+        </listOfProducts>
+        <listOfModifiers>
+          <modifierSpeciesReference species="enz_10"/>
+        </listOfModifiers>
+        <kineticLaw metaid="meta_kl_9">
+          <annotation>
+<rdf:RDF xmlns:bqbiol="http://biomodels.net/biology-qualifiers/"
+xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#/">
+<rdf:Description rdf:about="#meta_kl_9"
+><bqbiol:isDescribedBy>
+<rdf:Bag>
+<rdf:li rdf:resource="http://www.pubmed.gov/#7929251"/>
+</rdf:Bag>
+ </bqbiol:isDescribedBy>
+</rdf:Description>
+</rdf:RDF> 
+</annotation>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <ci> kl_9 </ci>
+              <ci> spc_3 </ci>
+              <ci> Kms_spc_3 </ci>
+              <ci> Kmp_spc_18 </ci>
+              <ci> spc_18 </ci>
+              <ci> Vf </ci>
+              <ci> Vr </ci>
+            </apply>
+          </math>
+          <listOfParameters>
+            <parameter id="Kms_spc_3" value="0.425" units="mM"/>
+            <parameter id="Kmp_spc_18" value="0.175" units="mM"/>
+            <parameter id="Vf" value="604" units="mMdivmin"/>
+            <parameter id="Vr" value="576" units="mMdivmin"/>
+          </listOfParameters>
+        </kineticLaw>
+      </reaction>
+    </listOfReactions>
+  </model>
+</sbml>
+
+
+
+
+
+
