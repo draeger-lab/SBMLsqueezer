@@ -59,9 +59,9 @@
 						</goals>
 						<configuration>
 
-							<descriptorRefs>
-								<descriptorRef>jar-with-dependencies</descriptorRef>
-							</descriptorRefs>
+							<descriptors>
+								<descriptor>core/src/main/assembly/jar-with-dependencies_mine.xml</descriptor>
+							</descriptors>
 							<appendAssemblyId>false</appendAssemblyId>
 							<finalName>squeezer-${project.version}_incl-libs</finalName>
 							<archive>

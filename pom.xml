@@ -157,7 +157,7 @@
 			<version>1.0</version>
 		</dependency>
 
-		<dependency>
+	 	 <dependency>
 			<groupId>org.sbml</groupId>
 			<artifactId>celldesigner</artifactId>
 			<version>4.4</version>
