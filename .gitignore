@@ -5,3 +5,13 @@ build/
 doc/api
 .project
 *.log
+
+# IntelliJ specific directories
+.idea/SBMLsqueezer.iml
+.idea/libraries
+.idea/modules.xml
+.idea/workspace.xml
+
+# Target directory
+core/target/
+celldesigner/target/

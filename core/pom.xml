@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>SBMLsqueezer</artifactId>
+        <groupId>org.sbml.squeezer</groupId>
+        <version>2.1.1</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>core</artifactId>
+
+    <!-- ==================================================================================================== -->
+    <!-- BUILDING -->
+    <!-- ==================================================================================================== -->
+
+    <build>
+
+        <finalName>${project.parent.artifactId}-${project.version}</finalName>
+
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+
+        <pluginManagement>
+            <plugins>
+
+                <!-- Allows inclusion of splash screen in jar-->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <version>3.2.0</version>
+                    <configuration>
+                        <archive>
+                            <manifestEntries>
+                                <SplashScreen-Image>org/sbml/squeezer/resources/img/SBMLsqueezerSplash.gif</SplashScreen-Image>
+                            </manifestEntries>
+                        </archive>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <id>default-jar</id> <!-- no default jar is created -->
+                            <phase>none</phase>
+                        </execution>
+                    </executions>
+                </plugin>
+
+
+                <!-- Assembly of the jar -->
+                <!-- Create JAR with following command
+                mvn clean compile package assembly:single -->
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-assembly-plugin</artifactId>
+                    <version>3.2.0</version>
+                    <configuration>
+                        <archive>
+                            <manifest>
+                                <addClasspath>true</addClasspath>
+                                <mainClass>org.sbml.squeezer.SBMLsqueezer</mainClass>
+                                <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                                <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+                            </manifest>
+                            <manifestEntries>
+                                <SplashScreen-Image>org/sbml/squeezer/resources/img/SBMLsqueezerSplash.gif</SplashScreen-Image>
+                            </manifestEntries>
+                        </archive>
+                        <appendAssemblyId>false</appendAssemblyId>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <id>make-jar-with-dependencies</id> <!-- this is used for inheritance merges -->
+                            <phase>package</phase> <!-- bind to the packaging phase -->
+                            <goals>
+                                <goal>single</goal>
+                            </goals>
+                            <configuration>
+                                <descriptorRefs>
+                                    <descriptorRef>jar-with-dependencies</descriptorRef>
+                                </descriptorRefs>
+                                <finalName>${project.parent.artifactId}-${project.version}</finalName>
+                            </configuration>
+                        </execution>
+                        <execution>
+                            <id>make-zip-for-garuda</id>
+                            <phase>package</phase>
+                            <goals>
+                                <goal>single</goal>
+                            </goals>
+                            <configuration>
+                                <descriptors>
+                                    <descriptor>${project.basedir}/src/assembly/assembly_for_garuda.xml</descriptor>
+                                </descriptors>
+                                <finalName>${project.parent.artifactId}-${project.version}-Garuda</finalName>
+                            </configuration>
+                        </execution>
+                        <execution>
+                            <id>package-source-code</id>
+                            <phase>package</phase>
+                            <goals>
+                                <goal>single</goal>
+                            </goals>
+                            <configuration>
+                                <descriptorRefs>
+                                    <descriptorRef>src</descriptorRef>
+                                </descriptorRefs>
+                                <finalName>${project.parent.artifactId}-${project.version}-SourceCode</finalName>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+
+        </pluginManagement>
+
+
+    </build>
+
+
+</project>
