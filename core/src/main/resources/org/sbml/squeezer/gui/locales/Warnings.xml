@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<!-- 
+ * $Id$
+ * $URL$
+ *********************************************************************** 
+ * This file is part of SBMLsqueezer, a Java program that creates rate 
+ * equations for reactions in SBML files (http://sbml.org).
+ *
+ * Copyright (C) 2006-2016 by the University of Tuebingen, Germany.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see http://www.gnu.org/licenses/.
+ ***********************************************************************
+ *
+ * Version: $Rev$
+-->
+<properties>
+  <comment>
+	This configuration provides locale-dependent names for warnings and error
+	messages in a (graphical) user interface.
+	Although the preferred way would be to have separate key-value pairs for
+	actual labels and their corresponding tooltips, you may want to use just 
+	one key-value pair, in which the tooltip is located after the separator 
+	";". Otherwise, please use the suffix "_TOOLTIP" to indicate a tooltip 
+	for some label.
+	
+	Please see the JavaDoc for MessageFormatter and Formatter. 
+  </comment>
+  
+  <entry key="WARNING">Warning</entry>
+  <entry key="SBML_WARNINGS">SBML warnings</entry>
+  
+  <!-- KineticLawSelectionPanel -->
+  
+  <entry key="INVALID_RATE_LAW_COUNT">at least one rate law must be given and the index must be between zero and the number of rate laws.</entry>
+
+  <!-- KineticLawGenerator -->
+  
+  <entry key="INVALID_COMPARTMENT_DIMENSION">Compartment {0} had an invalid spatial dimension and was therefore set to a volume.</entry>
+  <entry key="INVALID_REACTION_FORMAT">Reaction {0} in the model has an incorrect format. This means there is either an empty kinetic law in this reaction or a kinetic law that only consists of a white space. If you decide not to save this generated model, there is only one solution: open this SBML file in an editor and delete the whole kinetic law. SBMLsqueezer ignores this misstake and generates a proper equation. Therfore we recomment that you save this generated model.</entry>
+  <entry key="INVALID_REACTION_ID_FOR_RATE_LAW_CREATION">{0} is not the id of a reaction for which rate laws are to be created.</entry>
+
+  <!-- ReactionType -->
+  
+  <entry key="FALLBACK_KINETICS">Cannot apply default rate law {1} to reaction {0}, fall back to {2}.</entry>
+  <entry key="REACTION_MUST_BE_TRANSRIPTION">Reaction {0} must be a transcription.</entry>
+  <entry key="REACTION_MUST_BE_TRANSLATION">Reaction {0} must be a translation.</entry>
+  <entry key="REACTION_MUST_BE_TRANSITION">Reaction {0} must be a transition.</entry>
+  
+  <!-- SBMLsqueezer -->
+  
+  <entry key="CANT_READ_MODEL">A problem occurred while trying to read the model {0}.</entry>
+  <entry key="SQUEEZE_ERROR">input: {0}, output: {1}</entry>
+  <entry key="OUTPUT_ERROR">Could not write output to SBML.</entry>
+  <entry key="FILE_CONTAINS_NO_MODEL">File contains no model. Nothing to do.</entry>
+  <entry key="INVALID_TEX_FILE">no valid TeX file: {0}</entry>
+  <entry key="NO_TEX_FILE_PROVIDED">no TeX file was provided</entry>
+  <entry key="COULD_NOT_LOAD_IMAGE">Could not load image {0}</entry>
+  <entry key="INVALID_URL">Invalid URL {0}</entry>
+  
+  <!-- SBMLio -->
+  
+  <entry key="OPERATION_NOT_SUPPORTED">Operation not supported for type {0}!</entry>
+  
+  <!-- SBMLsqueezerUI -->
+  
+  <entry key="UNABLE_TO_LOAD_MODEL">Unable to load this model due to one or several errors. Please use the SBML online validator to check why this model is not correct.</entry>
+  
+  <!-- SqSBMLReader -->
+  
+  <entry key="WRONG_MODEL_INSTANCE">model must be an instance of java.lang.String, org.sbml.jsbml.Model or org.sbml.jsbml.SBMLDocument</entry>
+  
+  <!-- SqSBMLWriter -->
+  
+  <entry key="NO_JSBML_MODEL">only instances of org.sbml.jsbml.Model can be considered.</entry>
+  <entry key="NO_JSBML_MODEL_OR_SBMLDOCUMENT">object must be an instance of org.sbml.jsbml.SBMLDocument or org.sbml.jsbml.Model.</entry>
+  
+  <!-- IrrevCompetNonCooperativeEnzymes -->
+  
+  <entry key="RATE_LAW_CAN_ONLY_APPLIED_TO_ENZYME_CATALYZED_REACTIONS">This rate law can only be applied to enzyme-catalyzed reactions.</entry>
+  <entry key="RATE_LAW_CAN_ONLY_APPLIED_TO_REACTIONS_WITH_EXACTLY_ONE_SUBSTRATE_SPECIES">This rate law can only be applied to reactions with exactly one substrate species.</entry>
+  
+  <!-- IrrevNonModulatedNonInteractingEnzymes -->
+  
+  <entry key="RATE_LAW_CAN_ONLY_APPLIED_TO_NON_MODULATED_REACTIONS">This rate law can only be applied to non-modulated reactions.</entry>
+  <entry key="RATE_LAW_CAN_ONLY_APPLIED_TO_IRREVERSIBLE_REACTIONS">This rate law can only be applied to irreversible reactions.</entry>
+  <entry key="RATE_LAW_CAN_ONLY_APPLIED_IF_REACTANTS_HAVE_INTEGER_STOICHIOMETRIES">This rate law can only be applied if all reactants have integer stoichiometries.</entry>
+  
+  <!-- MichaelisMenten -->
+  
+  <entry key="INCORRECT_STOICHIOMETRY_OF_REACTANT_SPECIES">{0} cannot be applied to reaction {1} because the stoichiometry of the reactant species does not sum up to 1.0.</entry>
+  <entry key="INCORRECT_STOICHIOMETRY_OF_PRODUCT_SPECIES">Reversible {0} cannot be applied to reaction {1} because the stoichiometry of the product species does not sum up to 1.0.</entry>
+  
+  <!-- OrderedMechanism -->
+  
+  <entry key="ORDERED_NUM_OF_REACTANTS_MUST_EQUAL">Number of reactants must equal two to apply ordered Michaelis-Menten kinetics to reaction {0}.</entry>
+  <entry key="ORDERED_NUM_OF_PRODUCTS_MUST_EQUAL">For reversible reactions the number of products must equal either one or two to apply ordered kinetics to reaction {0}.</entry>
+  
+  <!-- PingPongMechanism -->
+  
+  <entry key="PING_PONG_NUM_OF_REACTANTS_MUST_EQUAL">Number of reactants must equal two to apply ping-pong Michaelis-Menten kinetics to reaction {0}.</entry>
+  <entry key="PING_PONG_NUM_OF_PRODUCTS_MUST_EQUAL">Number of products must equal two to apply ping-pong Michaelis-Menten kinetics to reaction {0}.</entry>
+  
+  <!-- RandomOrderMechanism -->
+  
+  <entry key="RANDOM_ORDER_NUM_OF_REACTANTS_MUST_EQUAL">Number of reactants must equal two to apply random order Michaelis-Menten kinetics to reaction {0}.</entry>
+  <entry key="RANDOM_ORDER_NUM_OF_PRODUCTS_MUST_EQUAL">For reversible reactions the number of products must equal either one or two to apply random order Michaelis-Menten kinetics to reaction {0}.</entry>
+  
+  <!-- UnitFactory -->
+  
+  <entry key="UNDEFINED_COMPARTMENT_OF_SPECIES">The compartment of species "{0}" is undefined.</entry>
+  <entry key="UNDEFINED_UNIT_OF_SPECIES">Undefined units of species "{0}".</entry>
+
+</properties>
