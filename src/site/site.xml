@@ -4,8 +4,21 @@
          name="SBMLsqueezer">
     <bannerLeft>
         <name>SBMLsqueezer</name>
+        <src>images/ICON_LOGO_SMALL_NOCOPYRIGHT.png</src>
     </bannerLeft>
+    <bannerRight>
+        <src>images/SBMLsqueezerIcon_128.png</src>
+        <width>96</width>
+        <height>96</height>
+    </bannerRight>
     <body>
+        <head>
+            <![CDATA[<link rel="stylesheet" href="css/font-awesome-4.7.0/css/font-awesome.min.css"/>]]>
+        </head>
+        <menu ref="reports"/>
+        <menu name="Extra">
+            <item name="Project Dependency Licenses" href="/third-party-report.html"/>
+        </menu>
     </body>
     <skin>
         <groupId>org.apache.maven.skins</groupId>
