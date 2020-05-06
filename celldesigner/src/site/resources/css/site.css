@@ -50,9 +50,3 @@ a.externalLink[href^=http] {
     background: white;
     padding:0px;
 }
-[class^="icon-"] {
-    background-image: url("../img/glyphicons-halflings-white.png");
-}
-.nav-list > .active > a > [class^="icon-"] {
-    background-image: url("../img/glyphicons-halflings.png");
-}

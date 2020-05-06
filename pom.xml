@@ -218,19 +218,55 @@
                     </dependency>
                 </dependencies>
             </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-project-info-reports-plugin</artifactId>
-                <version>3.0.0</version>
-            </plugin>
-
         </plugins>
     </build>
     <modules>
         <module>celldesigner</module>
         <module>core</module>
     </modules>
+
+    <!-- ==================================================================================================== -->
+    <!-- REPORTING -->
+    <!-- ==================================================================================================== -->
+
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>license-maven-plugin</artifactId>
+                <version>2.0.0</version>
+                <configuration>
+                    <useMissingFile>true</useMissingFile>
+                </configuration>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <report>third-party-report</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-project-info-reports-plugin</artifactId>
+                <version>3.0.0</version>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <report>licenses</report>
+                            <report>index</report>
+                            <report>ci-management</report>
+                            <report>issue-management</report>
+                            <report>team</report>
+                            <report>modules</report>
+                            <report>plugins</report>
+                            <report>summary</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+        </plugins>
+    </reporting>
 
     <!-- ==================================================================================================== -->
     <!-- REPOSITORIES -->
