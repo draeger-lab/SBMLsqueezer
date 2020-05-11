@@ -1,0 +1,16 @@
+org.sbml.squeezer
+org.sbml.squeezer.celldesigner
+org.sbml.squeezer.functionTermGenerator
+org.sbml.squeezer.gui
+org.sbml.squeezer.gui.wizard
+org.sbml.squeezer.io
+org.sbml.squeezer.kinetics
+org.sbml.squeezer.math
+org.sbml.squeezer.resources
+org.sbml.squeezer.sabiork
+org.sbml.squeezer.sabiork.util
+org.sbml.squeezer.sabiork.wizard
+org.sbml.squeezer.sabiork.wizard.console
+org.sbml.squeezer.sabiork.wizard.gui
+org.sbml.squeezer.sabiork.wizard.model
+org.sbml.squeezer.util
