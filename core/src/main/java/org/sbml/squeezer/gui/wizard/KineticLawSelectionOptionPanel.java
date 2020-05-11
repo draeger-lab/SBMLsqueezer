@@ -52,10 +52,9 @@ import de.zbit.util.ResourceManager;
 
 /**
  * This class implements the main panel. The panel includes the
- * SBMLsqueezer logo and a button to show the preferences dialog
+ * SBMLsqueezer logo and a button to show the preferences dialog (Feb 25, 2012)
  * 
  * @author Sebastian Nagel
- * @date Feb 25, 2012
  * @since 2.0
  * @version $Rev: 830 $
  */

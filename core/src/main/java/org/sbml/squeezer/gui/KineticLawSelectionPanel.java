@@ -74,11 +74,10 @@ import de.zbit.util.prefs.SBPreferences;
 /**
  * A panel, which contains all possible kinetic equations for the current
  * reaction. A panel that contains the whole message for the user: the message
- * itself, the reversibility and the applicable kinetics.
+ * itself, the reversibility and the applicable kinetics. (Feb 7, 2008)
  *
  * @author Andreas Dr&auml;ger
  * @author Hannes Borch
- * @date Feb 7, 2008
  * @since 1.0
  * @version $Rev$
  */

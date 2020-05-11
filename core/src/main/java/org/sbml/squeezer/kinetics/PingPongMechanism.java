@@ -41,13 +41,12 @@ import de.zbit.util.ResourceManager;
 
 /**
  * Kinetic law that describes the ping-pong reaction mechanism.
- * Also known as substituted enzyme mechanism.
+ * Also known as substituted enzyme mechanism. (Aug 1, 2007)
  * 
  * @author Nadine Hassis
  * @author Andreas Dr&auml;ger
  * @author Dieudonn&eacute; Wouamba
  * @author Sarah R. M&uuml;ller vom Hagen
- * @date Aug 1, 2007
  * @since 1.0
  * @version $Rev$
  */

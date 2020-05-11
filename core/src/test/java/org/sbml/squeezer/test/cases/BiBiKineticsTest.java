@@ -39,7 +39,7 @@ import org.sbml.squeezer.kinetics.SimultaneousBindingModularRateLaw;
 import org.sbml.squeezer.kinetics.TypeStandardVersion;
 
 /**
- * Test class to test reactions of the form A + B (<)-> C + D
+ * Test class to test reactions of the form A + B (&lt;)-&gt; C + D
  * @author Julianus Pfeuffer
  * @version $Rev$
  * @since 2.0
@@ -84,7 +84,7 @@ public class BiBiKineticsTest extends KineticsTest {
 	  ===================================================*/
   
   /**
-   * Tests the {@link CommonModularRateLaw} for the reaction A + B <-> C + D
+   * Tests the {@link CommonModularRateLaw} for the reaction A + B &lt;-&gt; C + D
    * @throws Throwable
    */
   @Test
@@ -94,7 +94,7 @@ public class BiBiKineticsTest extends KineticsTest {
   }
   
   /**
-   * Tests the {@link DirectBindingModularRateLaw} for the reaction A + B <-> C + D
+   * Tests the {@link DirectBindingModularRateLaw} for the reaction A + B &lt;-&gt; C + D
    * @throws Throwable
    */
   @Test
@@ -104,7 +104,7 @@ public class BiBiKineticsTest extends KineticsTest {
   }
   
   /**
-   * Tests the {@link PowerLawModularRateLaw} for the reaction A + B <-> C + D
+   * Tests the {@link PowerLawModularRateLaw} for the reaction A + B &lt;-&gt; C + D
    * @throws Throwable
    */
   @Test
@@ -114,7 +114,7 @@ public class BiBiKineticsTest extends KineticsTest {
   }
   
   /**
-   * Tests the {@link PowerLawModularRateLaw} for the reaction A + B <-> C + D
+   * Tests the {@link PowerLawModularRateLaw} for the reaction A + B &lt;-&gt; C + D
    * @throws Throwable
    */
   @Test
@@ -124,7 +124,7 @@ public class BiBiKineticsTest extends KineticsTest {
   }
   
   /**
-   * Tests the {@link PowerLawModularRateLaw} for the reaction A + B <-> C + D
+   * Tests the {@link PowerLawModularRateLaw} for the reaction A + B &lt;-&gt; C + D
    * @throws Throwable
    */
   @Test
@@ -134,7 +134,7 @@ public class BiBiKineticsTest extends KineticsTest {
   }
   
   /**
-   * Tests the {@link SimultaneousBindingModularRateLaw} for the reaction A + B <-> C + D
+   * Tests the {@link SimultaneousBindingModularRateLaw} for the reaction A + B &lt;-&gt; C + D
    * @throws Throwable
    */
   @Test
@@ -144,7 +144,7 @@ public class BiBiKineticsTest extends KineticsTest {
   }
   
   /**
-   * Tests the {@link ForceDependentModularRateLaw} for the reaction A + B <-> C + D
+   * Tests the {@link ForceDependentModularRateLaw} for the reaction A + B &lt;-&gt; C + D
    * @throws Throwable
    */
   @Test

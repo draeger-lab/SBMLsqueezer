@@ -24,10 +24,9 @@
 package org.sbml.squeezer.kinetics;
 
 /**
- * All implementing kinietic laws can be applied to reversible reactions.
+ * All implementing kinietic laws can be applied to reversible reactions. (2009-09-23)
  * 
  * @author Andreas Dr&auml;ger
- * @date 2009-09-23
  * @since 1.3
  * @version $Rev$
  */

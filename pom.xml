@@ -130,6 +130,14 @@
     <!-- ==================================================================================================== -->
 
     <build>
+
+        <resources>
+            <resource>
+                <directory>${project.build.directory}/site/</directory>
+                <targetPath>${basedir}/docs</targetPath>
+            </resource>
+        </resources>
+
         <plugins>
 
 
@@ -218,6 +226,16 @@
                     </dependency>
                 </dependencies>
             </plugin>
+
+            <!-- Maven Resources Plugin -->
+            <!-- Used for copying files into docs directory -->
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>3.0.2</version>
+            </plugin>
+
         </plugins>
     </build>
     <modules>
@@ -264,6 +282,15 @@
                         </reports>
                     </reportSet>
                 </reportSets>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.10.3</version>
+                <configuration>
+                    <overview>{project.basedir}/src/main/javadoc/overview.html</overview>
+                    <stylesheet>java</stylesheet>
+                </configuration>
             </plugin>
         </plugins>
     </reporting>

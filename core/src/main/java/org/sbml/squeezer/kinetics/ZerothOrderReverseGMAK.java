@@ -36,10 +36,9 @@ import org.sbml.squeezer.util.Bundles;
 import de.zbit.util.ResourceManager;
 
 /**
- * Mass action rate law for zeroth order reverse reactions.
+ * Mass action rate law for zeroth order reverse reactions. (Feb 8, 2008)
  * 
  * @author Andreas Dr&auml;ger
- * @date Feb 8, 2008
  * @since 1.0
  * @version $Rev$
  */

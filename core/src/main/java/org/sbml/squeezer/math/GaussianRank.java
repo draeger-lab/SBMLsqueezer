@@ -25,12 +25,11 @@ package org.sbml.squeezer.math;
 
 /**
  * An implementation of the Gaussian method to compute the column rank of a
- * matrix.
+ * matrix. (Aug 1, 2007)
  * 
 
  * @author Nadine Hassis
  * @author Andreas Dr&auml;ger
- * @date Aug 1, 2007
  * @since 1.0
  * @version $Rev$
  */

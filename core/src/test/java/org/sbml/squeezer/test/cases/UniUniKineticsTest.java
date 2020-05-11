@@ -18,7 +18,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see &lt;http://www.gnu.org/licenses/&gt;.
  * ---------------------------------------------------------------------
  */
 package org.sbml.squeezer.test.cases;
@@ -130,7 +130,7 @@ public class UniUniKineticsTest extends KineticsTest {
   
   
   /**
-   * Tests the {@link MichaelisMenten} kinetics for A -> B
+   * Tests the {@link MichaelisMenten} kinetics for A -&gt; B
    * @throws Throwable
    */
   @Test
@@ -140,7 +140,7 @@ public class UniUniKineticsTest extends KineticsTest {
   }
   
   /**
-   * Tests the {@link HillEquation} for A -> B
+   * Tests the {@link HillEquation} for A -&gt; B
    * @throws Throwable
    */
   @Test
@@ -150,7 +150,7 @@ public class UniUniKineticsTest extends KineticsTest {
   }
   
   /**
-   * Tests the {@link ConvenienceKinetics} for A -> B
+   * Tests the {@link ConvenienceKinetics} for A -&gt; B
    * @throws Throwable
    */
   @Test
@@ -174,7 +174,7 @@ public class UniUniKineticsTest extends KineticsTest {
   
   
   /**
-   * Tests the {@link MichaelisMenten} kinetics for A <-> B
+   * Tests the {@link MichaelisMenten} kinetics for A &lt;-&gt; B
    * @throws Throwable
    */
   @Test
@@ -184,7 +184,7 @@ public class UniUniKineticsTest extends KineticsTest {
   }
   
   /**
-   * Tests the {@link CommonModularRateLaw} for A <-> B
+   * Tests the {@link CommonModularRateLaw} for A &lt;-&gt; B
    * @throws Throwable
    */
   @Test
@@ -194,7 +194,7 @@ public class UniUniKineticsTest extends KineticsTest {
   }
   
   /**
-   * Tests the {@link DirectBindingModularRateLaw} for A <-> B
+   * Tests the {@link DirectBindingModularRateLaw} for A &lt;-&gt; B
    * @throws Throwable
    */
   @Test
@@ -204,7 +204,7 @@ public class UniUniKineticsTest extends KineticsTest {
   }
   
   /**
-   * Tests the {@link PowerLawModularRateLaw} for A <-> B
+   * Tests the {@link PowerLawModularRateLaw} for A &lt;-&gt; B
    * @throws Throwable
    */
   @Test
@@ -214,7 +214,7 @@ public class UniUniKineticsTest extends KineticsTest {
   }
   
   /**
-   * Tests the {@link PowerLawModularRateLaw} for A <-> B
+   * Tests the {@link PowerLawModularRateLaw} for A &lt;-&gt; B
    * @throws Throwable
    */
   @Test
@@ -224,7 +224,7 @@ public class UniUniKineticsTest extends KineticsTest {
   }
   
   /**
-   * Tests the {@link PowerLawModularRateLaw} for A <-> B
+   * Tests the {@link PowerLawModularRateLaw} for A &lt;-&gt; B
    * @throws Throwable
    */
   @Test
@@ -234,7 +234,7 @@ public class UniUniKineticsTest extends KineticsTest {
   }
   
   /**
-   * Tests the {@link SimultaneousBindingModularRateLaw} for A <-> B
+   * Tests the {@link SimultaneousBindingModularRateLaw} for A &lt;-&gt; B
    * @throws Throwable
    */
   @Test
@@ -244,7 +244,7 @@ public class UniUniKineticsTest extends KineticsTest {
   }
   
   /**
-   * Tests the {@link ForceDependentModularRateLaw} for A <-> B
+   * Tests the {@link ForceDependentModularRateLaw} for A &lt;-&gt; B
    * @throws Throwable
    */
   @Test
@@ -254,7 +254,7 @@ public class UniUniKineticsTest extends KineticsTest {
   }
   
   /**
-   * Tests the {@link ConvenienceKinetics} for A <-> B
+   * Tests the {@link ConvenienceKinetics} for A &lt;-&gt; B
    * @throws Throwable
    */
   @Test
@@ -264,7 +264,7 @@ public class UniUniKineticsTest extends KineticsTest {
   }
   
   /**
-   * Tests the {@link HillEquation} for A <-> B
+   * Tests the {@link HillEquation} for A &lt;-&gt; B
    * @throws Throwable
    */
   @Test
@@ -283,7 +283,7 @@ public class UniUniKineticsTest extends KineticsTest {
   
   
   /**
-   * Tests the {@link HillEquation} for A -> B (with inhibitor)
+   * Tests the {@link HillEquation} for A -&gt; B (with inhibitor)
    * @throws Throwable
    */
   @Test
@@ -293,7 +293,7 @@ public class UniUniKineticsTest extends KineticsTest {
   }
   
   /**
-   * Tests the {@link ConvenienceKinetics} for A -> B (with inhibitor)
+   * Tests the {@link ConvenienceKinetics} for A -&gt; B (with inhibitor)
    * @throws Throwable
    */
   @Test
@@ -312,7 +312,7 @@ public class UniUniKineticsTest extends KineticsTest {
   
   
   /**
-   * Tests the {@link HillEquation} for A <-> B (with inhibitor)
+   * Tests the {@link HillEquation} for A &lt;-&gt; B (with inhibitor)
    * @throws Throwable
    */
   @Test
@@ -322,7 +322,7 @@ public class UniUniKineticsTest extends KineticsTest {
   }
   
   /**
-   * Tests the {@link ConvenienceKinetics} for A <-> B (with inhibitor)
+   * Tests the {@link ConvenienceKinetics} for A &lt;-&gt; B (with inhibitor)
    * @throws Throwable
    */
   @Test
@@ -342,7 +342,7 @@ public class UniUniKineticsTest extends KineticsTest {
   
   
   /**
-   * Tests the {@link HillEquation} for A -> B (with activator)
+   * Tests the {@link HillEquation} for A -&gt; B (with activator)
    * @throws Throwable
    */
   @Test
@@ -352,7 +352,7 @@ public class UniUniKineticsTest extends KineticsTest {
   }
   
   /**
-   * Tests the {@link ConvenienceKinetics} for A -> B (with activator)
+   * Tests the {@link ConvenienceKinetics} for A -&gt; B (with activator)
    * @throws Throwable
    */
   @Test
@@ -371,7 +371,7 @@ public class UniUniKineticsTest extends KineticsTest {
   
   
   /**
-   * Tests the {@link HillEquation} for A <-> B (with activator)
+   * Tests the {@link HillEquation} for A &lt;-&gt; B (with activator)
    * @throws Throwable
    */
   @Test
@@ -381,7 +381,7 @@ public class UniUniKineticsTest extends KineticsTest {
   }
   
   /**
-   * Tests the {@link ConvenienceKinetics} for A <-> B (with activator)
+   * Tests the {@link ConvenienceKinetics} for A &lt;-&gt; B (with activator)
    * @throws Throwable
    */
   @Test
@@ -400,7 +400,7 @@ public class UniUniKineticsTest extends KineticsTest {
   
   
   /**
-   * Tests the {@link HillEquation} for A -> B (with catalyst)
+   * Tests the {@link HillEquation} for A -&gt; B (with catalyst)
    * @throws Throwable
    */
   @Test
@@ -410,7 +410,7 @@ public class UniUniKineticsTest extends KineticsTest {
   }
   
   /**
-   * Tests the {@link ConvenienceKinetics} for A -> B (with catalyst)
+   * Tests the {@link ConvenienceKinetics} for A -&gt; B (with catalyst)
    * @throws Throwable
    */
   @Test
@@ -428,7 +428,7 @@ public class UniUniKineticsTest extends KineticsTest {
   
   
   /**
-   * Tests the {@link ConvenienceKinetics} for A <-> B (with catalyst)
+   * Tests the {@link ConvenienceKinetics} for A &lt;-&gt; B (with catalyst)
    * @throws Throwable
    */
   @Test
@@ -438,7 +438,7 @@ public class UniUniKineticsTest extends KineticsTest {
   }
   
   /**
-   * Tests the {@link HillEquation} for A <-> B (with catalyst)
+   * Tests the {@link HillEquation} for A &lt;-&gt; B (with catalyst)
    * @throws Throwable
    */
   @Test

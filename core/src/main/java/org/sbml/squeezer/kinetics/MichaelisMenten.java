@@ -53,11 +53,11 @@ import de.zbit.util.ResourceManager;
  * href="http://identifiers.org/biomodels.sbo/SBO:0000275">275</a>, <a
  * href="http://identifiers.org/biomodels.sbo/SBO:0000276">276</a>, or <a
  * href="http://identifiers.org/biomodels.sbo/SBO:0000326">326</a>.
+ * (Aug 1, 2007)
  * 
  * @author Nadine Hassis
  * @author Andreas Dr&auml;ger
  * @author Sarah R. M&uuml;ller vom Hagen
- * @date Aug 1, 2007
  * @since 1.0
  * @version $Rev$
  */

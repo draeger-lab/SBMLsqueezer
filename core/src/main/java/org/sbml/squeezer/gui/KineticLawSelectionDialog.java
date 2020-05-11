@@ -41,13 +41,12 @@ import de.zbit.util.prefs.SBPreferences;
 import de.zbit.util.progressbar.AbstractProgressBar;
 
 /**
- * This is the main GUI class.
+ * This is the main GUI class. (Aug 3, 2007)
  * 
  * @author Nadine Hassis
  * @author Andreas Dr&auml;ger
  * @author Hannes Borch
  * @author Sebastian Nagel
- * @date Aug 3, 2007
  * @since 1.0
  * @version $Rev$
  */

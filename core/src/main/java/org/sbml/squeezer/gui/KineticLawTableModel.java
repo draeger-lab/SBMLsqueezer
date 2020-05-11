@@ -42,11 +42,10 @@ import de.zbit.util.progressbar.AbstractProgressBar;
 /**
  * Data model for the {@link KineticLawTable} that determins, which information
  * is displayed there and it provides methods to access comlumn or row names and
- * single elements in the table.
+ * single elements in the table. (2007-08-01)
  * 
  * @author Nadine Hassis
  * @author Andreas Dr&auml;ger
- * @date 2007-08-01
  * @since 1.0
  * @version $Rev$
  */

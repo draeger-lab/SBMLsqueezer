@@ -37,11 +37,10 @@ import de.zbit.gui.ColorPalette;
 
 /**
  * A renderer that paints the background of every second row white or in light
- * blue. For rows containing errors the background is set to a light red.
+ * blue. For rows containing errors the background is set to a light red. (Aug 1, 2007)
  * 
  * @author Nadine Hassis
  * @author Andreas Dr&auml;ger
- * @date Aug 1, 2007
  * @since 1.0
  * @version $Rev$
  */

@@ -26,12 +26,11 @@ package org.sbml.squeezer;
 /**
  * An exception that can be raised if a wront type of modification is assigned
  * to a reaction; it is a special kind of a
- * {@link RateLawNotApplicableException}.
+ * {@link RateLawNotApplicableException}. (Aug 13, 2007)
  * 
  * @since 1.0
  * @version $Rev$
  * @author Andreas Dr&auml;ger
- * @date Aug 13, 2007
  */
 public class ModificationException extends RateLawNotApplicableException {
   

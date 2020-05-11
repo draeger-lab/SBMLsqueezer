@@ -86,7 +86,7 @@ public class ReversibleKinetics extends KineticsTest {
   }
   
   /**
-   * Tests the {@link AdditiveModelLinear} for A -> B + C
+   * Tests the {@link AdditiveModelLinear} for A -&gt; B + C
    * @throws Throwable
    */
   @Test

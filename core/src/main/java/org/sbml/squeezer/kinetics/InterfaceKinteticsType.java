@@ -24,10 +24,9 @@
 package org.sbml.squeezer.kinetics;
 
 /**
- * Common super type for all interfaces that declare kinetics types.
+ * Common super type for all interfaces that declare kinetics types. (2010-11-09)
  * 
  * @author Andreas Dr&auml;ger
- * @date 2010-11-09
  * @since 1.3
  * @version $Rev$
  */

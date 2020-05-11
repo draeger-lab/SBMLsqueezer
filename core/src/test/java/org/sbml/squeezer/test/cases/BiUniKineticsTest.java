@@ -41,7 +41,7 @@ import org.sbml.squeezer.kinetics.TypeStandardVersion;
 
 /**
  * Class that tests the generated equations and derived units for reactions of the form
- * A + B (<)-> C and 2A (<)-> C.
+ * A + B (&lt;)-&gt; C and 2A (&lt;)-&gt; C.
  * @author Julianus Pfeuffer
  * @version $Rev$
  * @since 2.0
@@ -103,7 +103,7 @@ public class BiUniKineticsTest extends KineticsTest {
    *=========================================================*/
   
   /**
-   * Test for the {@link OrderedMechanism} for A + B -> C
+   * Test for the {@link OrderedMechanism} for A + B -&gt; C
    * @throws Throwable
    */
   @Test
@@ -118,7 +118,7 @@ public class BiUniKineticsTest extends KineticsTest {
    *=========================================================*/
   
   /**
-   * Test for the {@link CommonModularRateLaw} for A + B <=> C
+   * Test for the {@link CommonModularRateLaw} for A + B &lt;=&gt; C
    * @throws Throwable
    */
   @Test
@@ -128,7 +128,7 @@ public class BiUniKineticsTest extends KineticsTest {
   }
   
   /**
-   * Test for the {@link CommonModularRateLaw} for A + B <=> C
+   * Test for the {@link CommonModularRateLaw} for A + B &lt;=&gt; C
    * @throws Throwable
    */
   @Test
@@ -138,7 +138,7 @@ public class BiUniKineticsTest extends KineticsTest {
   }
   
   /**
-   * Test for the {@link CommonModularRateLaw} for A + B <=> C
+   * Test for the {@link CommonModularRateLaw} for A + B &lt;=&gt; C
    * @throws Throwable
    */
   @Test
@@ -148,7 +148,7 @@ public class BiUniKineticsTest extends KineticsTest {
   }
   
   /**
-   * Test for the {@link DirectBindingModularRateLaw} for A + B <=> C
+   * Test for the {@link DirectBindingModularRateLaw} for A + B &lt;=&gt; C
    * @throws Throwable
    */
   @Test
@@ -158,7 +158,7 @@ public class BiUniKineticsTest extends KineticsTest {
   }
   
   /**
-   * Test for the {@link SimultaneousBindingModularRateLaw} for A + B <=> C
+   * Test for the {@link SimultaneousBindingModularRateLaw} for A + B &lt;=&gt; C
    * @throws Throwable
    */
   @Test
@@ -168,7 +168,7 @@ public class BiUniKineticsTest extends KineticsTest {
   }
   
   /**
-   * Test for the {@link ForceDependentModularRateLaw} for A + B <=> C
+   * Test for the {@link ForceDependentModularRateLaw} for A + B &lt;=&gt; C
    * @throws Throwable
    */
   @Test
@@ -178,7 +178,7 @@ public class BiUniKineticsTest extends KineticsTest {
   }
   
   /**
-   * Test for the {@link PowerLawModularRateLaw} for A + B <=> C
+   * Test for the {@link PowerLawModularRateLaw} for A + B &lt;=&gt; C
    * @throws Throwable
    */
   @Test
@@ -188,7 +188,7 @@ public class BiUniKineticsTest extends KineticsTest {
   }
   
   /**
-   * Test for the {@link PowerLawModularRateLaw} for A + B <=> C
+   * Test for the {@link PowerLawModularRateLaw} for A + B &lt;=&gt; C
    * @throws Throwable
    */
   @Test
@@ -198,7 +198,7 @@ public class BiUniKineticsTest extends KineticsTest {
   }
   
   /**
-   * Test for the {@link PowerLawModularRateLaw} for A + B <=> C
+   * Test for the {@link PowerLawModularRateLaw} for A + B &lt;=&gt; C
    * @throws Throwable
    */
   @Test
@@ -208,7 +208,7 @@ public class BiUniKineticsTest extends KineticsTest {
   }
   
   /**
-   * Test for the {@link OrderedMechanism} for A + B <=> C
+   * Test for the {@link OrderedMechanism} for A + B &lt;=&gt; C
    * @throws Throwable
    */
   @Test
@@ -227,7 +227,7 @@ public class BiUniKineticsTest extends KineticsTest {
    *=========================================================*/
   
   /**
-   * Test for the {@link OrderedMechanism} for A + B <=> C
+   * Test for the {@link OrderedMechanism} for A + B &lt;=&gt; C
    * @throws Throwable
    */
   @Test
@@ -242,7 +242,7 @@ public class BiUniKineticsTest extends KineticsTest {
    *=========================================================*/
   
   /**
-   * Test for the {@link OrderedMechanism} for A + B <=> C
+   * Test for the {@link OrderedMechanism} for A + B &lt;=&gt; C
    * @throws Throwable
    */
   @Test
@@ -265,7 +265,7 @@ public class BiUniKineticsTest extends KineticsTest {
    *=========================================================*/
   
   /**
-   * Test for the {@link CommonModularRateLaw} for 2A -> C
+   * Test for the {@link CommonModularRateLaw} for 2A -&gt; C
    * @throws Throwable
    */
   @Test
@@ -275,7 +275,7 @@ public class BiUniKineticsTest extends KineticsTest {
   }
   
   /**
-   * Test for the {@link DirectBindingModularRateLaw} for 2A -> C
+   * Test for the {@link DirectBindingModularRateLaw} for 2A -&gt; C
    * @throws Throwable
    */
   @Test
@@ -285,7 +285,7 @@ public class BiUniKineticsTest extends KineticsTest {
   }
   
   /**
-   * Test for the {@link PowerLawModularRateLaw} for 2A -> C
+   * Test for the {@link PowerLawModularRateLaw} for 2A -&gt; C
    * @throws Throwable
    */
   @Test
@@ -295,7 +295,7 @@ public class BiUniKineticsTest extends KineticsTest {
   }
   
   /**
-   * Test for the {@link SimultaneousBindingModularRateLaw} for 2A -> C
+   * Test for the {@link SimultaneousBindingModularRateLaw} for 2A -&gt; C
    * @throws Throwable
    */
   @Test
@@ -305,7 +305,7 @@ public class BiUniKineticsTest extends KineticsTest {
   }
   
   /**
-   * Test for the {@link ForceDependentModularRateLaw} for 2A -> C
+   * Test for the {@link ForceDependentModularRateLaw} for 2A -&gt; C
    * @throws Throwable
    */
   @Test
@@ -321,7 +321,7 @@ public class BiUniKineticsTest extends KineticsTest {
   
   
   /**
-   * Test for the {@link CommonModularRateLaw} for 2A <=> C
+   * Test for the {@link CommonModularRateLaw} for 2A &lt;=&gt; C
    * @throws Throwable
    */
   @Test
@@ -331,7 +331,7 @@ public class BiUniKineticsTest extends KineticsTest {
   }
   
   /**
-   * Test for the {@link DirectBindingModularRateLaw} for 2A <=> C
+   * Test for the {@link DirectBindingModularRateLaw} for 2A &lt;=&gt; C
    * @throws Throwable
    */
   @Test
@@ -341,7 +341,7 @@ public class BiUniKineticsTest extends KineticsTest {
   }
   
   /**
-   * Test for the {@link PowerLawModularRateLaw} for 2A <=> C
+   * Test for the {@link PowerLawModularRateLaw} for 2A &lt;=&gt; C
    * @throws Throwable
    */
   @Test
@@ -351,7 +351,7 @@ public class BiUniKineticsTest extends KineticsTest {
   }
   
   /**
-   * Test for the {@link SimultaneousBindingModularRateLaw} for 2A <=> C
+   * Test for the {@link SimultaneousBindingModularRateLaw} for 2A &lt;=&gt; C
    * @throws Throwable
    */
   @Test
@@ -361,7 +361,7 @@ public class BiUniKineticsTest extends KineticsTest {
   }
   
   /**
-   * Test for the {@link ForceDependentModularRateLaw} for 2A <=> C
+   * Test for the {@link ForceDependentModularRateLaw} for 2A &lt;=&gt; C
    * @throws Throwable
    */
   @Test

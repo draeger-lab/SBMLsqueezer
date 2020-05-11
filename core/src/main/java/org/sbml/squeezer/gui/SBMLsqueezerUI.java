@@ -152,10 +152,9 @@ ChangeListener, PropertyChangeListener, TabClosingListener {
   private static final transient ResourceBundle WARNINGS = ResourceManager.getBundle(Bundles.WARNINGS);
   
   /**
-   * This is what the graphical user interface of SBMLsqueezer can do...
+   * This is what the graphical user interface of SBMLsqueezer can do... (2009-09-11)
    * 
    * @author Andreas Dr&auml;ger
-   * @date 2009-09-11
    * @since 1.3
    */
   public static enum Command implements ActionCommand {

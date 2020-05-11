@@ -37,10 +37,9 @@ import de.zbit.gui.wizard.WizardPanelDescriptor;
 import de.zbit.util.ResourceManager;
 
 /**
- * This class implements the descriptor for the equation panel
+ * This class implements the descriptor for the equation panel (Feb 25, 2012)
  * 
  * @author Sebastian Nagel
- * @date Feb 25, 2012
  * @since 2.0
  * @version $Rev: 830 $
  */

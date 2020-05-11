@@ -40,10 +40,9 @@ import org.sbml.squeezer.util.Bundles;
 import de.zbit.util.ResourceManager;
 
 /**
- * This class is a libSBML independent converter for JSBML models.
+ * This class is a libSBML independent converter for JSBML models. (Aug 9, 2011)
  * 
  * @author Sarah R. M&uuml;ller vom Hagen
- * @date Aug 9, 2011
  * @since 2.0
  * @version $Rev$
  */

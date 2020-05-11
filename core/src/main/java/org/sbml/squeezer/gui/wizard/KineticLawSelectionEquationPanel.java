@@ -82,10 +82,9 @@ import de.zbit.util.prefs.SBPreferences;
 import de.zbit.util.progressbar.gui.ProgressBarSwing;
 
 /**
- * This class implements the reaction frame
+ * This class implements the reaction frame (Feb 25, 2012)
  * 
  * @author Sebastian Nagel
- * @date Feb 25, 2012
  * @since 2.0
  * @version $Rev: 830 $
  */

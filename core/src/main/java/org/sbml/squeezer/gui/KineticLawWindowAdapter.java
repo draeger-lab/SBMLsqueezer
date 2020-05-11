@@ -54,10 +54,9 @@ import de.zbit.util.progressbar.AbstractProgressBar;
 
 /**
  * This class allows SBMLsqueezer to create a kinetic law interactively for just
- * one reaction.
+ * one reaction. (2009-10-22)
  * 
  * @author Andreas Dr&auml;ger
- * @date 2009-10-22
  * @since 1.3
  * @version $Rev$
  */

@@ -26,10 +26,9 @@ package org.sbml.squeezer.kinetics;
 /**
  * All implementing classes represent kinetic equations that require all
  * participating species to take part with integer stoichiometry (reactants and
- * products).
+ * products). (2009-09-24)
  * 
  * @author Andreas Dr&auml;ger
- * @date 2009-09-24
  * @since 1.3
  * @version $Rev$
  */

@@ -44,10 +44,9 @@ import de.zbit.util.ResourceManager;
 
 
 /**
- * This class provides methods to create JSBML models independently from libSBML.
+ * This class provides methods to create JSBML models independently from libSBML. (Aug 9, 2011)
  * 
  * @author Sarah R. M&uuml;ller vom Hagen
- * @date Aug 9, 2011
  * @since 2.0
  * @version $Rev$
  */

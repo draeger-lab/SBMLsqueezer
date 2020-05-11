@@ -42,11 +42,10 @@ import de.zbit.util.ResourceManager;
 /**
  * This class creates the common modular rate law (CM) according to
  * Liebermeister et al. 2010: &ldquo;Modular rate laws for enzymatic reactions:
- * thermodynamics, elasticities, and implementation&rdquo;.
+ * thermodynamics, elasticities, and implementation&rdquo;. (2009-09-21)
  * 
  * @author Andreas Dr&auml;ger
  * @author Sarah R. M&uuml;ller vom Hagen
- * @date 2009-09-21
  * @since 1.3
  * @version $Rev$
  */

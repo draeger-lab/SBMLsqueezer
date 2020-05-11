@@ -57,13 +57,12 @@ import de.zbit.util.ResourceManager;
  * method in general works the same way as the according one for the convenience
  * kinetic. Each enzyme's fraction is multiplied with a reaction constant that
  * is global for the eynzme's reaction.
- * </p>
+ * </p> (Aug 1, 2007)
  * 
  * @author Nadine Hassis
  * @author Andreas Dr&auml;ger
  * @author Hannes Borch
  * @author Sarah R. M&uuml;ller vom Hagen
- * @date Aug 1, 2007
  * @since 1.0
  * @version $Rev$
  */

@@ -39,8 +39,9 @@ import org.sbml.squeezer.util.Bundles;
 import de.zbit.util.ResourceManager;
 
 /**
+ * (16:44:54)
+ *
  * @author Andreas Dr&auml;ger
- * @date 16:44:54
  * @version $Rev$
  */
 public class RestrictedSpaceKinetics extends GeneralizedMassAction implements

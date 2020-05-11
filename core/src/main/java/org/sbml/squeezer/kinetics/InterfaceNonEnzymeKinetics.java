@@ -25,10 +25,9 @@ package org.sbml.squeezer.kinetics;
 
 /**
  * If a kinetic law object implements this interface, it can be applied to
- * reactions that are catalyzed by species that are not an enzyme.
+ * reactions that are catalyzed by species that are not an enzyme. (2009-09-22)
  * 
  * @author Andreas Dr&auml;ger
- * @date 2009-09-22
  * @since 1.3
  * @version $Rev$
  */

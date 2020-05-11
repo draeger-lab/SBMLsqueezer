@@ -26,11 +26,10 @@ package org.sbml.squeezer;
 /**
  * This is an enumeration of the two possible ways of how to ensure consistent
  * units within an SBML model; reacting species might either be given in
- * molecule counts ({@link #amount}) or their {@link #concentration}.
+ * molecule counts ({@link #amount}) or their {@link #concentration}. (2010-10-29)
  * 
  * @author Andreas Dr&auml;ger
  * @author Sebastian Nagel
- * @date 2010-10-29
  * @version $Rev$
  * @since 2.0
  */

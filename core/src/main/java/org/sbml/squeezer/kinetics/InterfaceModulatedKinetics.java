@@ -25,10 +25,9 @@ package org.sbml.squeezer.kinetics;
 
 /**
  * All implementing kinetic laws allow activatiors or inhibitors to take part in
- * the reaction process.
+ * the reaction process. (2009-09-23)
  * 
  * @author Andreas Dr&auml;ger
- * @date 2009-09-23
  * @since 1.3
  * @version $Rev$
  */

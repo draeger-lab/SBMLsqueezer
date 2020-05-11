@@ -41,12 +41,11 @@ import de.zbit.sbml.util.SBMLtools;
 import de.zbit.util.ResourceManager;
 
 /**
- * Rate law for the bi-uni or bi-bi ordered mechanism.
+ * Rate law for the bi-uni or bi-bi ordered mechanism. (Aug 1, 2007)
  * 
  * @author Nadine Hassis
  * @author Andreas Dr&auml;ger
  * @author Sarah R. M&uuml;ller vom Hagen
- * @date Aug 1, 2007
  * @since 1.0
  * @version $Rev$
  */

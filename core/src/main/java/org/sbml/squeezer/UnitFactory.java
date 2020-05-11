@@ -52,10 +52,9 @@ import de.zbit.util.ResourceManager;
  * A factory class that creates frequently used instances of {@link Unit} and
  * {@link UnitDefinition} if these are not yet present in a {@link Model}. To
  * this end, it always checks the {@link Model} and tries to obtain existing
- * {@link UnitDefinition}s from the {@link Model} whenever this is possible.
+ * {@link UnitDefinition}s from the {@link Model} whenever this is possible. (2010-10-22)
  * 
  * @author Andreas Dr&auml;ger
- * @date 2010-10-22
  * @version $Rev$
  */
 public class UnitFactory {

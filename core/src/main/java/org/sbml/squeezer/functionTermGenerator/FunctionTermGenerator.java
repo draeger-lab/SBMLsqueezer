@@ -80,7 +80,6 @@ public class FunctionTermGenerator {
 
   /**
    * @param model, that a default function term should be assigned
-   * @return the kineticsGeneRegulation
    */
   public void generateFunctionTerms(Model model) throws Exception {
 

@@ -28,10 +28,9 @@ package org.sbml.squeezer.kinetics;
  * enzyme-catalyzed reactions with exactly two reactants (or one reactant with a
  * stoichiometry of two) and two products (or one product with a stoichiometry
  * of two). An enzyme does not necessarily have to be assigned to the reaction
- * explicitely.
+ * explicitely. (2009-09-22)
  * 
  * @author Andreas Dr&auml;ger
- * @date 2009-09-22
  * @since 1.3
  * @version $Rev$
  */

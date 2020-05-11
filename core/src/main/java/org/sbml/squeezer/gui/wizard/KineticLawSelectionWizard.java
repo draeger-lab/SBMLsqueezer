@@ -42,13 +42,12 @@ import de.zbit.gui.wizard.WizardPanelDescriptor;
 import de.zbit.util.ResourceManager;
 
 /**
- * This class implements a Wizard for the KineticLawGenerator.
+ * This class implements a Wizard for the KineticLawGenerator. (Feb 25, 2012)
  * 
  * @see Wizard
  * @see KineticLawGenerator
  * 
  * @author Sebastian Nagel
- * @date Feb 25, 2012
  * @since 2.0
  * @version $Rev: 830 $
  */

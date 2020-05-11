@@ -26,10 +26,9 @@ package org.sbml.squeezer.kinetics;
 /**
  * A kinetic law that implements this interface can be applied to
  * enzyme-catalyzed reactions with exactly one reactant with stoichiometry one
- * and exactly one product with stoichiometry one.
+ * and exactly one product with stoichiometry one. (2009-09-22)
  * 
  * @author Andreas Dr&auml;ger
- * @date 2009-09-22
  * @since 1.3
  * @version $Rev$
  */

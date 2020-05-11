@@ -45,11 +45,10 @@ import de.zbit.util.ResourceManager;
 
 /**
  * Represents the power-law modular rate law (PM) from Liebermeister et al.
- * 2010, see <a href="http://bioinformatics.oxfordjournals.org/content/26/12/1528">Bioinformatics</a>
+ * 2010, see <a href="http://bioinformatics.oxfordjournals.org/content/26/12/1528">Bioinformatics</a> (2009-09-17)
  * 
  * @author Andreas Dr&auml;ger
  * @author Sarah R. M&uuml;ller vom Hagen
- * @date 2009-09-17
  * @since 1.3
  * @version $Rev$
  */

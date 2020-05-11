@@ -45,11 +45,10 @@ import de.zbit.util.ResourceManager;
  * kinetic law of an irreversible enzyme reaction, which is not modulated, and
  * in which all reacting species do not interact: Kinetics of enzymes that react
  * with one or several substances, their substrates, that bind independently.
- * The enzymes do not catalyse the reactions in both directions.
+ * The enzymes do not catalyse the reactions in both directions. (Feb 6, 2008)
  * 
  * @author Andreas Dr&auml;ger
  * @author Sarah R. M&uuml;ller vom Hagen
- * @date Feb 6, 2008
  * @since 1.0
  * @version $Rev$
  */

@@ -70,11 +70,10 @@ import de.zbit.util.logging.LogUtil;
  * kinetic laws and also to select the default kinetic equation for this
  * specific type. This class can also answer several questions regarding a
  * reaction, for instance, whether a reaction is follows a bi-bi mechanism. This
- * can be used for GUIs to display reaction properties to a user.
+ * can be used for GUIs to display reaction properties to a user. (2009-10-01)
  * 
  * @author Andreas Dr&auml;ger
  * @author Sarah R. M&uuml;ller vom Hagen
- * @date 2009-10-01
  * @since 1.3
  * @version $Rev$
  */

@@ -77,10 +77,9 @@ import de.zbit.util.prefs.SBPreferences;
 import de.zbit.util.progressbar.AbstractProgressBar;
 
 /**
- * Creates a table that displays all created kinetic equationns.
+ * Creates a table that displays all created kinetic equationns. (Nov 13, 2007)
  * 
  * @author Andreas Dr&auml;ger
- * @date Nov 13, 2007
  * @since 1.0
  * @version $Rev$
  */

@@ -64,14 +64,13 @@ import de.zbit.util.progressbar.AbstractProgressBar;
 
 /**
  * This class identifies and generates the missing kinetic laws for a the
- * selected model in the given plug-in.
+ * selected model in the given plug-in. (Aug 1, 2007)
  * 
  * @since 1.0
  * @version $Rev$
  * @author Nadine Hassis
  * @author Andreas Dr&auml;ger
  * @author Sarah R. M&uuml;ller vom Hagen
- * @date Aug 1, 2007
  */
 public class KineticLawGenerator {
   

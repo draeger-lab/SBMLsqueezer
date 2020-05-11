@@ -38,7 +38,7 @@ import org.sbml.squeezer.kinetics.ZerothOrderReverseGMAK;
 
 /**
  * Class that tests the generated equations and derived units for reactions of
- * the form A (<)-> _
+ * the form A (&lt;)-&gt; _
  * 
  * @author Julianus Pfeuffer
  * @version $Rev$
@@ -77,7 +77,7 @@ public class ZeroProductsTest extends KineticsTest {
   
   
   /**
-   * Tests {@link GeneralizedMassAction} Kinetics for the reaction A -> _ with 0th order forward reaction
+   * Tests {@link GeneralizedMassAction} Kinetics for the reaction A -&gt; _ with 0th order forward reaction
    * @throws Throwable
    */
   @Test
@@ -87,7 +87,7 @@ public class ZeroProductsTest extends KineticsTest {
   }
   
   /**
-   * Tests {@link GeneralizedMassAction} Kinetics for the reaction A -> _ with 0th order reverse reaction
+   * Tests {@link GeneralizedMassAction} Kinetics for the reaction A -&gt; _ with 0th order reverse reaction
    * @throws Throwable
    */
   @Test
@@ -104,7 +104,7 @@ public class ZeroProductsTest extends KineticsTest {
   
   
   /**
-   * Tests {@link GeneralizedMassAction} Kinetics for the reaction A <=> _ with 0th order forward reaction
+   * Tests {@link GeneralizedMassAction} Kinetics for the reaction A &lt;=&gt; _ with 0th order forward reaction
    * @throws Throwable
    */
   @Test
@@ -114,7 +114,7 @@ public class ZeroProductsTest extends KineticsTest {
   }
   
   /**
-   * Tests {@link GeneralizedMassAction} Kinetics for the reaction A <=> _ with 0th order reverse reaction
+   * Tests {@link GeneralizedMassAction} Kinetics for the reaction A &lt;=&gt; _ with 0th order reverse reaction
    * @throws Throwable
    */
   @Test

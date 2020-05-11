@@ -28,8 +28,9 @@ import java.util.ResourceBundle;
 import de.zbit.util.ResourceManager;
 
 /**
+ * Date: 2009-10-22
+ *
  * @author Andreas Dr&auml;ger
- * @date 2009-10-22
  * @version $Rev$
  * @since 2.0
  */

@@ -49,11 +49,10 @@ import de.zbit.util.ResourceManager;
 
 /**
  * This class has many factory methods for the creation of parameters to be used
- * in varous kinetic equations for a specific model.
+ * in varous kinetic equations for a specific model. (2010-10-22)
  * 
  * @author Andreas Dr&auml;ger
  * @author Sarah R. M&uuml;ller vom Hagen
- * @date 2010-10-22
  * @version $Rev$
  */
 public class ParameterFactory {
@@ -715,7 +714,7 @@ public class ParameterFactory {
    * @param enzymeID
    *            can be null.
    * @param bindingNum
-   *            if <= 0 not considered.
+   *            if &lt;= 0 not considered.
    * @return
    */
   public LocalParameter parameterKi(String inhibitorSpecies, String enzymeID,
@@ -1195,7 +1194,7 @@ public class ParameterFactory {
   
   /**
    * Needed in convenience kinetics to correct the units of the root terms in
-   * Eq. (24) of the paper Liebermeister, W. & Klipp, E. Bringing metabolic
+   * Eq. (24) of the paper Liebermeister, W. &amp; Klipp, E. Bringing metabolic
    * networks to life: convenience rate law and thermodynamic constraints Theor
    * Biol Med Model, 2006, 3, 41.
    * @return

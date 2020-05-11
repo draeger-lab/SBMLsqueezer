@@ -27,10 +27,9 @@ package org.sbml.squeezer.kinetics;
  * The possible selections for the three versions of modular rate laws (cf.
  * <a href="http://bioinformatics.oxfordjournals.org/cgi/content/abstract/btq141v1">
  * Liebermeister et al. (2010)</a>, Modular rate laws for enzymatic reactions:
- * thermodynamics, elasticities, and implementation)
+ * thermodynamics, elasticities, and implementation) (2010-10-29)
  * 
  * @author Andreas Dr&auml;ger
- * @date 2010-10-29
  * @version $Rev$
  * @since 2.0
  */

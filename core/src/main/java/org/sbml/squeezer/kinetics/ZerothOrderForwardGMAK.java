@@ -37,10 +37,9 @@ import de.zbit.util.ResourceManager;
 
 /**
  * This class creates generalized mass action rate equations with zeroth order
- * in all reactants.
+ * in all reactants. (Feb 8, 2008)
  * 
  * @author Andreas Dr&auml;ger
- * @date Feb 8, 2008
  * @since 1.0
  * @version $Rev$
  */

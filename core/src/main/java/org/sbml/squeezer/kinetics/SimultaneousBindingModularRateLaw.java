@@ -41,11 +41,10 @@ import de.zbit.util.ResourceManager;
 
 /**
  * This class creates the simultaneous binding modular rate law (SM) according
- * to Liebermeister et al. 2010.
+ * to Liebermeister et al. 2010. (2009-09-21)
  * 
  * @author Andreas Dr&auml;ger
  * @author Sarah R. M&uuml;ller vom Hagen
- * @date 2009-09-21
  * @since 1.3
  * @version $Rev$
  */

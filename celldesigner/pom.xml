@@ -19,6 +19,13 @@
 
         <finalName>${project.parent.artifactId}-CellDesignerPlugin-${project.version}</finalName>
 
+        <resources>
+            <resource>
+                <directory>${project.build.directory}/site/</directory>
+                <targetPath>${basedir}/../docs/${project.artifactId}</targetPath>
+            </resource>
+        </resources>
+
         <pluginManagement>
             <plugins>
 

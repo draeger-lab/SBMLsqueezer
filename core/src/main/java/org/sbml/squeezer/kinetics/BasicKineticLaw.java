@@ -49,13 +49,12 @@ import org.sbml.squeezer.UnitConsistencyType;
  * maintains all these in dedicated lists. All variants of {@link KineticLaw}s
  * that are to be displayed in SBMLsqueezer's GUI and to be available in
  * SBMLsqueezer at all must extend this class and at least one of the interfaces
- * in this package.
+ * in this package. (Aug 1, 2007)
  * 
  * @author Andreas Dr&auml;ger
  * @author Nadine Hassis
  * @author Hannes Borch
  * @author Sarah R. M&uuml;ller vom Hagen
- * @date Aug 1, 2007
  * @since 1.0
  * @version $Rev$
  */

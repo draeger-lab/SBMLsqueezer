@@ -13,6 +13,11 @@
         <head>
             <![CDATA[<link rel="stylesheet" href="css/font-awesome-4.7.0/css/font-awesome.min.css"/>]]>
         </head>
+        <menu name="Modules">
+            <item name = "Parent Project" href="../index.html"/>
+            <item name = "Core" href="index.html"/>
+            <item name = "Celldesigner Plugin" href="../celldesigner/index.html"/>
+        </menu>
         <menu ref="reports"/>
     </body>
     <skin>

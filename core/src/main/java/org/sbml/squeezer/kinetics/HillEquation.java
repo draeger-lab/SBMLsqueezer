@@ -44,10 +44,10 @@ import de.zbit.util.ResourceManager;
 /**
  * This is the generalized version of Hill's equation as suggested by
  * Cornish-Bowden (2004, p. 314, &ldquo;Fundamentals of Enzyme Kinetics&rdquo;).
- * 
+ * (2010-03-25)
+ *
  * @author Andreas Dr&auml;ger
  * @author Sarah R. M&uuml;ller vom Hagen
- * @date 2010-03-25
  * @since 1.3
  * @version $Rev$
  */

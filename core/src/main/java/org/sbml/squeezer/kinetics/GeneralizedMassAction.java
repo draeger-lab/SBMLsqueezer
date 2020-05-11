@@ -44,13 +44,12 @@ import de.zbit.util.ResourceManager;
 /**
  * This class creates rate equations according to the generalized mass action
  * rate law. For details see Heinrich and Schuster, "The regulation of Cellular
- * Systems", pp. 14-17, 1996.
+ * Systems", pp. 14-17, 1996. (Aug 1, 2007)
  * 
  * @author Nadine Hassis
  * @author Andreas Dr&auml;ger
  * @author Hannes Borch
  * @author Sarah R. M&uuml;ller vom Hagen
- * @date Aug 1, 2007
  * @since 1.0
  * @version $Rev$
  */

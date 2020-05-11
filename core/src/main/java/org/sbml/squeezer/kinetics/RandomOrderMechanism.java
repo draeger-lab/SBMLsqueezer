@@ -44,12 +44,11 @@ import de.zbit.util.ResourceManager;
 /**
  * This class creates a kinetic equation according to the random-order
  * ternary-complex mechanism (see Cornish-Bowden: Fundamentals of Enzyme
- * Kinetics, p. 169, 2004).
+ * Kinetics, p. 169, 2004). (Aug 1, 2007)
  * 
  * @author Nadine Hassis
  * @author Andreas Dr&auml;ger
  * @author Sarah R. M&uuml;ller vom Hagen
- * @date Aug 1, 2007
  * @since 1.0
  * @version $Rev$
  */

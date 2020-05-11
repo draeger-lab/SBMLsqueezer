@@ -25,12 +25,11 @@ package org.sbml.squeezer;
 
 /**
  * An exception to be thrown if the selected kinetics is not applicable to the
- * given reaction.
+ * given reaction. (Aug 14, 2007)
  * 
  * @since 1.0
  * @version $Rev$
  * @author Andreas Dr&auml;ger
- * @date Aug 14, 2007
  */
 public class RateLawNotApplicableException extends Exception {
   

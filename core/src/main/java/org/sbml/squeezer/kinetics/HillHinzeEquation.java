@@ -46,13 +46,12 @@ import de.zbit.util.ResourceManager;
  * This class creates a Hill equation as defined in the paper &ldquo;Hill
  * Kinetics meets P Systems: A Case Study on Gene Regulatory Networks as
  * Computing Agents in silico and in vivo&rdquo; of Hinze, T.; Hayat, S.;
- * Lenser, T.; Matsumaru, N., and Dittrich, P., 2007.
+ * Lenser, T.; Matsumaru, N., and Dittrich, P., 2007. (Aug 7, 2007)
  * 
  * @author Jochen Supper
  * @author Nadine Hassis
  * @author Andreas Dr&auml;ger
  * @author Sarah R. M&uuml;ller vom Hagen
- * @date Aug 7, 2007
  * @since 1.0
  * @version $Rev$
  */
