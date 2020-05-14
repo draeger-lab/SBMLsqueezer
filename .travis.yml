@@ -3,6 +3,8 @@ sudo: false
 dist: trusty
 jdk:
 - oraclejdk8
+maven:
+  - "3.6.3-1"
 notifications:
   email: false
 #  ant jar_incl-libs
