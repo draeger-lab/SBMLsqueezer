@@ -11,6 +11,7 @@ before_install:
   - sudo tar xf /tmp/apache-maven-*.tar.gz -C /opt
   - sudo ln -s /opt/apache-maven-3.6.3 /opt/maven
   - cat /etc/profile.d/maven.sh
+  - mvn -version
 script:
 #- travis_wait java -cp dist/SBMLsqueezer-2.1.1/SBMLsqueezer_v2.1.1.jar:lib/junit-4.8.jar org.junit.runner.JUnitCore org.sbml.squeezer.test.cases.SBMLsqueezerTestSuite
   - mvn clear compile package
