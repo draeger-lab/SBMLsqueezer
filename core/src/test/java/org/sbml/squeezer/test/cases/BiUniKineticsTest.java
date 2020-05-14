@@ -43,7 +43,7 @@ import org.sbml.squeezer.kinetics.TypeStandardVersion;
  * Class that tests the generated equations and derived units for reactions of the form
  * A + B (&lt;)-&gt; C and 2A (&lt;)-&gt; C.
  * @author Julianus Pfeuffer
- * @version $Rev$
+ *
  * @since 2.0
  */
 public class BiUniKineticsTest extends KineticsTest {

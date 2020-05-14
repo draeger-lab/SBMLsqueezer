@@ -132,7 +132,7 @@ import de.zbit.util.prefs.SBPreferences;
  * to this UI class and will therefore start the given action.
  * 
  * @author Andreas Dr&auml;ger
- * @version $Rev: 1092 $
+ *
  * @since 1.0
  */
 public class SBMLsqueezerUI extends BaseFrame implements ActionListener,

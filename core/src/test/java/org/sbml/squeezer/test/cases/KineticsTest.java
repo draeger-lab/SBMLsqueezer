@@ -64,7 +64,7 @@ import de.zbit.util.prefs.SBPreferences;
  * units.
  * 
  * @author Andreas Dr&auml;ger
- * @version $Rev$
+ * 
  * @since 2.0
  */
 public abstract class KineticsTest {

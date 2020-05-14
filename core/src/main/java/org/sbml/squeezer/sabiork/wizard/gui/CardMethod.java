@@ -49,7 +49,7 @@ import org.sbml.squeezer.sabiork.wizard.model.WizardProperties;
  * SABIO-RK wizard.
  * 
  * @author Matthias Rall
- * @version $Rev$
+ * 
  * @since 2.0
  */
 public class CardMethod extends Card {

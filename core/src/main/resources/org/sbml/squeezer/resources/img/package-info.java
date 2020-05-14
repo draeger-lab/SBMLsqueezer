@@ -26,7 +26,7 @@
  * All icons and images that are used by the graphical user interface of
  * SBMLsqueezer can be found in this package.
  * 
- * @version $Rev$
+ * 
  * @since 2.0
  */
 package org.sbml.squeezer.resources.img;

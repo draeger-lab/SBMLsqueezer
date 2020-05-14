@@ -55,7 +55,7 @@ import de.zbit.util.ResourceManager;
  * {@link UnitDefinition}s from the {@link Model} whenever this is possible. (2010-10-22)
  * 
  * @author Andreas Dr&auml;ger
- * @version $Rev$
+ * 
  */
 public class UnitFactory {
   

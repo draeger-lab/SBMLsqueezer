@@ -75,7 +75,7 @@ import de.zbit.util.logging.LogUtil;
  * @author Andreas Dr&auml;ger
  * @author Sarah R. M&uuml;ller vom Hagen
  * @since 1.3
- * @version $Rev$
+ *
  */
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public class ReactionType {

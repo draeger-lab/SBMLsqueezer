@@ -49,7 +49,7 @@ import org.sbml.squeezer.io.SBMLio;
  * all of the models in all sub-folders.
  * 
  * @author Andreas Dr&auml;ger
- * @version $Rev$
+ *
  * @since 2.0
  */
 @Ignore

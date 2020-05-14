@@ -40,7 +40,7 @@ import org.sbml.squeezer.sabiork.wizard.model.WizardProperties;
  * wizard.
  * 
  * @author Matthias Rall
- * @version $Rev$
+ * 
  * @since 2.0
  */
 public class CardSummaryM extends Card {

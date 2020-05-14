@@ -37,7 +37,7 @@ import org.sbml.squeezer.sabiork.wizard.model.WizardProperties;
  * A class that allows the storage of {@link SearchAResult}.
  * 
  * @author Matthias Rall
- * @version $Rev$
+ *
  * @since 2.0
  */
 public class TableModelSearchAResults extends AbstractTableModel {
@@ -227,7 +227,7 @@ public class TableModelSearchAResults extends AbstractTableModel {
   /**
    * 
    * @author Roland Keller
-   * @version $Rev$
+   *
    */
   public class SearchAResult {
     

@@ -29,7 +29,7 @@ package org.sbml.squeezer.kinetics;
  * 
  * @author Andreas Dr&auml;ger
  * @since 1.3
- * @version $Rev$
+ * 
  */
 public interface InterfaceNonEnzymeKinetics extends InterfaceKinteticsType {
   

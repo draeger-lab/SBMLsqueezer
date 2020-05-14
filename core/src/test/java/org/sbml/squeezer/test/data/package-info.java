@@ -24,7 +24,7 @@
 
 /**
  * 
- * @version $Rev$
+ *
  * @since 2.0
  */
 package org.sbml.squeezer.test.data;

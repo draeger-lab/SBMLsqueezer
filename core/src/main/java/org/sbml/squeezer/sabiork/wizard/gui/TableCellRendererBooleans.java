@@ -33,7 +33,7 @@ import javax.swing.table.TableCellRenderer;
  * A class that renders {@link Boolean} values as disabled check boxes.
  * 
  * @author Matthias Rall
- * @version $Rev$
+ *
  * @since 2.0
  */
 public class TableCellRendererBooleans implements TableCellRenderer {

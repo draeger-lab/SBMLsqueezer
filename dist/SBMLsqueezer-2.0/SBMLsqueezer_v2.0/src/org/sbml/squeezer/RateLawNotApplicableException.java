@@ -28,7 +28,7 @@ package org.sbml.squeezer;
  * given reaction.
  * 
  * @since 1.0
- * @version $Rev: 1081 $
+ * 
  * @author Andreas Dr&auml;ger
  * @date Aug 14, 2007
  */

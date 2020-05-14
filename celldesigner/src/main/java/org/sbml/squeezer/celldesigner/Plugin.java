@@ -45,7 +45,7 @@ import de.zbit.util.ResourceManager;
  * @author Nadine Hassis
  * @author Andreas Dr&auml;ger
  * @author Hannes Borch
- * @version $Rev$
+ * 
  * @since 1.0
  */
 public class Plugin extends AbstractCellDesignerPlugin {

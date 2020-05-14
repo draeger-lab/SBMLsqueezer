@@ -52,7 +52,7 @@ import de.zbit.util.ResourceManager;
  * @author Sarah R. M&uuml;ller vom Hagen
  * @date Aug 1, 2007
  * @since 1.0
- * @version $Rev: 1095 $
+ * 
  */
 public class GeneralizedMassAction extends BasicKineticLaw implements
 InterfaceNonEnzymeKinetics, InterfaceReversibleKinetics,

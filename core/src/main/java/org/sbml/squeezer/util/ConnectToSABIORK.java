@@ -53,7 +53,7 @@ import org.sbml.squeezer.RateLawNotApplicableException;
 
 /**
  * @author Roland Keller
- * @version $Rev$
+ * 
  * @since 2.0
  */
 public class ConnectToSABIORK {

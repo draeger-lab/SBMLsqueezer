@@ -286,10 +286,11 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.10.3</version>
+                <version>3.2.0</version>
                 <configuration>
                     <overview>{project.basedir}/src/main/javadoc/overview.html</overview>
-                    <stylesheet>java</stylesheet>
+                    <stylesheetfile>${basedir}/src/site/resources/css/javadoc.css</stylesheetfile>
+                    <skip>false</skip>
                 </configuration>
             </plugin>
         </plugins>

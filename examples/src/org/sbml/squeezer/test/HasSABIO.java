@@ -41,7 +41,7 @@ import org.sbml.squeezer.sabiork.wizard.SABIORKWizard;
  * files.
  * 
  * @author Andreas Dr&auml;ger
- * @version $Rev$
+ * 
  * @since 2.0
  */
 public class HasSABIO {

@@ -68,7 +68,7 @@ import de.zbit.util.progressbar.AbstractProgressBar;
  * selected model in the given plug-in.
  * 
  * @since 1.0
- * @version $Rev: 1091 $
+ * 
  * @author Nadine Hassis
  * @author Andreas Dr&auml;ger
  * @author Sarah R. M&uuml;ller vom Hagen

@@ -31,7 +31,7 @@ import org.sbml.squeezer.sabiork.wizard.model.KineticLawImporter;
  * A class for representing a result of the automatic search.
  * 
  * @author Matthias Rall
- * @version $Rev$
+ * 
  * @since 2.0
  */
 public class SearchAResult {

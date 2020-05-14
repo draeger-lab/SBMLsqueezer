@@ -26,7 +26,7 @@
  * 
  * @author Andreas Dr&auml;ger
  * @author Julianus Pfeuffer
- * @version $Rev$
+ *
  * @since 2.0
  */
 package org.sbml.squeezer.test.cases;

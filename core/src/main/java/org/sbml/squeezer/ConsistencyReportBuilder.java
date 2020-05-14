@@ -36,7 +36,7 @@ import de.zbit.util.StringUtil;
  * {@link FormatBuilder}.
  * 
  * @author Andreas Dr&auml;ger
- * @version $Rev$
+ * 
  * @since 2.0
  */
 public class ConsistencyReportBuilder {

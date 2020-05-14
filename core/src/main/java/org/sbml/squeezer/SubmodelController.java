@@ -68,7 +68,7 @@ import de.zbit.util.progressbar.AbstractProgressBar;
  * with the main {@link Model}
  * 
  * @since 2.0
- * @version $Rev$
+ *
  * @author Andreas Dr&auml;ger
  * @author Sebastian Nagel
  */

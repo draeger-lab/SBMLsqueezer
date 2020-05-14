@@ -51,7 +51,7 @@ import de.zbit.util.ResourceManager;
  * @author Sarah R. M&uuml;ller vom Hagen
  * @date 2009-09-17
  * @since 1.3
- * @version $Rev: 1081 $
+ *
  */
 public class PowerLawModularRateLaw extends BasicKineticLaw implements
 InterfaceUniUniKinetics, InterfaceBiUniKinetics, InterfaceBiBiKinetics,

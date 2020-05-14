@@ -27,7 +27,7 @@
  * that helps users to generate kinetic equations in one single step for the
  * entire model.
  * 
- * @version $Rev: 1090 $
+ * 
  * @since 2.0
  */
 package org.sbml.squeezer.gui.wizard;

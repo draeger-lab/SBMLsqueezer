@@ -26,7 +26,7 @@ import org.sbml.jsbml.text.parser.IFormulaParser;
  * @author Andreas Dr&auml;ger
  * @author Lisa Falk
  * @since 2.1.1
- * @version $Rev$
+ * 
  */
 
 public class FunctionTermGenerator {

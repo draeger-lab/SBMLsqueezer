@@ -34,7 +34,7 @@ import de.zbit.util.prefs.OptionGroup;
 
 /**
  * @author Roland Keller
- * @version $Rev: 1082 $
+ * 
  * @since 2.0
  */
 public interface SABIORKOptions extends KeyProvider {

@@ -53,7 +53,7 @@ import de.zbit.util.ResourceManager;
  * 
  * @author Andreas Dr&auml;ger
  * @author Sarah R. M&uuml;ller vom Hagen
- * @version $Rev$
+ * 
  */
 public class ParameterFactory {
   

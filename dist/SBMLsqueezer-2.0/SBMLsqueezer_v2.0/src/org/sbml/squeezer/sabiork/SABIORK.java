@@ -54,7 +54,7 @@ import org.sbml.squeezer.sabiork.util.XMLParser;
  * Web Services.
  * 
  * @author Matthias Rall
- * @version $Rev: 1082 $
+ *
  * @since 2.0
  */
 public class SABIORK {

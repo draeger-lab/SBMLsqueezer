@@ -55,7 +55,7 @@ import de.zbit.util.ResourceManager;
  * @author Andreas Dr&auml;ger
  * @author Sarah R. M&uuml;ller vom Hagen
  * @since 1.3
- * @version $Rev: 1077 $
+ *
  */
 public class HSystem extends BasicKineticLaw implements
 InterfaceGeneRegulatoryKinetics, InterfaceModulatedKinetics,

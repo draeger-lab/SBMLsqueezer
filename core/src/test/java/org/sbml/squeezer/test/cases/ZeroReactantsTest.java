@@ -41,7 +41,7 @@ import org.sbml.squeezer.kinetics.ZerothOrderReverseGMAK;
  * the form _ (&lt;)-&gt; B
  * 
  * @author Julianus Pfeuffer
- * @version $Rev$
+ * 
  * @since 2.0
  */
 public class ZeroReactantsTest extends KineticsTest {

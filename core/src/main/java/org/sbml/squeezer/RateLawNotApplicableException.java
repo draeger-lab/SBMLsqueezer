@@ -28,7 +28,7 @@ package org.sbml.squeezer;
  * given reaction. (Aug 14, 2007)
  * 
  * @since 1.0
- * @version $Rev$
+ *
  * @author Andreas Dr&auml;ger
  */
 public class RateLawNotApplicableException extends Exception {

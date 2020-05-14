@@ -30,7 +30,7 @@ import org.sbml.squeezer.sabiork.wizard.model.WizardProperties;
  * filter.
  * 
  * @author Matthias Rall
- * @version $Rev$
+ * 
  * @since 2.0
  */
 public class ComboBoxModelReactionFilters extends ComboBoxModelCaptions {
@@ -43,7 +43,7 @@ public class ComboBoxModelReactionFilters extends ComboBoxModelCaptions {
   /**
    * 
    * @author Matthias Rall
-   * @version $Rev$
+   * 
    */
   public enum ReactionFilter {
     

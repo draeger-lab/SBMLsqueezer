@@ -37,7 +37,7 @@ import de.zbit.util.prefs.SBPreferences;
  * rate equation generating core in a more complex application.
  * 
  * @author Andreas Dr&auml;ger
- * @version $Rev$
+ *
  * @since 2.0
  */
 public class SqueezeFile {

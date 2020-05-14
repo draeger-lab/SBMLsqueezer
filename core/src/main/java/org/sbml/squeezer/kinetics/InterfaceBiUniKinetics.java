@@ -31,7 +31,7 @@ package org.sbml.squeezer.kinetics;
  * 
  * @author Andreas Dr&auml;ger
  * @since 1.3
- * @version $Rev$
+ * 
  */
 public interface InterfaceBiUniKinetics extends InterfaceKinteticsType {
   

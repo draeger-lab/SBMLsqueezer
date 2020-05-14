@@ -37,7 +37,7 @@ import de.zbit.util.prefs.Range;
 /**
  * Options for SABIO-RK search.
  * @author Roland Keller
- * @version $Rev$
+ * 
  * @since 2.0
  */
 public interface SABIORKPreferences extends KeyProvider {

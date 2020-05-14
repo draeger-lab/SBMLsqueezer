@@ -31,7 +31,7 @@ import de.zbit.util.ResourceManager;
  * Date: 2009-10-22
  *
  * @author Andreas Dr&auml;ger
- * @version $Rev$
+ * 
  * @since 2.0
  */
 public enum Mode {

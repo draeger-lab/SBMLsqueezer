@@ -38,7 +38,7 @@ import org.sbml.squeezer.sabiork.wizard.model.WizardProperties;
  * A class that renders pH values as a color within a gradient.
  * 
  * @author Matthias Rall
- * @version $Rev$
+ * 
  * @since 2.0
  */
 public class TableCellRendererpHValues extends TableCellRendererColorGradient {

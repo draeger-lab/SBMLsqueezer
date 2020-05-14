@@ -27,7 +27,7 @@ package org.sbml.squeezer.sabiork.util;
  * A class of exceptions that occurred during the processing of HTTP requests.
  * 
  * @author Matthias Rall
- * @version $Rev$
+ *
  * @since 2.0
  */
 public class WebServiceResponseException extends Exception {

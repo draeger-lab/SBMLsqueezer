@@ -30,7 +30,7 @@ import java.util.Properties;
 
 /**
  * @author Matthias Rall
- * @version $Rev$
+ *
  * @since 2.0
  */
 public class WizardProperties {

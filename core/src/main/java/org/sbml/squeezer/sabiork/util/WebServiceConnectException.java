@@ -27,7 +27,7 @@ package org.sbml.squeezer.sabiork.util;
  * A class of exceptions produced by failed web service connections.
  * 
  * @author Matthias Rall
- * @version $Rev$
+ *
  * @since 2.0
  */
 public class WebServiceConnectException extends Exception {

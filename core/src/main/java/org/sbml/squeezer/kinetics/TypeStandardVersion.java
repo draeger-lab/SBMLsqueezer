@@ -30,7 +30,7 @@ package org.sbml.squeezer.kinetics;
  * thermodynamics, elasticities, and implementation) (2010-10-29)
  * 
  * @author Andreas Dr&auml;ger
- * @version $Rev$
+ * 
  * @since 2.0
  */
 public enum TypeStandardVersion {

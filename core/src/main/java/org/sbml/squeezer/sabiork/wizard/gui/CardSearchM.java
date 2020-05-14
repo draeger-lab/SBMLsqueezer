@@ -54,7 +54,7 @@ import org.sbml.squeezer.sabiork.wizard.model.WizardProperties;
  * A class that allows the manual search in the SABIO-RK wizard.
  * 
  * @author Matthias Rall
- * @version $Rev$
+ *
  * @since 2.0
  */
 public class CardSearchM extends Card implements ActionListener,

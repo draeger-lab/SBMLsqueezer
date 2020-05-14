@@ -35,7 +35,7 @@ import de.zbit.sbml.gui.SBMLModelSplitPane;
  * A dialog showing the structure of a model. Just for testing purposes.
  * 
  * @author Andreas Dr&auml;ger
- * @version $Rev: 1082 $
+ *
  * @since 2.0
  * @date 2010-04-09
  */

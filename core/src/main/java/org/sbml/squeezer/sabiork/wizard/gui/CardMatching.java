@@ -67,7 +67,7 @@ import org.sbml.squeezer.sabiork.wizard.model.WizardProperties;
  * A class that allows the manual matching of SBML components.
  * 
  * @author Matthias Rall
- * @version $Rev$
+ *
  * @since 2.0
  */
 public class CardMatching extends Card implements PropertyChangeListener {

@@ -26,7 +26,7 @@
  * A command-line based implementation of the SABIO-RK wizard.
  * 
  * @author Matthias Rall
- * @version $Rev: 1090 $
+ *
  * @since 2.0
  */
 package org.sbml.squeezer.sabiork.wizard.console;

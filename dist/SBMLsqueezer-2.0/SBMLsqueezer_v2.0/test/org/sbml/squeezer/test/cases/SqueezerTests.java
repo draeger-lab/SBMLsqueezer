@@ -58,7 +58,7 @@ import de.zbit.util.prefs.SBPreferences;
  * @author Sarah R. M&uuml;ller vom Hagen
  * @author Andreas Dr&auml;ger
  * @since 2.0
- * @version $Rev: 1082 $
+ * 
  */
 public class SqueezerTests extends TestCase {
   

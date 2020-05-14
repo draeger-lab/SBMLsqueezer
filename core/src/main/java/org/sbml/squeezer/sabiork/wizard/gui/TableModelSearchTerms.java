@@ -40,7 +40,7 @@ import de.zbit.util.prefs.SBPreferences;
  * A class that allows the storage of search terms.
  * 
  * @author Matthias Rall
- * @version $Rev$
+ * 
  * @since 2.0
  */
 public class TableModelSearchTerms extends AbstractTableModel {

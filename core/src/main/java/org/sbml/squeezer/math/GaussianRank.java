@@ -31,7 +31,7 @@ package org.sbml.squeezer.math;
  * @author Nadine Hassis
  * @author Andreas Dr&auml;ger
  * @since 1.0
- * @version $Rev$
+ *
  */
 public class GaussianRank {
   

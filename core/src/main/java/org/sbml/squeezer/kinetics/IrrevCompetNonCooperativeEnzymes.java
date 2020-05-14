@@ -48,7 +48,7 @@ import de.zbit.util.ResourceManager;
  * @author Andreas Dr&auml;ger
  * @author Sarah R. M&uuml;ller vom Hagen
  * @since 1.0
- * @version $Rev$
+ * 
  */
 public class IrrevCompetNonCooperativeEnzymes extends GeneralizedMassAction
 implements InterfaceIrreversibleKinetics, InterfaceModulatedKinetics,

@@ -27,7 +27,7 @@
  * search in SABIO-RK.
  * 
  * @author Matthias Rall
- * @version $Rev$
+ * 
  * @since 2.0
  */
 package org.sbml.squeezer.sabiork.wizard;

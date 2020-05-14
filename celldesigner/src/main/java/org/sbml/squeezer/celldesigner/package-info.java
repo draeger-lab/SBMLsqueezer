@@ -26,7 +26,7 @@
  * This package contains all necessary classes for the interaction between
  * CellDesigner and SBMLsqueezer.
  * 
- * @version $Rev$
+ *
  * @since 1.0
  */
 package org.sbml.squeezer.celldesigner;

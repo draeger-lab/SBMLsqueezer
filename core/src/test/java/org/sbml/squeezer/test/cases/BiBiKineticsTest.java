@@ -41,7 +41,7 @@ import org.sbml.squeezer.kinetics.TypeStandardVersion;
 /**
  * Test class to test reactions of the form A + B (&lt;)-&gt; C + D
  * @author Julianus Pfeuffer
- * @version $Rev$
+ * 
  * @since 2.0
  */
 public class BiBiKineticsTest extends KineticsTest {

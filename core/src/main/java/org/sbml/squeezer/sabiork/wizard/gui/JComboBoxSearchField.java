@@ -44,7 +44,7 @@ import org.sbml.squeezer.sabiork.util.WebServiceResponseException;
  * given SABIO-RK query field.
  * 
  * @author Matthias Rall
- * @version $Rev$
+ * 
  * @since 2.0
  */
 public class JComboBoxSearchField extends JComboBox implements KeyListener {

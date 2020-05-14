@@ -42,7 +42,7 @@ import org.sbml.squeezer.SubmodelController;
  * The model of the SABIO-RK wizard.
  * 
  * @author Matthias Rall
- * @version $Rev$
+ * 
  * @since 2.0
  */
 public class WizardModel implements PropertyChangeListener {

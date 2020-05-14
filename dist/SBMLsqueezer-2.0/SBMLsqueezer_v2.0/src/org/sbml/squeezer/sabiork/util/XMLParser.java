@@ -38,7 +38,7 @@ import javax.xml.stream.events.XMLEvent;
  * A class for simple XML parsing.
  * 
  * @author Matthias Rall
- * @version $Rev: 1082 $
+ *
  * @since 2.0
  */
 public class XMLParser {

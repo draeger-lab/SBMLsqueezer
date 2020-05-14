@@ -31,7 +31,7 @@ import javax.swing.border.EtchedBorder;
  * A class for drawing an etched horizontal line.
  * 
  * @author Matthias Rall
- * @version $Rev: 1082 $
+ *
  * @since 2.0
  */
 public class JComponentEtchedLine extends JComponent {

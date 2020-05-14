@@ -37,7 +37,7 @@ import de.zbit.util.progressbar.AbstractProgressBar;
 /**
  * 
  * @author Sarah R. M&uuml;ller vom Hagen
- * @version $Rev$
+ *
  * @since 2.0
  */
 public class ProgressAdapter {
@@ -48,7 +48,7 @@ public class ProgressAdapter {
   /**
    * 
    * @author Sarah R. M&uuml;ller vom Hagen
-   * @version $Rev$
+   *
    * @since 2.0
    */
   public static enum TypeOfProgress {

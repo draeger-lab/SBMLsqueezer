@@ -81,7 +81,7 @@ import de.zbit.util.progressbar.AbstractProgressBar;
  * 
  * @author Andreas Dr&auml;ger
  * @since 1.0
- * @version $Rev$
+ *
  */
 public class KineticLawTable extends JTable implements MouseInputListener {
   public static final transient ResourceBundle MESSAGES = ResourceManager.getBundle(Bundles.MESSAGES);
@@ -100,7 +100,7 @@ public class KineticLawTable extends JTable implements MouseInputListener {
   /**
    * 
    * @author Andreas Dr&auml;ger
-   * @version $Rev$
+   *
    * @since 2.0
    */
   private static final class TableModelWorker extends SwingWorker<KineticLawTableModel, Void> {

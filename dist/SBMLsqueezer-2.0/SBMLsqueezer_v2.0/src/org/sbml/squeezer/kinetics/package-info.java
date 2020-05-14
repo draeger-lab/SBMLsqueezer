@@ -29,7 +29,7 @@
  * org.sbml.squeezer.KineticLawGenerator}, which assigns kinetic laws to
  * reactions within a model.
  * 
- * @version $Rev: 1082 $
+ * 
  * @since 1.0
  */
 package org.sbml.squeezer.kinetics;

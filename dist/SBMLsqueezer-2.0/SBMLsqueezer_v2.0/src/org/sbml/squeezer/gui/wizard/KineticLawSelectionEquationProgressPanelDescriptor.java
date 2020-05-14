@@ -41,7 +41,7 @@ import de.zbit.util.progressbar.gui.ProgressBarSwing;
  * This class implements the descriptor for the progress panel
  * 
  * @author Sebastian Nagel
- * @version $Rev: 1082 $
+ *
  * @since 2.0
  */
 public class KineticLawSelectionEquationProgressPanelDescriptor extends WizardPanelDescriptor implements PropertyChangeListener {

@@ -47,7 +47,7 @@ import de.zbit.util.progressbar.AbstractProgressBar;
  * @author Nadine Hassis
  * @author Andreas Dr&auml;ger
  * @since 1.0
- * @version $Rev$
+ * 
  */
 public class KineticLawTableModel extends AbstractTableModel {
   /**

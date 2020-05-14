@@ -62,7 +62,7 @@ import org.sbml.squeezer.sabiork.wizard.model.WizardProperties;
 
 /**
  * @author Roland Keller
- * @version $Rev$
+ *
  * @since 2.0
  */
 public class CardSearchResultsM extends Card implements ActionListener,

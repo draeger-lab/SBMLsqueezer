@@ -86,7 +86,7 @@ import de.zbit.util.progressbar.gui.ProgressBarSwing;
  * 
  * @author Sebastian Nagel
  * @since 2.0
- * @version $Rev: 830 $
+ *
  */
 public class KineticLawSelectionEquationPanel extends JPanel implements ActionListener, PropertyChangeListener {
   

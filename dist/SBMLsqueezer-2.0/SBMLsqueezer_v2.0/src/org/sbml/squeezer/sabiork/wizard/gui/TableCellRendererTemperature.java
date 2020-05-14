@@ -38,7 +38,7 @@ import org.sbml.squeezer.sabiork.wizard.model.WizardProperties;
  * A class that renders a temperature as a color within a gradient.
  * 
  * @author Matthias Rall
- * @version $Rev: 1082 $
+ *
  * @since 2.0
  */
 public class TableCellRendererTemperature extends

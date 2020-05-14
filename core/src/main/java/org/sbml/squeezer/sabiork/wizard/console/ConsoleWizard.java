@@ -49,7 +49,7 @@ import org.sbml.squeezer.sabiork.wizard.model.WizardModel;
  * The console version of the SABIO-RK wizard.
  * 
  * @author Matthias Rall
- * @version $Rev$
+ * 
  * @since 2.0
  */
 public class ConsoleWizard {

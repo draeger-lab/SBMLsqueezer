@@ -51,7 +51,7 @@ import org.sbml.squeezer.KineticLawGenerator;
  * A collection of helper methods for JUnit testing of SBMLsqueezer.
  * 
  * @author Andreas Dr&auml;ger
- * @version $Rev$
+ *
  * @since 2.0
  */
 @SuppressWarnings("deprecation")

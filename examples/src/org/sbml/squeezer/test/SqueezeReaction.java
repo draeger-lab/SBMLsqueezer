@@ -37,7 +37,7 @@ import org.sbml.squeezer.kinetics.TypeStandardVersion;
 
 /**
  * @author Andreas Dr&auml;ger
- * @version $Rev$
+ * 
  * @since 2.0
  */
 public class SqueezeReaction {

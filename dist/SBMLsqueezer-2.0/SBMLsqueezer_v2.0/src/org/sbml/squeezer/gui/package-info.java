@@ -25,7 +25,7 @@
 /**
  * This package contains all necessary classes for the graphical user interface.
  * 
- * @version $Rev: 1082 $
+ * 
  * @since 1.0
  */
 package org.sbml.squeezer.gui;

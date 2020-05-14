@@ -27,7 +27,7 @@
  * reaction type analysis, kineticl law generation and some specialized
  * exceptions.
  * 
- * @version $Rev$
+ * 
  * @since 1.0
  */
 package org.sbml.squeezer;

@@ -29,7 +29,7 @@ import org.junit.runners.Suite.SuiteClasses;
 
 /**
  * @author Andreas Dr&auml;ger
- * @version $Rev: 1092 $
+ * 
  * @since 2.0
  */
 @RunWith(value=Suite.class)

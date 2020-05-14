@@ -27,7 +27,7 @@ package org.sbml.squeezer.util;
  * Localization support.
  * 
  * @author Sebastian Nagel
- * @version $Rev: 1082 $
+ * 
  * @since 2.0
  */
 public class Bundles {

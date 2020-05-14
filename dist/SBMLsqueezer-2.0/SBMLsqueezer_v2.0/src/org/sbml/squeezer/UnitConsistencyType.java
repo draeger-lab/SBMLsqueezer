@@ -31,7 +31,7 @@ package org.sbml.squeezer;
  * @author Andreas Dr&auml;ger
  * @author Sebastian Nagel
  * @date 2010-10-29
- * @version $Rev: 1082 $
+ * 
  * @since 2.0
  */
 public enum UnitConsistencyType {

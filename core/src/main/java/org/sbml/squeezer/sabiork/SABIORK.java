@@ -54,7 +54,7 @@ import org.sbml.squeezer.sabiork.util.XMLParser;
  * Web Services.
  * 
  * @author Matthias Rall
- * @version $Rev$
+ *
  * @since 2.0
  */
 public class SABIORK {
@@ -62,7 +62,7 @@ public class SABIORK {
   /**
    * 
    * @author Matthias Rall
-   * @version $Rev$
+   *
    * @since 2.0
    */
   public enum QueryField {
@@ -127,7 +127,7 @@ public class SABIORK {
   /**
    * 
    * @author Matthias Rall
-   * @version $Rev$
+   *
    * @since 2.0
    */
   public enum Resource {

@@ -56,7 +56,7 @@ import org.sbml.squeezer.UnitConsistencyType;
  * @author Hannes Borch
  * @author Sarah R. M&uuml;ller vom Hagen
  * @since 1.0
- * @version $Rev$
+ * 
  */
 public abstract class BasicKineticLaw extends KineticLaw {
   

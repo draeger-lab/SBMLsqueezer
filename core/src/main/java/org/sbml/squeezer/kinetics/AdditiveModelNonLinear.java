@@ -42,7 +42,7 @@ import de.zbit.util.ResourceManager;
  * @author Sandra Nitschmann
  * @author Andreas Dr&auml;ger
  * @since 1.3
- * @version $Rev$
+ *
  */
 public class AdditiveModelNonLinear extends AdditiveModelLinear implements
 InterfaceGeneRegulatoryKinetics, InterfaceModulatedKinetics,

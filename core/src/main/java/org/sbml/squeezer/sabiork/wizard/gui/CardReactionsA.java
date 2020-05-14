@@ -50,7 +50,7 @@ import org.sbml.squeezer.sabiork.wizard.model.WizardModel;
  * automatic search.
  * 
  * @author Matthias Rall
- * @version $Rev$
+ * 
  * @since 2.0
  */
 public class CardReactionsA extends Card implements ListSelectionListener,

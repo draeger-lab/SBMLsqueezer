@@ -35,7 +35,7 @@ import de.zbit.sbml.gui.ReactionPanel;
  * A class that renders a {@link Reaction} as a LaTeX formula.
  * 
  * @author Matthias Rall
- * @version $Rev$
+ * 
  * @since 2.0
  */
 public class TableCellRendererReactions implements TableCellRenderer {

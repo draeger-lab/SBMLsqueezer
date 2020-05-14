@@ -15,7 +15,7 @@ import de.zbit.util.prefs.Option;
  * @author Andreas Dr&auml;ger
  * @author Lisa Falk
  * @since 2.1.1
- * @version $Rev$
+ *
  */
 
 public interface FunctionTermOptions extends KeyProvider{

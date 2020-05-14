@@ -38,7 +38,7 @@ import de.zbit.util.prefs.Option;
  * 
  * @author Sebastian Nagel
  * @since 2.0
- * @version $Rev: 808 $
+ *
  */
 
 public interface IOOptions extends KeyProvider {

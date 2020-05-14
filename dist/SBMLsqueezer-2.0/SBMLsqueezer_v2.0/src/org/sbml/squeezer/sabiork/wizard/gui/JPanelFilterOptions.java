@@ -35,7 +35,7 @@ import de.zbit.util.prefs.SBPreferences;
  * A class that provides the possibility to set the different filter options.
  * 
  * @author Matthias Rall
- * @version $Rev: 1082 $
+ *
  * @since 2.0
  */
 public class JPanelFilterOptions extends PreferencesPanelForKeyProvider{

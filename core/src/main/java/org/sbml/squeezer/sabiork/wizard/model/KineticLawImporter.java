@@ -51,7 +51,7 @@ import org.sbml.jsbml.util.filters.CVTermFilter;
  * another {@link Reaction} into a given {@link Reaction}.
  * 
  * @author Matthias Rall
- * @version $Rev$
+ * 
  * @since 2.0
  */
 public class KineticLawImporter {

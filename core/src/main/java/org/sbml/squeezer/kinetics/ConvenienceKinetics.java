@@ -64,7 +64,7 @@ import de.zbit.util.ResourceManager;
  * @author Hannes Borch
  * @author Sarah R. M&uuml;ller vom Hagen
  * @since 1.0
- * @version $Rev$
+ * 
  */
 public class ConvenienceKinetics extends GeneralizedMassAction implements
 InterfaceUniUniKinetics, InterfaceBiUniKinetics, InterfaceBiBiKinetics,

@@ -49,7 +49,7 @@ import de.zbit.util.ResourceManager;
  * 
  * @author Sebastian Nagel
  * @since 2.0
- * @version $Rev: 830 $
+ *
  */
 public class KineticLawSelectionWizard extends Wizard {
   

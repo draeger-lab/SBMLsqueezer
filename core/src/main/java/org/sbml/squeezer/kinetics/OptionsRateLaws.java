@@ -40,7 +40,7 @@ import de.zbit.util.prefs.Range;
  * User settings for rate laws.
  * 
  * @author Andreas Dr&auml;ger
- * @version $Rev$
+ * 
  * @since 2.0
  */
 public interface OptionsRateLaws extends KeyProvider {

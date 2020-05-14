@@ -26,7 +26,7 @@
  * The model behind the SABIO-RK wizard can be found in this package.
  * 
  * @author Mattias Rall
- * @version $Rev$
+ * 
  * @since 2.0
  */
 package org.sbml.squeezer.sabiork.wizard.model;

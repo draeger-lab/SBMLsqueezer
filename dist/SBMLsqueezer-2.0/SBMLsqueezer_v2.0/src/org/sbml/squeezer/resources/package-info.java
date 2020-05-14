@@ -27,7 +27,7 @@
  * be loaded by SBMLsqueezer are located in this package together with the class
  * Resource for loading these files.
  * 
- * @version $Rev: 1082 $
+ * 
  * @since 1.0
  */
 package org.sbml.squeezer.resources;

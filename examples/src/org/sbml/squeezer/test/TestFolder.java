@@ -46,7 +46,7 @@ import de.zbit.util.prefs.SBPreferences;
 
 /**
  * @author Julianus Pfeuffer
- * @version $Rev$
+ * 
  * @since 2.0
  */
 public class TestFolder extends Handler {

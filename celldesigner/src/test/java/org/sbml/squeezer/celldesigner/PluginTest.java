@@ -34,7 +34,7 @@ import jp.sbi.celldesigner.plugin.CellDesignerPlugin;
 
 /**
  * @author Andreas Dr&auml;ger
- * @version $Rev$
+ * 
  * @since 1.0
  */
 public class PluginTest {

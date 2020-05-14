@@ -39,7 +39,7 @@ import org.sbml.squeezer.sabiork.SABIORK.QueryField;
 
 /**
  * @author Matthias Rall
- * @version $Rev$
+ *
  * @since 2.0
  */
 public class SABIORKTest {

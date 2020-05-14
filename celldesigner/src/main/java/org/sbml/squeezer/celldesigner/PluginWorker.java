@@ -60,7 +60,7 @@ import de.zbit.util.StringUtil;
 
 /**
  * @author Andreas Dr&auml;ger
- * @version $Rev$
+ *
  * @since 2.0
  */
 public class PluginWorker extends SwingWorker<SBMLDocument, Void> {

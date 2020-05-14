@@ -56,7 +56,7 @@ import org.sbml.squeezer.sabiork.wizard.model.WizardProperties;
 
 /**
  * @author Roland Keller
- * @version $Rev$
+ * 
  * @since 2.0
  */
 public class CardSearchResultsA extends Card implements ActionListener,
@@ -69,7 +69,7 @@ PropertyChangeListener {
   
   /**
    * @author Roland Keller
-   * @version $Rev$
+   * 
    * @since 2.0
    */
   public enum SearchState {

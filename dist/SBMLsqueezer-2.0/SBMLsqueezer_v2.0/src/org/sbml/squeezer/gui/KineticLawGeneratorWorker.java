@@ -37,7 +37,7 @@ import de.zbit.util.ResourceManager;
  * 
  * @author Sebastian Nagel
  * @since 2.0
- * @version $Rev: 831 $
+ *
  */
 public class KineticLawGeneratorWorker extends SwingWorker<Void, Void> {
   /**
