@@ -1,5 +1,5 @@
 language: java
-sudo: false
+sudo: true
 dist: trusty
 jdk:
 - oraclejdk8
@@ -7,11 +7,7 @@ notifications:
   email: false
 #  ant jar_incl-libs
 before_install:
-  - wget https://www-us.apache.org/dist/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.tar.gz -P /tmp
-  - sudo tar xf /tmp/apache-maven-*.tar.gz -C /opt
-  - sudo ln -s /opt/apache-maven-3.6.3 /opt/maven
-  - cat /etc/profile.d/maven.sh
-  - mvn -version
+  - sudo apt-get update
 script:
 #- travis_wait java -cp dist/SBMLsqueezer-2.1.1/SBMLsqueezer_v2.1.1.jar:lib/junit-4.8.jar org.junit.runner.JUnitCore org.sbml.squeezer.test.cases.SBMLsqueezerTestSuite
   - mvn clear compile package
