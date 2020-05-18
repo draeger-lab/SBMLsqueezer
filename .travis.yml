@@ -9,3 +9,4 @@ notifications:
 script:
 #- travis_wait java -cp dist/SBMLsqueezer-2.1.1/SBMLsqueezer_v2.1.1.jar:lib/junit-4.8.jar org.junit.runner.JUnitCore org.sbml.squeezer.test.cases.SBMLsqueezerTestSuite
   - mvn clean compile package -DskipTests
+  - mvn site
