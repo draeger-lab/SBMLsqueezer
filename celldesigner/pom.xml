@@ -21,6 +21,10 @@
 
         <resources>
             <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+            <resource>
                 <directory>${project.build.directory}/site/</directory>
                 <targetPath>${basedir}/../docs/${project.artifactId}</targetPath>
             </resource>
@@ -77,7 +81,7 @@
         <repository>
             <id>local-repo-celldesigner</id>
             <name>Local Repository Celldesigner</name>
-            <url>file:${project.basedir}/celldesigner/src/lib/maven</url>
+            <url>file:${project.basedir}/src/lib/maven</url>
         </repository>
     </repositories>
 

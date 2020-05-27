@@ -27,6 +27,7 @@ import static org.junit.Assert.*;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import javax.xml.stream.XMLStreamException;
 import org.junit.Test;
@@ -48,7 +49,7 @@ public class SABIORKTest {
   public void testGetIDs() throws WebServiceConnectException,
   WebServiceResponseException, IOException, XMLStreamException {
     Integer[] expecteds = new Integer[] { 23934, 23936, 23937, 23938,
-        23939, 23940, 23941 };
+        23939, 23940, 23941, 54637 };
     List<Integer> actuals = SABIORK.getIDs(SABIORK.QueryField.ORGANISM
       + ":\"homo sapiens\""
       + SABIORK.getFilterOptionsQuery(true, false, true, true, 10.0,
@@ -84,8 +85,8 @@ public class SABIORKTest {
   @Test
   public void testGetKineticLawsString() throws WebServiceConnectException,
   WebServiceResponseException, IOException, XMLStreamException {
-    Integer[] expecteds = new Integer[] { 23934, 23936, 23937, 23938,
-        23939, 23940, 23941 };
+    Integer[] expecteds = new Integer[] { 23936, 23934, 23941, 23939,
+        23937, 23938, 23940, 54637 };
     List<KineticLaw> kineticLaws = SABIORK
         .getKineticLaws(SABIORK.QueryField.ORGANISM
           + ":\"homo sapiens\""

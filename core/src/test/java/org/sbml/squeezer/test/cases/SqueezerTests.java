@@ -62,7 +62,7 @@ public class SqueezerTests extends TestCase {
   
   //	private String testPath = System.getProperty("user.dir") + "/files/tests/SBML_test_cases/cases/semantic/001-100";
   //String testPath = System.getProperty("user.dir") + "/files/tests/sbml-test-cases-2011-06-15";
-  private String testPath = System.getProperty("user.home") + "/workspace/SBMLsimulatorCore/files/SBML_test_cases/cases/semantic/00001";
+  private String testPath = System.getProperty("user.dir") + "/src/test/resources/test_xmls";
   /**
    * List of test files
    */
@@ -111,8 +111,89 @@ public class SqueezerTests extends TestCase {
     long time = System.currentTimeMillis();
     logger.info("test if there are files in the given directory...");
     int numberOfFiles = listOfFiles.size();
+      System.out.println(testPath);
     assertTrue(numberOfFiles > 0);
     logger.info("    done in " + (System.currentTimeMillis() - time) + " ms.");
+  }
+
+  @Test
+  public void testReadingModels() {
+    long time = System.currentTimeMillis();
+    logger.info("Generate SBMLreader and SBMLwriter.");
+    boolean libSBMLAvailable = false;
+    try {
+      // In order to initialize libSBML, check the java.library.path.
+      System.loadLibrary("sbmlj");
+      // Extra check to be sure we have access to libSBML:
+      Class.forName("org.sbml.libsbml.libsbml");
+      libSBMLAvailable = true;
+    } catch (Error exc) {
+    } catch (Throwable exc) {
+    }
+    SBMLInputConverter<?> reader = null;
+    SBMLOutputConverter<?> writer = null;
+    if (!libSBMLAvailable) {
+      reader = new SqSBMLReader();
+      writer = new SqSBMLWriter();
+    } else {
+      reader = new LibSBMLReader();
+      writer = new LibSBMLWriter();
+    }
+    logger.info("    done in " + (System.currentTimeMillis() - time) + " ms.");
+
+
+
+    time = System.currentTimeMillis();
+
+    boolean failed = false;
+    String safePath = testPath;
+
+    logger.info("Generate SBMLsqueezer.");
+
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    SBMLsqueezer<?> squeezer = new SBMLsqueezer(reader, writer);
+
+    logger.info("Test files.");
+
+    Model currentModel = null;	// current model extracted from the current file
+    Model newModel = null;		// model after saving and importing the old model
+
+    File f = null;				// input file
+    File fnew = null;			// output file
+
+    int c_failed = 0;
+
+    boolean areEqual;			// result of comparing the current and new model
+
+    KineticLawGenerator klg = null;		// KineticLawGenerator for the current model
+
+    for (int i=0; i<listOfFiles.size(); i++) {
+      failed = false;
+      // try to extract models from files
+      f = listOfFiles.get(i);
+      // set test to passed
+      arrayOfTestStatus[i] = "passed";
+      logger.info(
+              "\n########################################################\n" +
+                      "#          test file " + (i + 1) + " of " + listOfFiles.size() + "\n" +
+                      "#          file: " + f.getAbsolutePath() +
+                      "\n########################################################\n");
+
+      try {
+        logger.info("\n----------------------------------------------\n" +
+                "           file to model" +
+                "\n----------------------------------------------");
+        squeezer.readSBMLSource(f.getAbsolutePath());
+      } catch (Throwable e) {
+        logger.log(Level.WARNING, "failed to convert Model: ", e);
+        failed = true;
+        c_failed++;
+        arrayOfTestStatus[i] = "failed to convert Model";
+        if (!continueAfterError) {
+          fail();
+        }
+      }
+    }
   }
   
   /**
@@ -325,18 +406,18 @@ public class SqueezerTests extends TestCase {
         try {
           squeezer.readSBMLSource(fnew.getAbsolutePath());
           newModel = (Model) squeezer.getSBMLIO().getOriginalModel();
-          
+
           // reset units
           newModel.setListOfUnitDefinitions(newModel.getListOfUnitDefinitions());
           for (UnitDefinition ud : currentModel.getListOfUnitDefinitions()) {
             UnitFactory.checkUnitDefinitions(ud, newModel);
           }
-          
+
           // compare models
-          
-          
+
+
           //areEqual = miniModel.equals(newMiniModel);
-          
+
           areEqual = SqueezertestFunctions.compareModels(currentModel, newModel);
           if (areEqual) {
             logger.info("    models are equal"+
@@ -354,8 +435,8 @@ public class SqueezerTests extends TestCase {
               fnew.deleteOnExit();
             }
           }
-          
-          
+
+
         } catch (Exception e) {
           logger.log(Level.WARNING, "failed to compare models.", e);
           failed = true;
@@ -366,7 +447,7 @@ public class SqueezerTests extends TestCase {
             fail();
           }
         }
-        
+
       }
       
     }

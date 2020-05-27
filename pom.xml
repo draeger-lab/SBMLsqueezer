@@ -123,6 +123,12 @@
         <developer>
             <name>Stefanie Hoffmann</name>
         </developer>
+        <developer>
+            <name>Eike Pertuch</name>
+            <id>eikept</id>
+            <url>https://github.com/eikept</url>
+            <email>eike.pertuch@student.uni-tuebingen.de</email>
+        </developer>
     </developers>
 
     <!-- ==================================================================================================== -->
@@ -378,7 +384,7 @@
         <dependency>
             <groupId>org.sbml.jsbml</groupId>
             <artifactId>jsbml</artifactId>
-            <version>1.6-SNAPSHOT</version>
+            <version>1.4a1</version>
         </dependency>
 
         <!-- Local Repository -->
@@ -407,11 +413,11 @@
             <version>1.0</version>
         </dependency>
 
-        <dependency>
-            <groupId>org.sbml.jsbml.modules</groupId>
-            <artifactId>jsbml-libSBMLio</artifactId>
-            <version>1.0</version>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.sbml.jsbml.modules</groupId>-->
+<!--            <artifactId>jsbml-libSBMLio</artifactId>-->
+<!--            <version>1.0</version>-->
+<!--        </dependency>-->
 
     </dependencies>
 
