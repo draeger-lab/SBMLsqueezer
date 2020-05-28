@@ -925,7 +925,18 @@ ChangeListener, PropertyChangeListener, TabClosingListener {
       .get(GUIOptions.SAVE_DIR), false, false,
       JFileChooser.FILES_ONLY, filterSBML, filterTeX, filterText);
     if (chooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
-      final File out = chooser.getSelectedFile();
+      SBFileFilter selectedFileFilter = (SBFileFilter) chooser.getFileFilter();
+      String filepath = chooser.getSelectedFile().getPath();
+      if(!(filepath.endsWith(".xml") || filepath.endsWith(".sbml") || filepath.endsWith(".tex") || filepath.endsWith(".txt"))) {
+        if (selectedFileFilter.equals(filterSBML)) {
+            filepath += ".xml";
+        } else if (selectedFileFilter.equals(filterTeX)) {
+            filepath += ".tex";
+        } else if (selectedFileFilter.equals(filterText)) {
+            filepath += ".txt";
+        }
+      }
+      final File out = new File(filepath);
       savedFile = out;
       if (out.getParentFile() != null) {
         prefs.put(GUIOptions.SAVE_DIR, out.getParentFile()
