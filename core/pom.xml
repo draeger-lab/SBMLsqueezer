@@ -8,6 +8,7 @@
         <version>2.1.1</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
+    <description>In the stand-alone mode, SBMLsqueezer evaluates the Systems Biology Ontology (SBO) annotations to extract this information.</description>
 
     <artifactId>core</artifactId>
 

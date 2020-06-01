@@ -8,6 +8,7 @@
         <version>2.1.1</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
+    <description>When used as a plug-in for CellDesigner it uses the information from the SBGN representation of all network components</description>
 
     <artifactId>celldesigner</artifactId>
 

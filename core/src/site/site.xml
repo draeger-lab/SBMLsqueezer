@@ -2,7 +2,7 @@
 <project name="SBMLsqueezer">
     <bannerLeft>
         <name>SBMLsqueezer</name>
-        <src>images/ICON_LOGO_SMALL_NOCOPYRIGHT.png</src>
+        <src>images/ICON_LOGO_SMALL_NOCOPYRIGHT_CORE.png</src>
     </bannerLeft>
     <bannerRight>
         <src>images/SBMLsqueezerIcon_128.png</src>
