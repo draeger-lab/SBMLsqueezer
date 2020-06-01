@@ -927,6 +927,7 @@ ChangeListener, PropertyChangeListener, TabClosingListener {
     if (chooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
       SBFileFilter selectedFileFilter = (SBFileFilter) chooser.getFileFilter();
       String filepath = chooser.getSelectedFile().getPath();
+      logger.info(filepath);
       if(!(filepath.endsWith(".xml") || filepath.endsWith(".sbml") || filepath.endsWith(".tex") || filepath.endsWith(".txt"))) {
         if (selectedFileFilter.equals(filterSBML)) {
             filepath += ".xml";

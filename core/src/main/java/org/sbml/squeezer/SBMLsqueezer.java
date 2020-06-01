@@ -50,8 +50,6 @@ import org.sbml.jsbml.SBMLException;
 import org.sbml.jsbml.SBMLInputConverter;
 import org.sbml.jsbml.SBMLOutputConverter;
 import org.sbml.jsbml.ext.qual.Sign;
-import org.sbml.jsbml.xml.libsbml.LibSBMLReader;
-import org.sbml.jsbml.xml.libsbml.LibSBMLWriter;
 import org.sbml.squeezer.functionTermGenerator.DefaultTerm;
 import org.sbml.squeezer.functionTermGenerator.FunctionTermGenerator;
 import org.sbml.squeezer.functionTermGenerator.FunctionTermOptions;
@@ -407,32 +405,8 @@ public class SBMLsqueezer<T> extends Launcher {
    * @param tryLoadingLibSBML
    */
   private void initializeReaderAndWriter(boolean tryLoadingLibSBML) {
-    if (tryLoadingLibSBML) {
-      if (libSBMLAvailable == null) {
-        try {
-          // In order to initialize libSBML, check the java.library.path.
-          System.loadLibrary("sbmlj");
-          // Extra check to be sure we have access to libSBML:
-          Class.forName("org.sbml.libsbml.libsbml");
-          logger.info(MESSAGES.getString("LOADING_LIBSBML"));
-          libSBMLAvailable = Boolean.TRUE;
-        } catch (Error e) {
-          libSBMLAvailable = Boolean.FALSE;
-        } catch (Throwable e) {
-          libSBMLAvailable = Boolean.FALSE;
-        }
-      }
-      if (libSBMLAvailable.booleanValue()) {
-        logger.info(MESSAGES.getString("LAUNCHING_LIBSBML"));
-        sbmlIo = (SBMLio<T>) new SBMLio<org.sbml.libsbml.Model>(
-            new LibSBMLReader(), new LibSBMLWriter());
-      }
-    }
-    if (sbmlIo == null) {
-      logger.info(MESSAGES.getString("LOADING_JSBML"));
-      sbmlIo = (SBMLio<T>) new SBMLio<Model>(new SqSBMLReader(),
-          new SqSBMLWriter());
-    }
+    logger.info(MESSAGES.getString("LOADING_JSBML"));
+    sbmlIo = (SBMLio<T>) new SBMLio<Model>(new SqSBMLReader(), new SqSBMLWriter());
   }
 
   /* (non-Javadoc)

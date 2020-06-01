@@ -371,20 +371,12 @@
             <version>1.6.5-1</version><!-- newer version | og: 1.6.2-2 -->
         </dependency>
 
-        <!-- EBI Repository -->
-
-        <dependency>
-            <groupId>org.sbml</groupId>
-            <artifactId>libsbml</artifactId>
-            <version>5.15.0</version>
-        </dependency>
-
         <!-- JSBML SNAPSHOT repository -->
 
         <dependency>
             <groupId>org.sbml.jsbml</groupId>
             <artifactId>jsbml</artifactId>
-            <version>1.4a1</version>
+            <version>1.5</version>
         </dependency>
 
         <!-- Local Repository -->
@@ -413,11 +405,6 @@
             <version>1.0</version>
         </dependency>
 
-<!--        <dependency>-->
-<!--            <groupId>org.sbml.jsbml.modules</groupId>-->
-<!--            <artifactId>jsbml-libSBMLio</artifactId>-->
-<!--            <version>1.0</version>-->
-<!--        </dependency>-->
 
     </dependencies>
 

@@ -24,7 +24,6 @@
 package org.sbml.squeezer.io;
 
 import static de.zbit.util.Utils.getMessage;
-import static org.sbml.jsbml.xml.libsbml.LibSBMLConstants.LINK_TO_LIBSBML;
 
 import java.io.File;
 import java.io.IOException;
@@ -133,9 +132,6 @@ ChangeListener {
    */
   private void setCurrentModel(File file, Model model, T origModel) {
     openedModel = model;
-    if (origModel != null) {
-      model.putUserObject(LINK_TO_LIBSBML, origModel);
-    }
     SBMLDocument doc = model.getSBMLDocument();
     if (doc == null) {
       doc = new SBMLDocument(model.getLevel(), model.getVersion());
@@ -239,11 +235,11 @@ ChangeListener {
   @SuppressWarnings("unchecked")
   public List<SBMLException> getWriteWarnings() {
     try {
-      return getWriteWarnings((T) listOfOpenedFiles.get(selectedModel).getDocument().getModel().getUserObject(LINK_TO_LIBSBML));
+      return getWriteWarnings((T) listOfOpenedFiles.get(selectedModel).getDocument().getModel());
     } catch(Exception exc) {
       logger.fine(getMessage(exc));
     }
-    return getWriteWarnings((T) openedModel.getUserObject(LINK_TO_LIBSBML));
+    return getWriteWarnings((T) openedModel);
   }
   
   /* (non-Javadoc)
@@ -321,7 +317,7 @@ ChangeListener {
       throws SBMLException, IOException {
     Model model = listOfOpenedFiles.get(selectedModel).getDocument().getModel();
     return writer.writeSBML(
-      (T) (model.getUserObject(LINK_TO_LIBSBML) != null ? model.getUserObject(LINK_TO_LIBSBML) : model),
+      (T) model,
       filename,
       System.getProperty("app.name"),
       System.getProperty("app.version")

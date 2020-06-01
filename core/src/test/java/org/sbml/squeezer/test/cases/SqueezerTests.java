@@ -39,8 +39,6 @@ import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBMLInputConverter;
 import org.sbml.jsbml.SBMLOutputConverter;
 import org.sbml.jsbml.UnitDefinition;
-import org.sbml.jsbml.xml.libsbml.LibSBMLReader;
-import org.sbml.jsbml.xml.libsbml.LibSBMLWriter;
 import org.sbml.squeezer.KineticLawGenerator;
 import org.sbml.squeezer.OptionsGeneral;
 import org.sbml.squeezer.SBMLsqueezer;
@@ -132,13 +130,10 @@ public class SqueezerTests extends TestCase {
     }
     SBMLInputConverter<?> reader = null;
     SBMLOutputConverter<?> writer = null;
-    if (!libSBMLAvailable) {
-      reader = new SqSBMLReader();
-      writer = new SqSBMLWriter();
-    } else {
-      reader = new LibSBMLReader();
-      writer = new LibSBMLWriter();
-    }
+
+    reader = new SqSBMLReader();
+    writer = new SqSBMLWriter();
+
     logger.info("    done in " + (System.currentTimeMillis() - time) + " ms.");
 
 
@@ -216,13 +211,10 @@ public class SqueezerTests extends TestCase {
     }
     SBMLInputConverter<?> reader = null;
     SBMLOutputConverter<?> writer = null;
-    if (!libSBMLAvailable) {
-      reader = new SqSBMLReader();
-      writer = new SqSBMLWriter();
-    } else {
-      reader = new LibSBMLReader();
-      writer = new LibSBMLWriter();
-    }
+
+    reader = new SqSBMLReader();
+    writer = new SqSBMLWriter();
+
     logger.info("    done in " + (System.currentTimeMillis() - time) + " ms.");
     
     
@@ -401,11 +393,11 @@ public class SqueezerTests extends TestCase {
         logger.info("\n----------------------------------------------\n"+
             "           compare models"+
             "\n----------------------------------------------");
-        currentModel = (Model) squeezer.getSBMLIO().getOriginalModel();
+        currentModel = squeezer.getSBMLIO().getSelectedModel();
         fnew = new File(safePath);
         try {
           squeezer.readSBMLSource(fnew.getAbsolutePath());
-          newModel = (Model) squeezer.getSBMLIO().getOriginalModel();
+          newModel = squeezer.getSBMLIO().getSelectedModel();
 
           // reset units
           newModel.setListOfUnitDefinitions(newModel.getListOfUnitDefinitions());
@@ -471,28 +463,6 @@ public class SqueezerTests extends TestCase {
   }
   
   /**
-   * test, if the libSBML is available.
-   * Note that a failure of this test does not lead to any problems
-   * as the functional components of this library are completely
-   * substituted.
-   */
-  @Test
-  public void testLibSBML() {
-    
-    boolean libSBMLAvailable = false;
-    try {
-      // In order to initialize libSBML, check the java.library.path.
-      System.loadLibrary("sbmlj");
-      // Extra check to be sure we have access to libSBML:
-      Class.forName("org.sbml.libsbml.libsbml");
-      libSBMLAvailable = true;
-    } catch (Error e) {
-    } catch (Throwable e) {
-    }
-    assertTrue(!libSBMLAvailable);
-  }
-  
-  /**
    * test if the program can be started with default settings
    */
   @Test
@@ -539,13 +509,11 @@ public class SqueezerTests extends TestCase {
     }
     SBMLInputConverter<?> reader = null;
     SBMLOutputConverter<?> writer = null;
-    if (!libSBMLAvailable) {
-      reader = new SqSBMLReader();
-      writer = new SqSBMLWriter();
-    } else {
-      reader = new LibSBMLReader();
-      writer = new LibSBMLWriter();
-    }
+
+    reader = new SqSBMLReader();
+    writer = new SqSBMLWriter();
+
+
     logger.info("    done in " + (System.currentTimeMillis() - time) + " ms.");
     
     
