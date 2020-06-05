@@ -6,5 +6,5 @@ jdk:
 notifications:
   email: false
 script:
-  - mvn clean compile package -DskipTests
+  - mvn clean compile package
   - mvn site
