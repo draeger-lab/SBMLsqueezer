@@ -103,7 +103,7 @@ public class SABIORKTest {
   @Test
   public void testGetSuggestions() throws WebServiceConnectException,
   WebServiceResponseException, IOException, XMLStreamException {
-    String[] expecteds = new String[] { "lung", "lung cancer cell",
+    String[] expecteds = new String[] { "lung", "lung mast cell", "lung cancer cell",
     "lung mucoepidermoid carcinoma" };
     List<String> actuals = SABIORK.getSuggestions(
       SABIORK.QueryField.TISSUE, "lu");

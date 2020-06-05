@@ -136,19 +136,19 @@ public class SABIORK {
     SBML_MODEL_BY_ENTRY_ID("http://sabio.h-its.org/sabioRestWebServices/kineticLaws/"),
     SBML_MODEL_BY_ENTRY_IDS("http://sabio.h-its.org/sabioRestWebServices/kineticLaws?kinlawids="),
     SBML_MODEL_BY_QUERY("http://sabio.h-its.org/sabioRestWebServices/searchKineticLaws/sbml?q="),
-    SUGGESTIONS_COMPOUNDS("http://sabio.h-its.org/sabioRestWebServices/suggestions/Compounds?searchCompounds="),
-    SUGGESTIONS_ENZYMES("http://sabio.h-its.org/sabioRestWebServices/suggestions/Enzymes?searchEnzymes="),
-    SUGGESTIONS_ORGANISMS("http://sabio.h-its.org/sabioRestWebServices/suggestions/Organisms?searchOrganisms="),
-    SUGGESTIONS_PATHWAYS("http://sabio.h-its.org/sabioRestWebServices/suggestions/Pathways?searchPathways="),
-    SUGGESTIONS_TISSUES("http://sabio.h-its.org/sabioRestWebServices/suggestions/Tissues?searchTissues="),
-    SUGGESTIONS_UNIPROT_IDS("http://sabio.h-its.org/sabioRestWebServices/suggestions/UniprotIDs?searchUniprotIDs="),
-    SUGGESTIONS_KEGG_COMPOUND_IDS("http://sabio.h-its.org/sabioRestWebServices/suggestions/KEGGCompoundIDs?searchKEGGCompoundIDs="),
-    SUGGESTIONS_KEGG_REACTION_IDS("http://sabio.h-its.org/sabioRestWebServices/suggestions/KEGGReactionIDs?searchKEGGReactionIDs="),
-    SUGGESTIONS_SABIO_COMPOUND_IDS("http://sabio.h-its.org/sabioRestWebServices/suggestions/SABIOCompoundIDs?searchSABIOCompoundIDs="),
-    SUGGESTIONS_SABIO_REACTION_IDS("http://sabio.h-its.org/sabioRestWebServices/suggestions/SABIOReactionIDs?searchSABIOReactionIDs="),
-    SUGGESTIONS_CHEBI_COMPOUND_IDS("http://sabio.h-its.org/sabioRestWebServices/suggestions/CHEBICompoundIDs?searchCHEBICompoundIDs="),
-    SUGGESTIONS_PUBCHEM_COMPOUND_IDS("http://sabio.h-its.org/sabioRestWebServices/suggestions/PUBCHEMCompoundIDs?searchPUBCHEMCompoundIDs="),
-    SUGGESTIONS_PUBMED_IDS("http://sabio.h-its.org/sabioRestWebServices/suggestions/PubmedIDs?searchPubmedIDs=");
+    SUGGESTIONS_COMPOUNDS("http://sabio.h-its.org/testSabio/sabioRestWebServices/suggestions/Compounds?searchCompounds="),
+    SUGGESTIONS_ENZYMES("http://sabio.h-its.org/testSabio/sabioRestWebServices/suggestions/Enzymes?searchEnzymes="),
+    SUGGESTIONS_ORGANISMS("http://sabio.h-its.org/testSabio/sabioRestWebServices/suggestions/Organisms?searchOrganisms="),
+    SUGGESTIONS_PATHWAYS("http://sabio.h-its.org/testSabio/sabioRestWebServices/suggestions/Pathways?searchPathways="),
+    SUGGESTIONS_TISSUES("http://sabio.h-its.org/testSabio/sabioRestWebServices/suggestions/Tissues?searchTissues="),
+    SUGGESTIONS_UNIPROT_IDS("http://sabio.h-its.org/testSabio/sabioRestWebServices/suggestions/UniprotIDs?searchUniprotIDs="),
+    SUGGESTIONS_KEGG_COMPOUND_IDS("http://sabio.h-its.org/testSabio/sabioRestWebServices/suggestions/KEGGCompoundIDs?searchKEGGCompoundIDs="),
+    SUGGESTIONS_KEGG_REACTION_IDS("http://sabio.h-its.org/testSabio/sabioRestWebServices/suggestions/KEGGReactionIDs?searchKEGGReactionIDs="),
+    SUGGESTIONS_SABIO_COMPOUND_IDS("http://sabio.h-its.org/testSabio/sabioRestWebServices/suggestions/SABIOCompoundIDs?searchSABIOCompoundIDs="),
+    SUGGESTIONS_SABIO_REACTION_IDS("http://sabio.h-its.org/testSabio/sabioRestWebServices/suggestions/SABIOReactionIDs?searchSABIOReactionIDs="),
+    SUGGESTIONS_CHEBI_COMPOUND_IDS("http://sabio.h-its.org/testSabio/sabioRestWebServices/suggestions/CHEBICompoundIDs?searchCHEBICompoundIDs="),
+    SUGGESTIONS_PUBCHEM_COMPOUND_IDS("http://sabio.h-its.org/testSabio/sabioRestWebServices/suggestions/PUBCHEMCompoundIDs?searchPUBCHEMCompoundIDs="),
+    SUGGESTIONS_PUBMED_IDS("http://sabio.h-its.org/sabioRestWebServices/testSabio/suggestions/PubmedIDs?searchPubmedIDs=");
     
     private final String url;
     
