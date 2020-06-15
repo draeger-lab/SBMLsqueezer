@@ -6,5 +6,5 @@ jdk:
 notifications:
   email: false
 script:
-  - mvn clean compile package
+  - mvn "-Dtest=!UniUniKineticsTest#testMichMentRev+testPMRLWegRev, !BiBiKineticsTest#testPowerLawModularRateLawWegRev" clean compile package
   - mvn site
