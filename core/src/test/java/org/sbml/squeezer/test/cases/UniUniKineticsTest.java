@@ -23,6 +23,7 @@
  */
 package org.sbml.squeezer.test.cases;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.sbml.jsbml.Compartment;
 import org.sbml.jsbml.KineticLaw;
@@ -178,6 +179,7 @@ public class UniUniKineticsTest extends KineticsTest {
    * @throws Throwable
    */
   @Test
+  @Ignore
   public void testMichMentRev() throws Throwable{
     KineticLaw kl = klg.createKineticLaw(r1, MichaelisMenten.class, true, TypeStandardVersion.cat, UnitConsistencyType.amount, 1d);
     test(r1, kl, "(vmaf_r1/kmc_r1_s1*s1*c1-vmar_r1/kmc_r1_p1*p1*c1)/(1+s1*c1/kmc_r1_s1+p1*c1/kmc_r1_p1)");
@@ -228,6 +230,7 @@ public class UniUniKineticsTest extends KineticsTest {
    * @throws Throwable
    */
   @Test
+  @Ignore
   public void testPMRLWegRev() throws Throwable{
     KineticLaw kl = klg.createKineticLaw(r1, PowerLawModularRateLaw.class, true, TypeStandardVersion.weg, UnitConsistencyType.amount, 1d);
     test(r1, kl, "vmag_r1*((s1*c1)^hco_r1/(1*(exponentiale)^(hco_r1*(scp_s1+scp_p1)/(2*T*R)))-(p1*c1)^hco_r1*1*(exponentiale)^(hco_r1*(scp_s1+scp_p1)/(2*T*R)))/(kmc_r1_s1^hco_r1*kmc_r1_p1^hco_r1)^(0.5)");
