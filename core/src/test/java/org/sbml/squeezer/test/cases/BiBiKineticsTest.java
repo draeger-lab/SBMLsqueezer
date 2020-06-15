@@ -56,7 +56,7 @@ public class BiBiKineticsTest extends KineticsTest {
    */
   @Override
   public Model initModel() {
-    SBMLDocument doc = new SBMLDocument(2, 4);
+    SBMLDocument doc = new SBMLDocument(3, 2);
     Model model = doc.createModel("bibi_model");
     Compartment c = model.createCompartment("c1");
     Species s1 = model.createSpecies("s1", c);
@@ -71,10 +71,10 @@ public class BiBiKineticsTest extends KineticsTest {
     
     r1 = model.createReaction("r1");
     r1.setReversible(false);
-    r1.createReactant(s1);
-    r1.createReactant(s2);
-    r1.createProduct(p1);
-    r1.createProduct(p2);
+    r1.createReactant(s1).setStoichiometry(1d);
+    r1.createReactant(s2).setStoichiometry(1d);
+    r1.createProduct(p1).setStoichiometry(1d);
+    r1.createProduct(p2).setStoichiometry(1d);
     r1.createModifier(e1);
     return model;
   }
@@ -90,7 +90,7 @@ public class BiBiKineticsTest extends KineticsTest {
   @Test
   public void testCommonModularRateLawRev() throws Throwable {
     KineticLaw kl2 = klg.createKineticLaw(r1, CommonModularRateLaw.class, true, TypeStandardVersion.cat, UnitConsistencyType.amount, 1d);
-    test(r1, kl2, "(vmaf_r1*(s1*c1/kmc_r1_s1)^hco_r1*(s2*c1/kmc_r1_s2)^hco_r1-vmar_r1*(p1*c1/kmc_r1_p1)^hco_r1*(p2*c1/kmc_r1_p2)^hco_r1)/((1+s1*c1/kmc_r1_s1)^hco_r1*(1+s2*c1/kmc_r1_s2)^hco_r1+(1+p1*c1/kmc_r1_p1)^hco_r1*(1+p2*c1/kmc_r1_p2)^hco_r1-1)");
+    test(r1, kl2, "(vmaf_r1*(s1*c1/kmc_r1_s1)^hco_r1*(s2*c1/kmc_r1_s2)^hco_r1-vmar_r1*(p1*c1/kmc_r1_p1)^hco_r1*(p2*c1/kmc_r1_p2)^hco_r1)/(((1+s1*c1/kmc_r1_s1)^hco_r1*(1+s2*c1/kmc_r1_s2)^hco_r1+(1+p1*c1/kmc_r1_p1)^hco_r1*(1+p2*c1/kmc_r1_p2)^hco_r1)-1)");
   }
   
   /**
@@ -130,7 +130,7 @@ public class BiBiKineticsTest extends KineticsTest {
   @Test
   public void testPowerLawModularRateLawWegRev() throws Throwable {
     KineticLaw kl = klg.createKineticLaw(r1, PowerLawModularRateLaw.class, true, TypeStandardVersion.weg, UnitConsistencyType.amount, 1d);
-    test(r1, kl, "vmag_r1*((s1*c1)^hco_r1*(s2*c1)^hco_r1/(1*e^(hco_r1*(scp_s1+scp_s2+scp_p1+scp_p2)/(2*T*R)))-(p1*c1)^hco_r1*(p2*c1)^hco_r1*1*e^(hco_r1*(scp_s1+scp_s2+scp_p1+scp_p2)/(2*T*R)))/(kmc_r1_s1^hco_r1*kmc_r1_s2^hco_r1*kmc_r1_p1^hco_r1*kmc_r1_p2^hco_r1)^(0.5)");
+    test(r1, kl, "vmag_r1*((s1*c1)^hco_r1*(s2*c1)^hco_r1/(1*(exponentiale)^(hco_r1*(scp_s1+scp_s2+scp_p1+scp_p2)/(2*T*R)))-(p1*c1)^hco_r1*(p2*c1)^hco_r1*1*(exponentiale)^(hco_r1*(scp_s1+scp_s2+scp_p1+scp_p2)/(2*T*R)))/(kmc_r1_s1^hco_r1*kmc_r1_s2^hco_r1*kmc_r1_p1^hco_r1*kmc_r1_p2^hco_r1)^(0.5)");
   }
   
   /**

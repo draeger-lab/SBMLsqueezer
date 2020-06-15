@@ -55,6 +55,7 @@ import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
 import org.sbml.jsbml.Unit;
 import org.sbml.jsbml.UnitDefinition;
+import org.sbml.jsbml.util.ValuePair;
 import org.sbml.squeezer.util.Bundles;
 import org.sbml.squeezer.util.ProgressAdapter;
 import org.sbml.squeezer.util.ProgressAdapter.TypeOfProgress;
@@ -320,16 +321,19 @@ public class SubmodelController {
      * Copy needed species and reactions.
      */
     if (modelOrig.isSetListOfReactions()) {
+      boolean isBelowL3_2 = modelOrig.getLevelAndVersion().compareTo(3, 2) < 0;
       for (Reaction reacOrig : modelOrig.getListOfReactions()) {
         /*
          * Let us find all fast reactions. This feature is currently
          * ignored.
          */
-        if (reacOrig.isFast()) {
-          if (listOfFastReactions == null) {
-            listOfFastReactions = new LinkedList<Reaction>();
+        if(isBelowL3_2) {
+          if (reacOrig.isFast()) {
+            if (listOfFastReactions == null) {
+              listOfFastReactions = new LinkedList<Reaction>();
+            }
+            listOfFastReactions.add(reacOrig);
           }
-          listOfFastReactions.add(reacOrig);
         }
         if (reactionID != null) {
           if (!reacOrig.getId().equals(reactionID)) {
@@ -360,7 +364,9 @@ public class SubmodelController {
             reac.getAnnotation().setAbout(reacOrig.getAnnotation().getAbout());
           }
           submodel.addReaction(reac);
-          reac.setFast(reacOrig.isFast());
+          if(isBelowL3_2) {
+            reac.setFast(reacOrig.isFast());
+          }
           reac.setReversible(reacOrig.getReversible());
           if (reacOrig.isSetListOfReactants()) {
             for (SpeciesReference specRefOrig : reacOrig.getListOfReactants()) {

@@ -56,7 +56,7 @@ public class ZeroReactantsTest extends KineticsTest {
    */
   @Override
   protected Model initModel() {
-    SBMLDocument doc = new SBMLDocument(2, 4);
+    SBMLDocument doc = new SBMLDocument(3, 2);
     Model model = doc.createModel("uniuni_model");
     Compartment c = model.createCompartment("c1");
     Species p1 = model.createSpecies("p1", c);
@@ -66,7 +66,7 @@ public class ZeroReactantsTest extends KineticsTest {
     }
     
     r1 = model.createReaction("r1");
-    r1.createProduct(p1);
+    r1.createProduct(p1).setStoichiometry(1d);
     r1.setReversible(false);
     
     return model;

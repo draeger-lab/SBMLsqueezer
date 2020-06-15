@@ -199,7 +199,7 @@ InterfaceModulatedKinetics {
   ASTNode denominator(String enzyme) {
     ASTNode denominator = new ASTNode(1, this);
     // TODO: is dimensionless the correct unit?
-    //SBMLtools.setUnits(denominator, Unit.Kind.DIMENSIONLESS);
+    SBMLtools.setUnits(denominator, Unit.Kind.DIMENSIONLESS);
     ASTNode competInhib = specificModificationSummand(enzyme);
     return competInhib == null ? denominator : denominator.plus(competInhib);
   }

@@ -57,14 +57,14 @@ public class ZeroProductsTest extends KineticsTest {
   @Override
   public Model initModel() {
     
-    SBMLDocument doc = new SBMLDocument(2, 4);
+    SBMLDocument doc = new SBMLDocument(3, 2);
     Model model = doc.createModel("uniuni_model");
     Compartment c = model.createCompartment("c1");
     Species s1 = model.createSpecies("s1", c);
     s1.setHasOnlySubstanceUnits(false);
     
     r1 = model.createReaction("r1");
-    r1.createReactant(s1);
+    r1.createReactant(s1).setStoichiometry(1d);
     r1.setReversible(false);
     
     return model;

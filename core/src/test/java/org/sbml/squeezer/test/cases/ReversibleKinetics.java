@@ -57,7 +57,7 @@ public class ReversibleKinetics extends KineticsTest {
     /**
      * Creation of species
      */
-    SBMLDocument doc = new SBMLDocument(2, 4);
+    SBMLDocument doc = new SBMLDocument(3, 2);
     Model model = doc.createModel("uniuni_model");
     Compartment c = model.createCompartment("c1");
     Species s1 = model.createSpecies("s1", c);
@@ -69,15 +69,19 @@ public class ReversibleKinetics extends KineticsTest {
     inh.setSBOTerm(20);
     act.setSBOTerm(462);
     kat.setSBOTerm(460);
+
+    for (Species s : model.getListOfSpecies()) {
+      s.setHasOnlySubstanceUnits(false);
+    }
     
     /**
      *  Reaction with 2 products and all three modifiers.
      */
     
     r1 = model.createReaction("r1");
-    r1.createReactant(s1);
-    r1.createProduct(p1);
-    r1.createProduct(p2);
+    r1.createReactant(s1).setStoichiometry(1d);
+    r1.createProduct(p1).setStoichiometry(1d);
+    r1.createProduct(p2).setStoichiometry(1d);
     r1.createModifier(act);
     r1.createModifier(kat);
     r1.createModifier(inh);
@@ -93,7 +97,7 @@ public class ReversibleKinetics extends KineticsTest {
   public void testAdditiveLinear() throws Throwable{
     TidySBMLWriter.write(model.getSBMLDocument(), System.out, ' ', (short) 2);
     KineticLaw kl = klg.createKineticLaw(r1, AdditiveModelLinear.class, false, TypeStandardVersion.cat, UnitConsistencyType.concentration, 1d);
-    test(r1, kl, "m_r1*(w_r1_p1*p1+w_r1_p2*p2+(b_r1+(v_r1_a1*a1+v_r1_k1*k1+v_r1_i1*i1)))");
+    test(r1, kl, "m_r1*(w_r1_p1*p1+w_r1_p2*p2+b_r1+v_r1_a1*a1+v_r1_k1*k1+v_r1_i1*i1)");
   }
   
   // TODO: More test cases!
