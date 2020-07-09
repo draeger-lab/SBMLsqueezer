@@ -3,6 +3,7 @@
     <bannerLeft>
         <name>SBMLsqueezer</name>
         <src>images/ICON_LOGO_SMALL_NOCOPYRIGHT.png</src>
+        <href>https://draeger-lab.github.io/SBMLsqueezer/</href>
     </bannerLeft>
     <bannerRight>
         <src>images/SBMLsqueezerIcon_128.png</src>

@@ -24,7 +24,7 @@
         <junit.version>4.8</junit.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.license.url>https://opensource.org/licenses/GPL-3.0</project.license.url>
-        <organization.name>University of Tübingen - Computational Systems Biology of Infections and Antimicrobial-Resistant Pathogens
+        <organization.name>&nbsp;University of Tübingen - Computational Systems Biology of Infections and Antimicrobial-Resistant Pathogens
         </organization.name>
         <organization.url>https://uni-tuebingen.de/en/127116</organization.url>
     </properties>

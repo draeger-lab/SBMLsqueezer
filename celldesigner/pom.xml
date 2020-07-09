@@ -8,7 +8,7 @@
         <version>2.1.1</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <description>When used as a plug-in for CellDesigner it uses the information from the SBGN representation of all network components</description>
+    <description>The celldesigner module is a plug-in for Celldesigner which contrary to the stand-alone Version does not evaluate the SBO annotations to obtain information about the context of the reactions, but instead uses information in the SBGN representation of all network components.</description>
 
     <artifactId>celldesigner</artifactId>
 
@@ -28,6 +28,13 @@
             <resource>
                 <directory>${project.build.directory}/site/</directory>
                 <targetPath>${basedir}/../docs/${project.artifactId}</targetPath>
+            </resource>
+            <resource>
+                <directory>${project.build.directory}</directory>
+                <includes>
+                    <include>${project.build.finalName}*</include>
+                </includes>
+                <targetPath>${basedir}/../dist/SBMLsqueezer-${project.version}</targetPath>
             </resource>
         </resources>
 
@@ -58,13 +65,30 @@
                     </configuration>
                     <executions>
                         <execution>
-                            <id>make-assembly</id> <!-- this is used for inheritance merges -->
+                            <id>make-jar-with-dependencies</id> <!-- this is used for inheritance merges -->
                             <phase>package</phase> <!-- bind to the packaging phase -->
                             <goals>
-                                <!-- This will create a JAR with all dependencies -->
-                                <!-- mvn clean compile assembly:single -->
                                 <goal>single</goal>
                             </goals>
+                            <configuration>
+                                <descriptorRefs>
+                                    <descriptorRef>jar-with-dependencies</descriptorRef>
+                                </descriptorRefs>
+                                <finalName>${project.build.finalName}</finalName>
+                            </configuration>
+                        </execution>
+                        <execution>
+                            <id>package-source-code</id>
+                            <phase>package</phase>
+                            <goals>
+                                <goal>single</goal>
+                            </goals>
+                            <configuration>
+                                <descriptorRefs>
+                                    <descriptorRef>src</descriptorRef>
+                                </descriptorRefs>
+                                <finalName>${project.build.finalName}-SourceCode</finalName>
+                            </configuration>
                         </execution>
                     </executions>
                 </plugin>
