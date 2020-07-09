@@ -85,8 +85,7 @@ public class SABIORKTest {
   @Test
   public void testGetKineticLawsString() throws WebServiceConnectException,
   WebServiceResponseException, IOException, XMLStreamException {
-    Integer[] expecteds = new Integer[] { 23936, 23934, 23941, 23939,
-        23937, 23938, 23940, 54637 };
+    Integer[] expecteds = new Integer[] { 54637, 23941, 23939, 23940, 23938, 23936, 23937, 23934};
     List<KineticLaw> kineticLaws = SABIORK
         .getKineticLaws(SABIORK.QueryField.ORGANISM
           + ":\"homo sapiens\""
@@ -103,8 +102,9 @@ public class SABIORKTest {
   @Test
   public void testGetSuggestions() throws WebServiceConnectException,
   WebServiceResponseException, IOException, XMLStreamException {
-    String[] expecteds = new String[] { "lung", "lung mast cell", "lung cancer cell",
-    "lung mucoepidermoid carcinoma" };
+    String[] expecteds = new String[] { "lung", "lung", "lung (bto)", "lung mast cell", "lung mast cell", "lung cancer cell",
+    "lung cancer cell", "lung mast cell (bto)", "lung cancer cell (bto)", "lung mucoepidermoid carcinoma", "lung mucoepidermoid carcinoma",
+            "lung mucoepidermoid carcinoma (bto)" };
     List<String> actuals = SABIORK.getSuggestions(
       SABIORK.QueryField.TISSUE, "lu");
     assertArrayEquals(expecteds, actuals.toArray());
