@@ -32,7 +32,7 @@ package org.sbml.squeezer.math;
  * @author Andreas Dr&auml;ger
  * @date Aug 1, 2007
  * @since 1.0
- * @version $Rev: 1081 $
+ * 
  */
 public class GaussianRank {
   

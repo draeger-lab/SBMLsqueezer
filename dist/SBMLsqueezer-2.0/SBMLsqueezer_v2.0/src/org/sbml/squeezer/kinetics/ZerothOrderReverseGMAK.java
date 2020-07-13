@@ -41,7 +41,7 @@ import de.zbit.util.ResourceManager;
  * @author Andreas Dr&auml;ger
  * @date Feb 8, 2008
  * @since 1.0
- * @version $Rev: 1077 $
+ *
  */
 public class ZerothOrderReverseGMAK extends GeneralizedMassAction implements
 InterfaceNonEnzymeKinetics, InterfaceReversibleKinetics,

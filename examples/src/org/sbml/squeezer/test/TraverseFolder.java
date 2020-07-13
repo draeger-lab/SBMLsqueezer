@@ -29,7 +29,7 @@ import java.util.ArrayList;
 
 /**
  * @author Julianus Pfeuffer
- * @version $Rev$
+ * 
  * @since 2.0
  */
 public class TraverseFolder {

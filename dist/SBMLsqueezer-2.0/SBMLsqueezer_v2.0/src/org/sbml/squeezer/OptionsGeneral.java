@@ -44,7 +44,7 @@ import de.zbit.util.prefs.Range;
  * @author Sarah R. M&uuml;ller vom Hagen
  * @author Sebastian Nagel
  * @since 2.0
- * @version $Rev: 1082 $
+ * 
  */
 public interface OptionsGeneral extends KeyProvider {
   

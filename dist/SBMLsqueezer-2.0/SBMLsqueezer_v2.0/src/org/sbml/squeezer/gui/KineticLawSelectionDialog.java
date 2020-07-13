@@ -49,7 +49,7 @@ import de.zbit.util.progressbar.AbstractProgressBar;
  * @author Sebastian Nagel
  * @date Aug 3, 2007
  * @since 1.0
- * @version $Rev: 1081 $
+ * 
  */
 public class KineticLawSelectionDialog extends JDialog {
   

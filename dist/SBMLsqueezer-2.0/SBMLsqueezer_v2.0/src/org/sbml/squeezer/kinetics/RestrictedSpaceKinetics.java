@@ -41,7 +41,7 @@ import de.zbit.util.ResourceManager;
 /**
  * @author Andreas Dr&auml;ger
  * @date 16:44:54
- * @version $Rev: 1077 $
+ * 
  */
 public class RestrictedSpaceKinetics extends GeneralizedMassAction implements
 InterfaceIrreversibleKinetics, InterfaceBiUniKinetics {

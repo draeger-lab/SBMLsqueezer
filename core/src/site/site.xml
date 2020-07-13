@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project name="SBMLsqueezer">
+    <bannerLeft>
+        <name>SBMLsqueezer</name>
+        <src>images/ICON_LOGO_SMALL_NOCOPYRIGHT_CORE.png</src>
+        <href>https://draeger-lab.github.io/SBMLsqueezer/</href>
+    </bannerLeft>
+    <bannerRight>
+        <src>images/SBMLsqueezerIcon_128.png</src>
+        <width>96</width>
+        <height>96</height>
+    </bannerRight>
+    <body>
+        <head>
+            <![CDATA[<link rel="stylesheet" href="css/font-awesome-4.7.0/css/font-awesome.min.css"/>]]>
+        </head>
+        <menu name="Modules">
+            <item name = "Parent Project" href="../index.html"/>
+            <item name = "Core" href="index.html"/>
+            <item name = "Celldesigner Plugin" href="../celldesigner/index.html"/>
+        </menu>
+        <menu ref="reports"/>
+    </body>
+    <skin>
+        <groupId>org.apache.maven.skins</groupId>
+        <artifactId>maven-fluido-skin</artifactId>
+        <version>1.8</version>
+    </skin>
+</project>

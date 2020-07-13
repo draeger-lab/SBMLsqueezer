@@ -32,7 +32,7 @@ import javax.swing.JComboBox;
  * {@code 0.1}).
  * 
  * @author Matthias Rall
- * @version $Rev: 1082 $
+ * 
  * @since 2.0
  */
 public class JComboBoxInterval extends JComboBox {

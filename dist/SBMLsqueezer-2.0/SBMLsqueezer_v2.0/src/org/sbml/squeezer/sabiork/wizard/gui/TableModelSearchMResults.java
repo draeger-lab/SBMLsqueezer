@@ -37,7 +37,7 @@ import org.sbml.squeezer.sabiork.wizard.model.WizardProperties;
  * A class that allows the storage of {@link KineticLaw}.
  * 
  * @author Matthias Rall
- * @version $Rev: 1082 $
+ * 
  * @since 2.0
  */
 public class TableModelSearchMResults extends AbstractTableModel {

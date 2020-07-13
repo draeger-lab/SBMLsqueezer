@@ -71,7 +71,7 @@ import org.sbml.squeezer.sabiork.wizard.model.WizardProperties;
  * The GUI version of the SABIO-RK wizard.
  * 
  * @author Matthias Rall
- * @version $Rev: 1082 $
+ * 
  * @since 2.0
  */
 public class JDialogWizard extends JDialog implements ActionListener, WindowListener,
@@ -85,7 +85,7 @@ MouseListener {
   /**
    * 
    * @author Matthias Rall
-   * @version $Rev: 1082 $
+   * 
    */
   public enum ButtonState {
     START, NEXT_ENABLED, NEXT_DISABLED, FINISH, NEXT_BACK_ENABLED;
@@ -94,7 +94,7 @@ MouseListener {
   /**
    * 
    * @author Matthias Rall
-   * @version $Rev: 1082 $
+   * 
    */
   public enum CardID {
     NOT_AVAILABLE, CONFIRM_DIALOG, MATCHING, METHOD, REACTIONS_A, REACTIONS_M, SEARCH_A, SEARCH_M, SUMMARY_A, SUMMARY_M, SEARCHRESULTS_A, SEARCHRESULTS_M;
@@ -103,7 +103,7 @@ MouseListener {
   /**
    * 
    * @author Andreas Dr&auml;ger
-   * @version $Rev: 1082 $
+   * 
    */
   public enum Actions {
     BACK, FINISH, CANCEL;

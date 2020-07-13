@@ -30,7 +30,7 @@ import javax.swing.table.TableCellRenderer;
  * A class that renders {@link Double} values as a color within a gradient.
  * 
  * @author Matthias Rall
- * @version $Rev: 1082 $
+ * 
  * @since 2.0
  */
 public abstract class TableCellRendererColorGradient implements

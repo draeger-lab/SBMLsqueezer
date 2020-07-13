@@ -88,7 +88,7 @@ import de.zbit.util.progressbar.ProgressBar;
  * @author Hannes Borch
  * @author Sarah R. M&uuml;ller vom Hagen
  * @since 1.0
- * @version $Rev: 1102 $
+ *
  * @param <T> the type of SBML documents that can be treated by this controller.
  */
 @SuppressWarnings("unchecked")

@@ -1,0 +1,412 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.sbml.squeezer</groupId>
+    <artifactId>SBMLsqueezer</artifactId>
+    <version>2.1.1</version>
+
+    <!-- Pom Packaging because this is the parent project -->
+    <packaging>pom</packaging>
+
+    <!-- ==================================================================================================== -->
+    <!-- GENERAL PROJECT INFO -->
+    <!-- ==================================================================================================== -->
+
+    <name>SBMLsqueezer</name>
+    <url>https://github.com/draeger-lab/SBMLsqueezer</url>
+    <description>SBMLsqueezer generates kinetic equations for biochemical networks according to context of each reaction. When used as a plug-in for CellDesigner it uses the information from the SBGN representation of all network components. In the stand-alone mode, SBMLsqueezer evaluates the Systems Biology Ontology (SBO) annotations to extract this information. An online version of SBMLsqueezer is available that runs without instally any software on the local machine. The rate laws that can be produced by SBMLsqueezer include several types of generalized mass action; detailed and generalized enzyme kinetics, various types of Hill equations, S- and H-systems, and additive models for gene regulation. User defined settings specify which equation to apply for any type of reaction and how to ensure unit consistency of the model. Equations can be created using contextual menus. All newly created parameters are equipped with the derived unit and annotated with SBO terms if available and meaningful textual names. MathML is inserted directly into the SBML file. LaTeX or text export of ordinary differential equations is provided.</description>
+
+    <properties>
+        <jdk.version>1.8</jdk.version>
+        <junit.version>4.8</junit.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.license.url>https://opensource.org/licenses/GPL-3.0</project.license.url>
+        <organization.name>&nbsp;University of Tübingen - Computational Systems Biology of Infections and Antimicrobial-Resistant Pathogens
+        </organization.name>
+        <organization.url>https://uni-tuebingen.de/en/127116</organization.url>
+    </properties>
+
+    <organization>
+        <name>${organization.name}</name>
+        <url>${organization.url}</url>
+    </organization>
+
+    <issueManagement>
+        <system>GitHub Issues</system>
+        <url>https://github.com/draeger-lab/SBMLsqueezer/issues</url>
+    </issueManagement>
+
+    <ciManagement>
+        <system>Travis CI</system>
+        <url>https://travis-ci.org/github/draeger-lab/SBMLsqueezer</url>
+    </ciManagement>
+
+    <distributionManagement>
+        <site>
+            <id>SBMLsqueezer</id>
+        </site>
+    </distributionManagement>
+
+    <licenses>
+        <license>
+            <name>GNU General Public License version 3</name>
+            <url>${project.license.url}</url>
+            <distribution>repository</distribution>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <name>Andreas Dräger</name>
+            <id>draeger</id>
+            <email>andreas.draeger@uni-tuebingen.de</email>
+            <url>https://github.com/draeger</url>
+            <organization>University of Tübingen</organization>
+            <timezone>Germany/Berlin</timezone>
+        </developer>
+        <developer>
+            <name>Alexander Dörr</name>
+            <id>alexander-doerr</id>
+            <email>alexander.doerr@uni-tuebingen.de</email>
+            <url>http://www.cogsys.cs.uni-tuebingen.de/mitarb/doerr/</url>
+            <timezone>Germany/Berlin</timezone>
+        </developer>
+        <developer>
+            <name>Sebastian Nagel</name>
+            <id>nagel86</id>
+        </developer>
+        <developer>
+            <name>Roland Keller</name>
+            <id>RolandKeller5</id>
+            <url>http://www.cogsys.cs.uni-tuebingen.de/mitarb/keller/</url>
+            <email>roland.keller@gmx.de</email>
+            <timezone>Germany/Berlin</timezone>
+        </developer>
+        <developer>
+            <name>Sandra Saliger</name>
+        </developer>
+        <developer>
+            <name>Simon Schäfer</name>
+            <id>shsshs</id>
+        </developer>
+        <developer>
+            <name>Sarah Müller vom Haagen</name>
+            <id>mvhsara</id>
+        </developer>
+        <developer>
+            <name>Johannes Pfeuffer</name>
+            <id>jpfeuffer</id>
+        </developer>
+        <developer>
+            <name>Hannes Borch</name>
+        </developer>
+        <developer>
+            <name>Dieudonné Motsou Wouamba</name>
+        </developer>
+        <developer>
+            <name>Lisa Falk</name>
+            <id>lisafalk</id>
+            <email>lisafalk@student.uni-tuebingen.de</email>
+        </developer>
+        <developer>
+            <name>Thomas M. Hamm</name>
+            <id>tmHamm</id>
+            <email>hamm@informatik.uni-tuebingen.de</email>
+        </developer>
+        <developer>
+            <name>Clemens Wrzodek</name>
+            <id>Clemens82</id>
+        </developer>
+        <developer>
+            <name>Stefanie Hoffmann</name>
+        </developer>
+        <developer>
+            <name>Eike Pertuch</name>
+            <id>eikept</id>
+            <url>https://github.com/eikept</url>
+            <email>eike.pertuch@student.uni-tuebingen.de</email>
+        </developer>
+    </developers>
+
+    <!-- ==================================================================================================== -->
+    <!-- BUILDING -->
+    <!-- ==================================================================================================== -->
+
+    <build>
+
+        <resources>
+            <resource>
+                <directory>${project.build.directory}/site/</directory>
+                <targetPath>${basedir}/docs</targetPath>
+            </resource>
+        </resources>
+
+        <plugins>
+
+
+            <!-- General compiler configuration -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
+                <configuration>
+                    <source>${jdk.version}</source>
+                    <target>${jdk.version}</target>
+                    <encoding>UTF-8</encoding>
+                </configuration>
+            </plugin>
+
+            <!-- General assembly configuration -->
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>3.2.0</version>
+            </plugin>
+
+            <!-- Maven Surefire plugin running tests-->
+
+<!--            <plugin>-->
+<!--                <groupId>org.apache.maven.plugins</groupId>-->
+<!--                <artifactId>maven-surefire-plugin</artifactId>-->
+<!--                <version>3.0.0-M4</version>-->
+<!--            </plugin>-->
+
+            <!-- Creating license page -->
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>license-maven-plugin</artifactId>
+                <version>1.16</version>
+                <configuration>
+                    <!-- Used for filling in missing licenses -->
+                    <useMissingFile>true</useMissingFile>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>download-licenses</id>
+                        <goals>
+                            <goal>download-licenses</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.apache.maven.doxia</groupId>
+                        <artifactId>doxia-core</artifactId>
+                        <version>1.9.1</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.apache.maven.doxia</groupId>
+                        <artifactId>doxia-site-renderer</artifactId>
+                        <version>1.9.2</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+
+            <!-- Maven Site plugin -->
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-site-plugin</artifactId>
+                <version>3.9.0</version>
+                <configuration>
+                    <locales>en</locales>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>attach-descriptor</id>
+                        <goals>
+                            <goal>attach-descriptor</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.apache.maven.doxia</groupId>
+                        <artifactId>doxia-module-markdown</artifactId>
+                        <version>1.9.1</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+
+            <!-- Maven Resources Plugin -->
+            <!-- Used for copying files into docs directory -->
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>3.0.2</version>
+            </plugin>
+
+        </plugins>
+    </build>
+    <modules>
+        <module>celldesigner</module>
+        <module>core</module>
+    </modules>
+
+    <!-- ==================================================================================================== -->
+    <!-- REPORTING -->
+    <!-- ==================================================================================================== -->
+
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>license-maven-plugin</artifactId>
+                <version>1.16</version>
+                <configuration>
+                    <useMissingFile>true</useMissingFile>
+                </configuration>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <report>third-party-report</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-project-info-reports-plugin</artifactId>
+                <version>3.0.0</version>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <report>licenses</report>
+                            <report>index</report>
+                            <report>ci-management</report>
+                            <report>issue-management</report>
+                            <report>team</report>
+                            <report>modules</report>
+                            <report>plugins</report>
+                            <report>summary</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.2.0</version>
+                <configuration>
+                    <overview>{project.basedir}/src/main/javadoc/overview.html</overview>
+                    <stylesheetfile>${basedir}/src/site/resources/css/javadoc.css</stylesheetfile>
+                    <skip>false</skip>
+                </configuration>
+            </plugin>
+        </plugins>
+    </reporting>
+
+    <!-- ==================================================================================================== -->
+    <!-- REPOSITORIES -->
+    <!-- ==================================================================================================== -->
+
+    <repositories>
+
+        <repository>
+            <id>local-repo</id>
+            <name>Local Repository</name>
+            <url>file:${project.basedir}/src/lib/maven</url>
+        </repository>
+
+        <repository>
+            <id>EBI</id>
+            <name>EBI Repository</name>
+            <url>https://www.ebi.ac.uk/intact/maven/nexus/content/repositories/ebi-repo/</url>
+        </repository>
+
+        <!-- JSBML SNAPSHOT repository -->
+
+        <repository>
+            <id>JSBML-SNAPSHOT</id>
+            <name>The JSBML Snapshot repository</name>
+            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+        </repository>
+
+    </repositories>
+
+    <!-- ==================================================================================================== -->
+    <!-- DEPENDENCIES -->
+    <!-- ==================================================================================================== -->
+
+    <dependencies>
+
+        <!-- Central Repository -->
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.scilab.forge</groupId>
+            <artifactId>jlatexmath</artifactId>
+            <version>1.0.7</version><!-- newer version | og: 1.0.0-->
+        </dependency>
+        <dependency>
+            <groupId>org.devzendo</groupId>
+            <artifactId>quaqua</artifactId>
+            <version>9.1</version>
+            <!-- to do: only import filechooser-->
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.4</version>
+        </dependency>
+        <dependency>
+            <groupId>net.arnx</groupId>
+            <artifactId>jsonic</artifactId>
+            <version>1.2.10</version>
+        </dependency>
+        <dependency>
+            <groupId>org.swinglabs.swingx</groupId>
+            <artifactId>swingx-core</artifactId>
+            <version>1.6.5-1</version><!-- newer version | og: 1.6.2-2 -->
+        </dependency>
+
+        <!-- JSBML SNAPSHOT repository -->
+
+        <dependency>
+            <groupId>org.sbml.jsbml</groupId>
+            <artifactId>jsbml</artifactId>
+            <version>1.5</version>
+        </dependency>
+
+        <!-- Local Repository -->
+
+        <dependency>
+            <groupId>de</groupId>
+            <artifactId>zbit</artifactId>
+            <version>1.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.sbml.tolatex</groupId>
+            <artifactId>SBML2LaTeX</artifactId>
+            <version>1.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>jp.sbi.garuda</groupId>
+            <artifactId>platform</artifactId>
+            <version>1.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>jp.sbi.garuda.client</groupId>
+            <artifactId>backend</artifactId>
+            <version>1.0</version>
+        </dependency>
+
+
+    </dependencies>
+
+
+</project>

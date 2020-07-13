@@ -35,7 +35,7 @@ import org.sbml.squeezer.sabiork.wizard.model.WizardModel;
  * wizard.
  * 
  * @author Matthias Rall
- * @version $Rev: 1082 $
+ * 
  * @since 2.0
  */
 public abstract class Card extends JPanel {

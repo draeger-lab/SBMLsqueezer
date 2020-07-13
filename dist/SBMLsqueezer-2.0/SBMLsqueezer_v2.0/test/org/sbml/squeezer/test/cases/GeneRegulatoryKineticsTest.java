@@ -48,7 +48,7 @@ import org.sbml.squeezer.kinetics.Weaver;
 /**
  * 
  * @author Sebastian Nagel
- * @version $Rev: 1082 $
+ *
  * @since 2.0
  */
 public class GeneRegulatoryKineticsTest extends KineticsTest{

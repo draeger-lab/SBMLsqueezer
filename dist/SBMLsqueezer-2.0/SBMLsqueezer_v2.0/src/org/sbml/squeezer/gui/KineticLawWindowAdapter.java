@@ -59,7 +59,7 @@ import de.zbit.util.progressbar.AbstractProgressBar;
  * @author Andreas Dr&auml;ger
  * @date 2009-10-22
  * @since 1.3
- * @version $Rev: 1081 $
+ * 
  */
 public class KineticLawWindowAdapter extends WindowAdapter implements
 ComponentListener, PropertyChangeListener {

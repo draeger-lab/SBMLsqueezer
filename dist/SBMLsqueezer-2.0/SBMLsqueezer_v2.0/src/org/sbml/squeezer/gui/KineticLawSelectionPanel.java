@@ -79,7 +79,7 @@ import de.zbit.util.prefs.SBPreferences;
  * @author Hannes Borch
  * @date Feb 7, 2008
  * @since 1.0
- * @version $Rev: 1081 $
+ * 
  */
 public class KineticLawSelectionPanel extends JPanel implements ItemListener {
   /**

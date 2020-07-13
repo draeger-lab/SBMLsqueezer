@@ -31,7 +31,7 @@ import org.sbml.squeezer.sabiork.wizard.model.WizardProperties;
  * in the manual search.
  * 
  * @author Matthias Rall
- * @version $Rev: 1082 $
+ *
  * @since 2.0
  */
 public class ComboBoxModelSearchItems extends ComboBoxModelCaptions {

@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>SBMLsqueezer</artifactId>
+        <groupId>org.sbml.squeezer</groupId>
+        <version>2.1.1</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <description>The celldesigner module is a plug-in for Celldesigner which contrary to the stand-alone Version does not evaluate the SBO annotations to obtain information about the context of the reactions, but instead uses information in the SBGN representation of all network components.</description>
+
+    <artifactId>celldesigner</artifactId>
+
+    <!-- ==================================================================================================== -->
+    <!-- BUILDING -->
+    <!-- ==================================================================================================== -->
+
+    <build>
+
+        <finalName>${project.parent.artifactId}-CellDesignerPlugin-${project.version}</finalName>
+
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+            <resource>
+                <directory>${project.build.directory}/site/</directory>
+                <targetPath>${basedir}/../docs/${project.artifactId}</targetPath>
+            </resource>
+            <resource>
+                <directory>${project.build.directory}</directory>
+                <includes>
+                    <include>${project.build.finalName}*</include>
+                </includes>
+                <targetPath>${basedir}/../dist/SBMLsqueezer-${project.version}</targetPath>
+            </resource>
+        </resources>
+
+        <pluginManagement>
+            <plugins>
+
+                <!-- Assembly of the jar -->
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-assembly-plugin</artifactId>
+                    <version>3.2.0</version>
+                    <configuration>
+                        <archive>
+                            <manifest>
+                                <addClasspath>true</addClasspath>
+                                <mainClass>org.sbml.squeezer.SBMLsqueezer</mainClass>
+                                <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                                <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+                            </manifest>
+                        </archive>
+                        <descriptorRefs>
+                            <descriptorRef>jar-with-dependencies</descriptorRef>
+                        </descriptorRefs>
+                        <finalName>${project.parent.artifactId}-CellDesignerPlugin-${project.version}</finalName>
+                        <appendAssemblyId>false</appendAssemblyId>
+                        <!--<descriptor>assembly.xml</descriptor> --> <!-- Details of the assembly are described in this file -->
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <id>make-jar-with-dependencies</id> <!-- this is used for inheritance merges -->
+                            <phase>package</phase> <!-- bind to the packaging phase -->
+                            <goals>
+                                <goal>single</goal>
+                            </goals>
+                            <configuration>
+                                <descriptorRefs>
+                                    <descriptorRef>jar-with-dependencies</descriptorRef>
+                                </descriptorRefs>
+                                <finalName>${project.build.finalName}</finalName>
+                            </configuration>
+                        </execution>
+                        <execution>
+                            <id>package-source-code</id>
+                            <phase>package</phase>
+                            <goals>
+                                <goal>single</goal>
+                            </goals>
+                            <configuration>
+                                <descriptorRefs>
+                                    <descriptorRef>src</descriptorRef>
+                                </descriptorRefs>
+                                <finalName>${project.build.finalName}-SourceCode</finalName>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+
+            </plugins>
+
+        </pluginManagement>
+    </build>
+
+    <!-- ==================================================================================================== -->
+    <!-- REPOSITORIES -->
+    <!-- ==================================================================================================== -->
+
+    <repositories>
+        <repository>
+            <id>local-repo-celldesigner</id>
+            <name>Local Repository Celldesigner</name>
+            <url>file:${project.basedir}/src/lib/maven</url>
+        </repository>
+    </repositories>
+
+    <!-- ==================================================================================================== -->
+    <!-- DEPENDENCIES -->
+    <!-- ==================================================================================================== -->
+
+    <dependencies>
+        <dependency>
+            <groupId>jp.sbi</groupId>
+            <artifactId>celldesigner</artifactId>
+            <version>4.4</version>
+        </dependency>
+        <dependency>
+            <groupId>org.sbml.jsbml</groupId>
+            <artifactId>celldesigner</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.sbml.squeezer</groupId>
+            <artifactId>core</artifactId>
+            <version>2.1.1</version>
+        </dependency>
+    </dependencies>
+
+</project>

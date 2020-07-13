@@ -51,7 +51,7 @@ import de.zbit.util.ResourceManager;
  * @author Sarah R. M&uuml;ller vom Hagen
  * @date Feb 6, 2008
  * @since 1.0
- * @version $Rev: 1077 $
+ *
  */
 public class IrrevNonModulatedNonInteractingEnzymes extends BasicKineticLaw
 implements InterfaceIrreversibleKinetics, InterfaceUniUniKinetics,

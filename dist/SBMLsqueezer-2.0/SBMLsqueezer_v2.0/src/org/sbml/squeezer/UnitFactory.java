@@ -56,7 +56,7 @@ import de.zbit.util.ResourceManager;
  * 
  * @author Andreas Dr&auml;ger
  * @date 2010-10-22
- * @version $Rev: 1092 $
+ * 
  */
 public class UnitFactory {
   

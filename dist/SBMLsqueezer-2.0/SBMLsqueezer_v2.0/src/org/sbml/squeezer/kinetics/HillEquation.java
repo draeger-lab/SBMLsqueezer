@@ -49,7 +49,7 @@ import de.zbit.util.ResourceManager;
  * @author Sarah R. M&uuml;ller vom Hagen
  * @date 2010-03-25
  * @since 1.3
- * @version $Rev: 1077 $
+ *
  */
 public class HillEquation extends BasicKineticLaw implements
 InterfaceUniUniKinetics, InterfaceReversibleKinetics,

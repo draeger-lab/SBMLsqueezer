@@ -43,7 +43,7 @@ import javax.swing.plaf.basic.BasicComboBoxRenderer;
  * A class that allows to create a combo box with non-selectable captions.
  * 
  * @author Matthias Rall
- * @version $Rev: 1082 $
+ * 
  * @since 2.0
  */
 public class ComboBoxModelCaptions extends DefaultComboBoxModel {

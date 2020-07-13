@@ -36,7 +36,7 @@ import de.zbit.gui.prefs.PreferencesPanelForKeyProvider;
 
 /**
  * @author Andreas Dr&auml;ger
- * @version $Rev$
+ * 
  * @since 2.0
  */
 public class OptionPanelTest {

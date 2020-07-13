@@ -38,7 +38,7 @@ import org.sbml.squeezer.kinetics.TypeStandardVersion;
 /**
  * Class with tests for general reversible reactions
  * @author Julianus Pfeuffer
- * @version $Rev: 1082 $
+ *
  * @since 2.0
  */
 public class ReversibleKinetics extends KineticsTest {

@@ -47,7 +47,7 @@ import org.sbml.squeezer.kinetics.TypeStandardVersion;
 
 /**
  * @author Andreas Dr&auml;ger
- * @version $Rev: 1092 $
+ *
  * @since 2.0
  */
 public class GeneralizedMassActionTest extends KineticsTest {

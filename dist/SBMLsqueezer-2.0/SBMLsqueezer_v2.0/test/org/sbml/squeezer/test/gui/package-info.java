@@ -24,7 +24,7 @@
 
 /**
  * 
- * @version $Rev: 1082 $
+ * 
  * @since 2.0
  */
 package org.sbml.squeezer.test.gui;

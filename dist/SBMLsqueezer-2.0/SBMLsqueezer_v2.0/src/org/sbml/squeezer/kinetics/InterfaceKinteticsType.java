@@ -29,7 +29,7 @@ package org.sbml.squeezer.kinetics;
  * @author Andreas Dr&auml;ger
  * @date 2010-11-09
  * @since 1.3
- * @version $Rev: 1077 $
+ * 
  */
 public interface InterfaceKinteticsType {
   
