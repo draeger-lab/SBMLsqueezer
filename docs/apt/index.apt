@@ -1,0 +1,9 @@
+* Generates kinetic equations for all reactions in your model, or only for those reactions that are currently lacking a rate law with a large variety of generic and specific rate laws for several standard cases
+* Allows you to create all rate laws in a reversible manner.
+* Can detect reactive species, whose annotation indicates that these are genes.
+* Can assume that all reactions in your network are enzymatically catalyzed and hence change the selection of rate laws.
+* Defines the units of all species and compartments if necessary and derive the units for all newly created local and global parameters and numbers in order to ensure unit consistency of the entire model.
+* Can check the model for global and local parameters as well as unit definitions that are never used and addressed. SBMLsqueezer can automatically remove these from the model.
+* Imports experimentally determined rate equations from SABIO-RK and include them into your model.
+* Equips your model with default values where no values are defined.
+* Summarizes all features of the model in an exhaustive LaTeX-based model report

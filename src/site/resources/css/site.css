@@ -56,3 +56,21 @@ a.externalLink[href^=http] {
 .nav-list > .active > a > [class^="icon-"] {
     background-image: url("../img/glyphicons-halflings.png");
 }
+
+.figure {
+    text-align: center;
+    display: inline-block;
+    margin: 0 auto;
+    padding: 0 auto;
+}
+
+#SBMLdemo {
+    width: 60%;
+    display: block;
+    margin: 0 auto;
+    padding: 0 auto;
+}
+
+.prom_logo {
+    height: 50px;
+}
