@@ -1,0 +1,117 @@
+% 01_Introduction
+\chapter{Introduction}
+
+TODO: Write some text. Write some Introduction for your application.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 02_Installation
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Installation}
+
+TODO: This is some template text. Please modify / replace it with your own.
+
+
+\section{Requirements}
+\subsection{Software}
+
+InCroMAP is entirely written in Java\TTra and runs on any operating system
+where a suitable Java Virtual Machine (JDK version 1.6 or newer) is installed.
+See, for example, the Java SE download
+page\footnote{\url{http://www.oracle.com/technetwork/java/javase/downloads/index.html}\label{fn:jvmldl}}.
+
+\subsection{Hardware}
+
+With at least 1\,GB main memory, you should be able to perform most tasks
+without any problem. For large datasets, you should have at least 2\,GB of main
+memory. \newline An active internet connection is required for most operations.
+
+\section{Starting the application}
+\label{startingTheProgram}
+
+If you downloaded a ZIP-file, you need to unzip it before starting the
+application. Depending on your operating system, you should use the provided
+shell scripts for starting the application. This is \texttt{start.sh} for Linux
+or \texttt{start.bat} for Windows. On MAC OS, you have to create your own
+shortcut. You can start the application on all operating systems by typing
+
+\begin{lstlisting}[language=bash,numbers=none]
+java -jar -Xms128m -Xmx1024m InCroMAP.jar
+\end{lstlisting}
+
+\noindent on your command prompt. Please note that you might have to change
+\texttt{InCroMAP.jar} for the real name of the JAR-file, e.g.,
+\texttt{InCroMAP1.2.0.jar}. In this example, a minimum of 128\,MB and a maximum
+of 1024\,MB of memory will be available for the program. In most cases,
+InCroMAP needs more than 128\,MB memory, so it might be convenient to create a
+shortcut and start the application with as much memory as available. If you
+have 2\,GB RAM, for example, you might want to start the application with the
+following command:
+
+\begin{lstlisting}[language=bash,numbers=none]
+java -Xms128m -Xmx1400M -jar InCroMAP.jar
+\end{lstlisting}
+
+For your convenience, we already created several start-scripts to run the
+application with as much memory as possible. How much memory you actually need
+strongly depends on the size of your input datasets.
+%
+
+\chapter{How to get started}
+
+TODO: Write some text.
+
+
+% 03_Troubleshooting
+\chapter{FAQ / Troubleshooting}
+\label{ch:faq}
+
+TODO: These are some template questions. Add new ones and modify/ remove the
+old ones to suit your needs.
+
+\noindent \textbf{Where can I get help for a certain component/ option/ checkbox/ etc.?}\newline
+Most elements in InCroMAP have tooltips. If you don't understand an option, you
+can get help in the first place by just pointing the mouse cursor over it and
+wait for the tooltip to show up ($\sim$ 3 seconds).\newline
+
+\noindent \textbf{I'm getting a ``java.lang.OutOfMemoryError: Java heap space"}\newline
+Some operations need a lot of memory. If you simply start InCroMAP, without any
+JVM parameters, only 64\,MB of memory are available. Please append the argument
+\texttt{-Xmx1024M} to start the application with 1\,GB of main memory. See
+Section~\vref{startingTheProgram} for a more detailed description of how to
+start the application with additional memory. If possible, you should give the
+application 2\,GB of main memory. A minimum of 1\,GB main memory should be
+available to the application.\newline
+
+\noindent \textbf{Is an internet connection required to run InCroMAP?}\newline
+An internet connection is required for most operations. Many identifier mapping
+files and pathway-based visualizations require an active internet connection.
+However, if you import your data directly with NCBI Entrez Gene IDs and do not
+use the pathway-visualization or GO-enrichment, you should be able to run the
+application offline.\newline
+
+\noindent \textbf{Where can I get the latest version?}\newline
+Go to \url{http://www.cogsys.cs.uni-tuebingen.de/software/Integrator/}.\newline
+
+\noindent \textbf{Which Java version must be installed on my computer to launch
+InCroMAP?}\newline InCroMAP requires at least Java 1.6. Please see
+\url{http://www.java.com/de/download/} to download the latest Java version.
+
+\noindent \textbf{Why does InCroMAP not start on my Mac with Mac OS prior to
+10.6 Update 3?}\newline If you try to launch InCroMAP, but the application does
+not start and you receive the following error message on the command-line or
+Java console of your Mac, you need to update your Java installation:
+\begin{verbatim}
+Exception in thread "AWT-EventQueue-0" java.lang.NoClassDefFoundError:
+    com/apple/eawt/AboutHandler
+    at java.lang.ClassLoader.defineClass1(Native Method)
+    at java.lang.ClassLoader.defineClass(ClassLoader.java:703)
+    ...
+\end{verbatim}
+The interface \texttt{com.apple.eawt.AboutHandler} was introduced to Java for
+Mac OS X 10.6 Update 3. If you have an earlier version of Mac OS or Java,
+please update your OS or Java installation. Also see the Mac OS documentation
+about the \texttt{AboutHandler} for more information. On a Mac, you can update
+your Java installation through the Software Update menu item in the main Apple
+menu.
+
