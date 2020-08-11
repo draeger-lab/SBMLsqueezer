@@ -1,5 +1,5 @@
 # SBMLsqueezer
-<img align="right" src="resources/org/sbml/squeezer/resources/img/SBMLsqueezerIcon_64.png"/>
+<img align="right" src="src/site/resources/images/SBMLsqueezerIcon_128.png"/>
 
 **Context-sensitive creation of kinetic equations in biochemical networks**
 
