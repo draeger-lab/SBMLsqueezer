@@ -294,8 +294,8 @@
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>3.2.0</version>
                 <configuration>
-                    <overview>{project.basedir}/src/main/javadoc/overview.html</overview>
-                    <stylesheetfile>${basedir}/src/site/resources/css/javadoc.css</stylesheetfile>
+                    <overview>${project.basedir}/src/main/javadoc/overview.html</overview>
+                    <stylesheetfile>${project.basedir}/src/site/resources/css/javadoc.css</stylesheetfile>
                     <skip>false</skip>
                 </configuration>
             </plugin>
