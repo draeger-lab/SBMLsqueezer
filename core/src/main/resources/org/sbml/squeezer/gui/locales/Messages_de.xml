@@ -37,7 +37,15 @@
 	
 	Please see the JavaDoc for MessageFormatter and Formatter. 
   </comment>
-  
+
+  <!-- GeneratorSelectionPanel -->
+
+  <entry key="FUNCTION_TERM_SELECT">Erzeuge Standardfunktionsterme</entry>
+  <entry key="KINETIC_EQUATION_SELECT">Erzeuge kinetische Gleichungen</entry>
+  <entry key="GENERATOR_SELECT_1">Das ausgewählte Modell enthält sowohl Reaktionen als auch Transitionen.</entry>
+  <entry key="GENERATOR_SELECT_2">Möchten Sie kinetische Gleichungen oder Standardfunktionsterme erzeugen?</entry>
+  <entry key="GENERATOR_SELECT_TITLE">Auswahl des zu benutzenden Erzeugers</entry>
+
   <!-- KineticLawSelectionDialog -->
   
   <entry key="KINETIC_EQUATIONS">Kinetische Gleichungen</entry>
@@ -98,7 +106,36 @@
   <entry key="COL_PRODUCTS">Produkte</entry>
   <entry key="COL_PARAMETERS">Parameteranzahl</entry>
   <entry key="COL_FORMULA">Formel</entry>
-  
+  <entry key="CREATE_KINETIC_OVERVIEW">Erstelle Übersicht</entry>
+
+  <!-- FunctionTermGeneratorOptionPanel  -->
+
+  <entry key="CHOOSE_OPTIONS_FTG">Wählen Sie die Optionen für den Funktionstermgenerator</entry>
+
+  <!-- FunctionTermTable -->
+
+  <entry key="FUNCTION_TERM_HEADER_TOOLTIP">Funktionstermtabelle</entry>
+  <entry key="FUNCTION_TERMS">Neu generierte Funktionsterme</entry>
+
+  <!-- FunctionTermTableModel -->
+
+  <entry key="COL_TRANSITION">Transition</entry>
+  <entry key="COL_FUNCTION_TERM">Funktionsterm</entry>
+  <entry key="FUNCTION_TERM_RESULTS_PROGRESS">Erstelle Übersicht</entry>
+
+  <!-- FunctionTermResultsPanel/FunctionTermDisplayPanel -->
+
+  <entry key="FUNCTION_TERM_DISPLAY">Funktionstermdarstellung</entry>
+  <entry key="DISPLAY_OF_SELECTED_FUNCTION_TERM">Darstellung des ausgewählten Funktionsterms</entry>
+  <entry key="TRANSITION_ID">Transitions ID</entry>
+  <entry key="DEFAULT_TERM_FT_DISPLAY_PANEL">Standardterm</entry>
+  <entry key="SIGN_FT_DISPLAY_PANEL">Standardvorzeichen</entry>
+
+  <!-- No qualitative or quantative model dialog -->
+
+  <entry key="NO_QUAL_OR_QUAN_DIALOG_1">Das ausgewählte Modell enthält weder Reaktionen noch Transitionen,</entry>
+  <entry key="NO_QUAL_OR_QUAN_DIALOG_2">daher können keine kinetische Gleichungen oder Funktionsterme erzeugt werden.</entry>
+
   <!-- LaTeXRenderer -->
   
   <entry key="ZOOM_IN_TOOLTIP">Vergrößern</entry>
@@ -109,6 +146,8 @@
   <entry key="STORE_KINETIC_EQUATION">Speichere kinetische Gleichung...</entry>
   <entry key="STORE_KINETIC_EQUATIONS">Speichere kinetische Gleichungen...</entry>
   <entry key="GENERATE_KINETIC_EQUATION">Erzeuge kinetische Gleichung...</entry>
+  <entry key="GENERATE_FUNCTION_TERM">Erzeuge Funktionsterm...</entry>
+  <entry key="STORE_FUNCTION_TERMS">Speichere Funktionsterme...</entry>
   <entry key="CREATE_MINI_MODEL">Erstelle Teilnmodell...</entry>
   
   <!-- ReactionType -->
@@ -151,6 +190,8 @@
   <entry key="URL_ABOUT_MESSAGE">resources/html/about.html</entry>
   <entry key="URL_LICENSE_FILE">resources/html/License.html</entry>
   <entry key="URL_ONLINE_HELP">resources/html/help.html</entry>
+  <entry key="FUNCTION_TERM">Generiere Funktionsterme</entry>
+  <entry key="FUNCTION_TERM_TOOLTIP">Generiert Funktionsterme, falls fehlend, für das qualitative Modell.</entry>
   
   <!-- SettingsPanelDefaultMechanisms -->
   

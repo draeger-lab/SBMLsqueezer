@@ -229,4 +229,5 @@
     <entry key="DEFAULT_SIGN_TOOLTIP">Define the default sign, when no sign is set to the Input object of a Transition</entry>
     <entry key="DEFAULT_TERM">Default Term</entry>
     <entry key="DEFAULT_TERM_TOOLTIP">Define the kind of default term you want to apply</entry>
+
 </properties>

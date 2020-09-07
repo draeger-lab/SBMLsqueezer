@@ -38,6 +38,7 @@
 	Please see the JavaDoc for MessageFormatter and Formatter. 
   </comment>
 
+
   <!-- AdditiveModelLinear -->
   
   <entry key="ADDITIVE_MODEL_LINEAR_SIMPLE_NAME">Linear additive model, general form</entry>
@@ -92,7 +93,15 @@
   <!-- IrrevNonModulatedNonInteractingEnzymes -->
   
   <entry key="IRREV_NON_MODULATED_NON_INTERACTING_ENZYMES_SIMPLE_NAME">Irreversible non-modulated non-interacting reactant enzymes</entry>
-  
+
+  <!-- GeneratorSelectionPanel -->
+
+  <entry key="FUNCTION_TERM_SELECT">Generate default function terms</entry>
+  <entry key="KINETIC_EQUATION_SELECT">Generate kinetic equations</entry>
+  <entry key="GENERATOR_SELECT_1">The selected model contains both reactions and transitions.</entry>
+  <entry key="GENERATOR_SELECT_2">Do you want to create kinetic equations or default function terms?</entry>
+  <entry key="GENERATOR_SELECT_TITLE">Selection of generator to use.</entry>
+
   <!-- KineticLawSelectionDialog -->
   
   <entry key="KINETIC_EQUATIONS">Kinetic Equations</entry>
@@ -157,7 +166,31 @@
   <entry key="COL_PRODUCTS">Products</entry>
   <entry key="COL_PARAMETERS">Parameter counts</entry>
   <entry key="COL_FORMULA">Formula</entry>
-  
+  <entry key="CREATE_KINETIC_OVERVIEW">Creating overview</entry>
+
+  <!-- FunctionTermGeneratorOptionPanel  -->
+
+  <entry key="CHOOSE_OPTIONS_FTG">Choose options for the function term generator</entry>
+
+  <!-- FunctionTermTable -->
+
+  <entry key="FUNCTION_TERM_HEADER_TOOLTIP">Function term table</entry>
+  <entry key="FUNCTION_TERMS">Newly generated function terms</entry>
+
+  <!-- FunctionTermTableModel -->
+
+  <entry key="COL_TRANSITION">Transition</entry>
+  <entry key="COL_FUNCTION_TERM">Function Term</entry>
+  <entry key="FUNCTION_TERM_RESULTS_PROGRESS">Creating overview</entry>
+
+  <!-- FunctionTermResultsPanel/FunctionTermDisplayPanel -->
+
+  <entry key="FUNCTION_TERM_DISPLAY">Function term display</entry>
+  <entry key="DISPLAY_OF_SELECTED_FUNCTION_TERM">Display of selected function term</entry>
+  <entry key="TRANSITION_ID">Transition ID</entry>
+  <entry key="DEFAULT_TERM_FT_DISPLAY_PANEL">Default Term</entry>
+  <entry key="SIGN_FT_DISPLAY_PANEL">Default Sign</entry>
+
   <!-- LaTeXRenderer -->
   
   <entry key="ZOOM_IN_TOOLTIP">Zoom in</entry>
@@ -166,7 +199,12 @@
   <!-- MichaelisMenten -->
   
   <entry key="MICHAELIS_MENTEN_SIMPLE_NAME">Michaelis-Menten</entry>
-  
+
+  <!-- No qualitative or quantative model dialog -->
+
+  <entry key="NO_QUAL_OR_QUAN_DIALOG_1">The selected model contains neither reactions nor transitions,</entry>
+  <entry key="NO_QUAL_OR_QUAN_DIALOG_2">therefore no kinetic equations or function terms can be created.</entry>
+
   <!-- NetGeneratorNonLinear -->
   
   <entry key="NET_GENERATOR_NON_LINEAR_SIMPLE_NAME">Non-linear additive model, NetGenerator form</entry>
@@ -241,6 +279,8 @@
   <entry key="STORE_KINETIC_EQUATION">Storing kinetic equation...</entry>
   <entry key="STORE_KINETIC_EQUATIONS">Storing kinetic equations...</entry>
   <entry key="GENERATE_KINETIC_EQUATION">Generating kinetic equation...</entry>
+  <entry key="GENERATE_FUNCTION_TERM">Generating function term...</entry>
+  <entry key="STORE_FUNCTION_TERMS">Storing function terms...</entry>
   <entry key="CREATE_MINI_MODEL">Creating submodel...</entry>
   
   <!-- PowerLawModularRateLaw -->
@@ -296,6 +336,8 @@
   <entry key="URL_ABOUT_MESSAGE">resources/html/about.html</entry>
   <entry key="URL_LICENSE_FILE">resources/html/License.html</entry>
   <entry key="URL_ONLINE_HELP">resources/html/help.html</entry>
+  <entry key="FUNCTION_TERM">Generate function terms</entry>
+  <entry key="FUNCTION_TERM_TOOLTIP">Generates function terms if missing for qualitative models</entry>
   
   <!-- SettingsPanelDefaultMechanisms -->
   

@@ -105,8 +105,7 @@ public class KineticLawTableModel extends AbstractTableModel {
       // Notify progress listener:
       double percent = reactionNum * 100d/klg.getCreatedKineticsCount();
       double remainingTime = 100 * ((System.currentTimeMillis() - startTime) / percent);
-      // TODO: Localize
-      progressBar.percentageChanged((int) Math.round(percent), remainingTime, "Creating overview");
+      progressBar.percentageChanged((int) Math.round(percent), remainingTime, MESSAGES.getString("CREATE_KINETIC_OVERVIEW"));
     }
     progressBar.finished();
   }

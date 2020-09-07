@@ -182,6 +182,7 @@ public class LaTeXRenderer implements EquationRenderer {
     TeXFormula formula = new TeXFormula(texCode);
     TeXIcon texIcon = formula.createTeXIcon(TeXConstants.STYLE_DISPLAY, fontSize, TeXFormula.SANSSERIF);
     JLabel teXDisplay = new JLabel(texIcon);
+    teXDisplay.setOpaque(true);
     teXDisplay.setBackground(Color.WHITE);
     
     scroll = new JScrollPane(teXDisplay);

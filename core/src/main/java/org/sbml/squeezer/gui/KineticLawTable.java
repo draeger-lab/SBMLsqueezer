@@ -140,6 +140,8 @@ public class KineticLawTable extends JTable implements MouseInputListener {
     protected void done() {
       try {
         table.setModel(get());
+        table.setColumnWidthAppropriately();
+        table.setRowHeightAppropriately();
         listener.propertyChange(new PropertyChangeEvent(table, "done", null, table.getModel()));
       } catch (Exception exc) {
         Logger.getLogger(TableModelWorker.class.getName()).fine(getMessage(exc));
@@ -160,8 +162,6 @@ public class KineticLawTable extends JTable implements MouseInputListener {
     new TableModelWorker(klg, progressBar, this, listener).execute();
     this.klg = klg;
     getModel().addTableModelListener(this);
-    setColumnWidthAppropriately();
-    setRowHeightAppropriately();
     setDefaultRenderer(Object.class, new KineticLawTableCellRenderer());
     getTableHeader().setToolTipText(
       StringUtil.toHTML(MESSAGES.getString("KINTEIC_LAW_TABLE_HEADER_TOOLTIP"), 40));
@@ -514,7 +514,7 @@ public class KineticLawTable extends JTable implements MouseInputListener {
         }
       }
       getColumnModel().getColumn(col).setPreferredWidth(
-        3 * getFont().getSize() / 5 * maxLength + 10);
+              3 * getFont().getSize() / 5 * maxLength + 10);
     }
   }
   

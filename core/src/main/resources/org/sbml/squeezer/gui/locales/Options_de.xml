@@ -182,58 +182,73 @@
    
   <!-- SABIORKOptions -->
   
-  <entry key="SABIORKPreferences">SABIO-RK search preferences</entry>
-  <entry key="SABIORKPreferences_TOOLTIP">Here you can constrain your search for reaction kinetics in the online database SABIO-RK (System for the Analysis of Biochemical Pathways&#8212;Reaction Kinetics).</entry>
+  <entry key="SABIORKPreferences">SABIO-RK Suchpräferenzen</entry>
+  <entry key="SABIORKPreferences_TOOLTIP">Hier kann die Suche nach kinetischen Gleichungen von Reaktionen
+    in der Online Datenbank SABIO-RK System für die Analyse von Biochemischen Pfaden &#8212; Reaktionskinetiken)
+    eingeschränkt werden.</entry>
+  <entry key="IS_WILDTYPE">Kinetische Gleichungen von Wildtypen</entry>
+  <entry key="IS_WILDTYPE_TOOLTIP">Suche nach kinetischen Gleichungen von Wildtypen</entry>
+  <entry key="IS_MUTANT">Kinetische Gleichungen von Mutanten</entry>
+  <entry key="IS_MUTANT_TOOLTIP">Suche nach kinetischen Gleichungen von Mutanten</entry>
+  <entry key="IS_RECOMBINANT">Kinetische Gleichungen von rekombinanten Organismen</entry>
+  <entry key="IS_RECOMBINANT_TOOLTIP">Suche nach kinetischen Gleichungen von rekombinanten Organismen</entry>
+  <entry key="HAS_KINETIC_DATA">Einträge mit kinetischen Daten</entry>
+  <entry key="HAS_KINETIC_DATA_TOOLTIP">Suche nach Einträgen mit kinetischen Daten</entry>
+  <entry key="IS_DIRECT_SUBMISSION">Direkte Einreichung</entry>
+  <entry key="IS_DIRECT_SUBMISSION_TOOLTIP">Suche nach direkt eingereichten Einträgen</entry>
+  <entry key="IS_JOURNAL">Zeitschriften Einträge</entry>
+  <entry key="IS_JOURNAL_TOOLTIP">Suche nach Einträgen, welche Zeitschriftspublikationen referieren</entry>
+  <entry key="LOWEST_PH_VALUE">Niedrigster pH-Wert</entry>
+  <entry key="LOWEST_PH_VALUE_TOOLTIP">Der niedrigst mögliche pH-Wert für die Einträge</entry>
+  <entry key="HIGHEST_PH_VALUE">Höchster ph-Wert</entry>
+  <entry key="HIGHEST_PH_VALUE_TOOLTIP">Der höchst mögliche pH-Wert für die Einträge</entry>
+  <entry key="LOWEST_TEMPERATURE_VALUE">Niedrigste Temperatur (in &#176;C)</entry>
+  <entry key="LOWEST_TEMPERATURE_VALUE_TOOLTIP">Der niedrigst mögliche Temperatur für die Einträge (in &#176;C).</entry>
+  <entry key="HIGHEST_TEMPERATURE_VALUE">Höchste Temperatur (in &#176;C)</entry>
+  <entry key="HIGHEST_TEMPERATURE_VALUE_TOOLTIP">Der höchst mögliche Temperatur für die Einträge (in &#176;C).</entry>
+  <entry key="IS_ENTRIES_INSERTED_SINCE">Frühestes Datum</entry>
+  <entry key="IS_ENTRIES_INSERTED_SINCE_TOOLTIP">Berüchsichtige nur Einträge nach spezifiziertem Datum</entry>
+  <entry key="LOWEST_DATE">Datum des Eintrags</entry>
+  <entry key="LOWEST_DATE_TOOLTIP">Definiere das frühst mögliche Datum für welchen Einträge in SABIO-RK eingetragen wurden.</entry>
   
-  <entry key="IS_WILDTYPE">Wildtype kinetics</entry>
-  <entry key="IS_WILDTYPE_TOOLTIP">Search for wildtype kinetics</entry>
-  <entry key="IS_MUTANT">Mutant kinetics</entry>
-  <entry key="IS_MUTANT_TOOLTIP">Search for kinetics of mutants</entry>
-  <entry key="IS_RECOMBINANT">Recombinant kinetics</entry>
-  <entry key="IS_RECOMBINANT_TOOLTIP">Search for kinetics of recombinant organisms</entry>
-  <entry key="HAS_KINETIC_DATA">Entries with kinetic data</entry>
-  <entry key="HAS_KINETIC_DATA_TOOLTIP">Search for entries containing kinetic data</entry>
-  <entry key="IS_DIRECT_SUBMISSION">Direct submission</entry>
-  <entry key="IS_DIRECT_SUBMISSION_TOOLTIP">Search for entries directly submitted</entry>
-  <entry key="IS_JOURNAL">Journal entries</entry>
-  <entry key="IS_JOURNAL_TOOLTIP">Search for entries referring to journal publications</entry>
-  <entry key="LOWEST_PH_VALUE">Lower pH value</entry>
-  <entry key="LOWEST_PH_VALUE_TOOLTIP">The lowest possible pH value for entries</entry>
-  <entry key="HIGHEST_PH_VALUE">Upper ph value</entry>
-  <entry key="HIGHEST_PH_VALUE_TOOLTIP">The highest possible pH value for entries</entry>
-  <entry key="LOWEST_TEMPERATURE_VALUE">Lower temperature (in &#176;C)</entry>
-  <entry key="LOWEST_TEMPERATURE_VALUE_TOOLTIP">The lowest possible temperature for entries (in &#176;C).</entry>
-  <entry key="HIGHEST_TEMPERATURE_VALUE">Upper temperature (in &#176;C)</entry>
-  <entry key="HIGHEST_TEMPERATURE_VALUE_TOOLTIP">The highest possible temperature for entries (in &#176;C).</entry>
-  <entry key="IS_ENTRIES_INSERTED_SINCE">Consider earliest date </entry>
-  <entry key="IS_ENTRIES_INSERTED_SINCE_TOOLTIP">Consider only entries inserted after the specified date</entry>
-  <entry key="LOWEST_DATE">Date of insertion</entry>
-  <entry key="LOWEST_DATE_TOOLTIP">Define the earliest acceptable date when the entries have been inserted into SABIO-RK.</entry>  
-  
-  <entry key="GROUP_DATE">Date</entry>
-  <entry key="GROUP_GENERAL_PROPERTIES">General properties</entry>
-  <entry key="GROUP_GENERAL_PROPERTIES_TOOLTIP">Define key features to restrict the results of your search for reaction kinetics in SABIO-RK.</entry>
-  <entry key="GROUP_TEMPERATURE">Temperature</entry>
-  <entry key="GROUP_TEMPERATURE_TOOLTIP">Define a plausible temperature range for your reaction system.</entry>
-  <entry key="GROUP_PH_VALUE">Range of pH values</entry>
-  <entry key="GROUP_PH_VALUE_TOOLTIP">Constrict the selection of reaction kinetics to plausible conditions by selecting a meaningful range of pH values.</entry>
+  <entry key="GROUP_DATE">Datum</entry>
+  <entry key="GROUP_GENERAL_PROPERTIES">Allgemeine Eigenschaften</entry>
+  <entry key="GROUP_GENERAL_PROPERTIES_TOOLTIP">Definiere Schlüsselmerkmale zur Einschränkung der Ergebnisse der Suche nach
+    kinetischen Gleichungen für Reaktionen in SABIO-RK</entry>
+  <entry key="GROUP_TEMPERATURE">Temperatur</entry>
+  <entry key="GROUP_TEMPERATURE_TOOLTIP">Definiere plausiblen Temperaturbereich für das Reaktionssystem.</entry>
+  <entry key="GROUP_PH_VALUE">Bereich der ph-Werte</entry>
+  <entry key="GROUP_PH_VALUE_TOOLTIP">Einschränkung der Auswahl an kinetischen Gleichungen für Reaktionen zu plausiblen
+    Bedingungen durch Wahl eines aussagekräftigen Bereichs der ph-Werte</entry>
  
   
   <!-- SABIORKOptions -->
   
-  <entry key="SABIORKOptions">SABIO-RK search options</entry>
-  <entry key="SABIORKOptions_TOOLTIP">Here you can constrain your search for reaction kinetics in the online database SABIO-RK (System for the Analysis of Biochemical Pathways&#8212;Reaction Kinetics).</entry>
-  
-  <entry key="PATHWAY">Pathway</entry>
-  <entry key="PATHWAY_TOOLTIP">Define the pathway for which the kinetics are to be determined.</entry>
-  <entry key="TISSUE">Tissue</entry>
-  <entry key="TISSUE_TOOLTIP">Define the tissue for which the kinetics are to be determined.</entry>
-  <entry key="CELLULAR_LOCATION">Cellular location</entry>
-  <entry key="CELLULAR_LOCATION_TOOLTIP">Define the cellular location for which the kinetics are to be determined.</entry>
-  <entry key="ORGANISM">Organism</entry>
-  <entry key="ORGANISM_TOOLTIP">Define the organism for which the kinetics are to be determined.</entry>
+  <entry key="SABIORKOptions">SABIO-RK Suchoptionen</entry>
+  <entry key="SABIORKOptions_TOOLTIP">Hier kann die Suche für kinetischen Gleichungen für Reaktionen in der Online
+    Datenbank SABIO-RK (System für die Analyse von Biochemischen Pfaden &#8212; Reaktionskinetiken) eingeschränkt werden.</entry>
+  <entry key="PATHWAY">Pfad</entry>
+  <entry key="PATHWAY_TOOLTIP">Definiere den Pfad für welchen die kinetischen Gleichungen ermittelt werden sollen.</entry>
+  <entry key="TISSUE">Gewebe</entry>
+  <entry key="TISSUE_TOOLTIP">Definiere das Gewebe für welches die kinetischen Gleichungen ermittelt werden sollen.</entry>
+  <entry key="CELLULAR_LOCATION">Zellulärer Ort</entry>
+  <entry key="CELLULAR_LOCATION_TOOLTIP">Definiere den zellulären Ort für welchen die kinetischen Gleichungen ermittelt
+    werden sollen.</entry>
+  <entry key="ORGANISM">Organismus</entry>
+  <entry key="ORGANISM_TOOLTIP">Definiere den Organismus für welchen die kinetischen Gleichungen ermittelt werden sollen..</entry>
    
-  <entry key="GROUP_GENERAL_OPTIONS">General options</entry>
-  <entry key="GROUP_GENERAL_OPTIONS_TOOLTIP">Define key options to restrict the results of your search for reaction kinetics in SABIO-RK.</entry> 
+  <entry key="GROUP_GENERAL_OPTIONS">Allgemeine Optionen</entry>
+  <entry key="GROUP_GENERAL_OPTIONS_TOOLTIP">Definiere Schlüsseloptionen um die Ergebnisse der Suche nach kinetischen
+    Gleichungen für Reaktionen in SABIO-RK einzuschränken.</entry>
+
+  <!-- FunctionTermOptions -->
+
+  <entry key="FunctionTermOptions">Funktionstermoptionen</entry>
+  <entry key="FunctionTermOptions_TOOLTIP">Hier können die Optionen abhängig des Funktionsterms definiert werden.</entry>
+  <entry key="DEFAULT_SIGN">Standardvorzeichen</entry>
+  <entry key="DEFAULT_SIGN_TOOLTIP">Definiere das Standardvorzeichen, welches verwendet wird, falls kein Vorzeichen
+    in der Eingabe einer Transition gesetzt ist.</entry>
+  <entry key="DEFAULT_TERM">Standardterm</entry>
+  <entry key="DEFAULT_TERM_TOOLTIP">Definiere die Art des Funktionsterms, welcher angewendet werden soll.</entry>
 
 </properties>

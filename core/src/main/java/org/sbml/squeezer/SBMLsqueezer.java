@@ -375,7 +375,7 @@ public class SBMLsqueezer<T> extends Launcher {
    */
   @Override
   public short getYearOfProgramRelease() {
-    return (short) 2018;
+    return (short) 2020;
   }
 
   /* (non-Javadoc)
@@ -512,6 +512,7 @@ public class SBMLsqueezer<T> extends Launcher {
       ftg.setDefaultTerm(defaultTerm);
       ftg.setDefaultSign(sbmlIo.getSelectedModel());
       ftg.generateFunctionTerms(sbmlIo.getSelectedModel());
+      ftg.storeChanges(sbmlIo.getSelectedModel());
 
       time = System.currentTimeMillis();
       logger.info(MESSAGES.getString("SAVING_TO_FILE"));

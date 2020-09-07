@@ -33,6 +33,8 @@ import org.sbml.jsbml.Reaction;
 
 import de.zbit.util.ResourceManager;
 import de.zbit.util.progressbar.AbstractProgressBar;
+import org.sbml.jsbml.ext.qual.QualConstants;
+import org.sbml.jsbml.ext.qual.QualModelPlugin;
 
 /**
  * 
@@ -67,7 +69,11 @@ public class ProgressAdapter {
     /**
      * create mini model
      */
-    createMiniModel;
+    createMiniModel,
+    /**
+     * generate function terms
+     */
+    generateFunctionTerms;
   }
   
   private long startTime = 0;
@@ -115,6 +121,9 @@ public class ProgressAdapter {
         break;
       case createMiniModel:
         logger.log(Level.INFO, MESSAGES.getString("CREATE_MINI_MODEL"));
+        break;
+      case generateFunctionTerms:
+        logger.log(Level.INFO, MESSAGES.getString("GENERATE_FUNCTION_TERM"));
         break;
     }
   }
@@ -195,6 +204,10 @@ public class ProgressAdapter {
           }
         }
         break;
+      case generateFunctionTerms:
+        QualModelPlugin qm = (QualModelPlugin) modelOrig.getPlugin(QualConstants.shortLabel);
+        numberOfTotalCalls = 0;
+        numberOfTotalCalls += qm.getNumTransitions();
     }
   }
 }
