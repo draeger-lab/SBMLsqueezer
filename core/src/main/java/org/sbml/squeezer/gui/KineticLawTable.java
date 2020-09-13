@@ -151,7 +151,8 @@ public class KineticLawTable extends JTable implements MouseInputListener {
   }
   
   /**
-   * TODO
+   * Creates a table displaying the results of the generation of kinetic equations. Also allows
+   * for choosing different kinetic equations in a separate window for specific reactions.
    * 
    * @param klg
    * @param progressBar

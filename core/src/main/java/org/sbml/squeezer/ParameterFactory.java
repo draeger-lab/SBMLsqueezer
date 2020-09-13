@@ -642,7 +642,7 @@ public class ParameterFactory {
       }
       if (!kr.isSetName()) {
         kr.setName(MessageFormat.format(MESSAGES
-          .getString("MAXIMAL_VELOCITY_OF_REACTION"), MESSAGES
+          .getString("LIMITING_RATE"), MESSAGES
           .getString(forward ? "FORWARD" : "REVERSE"),
           SBMLtools.getName(r)));
       }

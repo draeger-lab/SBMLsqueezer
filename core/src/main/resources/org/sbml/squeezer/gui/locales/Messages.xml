@@ -237,8 +237,8 @@
   <entry key="CATALYTIC_RATE_CONSTANT_OF_ENZYME_IN_REACTION">{0} catalytic rate constant of enzyme {1} in reaction {2}</entry>
   <entry key="SUBSTRATE">Substrate</entry>
   <entry key="PRODUCT">Product</entry>
-  <entry key="MAXIMAL_VELOCITY_OF_REACTION">{0} maximal velocity of reaction {1}</entry> <!-- TODO: Better call this "Limiting Rate" -->
-  <entry key="MAXIMAL_VELOCITY_OF_ENZYME_IN_REACTION">{0} maximal velocity of enzyme {1} in reaction {2}</entry>
+  <entry key="LIMITING_RATE">{0} limiting rate of reaction {1}</entry>
+  <entry key="LIMITING_RATE_OF_ENZYME_IN_REACTION">{0} limiting rate of enzyme {1} in reaction {2}</entry>
   <entry key="FORWARD">Forward</entry>
   <entry key="REVERSE">Revere</entry>
   <entry key="ENERGY_CONSTANT_OF_SPECIES">Energy constant of species {0}</entry>

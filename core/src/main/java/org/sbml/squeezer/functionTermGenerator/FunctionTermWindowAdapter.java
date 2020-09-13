@@ -59,7 +59,6 @@ public class FunctionTermWindowAdapter extends WindowAdapter implements
         gotFocus = false;
 
         QualModelPlugin qm = (QualModelPlugin)(sbmlIO.getSelectedModel().getPlugin(QualConstants.shortLabel));
-        System.out.println(transitionID);
         transition = qm.getTransition(transitionID);
         try {
             ftg = new FunctionTermGenerator();

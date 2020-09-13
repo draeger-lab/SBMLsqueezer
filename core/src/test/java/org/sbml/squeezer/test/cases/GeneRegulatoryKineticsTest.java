@@ -444,7 +444,6 @@ public class GeneRegulatoryKineticsTest extends KineticsTest{
   public void testNetGeneratorNonLinearIrrevConcentration() throws Throwable {
     Reaction r1 = model.getReaction("r2");
     KineticLaw kl = klg.createKineticLaw(r1, NetGeneratorNonLinear.class, false, TypeStandardVersion.cat, UnitConsistencyType.concentration, 1d);
-    System.out.println(kl.getMath().toFormula());
     test(r1, kl, "m_r2*1/(1+(exponentiale)^(-(w_r2_p1*p1/c1+w_r2_e1*e1/c1+b_r2)))+1*w_r2_p1*p1/c1");
   }
   

@@ -1,6 +1,5 @@
 package org.sbml.squeezer.functionTermGenerator.wizard;
 
-import de.zbit.util.ArrayUtils;
 import de.zbit.util.ResourceManager;
 import de.zbit.util.prefs.SBPreferences;
 import org.sbml.jsbml.ext.qual.Sign;
@@ -11,7 +10,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Arrays;
 import java.util.ResourceBundle;
 
 /**
@@ -23,6 +21,7 @@ import java.util.ResourceBundle;
  * by:
  * @author Sebastian Nagel
  *
+ * Adapted by:
  * @author Eike Pertuch
  * @since 2.1.2
  *
@@ -66,7 +65,7 @@ import java.util.ResourceBundle;
 
         //Add Panel (ComboBox with Label) for default Term
         JLabel dtLabel = new JLabel(OPTIONS.getString("DEFAULT_TERM"));
-        JComboBox<DefaultTerm> dtComboBox = new JComboBox<DefaultTerm>(Arrays.copyOf(DefaultTerm.values(), DefaultTerm.values().length-1));
+        JComboBox<DefaultTerm> dtComboBox = new JComboBox<DefaultTerm>(DefaultTerm.values());
         dtComboBox.setSelectedItem(defaultTerm);
         dtComboBox.setBackground(new Color(mainPanel.getBackground().getRGB()));
         dtComboBox.addActionListener(this);
