@@ -92,7 +92,7 @@ public class KineticLawTable extends JTable implements MouseInputListener {
   private static final long serialVersionUID = -1575566223506382693L;
   
   private boolean editing;
-  
+
   private KineticLawGenerator klg;
   
   // private static final int widthMultiplier = 7;
@@ -304,7 +304,7 @@ public class KineticLawTable extends JTable implements MouseInputListener {
   NoSuchMethodException, InstantiationException,
   IllegalAccessException, InvocationTargetException {
     if ((dataModel.getRowCount() > 0) && (dataModel.getColumnCount() > 0)) {
-      final Reaction reaction = klg.getModel().getReaction(
+      final Reaction reaction = klg.getSubmodel().getReaction(
         ((KineticLawTableModel) dataModel).getKineticLaw(rowIndex).getParent().getId());
       try {
         final Class<?> possibleTypes[] = klg.getReactionType(
@@ -526,5 +526,5 @@ public class KineticLawTable extends JTable implements MouseInputListener {
   public void tableChanged(TableModelEvent e) {
     super.tableChanged(e);
   }
-  
+
 }

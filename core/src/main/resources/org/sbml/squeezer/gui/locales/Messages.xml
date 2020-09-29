@@ -46,6 +46,10 @@
   <!-- AdditiveModelNonLinear -->
   
   <entry key="ADDITIVE_MODEL_NON_LINEAR_SIMPLE_NAME">Non-linear additive model, general form</entry>
+
+  <!-- AlternativeMassAction -->
+
+  <entry key="ALTERNATIVE_MASS_ACTION_SIMPLE_NAME">Alternative mass-action</entry>
   
   <!-- CommonModularRateLaw -->
   
