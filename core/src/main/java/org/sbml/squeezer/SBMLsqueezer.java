@@ -355,7 +355,7 @@ public class SBMLsqueezer<T> extends Launcher {
   public URL getURLOnlineUpdate() {
     URL url = null;
     try {
-      url = new URL("http://www.cogsys.cs.uni-tuebingen.de/software/SBMLsqueezer/downloads/");
+      url = new URL("https://draeger-lab.github.io/SBMLsqueezer/downloads/");
     } catch (MalformedURLException exc) {
       logger.log(Level.FINER, getMessage(exc), exc);
     }
