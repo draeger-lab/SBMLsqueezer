@@ -21,7 +21,7 @@
 
     <properties>
         <jdk.version>1.8</jdk.version>
-        <junit.version>4.8</junit.version>
+        <junit.version>4.13.1</junit.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.license.url>https://opensource.org/licenses/GPL-3.0</project.license.url>
         <organization.name>&nbsp;University of Tübingen - Computational Systems Biology of Infections and Antimicrobial-Resistant Pathogens
