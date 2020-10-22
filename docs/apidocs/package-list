@@ -1,6 +1,7 @@
 org.sbml.squeezer
 org.sbml.squeezer.celldesigner
 org.sbml.squeezer.functionTermGenerator
+org.sbml.squeezer.functionTermGenerator.wizard
 org.sbml.squeezer.gui
 org.sbml.squeezer.gui.wizard
 org.sbml.squeezer.io

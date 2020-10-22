@@ -367,7 +367,7 @@ public class SBMLsqueezer<T> extends Launcher {
    */
   @Override
   public String getVersionNumber() {
-    return "2.1.1";
+    return "2.2";
   }
 
   /* (non-Javadoc)

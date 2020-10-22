@@ -127,7 +127,7 @@ public class FunctionTermDisplayPanel extends JPanel implements ItemListener {
         curDefTerm = DefaultTerm.valueOf(prefs.get(FunctionTermOptions.DEFAULT_TERM));
         curDefSign = Sign.valueOf(prefs.get(FunctionTermOptions.DEFAULT_SIGN));
 
-        List<String> rbDefTermNames = Arrays.stream(DefaultTerm.values()).map(Enum::toString).collect(Collectors.toList());
+        List<String> rbDefTermNames = Arrays.stream(DefaultTerm.values()).map(DefaultTerm::getSimpleName).collect(Collectors.toList());
         rbDefTermNames.remove(rbDefTermNames.size()-1);
         ButtonGroup defaultTermBut = new ButtonGroup();
         defTermOpt = new JPanel();

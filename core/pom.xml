@@ -5,7 +5,7 @@
     <parent>
         <artifactId>SBMLsqueezer</artifactId>
         <groupId>org.sbml.squeezer</groupId>
-        <version>2.1.1</version>
+        <version>2.2</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <description>The core module is the stand-alone/Garuda Version of SBMLsqueezer which evaluates the Systems Biology Ontology (SBO) annotations to obtain information on the context of each reaction. Given this information it can generate kinetic equations for the reactions in the model.</description>

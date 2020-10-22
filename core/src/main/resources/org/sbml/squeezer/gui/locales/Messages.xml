@@ -60,6 +60,8 @@
   <entry key="CONVENIENCE_KINETICS_SIMPLE_NAME">Convenience kinetics</entry>
   <entry key="THERMODYNAMICALLY_INDEPENDENT_CONVENIENCE_KINETICS">thermodynamically independent convenience kinetics</entry>
   <entry key="CONVENIENCE_KINETICS">convenience kinetics</entry>
+  <entry key="UNKNOWN_STOICHIOMETRY_CK">Unknown stoichiometry in reaction {0} for reaction participant {1}.</entry>
+  <entry key="ONLY_INTEGER_STOICHIOMETRY_CK">{0} can only deal with integer stoichiometries.</entry>
   
   <!-- DirectBindingModularRateLaw -->
   
@@ -362,6 +364,9 @@
   <!-- SSystem -->
   
   <entry key="SSYSTEM_SIMPLE_NAME">S-System-based kinetic</entry>
+
+  <!-- SubmodelController -->
+  <entry key="NO_MATH_ELEMENT_SC">No math element defined for reaction {0}</entry>
   
   <!-- Vohradsky -->
   

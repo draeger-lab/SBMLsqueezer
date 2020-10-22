@@ -38,6 +38,68 @@
 	Please see the JavaDoc for MessageFormatter and Formatter. 
   </comment>
 
+<!--   AdditiveModelLinear -->
+
+  <entry key="ADDITIVE_MODEL_LINEAR_SIMPLE_NAME">Lineares additives Modell, allgemeine Form</entry>
+
+  <!-- AdditiveModelNonLinear -->
+
+  <entry key="ADDITIVE_MODEL_NON_LINEAR_SIMPLE_NAME">Nicht-Lineares additives Modell, allgemeine Form</entry>
+
+  <!-- AlternativeMassAction -->
+
+  <entry key="ALTERNATIVE_MASS_ACTION_SIMPLE_NAME">Alternative Massenwirkungskinetik</entry>
+
+  <!-- CommonModularRateLaw -->
+
+  <entry key="COMMON_MODULAR_RATE_LAW_SIMPLE_NAME">Allgemeine moduläre Ratengleichung (CM)</entry>
+
+  <!-- ConvenienceKinetics -->
+
+  <entry key="CONVENIENCE_KINETICS_SIMPLE_NAME">Einfache kinetische Gleichung</entry>
+  <entry key="THERMODYNAMICALLY_INDEPENDENT_CONVENIENCE_KINETICS">thermodynamisch-unabhängige einfache kinetische Gleichung</entry>
+  <entry key="CONVENIENCE_KINETICS">einfache kinetische Gleichung</entry>
+  <entry key="UNKNOWN_STOICHIOMETRY_CK">Unbekannte Stöchiometrie in Reaktion {0} für Reaktionsteilnehmer {1}.</entry>
+  <entry key="ONLY_INTEGER_STOICHIOMETRY_CK">{0} kann nur mit ganzähligen Stöchiometrien umgehen.</entry>
+
+
+    <!-- DirectBindingModularRateLaw -->
+
+  <entry key="DIRECT_BINDING_MODULAR_RATE_LAW_SIMPLE_NAME">Direkte Bindungs moduläre Ratengleichung (CM)</entry>
+
+  <!-- ForceDependentModularRateLaw -->
+
+  <entry key="FORCE_DEPENDENT_MODULAR_RATE_LAW_SIMPLE_NAME">Kraft-abhängige moduläre Ratengleichung  (FM)</entry>
+
+  <!-- GeneralizedMassAction -->
+
+  <entry key="GENERALIZED_MASS_ACTION_SIMPLE_NAME">Verallgemeinerte Massenwirkungskinetik</entry>
+
+  <!-- HillEquation -->
+
+  <entry key="GENERALIZED_HILL_EQUATION_SIMPLE_NAME">Verallgemeinerte Hill Gleichung</entry>
+
+  <!-- HillHinzeEquation -->
+
+  <entry key="HILL_HINZE_EQUATION_SIMPLE_NAME">Hill-Hinze Gleichung</entry>
+  <entry key="HILL_EQUATION_SIMPLE_NAME">Hill Gleichung</entry>
+
+  <!-- HillRaddeEquation -->
+
+  <entry key="HILL_RADDE_EQUATION">Hill-Radde Gleichung</entry>
+
+  <!-- HSystem -->
+
+  <entry key="HSYSTEM_SIMPLE_NAME">H-System Gleichung von Hadeler (2003)</entry>
+
+  <!-- IrrevCompetNonCooperativeEnzymes -->
+
+  <entry key="IRREV_COMPET_NON_COOP_ENZYMES_SIMPLE_NAME">Irreversible nicht-exlusive nicht-kooperative kompetetive Inhibition</entry>
+
+  <!-- IrrevNonModulatedNonInteractingEnzymes -->
+
+  <entry key="IRREV_NON_MODULATED_NON_INTERACTING_ENZYMES_SIMPLE_NAME">Irreversible nicht-modulierte nicht-interagierende Reaktanten-Enzyme</entry>
+
   <!-- GeneratorSelectionPanel -->
 
   <entry key="FUNCTION_TERM_SELECT">Erzeuge Standardfunktionsterme</entry>
@@ -131,15 +193,51 @@
   <entry key="DEFAULT_TERM_FT_DISPLAY_PANEL">Standardterm</entry>
   <entry key="SIGN_FT_DISPLAY_PANEL">Standardvorzeichen</entry>
 
+
   <!-- No qualitative or quantative model dialog -->
 
   <entry key="NO_QUAL_OR_QUAN_DIALOG_1">Das ausgewählte Modell enthält weder Reaktionen noch Transitionen,</entry>
   <entry key="NO_QUAL_OR_QUAN_DIALOG_2">daher können keine kinetische Gleichungen oder Funktionsterme erzeugt werden.</entry>
 
+
   <!-- LaTeXRenderer -->
   
   <entry key="ZOOM_IN_TOOLTIP">Vergrößern</entry>
   <entry key="ZOOM_OUT_TOOLTIP">Verkleinern</entry>
+
+  <!-- MichaelisMenten -->
+
+  <entry key="MICHAELIS_MENTEN_SIMPLE_NAME">Michaelis-Menten</entry>
+
+  <!-- NetGeneratorNonLinear -->
+
+  <entry key="NET_GENERATOR_NON_LINEAR_SIMPLE_NAME">Nicht-Lineares additives Modell, NetGenerator Form</entry>
+
+  <!-- NetGeneratorLinear -->
+
+  <entry key="NET_GENERATOR_LINEAR_SIMPLE_NAME">Lineares additives Modell, NetGenerator Form</entry>
+
+  <!-- No qualitative or quantative model dialog -->
+
+  <entry key="NO_QUAL_OR_QUAN_DIALOG_1">Das ausgewählte Modell enthält weder Reaktionen noch Transitionen,</entry>
+  <entry key="NO_QUAL_OR_QUAN_DIALOG_2">daher können keine kinetische Gleichungen oder Funktionsterme erzeugt werden.</entry>
+
+  <!-- OrderedMechanism -->
+
+  <!-- TODO: Check -->
+  <entry key="ORDERED_MECHANISM_SIMPLE_NAME">Geordneter Mechanismus</entry>
+  <entry key="COMPULSORY_ORDER_TERNARY_COMPLEY_MEACHANISM">{0} compulsory-order ternary-complex mechanism {1}</entry>
+  <entry key="ONE_PRODUCT">ein Produkt</entry>
+  <entry key="TWO_PRODUCTS">zwei Produkte</entry>
+
+
+  <!-- PingPongMechanism -->
+
+  <entry key="PING_PONG_MEACHANISM_SIMPLE_NAME">Ping-Pong Mechanismus</entry>
+
+  <!-- PowerLawModularRateLaw -->
+
+  <entry key="POWER_MODULAR_RATE_LAW_SIMPLE_NAME">Energie-abhängige moduläre Ratengleichung (PM)</entry>
   
   <!-- ProgressAdapter -->
   
@@ -149,7 +247,13 @@
   <entry key="GENERATE_FUNCTION_TERM">Erzeuge Funktionsterm...</entry>
   <entry key="STORE_FUNCTION_TERMS">Speichere Funktionsterme...</entry>
   <entry key="CREATE_MINI_MODEL">Erstelle Teilnmodell...</entry>
-  
+
+  <!-- Random Order -->
+
+  <entry key="RANDOM_ORDER_MEACHANISM_SIMPLE_NAME">Mechanismus zufälliger Ordnung</entry>
+  <!-- TODO: Better translation -->
+  <entry key="RAPID_EQUILIBRIUM_RANDOM_ORDER_TERNARY_COMPLEY_MEACHANISM">{0} dreifach-Komplex Mechanismus raschen Gleichgewichts und zufälliger Ordnungrapid-equilibrium {1}</entry>
+
   <!-- ReactionType -->
   
   <entry key="IS_ENZYMATIC_CATALYST">{0} ist ein enzymatischer Katalysator</entry>
@@ -204,5 +308,32 @@
   <!-- SettingsPanelKinetics -->
   
   <entry key="TITLE_KINETICS">Kinetik-Einstellungen</entry>
+
+  <!-- SubmodelController -->
+  <entry key="NO_MATH_ELEMENT_SC">Kein Mathematik Element definiert für Reaktion {0}</entry>
+
+  <!-- SimultaneousBindingModularRateLaw -->
+
+  <entry key="SIMULTANEOUS_BINDING_MODULAR_RATE_LAW_SIMPLE_NAME">Moduläre Ratengleichung mit silmutaner Bindung (SM)</entry>
+
+  <!-- SSystem -->
+
+  <entry key="SSYSTEM_SIMPLE_NAME">S-System-basierte kinetische Gleichung</entry>
+
+  <!-- Vohradsky -->
+
+  <entry key="VOHRADSKY_SIMPLE_NAME">Nicht-Lineares additives Modell von Vohradský (2001)</entry>
+
+  <!-- Weaver -->
+
+  <entry key="WEAVER_SIMPLE_NAME">Nicht-Lineares additives Modell von Weaver et al. (1999)</entry>
+
+  <!-- ZerothOrderForwardGMAK -->
+
+  <entry key="ZEROTH_ORDER_FORWARD_GMAK_SIMPLE_NAME">Massenwirkungskinetik nullter Ordnung</entry>
+
+  <!-- ZerothOrderReverseGMAK -->
+
+  <entry key="ZEROTH_ORDER_REVERSE_GMAK_SIMPLE_NAME">Umgekehrte Massenwirkungskinetik nullter Ordnung</entry>
     
 </properties>

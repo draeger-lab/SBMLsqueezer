@@ -3,6 +3,7 @@ package org.sbml.squeezer.functionTermGenerator;
 import java.io.StringReader;
 import java.util.ArrayList;
 
+import de.zbit.util.prefs.SBPreferences;
 import de.zbit.util.progressbar.AbstractProgressBar;
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.ASTNode.Type;
@@ -112,7 +113,11 @@ public class FunctionTermGenerator {
      */
     public void generateFunctionTerms(Model model) throws Exception {
 
+
+        SBPreferences prefs = SBPreferences.getPreferencesFor(FunctionTermOptions.class);
         QualModelPlugin qm = (QualModelPlugin) model.getPlugin(QualConstants.shortLabel);
+
+        boolean generateTermsForAllReactions = prefs.getBoolean(FunctionTermOptions.OVERWRITE_EXISTING_FUNCTION_TERMS);
 
         this.createdFunctionTermsCount = 0;
         this.modifiedTransitions.clear();
@@ -137,7 +142,7 @@ public class FunctionTermGenerator {
 
             if (!t.isSetListOfFunctionTerms() || (t.isSetListOfFunctionTerms() &&
                     ((t.getListOfFunctionTerms().size() == 1 && t.getListOfFunctionTerms().get(0).isDefaultTerm()) ||
-                            t.getListOfFunctionTerms().isEmpty()))) {
+                            t.getListOfFunctionTerms().isEmpty())) || generateTermsForAllReactions) {
 
                 ASTNode2 math;
 
@@ -156,6 +161,9 @@ public class FunctionTermGenerator {
                 String helper = math.toFormula().replace("xor", "Xor");
                 ASTNode node = ASTNode.parseFormula(helper, parser);
 
+                if(generateTermsForAllReactions) {
+                    t.getListOfFunctionTerms().clear();
+                }
                 t.createFunctionTerm(node);
 
                 //set the resultLevel of the newly created default function term

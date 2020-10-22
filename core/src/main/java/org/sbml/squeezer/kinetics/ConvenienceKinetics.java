@@ -295,15 +295,13 @@ InterfaceIrreversibleKinetics, InterfaceModulatedKinetics {
       ASTNode exponent;
       if (!ref.isSetStoichiometry() && Double.isNaN(ref.getStoichiometry())
           && !ref.isSetStoichiometryMath() && ((level < 3) || !ref.isSetId())) {
-        // TODO: Localize
-        logger.severe(MessageFormat.format("Unknown stoichiometry in reaction {0} for reaction participant {1}.", reaction, ref.getSpecies()));
+        logger.severe(MessageFormat.format(MESSAGES.getString("UNKNOWN_STOICHIOMETRY_CK"), reaction, ref.getSpecies()));
       }
       if (ref.isSetStoichiometryMath()) {
         exponent = ref.getStoichiometryMath().getMath().clone();
       } else {
         if (!Maths.isInt(ref.getStoichiometry())) {
-          // TODO: Localize
-          logger.severe(MessageFormat.format("{0} can only deal with integer stoichiometries.", getSimpleName(), reaction));
+          logger.severe(MessageFormat.format(MESSAGES.getString("ONLY_INTEGER_STOICHIOMETRY_CK"), getSimpleName(), reaction));
         }
         if ((level > 2) && (ref.isSetId())) {
           exponent = new ASTNode(ref, this);

@@ -5,7 +5,7 @@
     <parent>
         <artifactId>SBMLsqueezer</artifactId>
         <groupId>org.sbml.squeezer</groupId>
-        <version>2.1.1</version>
+        <version>2.2</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <description>The celldesigner module is a plug-in for Celldesigner which contrary to the stand-alone Version does not evaluate the SBO annotations to obtain information about the context of the reactions, but instead uses information in the SBGN representation of all network components.</description>

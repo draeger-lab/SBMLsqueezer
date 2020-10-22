@@ -2,6 +2,7 @@ package org.sbml.squeezer.functionTermGenerator.wizard;
 
 import de.zbit.util.ResourceManager;
 import de.zbit.util.prefs.SBPreferences;
+import org.sbml.jsbml.ListOf;
 import org.sbml.jsbml.ext.qual.Sign;
 import org.sbml.squeezer.functionTermGenerator.*;
 import org.sbml.squeezer.util.Bundles;
@@ -10,7 +11,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Arrays;
+import java.util.List;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
 /**
  * This class implements the main options panel. Here the default sign and default term
@@ -65,8 +69,11 @@ import java.util.ResourceBundle;
 
         //Add Panel (ComboBox with Label) for default Term
         JLabel dtLabel = new JLabel(OPTIONS.getString("DEFAULT_TERM"));
-        JComboBox<DefaultTerm> dtComboBox = new JComboBox<DefaultTerm>(DefaultTerm.values());
-        dtComboBox.setSelectedItem(defaultTerm);
+        List<String> dtNamesList = Arrays.stream(DefaultTerm.values()).map(DefaultTerm::getSimpleName).collect(Collectors.toList());
+        String[] dtNames = dtNamesList.toArray(new String[0]);
+        JComboBox<String> dtComboBox = new JComboBox<>(dtNames);
+        dtComboBox.setName("dtComboBox");
+        dtComboBox.setSelectedItem(defaultTerm.getSimpleName());
         dtComboBox.setBackground(new Color(mainPanel.getBackground().getRGB()));
         dtComboBox.addActionListener(this);
         JPanel dtPanel = new JPanel();
@@ -77,6 +84,7 @@ import java.util.ResourceBundle;
         // Add Panel (ComboBox with Label) for default Sign
         JLabel dsLabel = new JLabel(OPTIONS.getString("DEFAULT_SIGN"));
         JComboBox<Sign> dsComboBox = new JComboBox<Sign>(Sign.values());
+        dsComboBox.setName("dsComboBox");
         dsComboBox.setSelectedItem(defaultSign);
         dsComboBox.setBackground(new Color(mainPanel.getBackground().getRGB()));
         dsComboBox.addActionListener(this);
@@ -103,11 +111,14 @@ import java.util.ResourceBundle;
         if(event.getSource() instanceof JComboBox) {
             JComboBox changedCB = (JComboBox) event.getSource();
             Object changedObj = changedCB.getSelectedItem();
-            if(changedObj instanceof Sign) {
+            System.out.println(((JComboBox<?>) event.getSource()).getName());
+            if(((JComboBox<?>) event.getSource()).getName().equals("dsComboBox")) {
                 ftg.setSign((Sign) changedObj);
             }
-            else if(changedObj instanceof DefaultTerm) {
-                ftg.setDefaultTerm((DefaultTerm) changedObj);
+            else if(((JComboBox<?>) event.getSource()).getName().equals("dtComboBox")) {
+                System.out.println("DefTerm Before: " + ftg.getDefaultTerm());
+                ftg.setDefaultTerm(DefaultTerm.getDefaultTermFromSimpleName((String)changedObj));
+                System.out.println("DefTerm After: " + ftg.getDefaultTerm());
             }
         }
     }

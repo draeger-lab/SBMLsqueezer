@@ -494,7 +494,6 @@ public class ReactionType {
         int type;
         for (ModifierSpeciesReference modifier : reaction.getListOfModifiers()) {
             type = modifier.getSBOTerm();
-            System.out.println(("ModType: " + type));
             // if (SBO.isModifier(type)) {
             // Ok, this is confusing...
             // inhibitors.add(modifier.getSpecies());

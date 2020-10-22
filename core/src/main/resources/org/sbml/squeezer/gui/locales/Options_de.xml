@@ -250,5 +250,8 @@
     in der Eingabe einer Transition gesetzt ist.</entry>
   <entry key="DEFAULT_TERM">Standardterm</entry>
   <entry key="DEFAULT_TERM_TOOLTIP">Definiere die Art des Funktionsterms, welcher angewendet werden soll.</entry>
+  <entry key="ALL_ACTI">Nur Aktivatoren, keine Inhibitoren</entry>
+  <entry key="ONE_ACTI">Ein Aktivator, keine Inhibitoren</entry>
+  <entry key="NONE">Keine</entry>
 
 </properties>

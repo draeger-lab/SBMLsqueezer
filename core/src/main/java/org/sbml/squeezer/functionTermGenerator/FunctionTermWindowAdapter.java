@@ -74,7 +74,7 @@ public class FunctionTermWindowAdapter extends WindowAdapter implements
 
         pane = new JOptionPane(scroll,
                 JOptionPane.QUESTION_MESSAGE, JOptionPane.OK_CANCEL_OPTION,
-                UIManager.getIcon("ICON_LEMON_SMALL"), null, null);
+                UIManager.getIcon("SBMLsqueezerIcon_64"), null, null);
         pane.setInitialValue(null);
         Window owner = dialog.getOwner();
         pane.setComponentOrientation(((owner == null) ? JOptionPane

@@ -79,6 +79,8 @@ public class SubmodelController {
    * Localization support.
    */
   public static final transient ResourceBundle WARNINGS = ResourceManager.getBundle(Bundles.WARNINGS);
+
+  public static final transient ResourceBundle MESSAGES = ResourceManager.getBundle(Bundles.MESSAGES);
   
   /**
    * A {@link Logger} for this class.
@@ -681,8 +683,7 @@ public class SubmodelController {
       }
     }
     if (!kineticLaw.isSetMath()) {
-      // TODO: Localize!
-      logger.log(Level.SEVERE, MessageFormat.format("No math element defined for reaction {0}", reaction.getId()));
+      logger.log(Level.SEVERE, MessageFormat.format(MESSAGES.getString("NO_MATH_ELEMENT_SC"), reaction.getId()));
     } else {
       kineticLaw.getMath().updateVariables();
     }

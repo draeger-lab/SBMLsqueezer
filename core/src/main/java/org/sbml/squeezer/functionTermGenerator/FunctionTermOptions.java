@@ -25,4 +25,14 @@ public interface FunctionTermOptions extends KeyProvider{
 	public static final Option<Sign> DEFAULT_SIGN = new Option<Sign>("DEFAULT_SIGN", Sign.class, OPTIONS_BUNDLE, Sign.positive);
 	
 	public static final Option<DefaultTerm> DEFAULT_TERM = new Option<DefaultTerm>("DEFAULT_TERM", DefaultTerm.class, OPTIONS_BUNDLE, DefaultTerm.none);
+
+	/**
+	 * If {@code true} a new (default) function term will be created for each transition irrespective of
+	 * whether there is already a function terms assigned to this transition or not.
+	 */
+	public static final Option<Boolean> OVERWRITE_EXISTING_FUNCTION_TERMS = new Option<Boolean>(
+			"OVERWRITE_EXISTING_FUNCTION_TERMS",
+			Boolean.class,
+			OPTIONS_BUNDLE,
+			Boolean.valueOf(false));
 }

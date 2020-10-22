@@ -66,6 +66,8 @@
   <entry key="DEFAULT_SPECIES_INIT_VAL_TOOLTIP">If species are not yet initialized, SBMLsqueezer will use this value as initial amount or initial concentration of the species. Which kind of quantity is used, depends on whether the species has only substance units. This means, for species that are to be interpreted in terms of concentration, an initial concentration will be set, whereas an initial amount will be set if the species is to be interpreted in terms of molecule counts. By default this value is set to 1.0.</entry>
   <entry key="OVERWRITE_EXISTING_RATE_LAWS">Overwrite existing rate laws</entry>
   <entry key="OVERWRITE_EXISTING_RATE_LAWS_TOOLTIP">If this flag is set to true, a new rate law will be created for each reaction irrespective of whether there is already a rate law assigned to this reaction or not. If false (default), new rate laws are only generated if missing in the SBML file. Note that if this option is checked, already existing kinetic laws will be overwritten.</entry>
+  <entry key="OVERWRITE_EXISTING_FUNCTION_TERMS">Overwrite existing function terms</entry>
+  <entry key="OVERWRITE_EXISTING_FUNCTION_TERMS_TOOLTIP">If this flag is set to true, a new (default) function term will be created for each transition irrespective of whether there is already a function term assigned to this transition or not. If false (default), new function terms are only generated if missing in the SBML file. Note that if this option is checked, already existing function terms will be overwritten.</entry>
   <entry key="IGNORE_THESE_SPECIES_WHEN_CREATING_LAWS">Ignore these species when creating laws</entry>
   <entry key="IGNORE_THESE_SPECIES_WHEN_CREATING_LAWS_TOOLTIP">Allows the user to ignore species that are annotated with the given compound identifiers when creating rate laws for reactions that involve these species. For instance, water or single protons can often be ignored when creating rate equations, hence simplifying the resulting rate equations. Preselected are the KEGG compound identifiers for several ions and small molecules, including water and protons.</entry>
 
@@ -218,16 +220,20 @@
   <entry key="ORGANISM_TOOLTIP">Define the organism for which the kinetics are to be determined.</entry>
    
   <entry key="GROUP_GENERAL_OPTIONS">General options</entry>
-  <entry key="GROUP_GENERAL_OPTIONS_TOOLTIP">Define key options to restrict the results of your search for reaction kinetics in SABIO-RK.</entry> 
+  <entry key="GROUP_GENERAL_OPTIONS_TOOLTIP">Define key options to restrict the results of your search for reaction kinetics in SABIO-RK.</entry>
 
 
-	<!--  FunctionTermOptions -->
-	
-	<entry key="FunctionTermOptions">Function Term Options</entry>
-	<entry key="FunctionTermOptions_TOOLTIP">Here you can define the options depending the Function Term </entry>
-	<entry key="DEFAULT_SIGN">Default Sign</entry>
-    <entry key="DEFAULT_SIGN_TOOLTIP">Define the default sign, when no sign is set to the Input object of a Transition</entry>
-    <entry key="DEFAULT_TERM">Default Term</entry>
-    <entry key="DEFAULT_TERM_TOOLTIP">Define the kind of default term you want to apply</entry>
+  <!--  FunctionTermOptions -->
+
+  <entry key="FunctionTermOptions">Function Term Options</entry>
+  <entry key="FunctionTermOptions_TOOLTIP">Here you can define the options depending the Function Term</entry>
+  <entry key="DEFAULT_SIGN">Default Sign</entry>
+  <entry key="DEFAULT_SIGN_TOOLTIP">Define the default sign, when no sign is set to the Input object of a Transition
+  </entry>
+  <entry key="DEFAULT_TERM">Default Term</entry>
+  <entry key="DEFAULT_TERM_TOOLTIP">Define the kind of default term you want to apply</entry>
+  <entry key="ALL_ACTI">All activators, no inhibitors</entry>
+  <entry key="ONE_ACTI">One activator, no inhibitors</entry>
+  <entry key="NONE">None</entry>
 
 </properties>

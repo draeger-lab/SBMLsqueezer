@@ -61,8 +61,8 @@ TableCellRendererColorGradient {
       try {
         temperature = SABIORK.getStartValueTemperature(
           (KineticLaw) value).trim();
-        temperatureUnit = SABIORK
-            .getTemperatureUnit((KineticLaw) value).trim();
+        temperatureUnit = "°" + SABIORK
+            .getTemperatureUnit((KineticLaw) value).trim().replaceAll("[^\\\\x00-\\\\x7F]","");
       } catch (UnsupportedEncodingException e) {
         e.printStackTrace();
       } catch (XMLStreamException e) {
