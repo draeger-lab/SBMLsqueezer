@@ -271,7 +271,7 @@ public class SBMLsqueezer<T> extends Launcher {
         	sign = Sign.unknown;
         }
         try {
-        	defaultTerm = DefaultTerm.valueOf(properties.get(FunctionTermOptions.DEFAULT_TERM));
+        	defaultTerm = DefaultTerm.getDefaultTermFromSimpleName(properties.get(FunctionTermOptions.DEFAULT_TERM));
         } catch (NullPointerException e) {
         	defaultTerm = DefaultTerm.none;
         }

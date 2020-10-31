@@ -2,6 +2,8 @@ package org.sbml.squeezer.functionTermGenerator;
 
 import java.util.ResourceBundle;
 
+import de.zbit.util.prefs.OptionGroup;
+import de.zbit.util.prefs.Range;
 import org.sbml.jsbml.ext.qual.Sign;
 import org.sbml.squeezer.util.Bundles;
 
@@ -24,7 +26,15 @@ public interface FunctionTermOptions extends KeyProvider{
 
 	public static final Option<Sign> DEFAULT_SIGN = new Option<Sign>("DEFAULT_SIGN", Sign.class, OPTIONS_BUNDLE, Sign.positive);
 	
-	public static final Option<DefaultTerm> DEFAULT_TERM = new Option<DefaultTerm>("DEFAULT_TERM", DefaultTerm.class, OPTIONS_BUNDLE, DefaultTerm.none);
+	public static final Option<String> DEFAULT_TERM = new Option<String>(
+			"DEFAULT_TERM",
+			String.class,
+			OPTIONS_BUNDLE,
+			new Range<String>(
+					String.class,
+					OPTIONS_BUNDLE.getString("ONE_ACTI"), OPTIONS_BUNDLE.getString("ALL_ACTI"),
+					OPTIONS_BUNDLE.getString("NONE")),
+			OPTIONS_BUNDLE.getString("NONE"));
 
 	/**
 	 * If {@code true} a new (default) function term will be created for each transition irrespective of
@@ -35,4 +45,19 @@ public interface FunctionTermOptions extends KeyProvider{
 			Boolean.class,
 			OPTIONS_BUNDLE,
 			Boolean.valueOf(false));
+
+	/**
+	 *
+	 */
+	@SuppressWarnings({ "unchecked" })
+	public static final OptionGroup<Boolean> GROUP_GENERAL_OPTIONS = new OptionGroup<Boolean>(
+			"GROUP_GENERAL_OPTIONS", OPTIONS_BUNDLE, OVERWRITE_EXISTING_FUNCTION_TERMS);
+
+	/**
+	 *
+	 */
+	@SuppressWarnings({ "unchecked" })
+	public static final OptionGroup<?> GROUP_DEFAULT_VALUES = new OptionGroup(
+			"GROUP_DEFAULT_VALUES", OPTIONS_BUNDLE, DEFAULT_SIGN, DEFAULT_TERM
+	);
 }

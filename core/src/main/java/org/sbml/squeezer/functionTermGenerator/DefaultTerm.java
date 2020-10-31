@@ -3,43 +3,38 @@ package org.sbml.squeezer.functionTermGenerator;
 import de.zbit.util.ResourceManager;
 import org.sbml.squeezer.util.Bundles;
 
+import java.lang.reflect.Field;
 import java.util.ResourceBundle;
 
 /**
  * @author Andreas Dr&auml;ger
  * @author Lisa Falk
+ * @author Eike Pertuch
+ *
  * @since 2.1.1
  */
 public enum DefaultTerm {
     /**
      *
      */
-    oneActivatorAndNoInhibitor,
+    oneActivatorAndNoInhibitor(ResourceManager.getBundle(Bundles.OPTIONS).getString("ONE_ACTI")),
     /**
      *
      */
-    allActivatorsAndNoInhibitor,
+    allActivatorsAndNoInhibitor(ResourceManager.getBundle(Bundles.OPTIONS).getString("ALL_ACTI")),
     /**
      *
      */
-    none;
+    none(ResourceManager.getBundle(Bundles.OPTIONS).getString("NONE"));
 
-    /**
-     * Gets the simple Name of default term
-     *
-     * @return simple name
-     */
-    public String getSimpleName() {
 
-        ResourceBundle OPTIONS = ResourceManager.getBundle(Bundles.OPTIONS);
-
-        switch (this) {
-            case allActivatorsAndNoInhibitor:
-                return OPTIONS.getString("ALL_ACTI");
-            case oneActivatorAndNoInhibitor:
-                return OPTIONS.getString("ONE_ACTI");
-            default:
-                return OPTIONS.getString("NONE");
+    DefaultTerm(String name) {
+        try {
+            Field fieldName = getClass().getSuperclass().getDeclaredField("name");
+            fieldName.setAccessible(true);
+            fieldName.set(this, name);
+            fieldName.setAccessible(false);
+        } catch (Exception e) {
         }
     }
 

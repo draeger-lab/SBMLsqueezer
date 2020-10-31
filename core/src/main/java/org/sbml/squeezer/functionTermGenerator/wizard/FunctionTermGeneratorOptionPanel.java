@@ -60,7 +60,7 @@ import java.util.stream.Collectors;
     public void init() {
 
         SBPreferences prefs = SBPreferences.getPreferencesFor(FunctionTermOptions.class);
-        DefaultTerm defaultTerm = DefaultTerm.valueOf(prefs.get(FunctionTermOptions.DEFAULT_TERM));
+        DefaultTerm defaultTerm = DefaultTerm.getDefaultTermFromSimpleName(prefs.get(FunctionTermOptions.DEFAULT_TERM));
         Sign defaultSign = Sign.valueOf(prefs.get(FunctionTermOptions.DEFAULT_SIGN));
         JPanel mainPanel = new JPanel();
 
@@ -69,11 +69,12 @@ import java.util.stream.Collectors;
 
         //Add Panel (ComboBox with Label) for default Term
         JLabel dtLabel = new JLabel(OPTIONS.getString("DEFAULT_TERM"));
-        List<String> dtNamesList = Arrays.stream(DefaultTerm.values()).map(DefaultTerm::getSimpleName).collect(Collectors.toList());
+        List<String> dtNamesList = Arrays.stream(DefaultTerm.values()).map(DefaultTerm::name).collect(Collectors.toList());
+        dtNamesList.remove(dtNamesList.size()-1);
         String[] dtNames = dtNamesList.toArray(new String[0]);
         JComboBox<String> dtComboBox = new JComboBox<>(dtNames);
         dtComboBox.setName("dtComboBox");
-        dtComboBox.setSelectedItem(defaultTerm.getSimpleName());
+        dtComboBox.setSelectedItem(defaultTerm.name());
         dtComboBox.setBackground(new Color(mainPanel.getBackground().getRGB()));
         dtComboBox.addActionListener(this);
         JPanel dtPanel = new JPanel();
@@ -111,14 +112,11 @@ import java.util.stream.Collectors;
         if(event.getSource() instanceof JComboBox) {
             JComboBox changedCB = (JComboBox) event.getSource();
             Object changedObj = changedCB.getSelectedItem();
-            System.out.println(((JComboBox<?>) event.getSource()).getName());
             if(((JComboBox<?>) event.getSource()).getName().equals("dsComboBox")) {
                 ftg.setSign((Sign) changedObj);
             }
             else if(((JComboBox<?>) event.getSource()).getName().equals("dtComboBox")) {
-                System.out.println("DefTerm Before: " + ftg.getDefaultTerm());
                 ftg.setDefaultTerm(DefaultTerm.getDefaultTermFromSimpleName((String)changedObj));
-                System.out.println("DefTerm After: " + ftg.getDefaultTerm());
             }
         }
     }

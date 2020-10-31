@@ -439,8 +439,6 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 
         openedFile.addPropertyChangeListener(OpenedFile.FILE_CONTENT_CHANGED_EVENT, this);
 
-        setupContextMenu(split, null, null);
-
         String title = Integer.toString(tabbedPane.getTabCount() + 1);
         Model m = null;
         if (openedFile.getDocument() != null) {
@@ -457,6 +455,7 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
         sbmlIO.getListOfOpenedFiles().add(openedFile);
         tabbedPane.add(title, split);
         tabbedPane.setSelectedIndex(tabbedPane.getTabCount() - 1);
+        setupContextMenu(split, null, null);
         if (sbmlIO.getSelectedModel().getReactionCount() > 0) {
             GUITools.setEnabled(true, getJMenuBar(), getJToolBar(), Command.SQUEEZE, Command.SABIO_RK, Command.TO_LATEX);
         }
@@ -509,9 +508,16 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
         JMenuItem squeezeItem = GUITools.createJMenuItem(tree, Command.SQUEEZE, UIManager.getIcon("SBMLsqueezerIcon_16"));
         JMenuItem latexItem = GUITools.createJMenuItem(tree, Command.TO_LATEX, UIManager.getIcon("ICON_LATEX_16"));
 
-        tree.addPopupMenuItem(sabioItem, Reaction.class, Model.class, SBMLDocument.class);
-        tree.addPopupMenuItem(squeezeItem, Transition.class, Reaction.class, Model.class, SBMLDocument.class);
-        tree.addPopupMenuItem(latexItem, Transition.class, Reaction.class, Model.class, SBMLDocument.class);
+        if (sbmlIO.getSelectedModel().getReactionCount() > 0) {
+            tree.addPopupMenuItem(sabioItem, Reaction.class, Model.class, SBMLDocument.class);
+            tree.addPopupMenuItem(squeezeItem, Reaction.class, Model.class, SBMLDocument.class);
+            tree.addPopupMenuItem(latexItem, Reaction.class, Model.class, SBMLDocument.class);
+        }
+        else if(((QualModelPlugin) sbmlIO.getSelectedModel().getPlugin(QualConstants.shortLabel)).getTransitionCount() > 0) {
+            tree.addPopupMenuItem(sabioItem);
+            tree.addPopupMenuItem(squeezeItem, Transition.class, Model.class, SBMLDocument.class);
+            tree.addPopupMenuItem(latexItem);
+        }
     }
 
     /* (non-Javadoc)
