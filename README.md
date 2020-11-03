@@ -8,7 +8,9 @@
 [![DOI:10.1186/s12918-015-0212-9](https://zenodo.org/badge/DOI/10.1186/s12918-015-0212-9.svg)](https://doi.org/10.1186/s12918-015-0212-9)
 [![Build Status](https://travis-ci.org/draeger-lab/SBMLsqueezer.svg?branch=master&style=plastic)](https://travis-ci.org/draeger-lab/SBMLsqueezer)
 
-*Authors:* [Andreas Dräger](https://github.com/draeger/), [Alexander Dörr](https://github.com/alexander-doerr),  [Sebastian Nagel](https://github.com/nagel86/), [Roland Keller](https://github.com/RolandKeller5), Sandra Saliger, [Simon Schäfer](https://github.com/shsshs), [Sarah R. Müller vom Hagen](https://github.com/mvhsara/), [Johannes Pfeuffer](https://github.com/jpfeuffer/), Hannes Borch, Dieudonné Motsou Wouamba, [Lisa Falk](https://github.com/LisaFalk/), [Thomas M. Hamm](https://github.com/tmHamm/), [Clemens Wrzodek](https://github.com/Clemens82/), Stefanie Hoffmann, [Eike Pertuch](https://github.com/eikept)
+*Authors:* [Eike Pertuch](https://github.com/eikept), [Andreas Dräger](https://github.com/draeger/)
+
+*Alumni:* [Alexander Dörr](https://github.com/alexander-doerr),  [Sebastian Nagel](https://github.com/nagel86/), [Roland Keller](https://github.com/RolandKeller5), Sandra Saliger, [Simon Schäfer](https://github.com/shsshs), [Sarah R. Müller vom Hagen](https://github.com/mvhsara/), [Johannes Pfeuffer](https://github.com/jpfeuffer/), Hannes Borch, Dieudonné Motsou Wouamba, [Lisa Falk](https://github.com/LisaFalk/), [Thomas M. Hamm](https://github.com/tmHamm/), [Clemens Wrzodek](https://github.com/Clemens82/), Stefanie Hoffmann
 ___________________________________________________________________________________________________________
 
 ### Short description
