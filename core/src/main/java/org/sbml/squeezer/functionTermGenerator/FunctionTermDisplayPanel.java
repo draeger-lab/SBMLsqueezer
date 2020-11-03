@@ -145,6 +145,7 @@ public class FunctionTermDisplayPanel extends JPanel implements ItemListener {
         }
 
         List<String> signOptNames = Arrays.stream(Sign.values()).map(Enum::toString).collect(Collectors.toList());
+        signOptNames.remove(signOptNames.size()-1);
         ButtonGroup signBut = new ButtonGroup();
         signOpt = new JPanel();
         signOpt.setLayout(new BoxLayout(signOpt, BoxLayout.Y_AXIS));

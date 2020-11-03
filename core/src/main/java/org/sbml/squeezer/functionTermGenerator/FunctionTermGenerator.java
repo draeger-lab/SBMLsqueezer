@@ -95,12 +95,15 @@ public class FunctionTermGenerator {
     public void setDefaultSign(Model model) {
 
         QualModelPlugin qm = (QualModelPlugin) model.getPlugin(QualConstants.shortLabel);
+        if (tempListOfTransitions == null) {
+            this.tempListOfTransitions = qm.getListOfTransitions().clone();
+        }
 
         for (Transition t : qm.getListOfTransitions()) {
             for (Input i : t.getListOfInputs()) {
                 // if no sign or sign=unknown the default sign is set
                 if (!i.isSetSign() || i.getSign().equals(Sign.unknown)) {
-                    i.setSign(sign);
+                    tempListOfTransitions.get(t.getId()).getListOfInputs().get(i.getId()).setSign(sign);
                 }
             }
         }
@@ -115,7 +118,6 @@ public class FunctionTermGenerator {
 
 
         SBPreferences prefs = SBPreferences.getPreferencesFor(FunctionTermOptions.class);
-        QualModelPlugin qm = (QualModelPlugin) model.getPlugin(QualConstants.shortLabel);
 
         boolean generateTermsForAllReactions = prefs.getBoolean(FunctionTermOptions.OVERWRITE_EXISTING_FUNCTION_TERMS);
 
@@ -130,8 +132,6 @@ public class FunctionTermGenerator {
             progressAdapter = new ProgressAdapter(progressBar, ProgressAdapter.TypeOfProgress.generateFunctionTerms);
             progressAdapter.setNumberOfTags(model, null, false);
         }
-
-        this.tempListOfTransitions = qm.getListOfTransitions().clone();
 
         for (Transition t : tempListOfTransitions) {
 
@@ -178,11 +178,13 @@ public class FunctionTermGenerator {
     /**
      * Generates default function term for a single transition
      *
-     * @param t
+     * @param ogT
      * @param logicalJunction
      * @return
      */
-    public ASTFunction generateFunctionTermForOneTransition(Transition t, Type logicalJunction) {
+    public ASTFunction generateFunctionTermForOneTransition(Transition ogT, Type logicalJunction) {
+
+        Transition t = tempListOfTransitions.get(ogT.getId());
 
         if (t.isSetListOfInputs()) {
 
@@ -350,5 +352,8 @@ public class FunctionTermGenerator {
         Transition t = qm.getTransition(transitionID);
         t.getListOfFunctionTerms().clear();
         t.createFunctionTerm(ftn);
+        for (Input i : t.getListOfInputs()) {
+            i.setSign(sign);
+        }
     }
 }

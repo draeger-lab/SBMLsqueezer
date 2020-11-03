@@ -24,7 +24,15 @@ public interface FunctionTermOptions extends KeyProvider{
 
 	public static final ResourceBundle OPTIONS_BUNDLE = ResourceManager.getBundle(Bundles.OPTIONS);
 
-	public static final Option<Sign> DEFAULT_SIGN = new Option<Sign>("DEFAULT_SIGN", Sign.class, OPTIONS_BUNDLE, Sign.positive);
+	public static final Option<Sign> DEFAULT_SIGN = new Option<Sign>(
+			"DEFAULT_SIGN",
+			Sign.class,
+			OPTIONS_BUNDLE,
+			new Range<Sign>(
+					Sign.class,
+					Sign.positive, Sign.negative, Sign.dual
+			),
+			Sign.positive);
 	
 	public static final Option<String> DEFAULT_TERM = new Option<String>(
 			"DEFAULT_TERM",
@@ -32,9 +40,8 @@ public interface FunctionTermOptions extends KeyProvider{
 			OPTIONS_BUNDLE,
 			new Range<String>(
 					String.class,
-					OPTIONS_BUNDLE.getString("ONE_ACTI"), OPTIONS_BUNDLE.getString("ALL_ACTI"),
-					OPTIONS_BUNDLE.getString("NONE")),
-			OPTIONS_BUNDLE.getString("NONE"));
+					OPTIONS_BUNDLE.getString("ONE_ACTI"), OPTIONS_BUNDLE.getString("ALL_ACTI")),
+			OPTIONS_BUNDLE.getString("ALL_ACTI"));
 
 	/**
 	 * If {@code true} a new (default) function term will be created for each transition irrespective of
