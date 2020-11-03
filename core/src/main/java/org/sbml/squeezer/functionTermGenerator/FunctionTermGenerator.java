@@ -353,7 +353,9 @@ public class FunctionTermGenerator {
         t.getListOfFunctionTerms().clear();
         t.createFunctionTerm(ftn);
         for (Input i : t.getListOfInputs()) {
-            i.setSign(sign);
+            if(!i.isSetSign() || i.getSign().equals(Sign.unknown)) {
+                i.setSign(sign);
+            }
         }
     }
 }
