@@ -16,8 +16,7 @@ import java.util.ResourceBundle;
  *
  */
 public class AlternativeMassAction extends GeneralizedMassAction implements
-        InterfaceNonEnzymeKinetics, InterfaceReversibleKinetics,
-        InterfaceIrreversibleKinetics, InterfaceModulatedKinetics {
+        InterfaceNonEnzymeKinetics, InterfaceReversibleKinetics, InterfaceModulatedKinetics {
 
     /**
      * @param parentReaction

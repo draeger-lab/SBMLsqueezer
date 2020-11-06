@@ -456,12 +456,12 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
         tabbedPane.add(title, split);
         tabbedPane.setSelectedIndex(tabbedPane.getTabCount() - 1);
         setupContextMenu(split, null, null);
-        if (sbmlIO.getSelectedModel().getReactionCount() > 0) {
-            GUITools.setEnabled(true, getJMenuBar(), getJToolBar(), Command.SQUEEZE, Command.SABIO_RK, Command.TO_LATEX);
-        }
         if (((QualModelPlugin) sbmlIO.getSelectedModel().getPlugin(QualConstants.shortLabel)).getTransitionCount() > 0) {
             GUITools.setEnabled(true, getJMenuBar(), getJToolBar(), Command.SQUEEZE);
             GUITools.setEnabled(false, getJMenuBar(), getJToolBar(), Command.SABIO_RK, Command.TO_LATEX);
+        }
+        if (sbmlIO.getSelectedModel().getReactionCount() > 0) {
+            GUITools.setEnabled(true, getJMenuBar(), getJToolBar(), Command.SQUEEZE, Command.SABIO_RK, Command.TO_LATEX);
         }
         if (garudaBackend != null) {
             GUITools.setEnabled(true, getJMenuBar(), getJToolBar(), GarudaActions.SENT_TO_GARUDA);
@@ -692,7 +692,9 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
             choice = JOptionPane.showConfirmDialog(this,
                     StringUtil.toHTML(MessageFormat.format(MESSAGES.getString("SAVE_BEFORE_CLOSING"), openedFile.getFile().getName()), 40),
                     MESSAGES.getString("SAVE_BEFORE_CLOSING_TITLE"),
-                    JOptionPane.YES_NO_CANCEL_OPTION);
+                    JOptionPane.YES_NO_CANCEL_OPTION,
+                    JOptionPane.QUESTION_MESSAGE,
+                    UIManager.getIcon("SBMLsqueezerIcon_64"));
         }
 
         File savedFile = null;

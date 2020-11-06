@@ -927,6 +927,7 @@ public class ReactionType {
      * classes).
      */
     public Class<?>[] identifyPossibleKineticLaws() {
+        System.out.println("IN iPKL");
         Set<Class> types = new HashSet<Class>();
         boolean emptyListOfReactants = representsEmptySet(reaction.getListOfReactants());
         boolean emptyListOfProducts = representsEmptySet(reaction.getListOfProducts());
@@ -969,7 +970,12 @@ public class ReactionType {
         } else {
             if (nonEnzyme) {
                 // non enzyme reactions
-                types.addAll(getKineticsNonEnzyme());
+                if (reaction.isReversible()) {
+                    types.addAll(getKineticsReversibleNonEnzyme());
+                }
+                else {
+                    types.addAll(getKineticsIrreversibleNonEnzyme());
+                }
             } else {
                 enzymeKinetics = true;
             }

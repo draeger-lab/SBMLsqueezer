@@ -82,7 +82,7 @@ public class GeneratorSelectionDialog extends JDialog  {
         JOptionPane pane = new JOptionPane(mainPanel,
                 JOptionPane.QUESTION_MESSAGE,
                 JOptionPane.OK_CANCEL_OPTION, UIManager
-                .getIcon("ICON_LEMON_SMALL"));
+                .getIcon("SBMLsqueezerIcon_64"));
         pane.selectInitialValue();
         pane.addPropertyChangeListener(new PropertyChangeListener() {
             @Override

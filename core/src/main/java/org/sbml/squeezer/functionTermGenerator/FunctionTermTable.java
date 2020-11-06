@@ -145,7 +145,7 @@ public class FunctionTermTable extends JTable implements MouseInputListener {
                 final JOptionPane pane = new JOptionPane(ftdp,
                         JOptionPane.INFORMATION_MESSAGE,
                         JOptionPane.DEFAULT_OPTION, UIManager
-                        .getIcon("ICON_LEMON_SMALL"));
+                        .getIcon("SBMLsqueezerIcon_64"));
                 pane.selectInitialValue();
                 Container container = getTopLevelAncestor();
                 final JDialog dialog;
