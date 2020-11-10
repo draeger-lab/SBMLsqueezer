@@ -41,20 +41,7 @@ import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBO;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
-import org.sbml.squeezer.kinetics.BasicKineticLaw;
-import org.sbml.squeezer.kinetics.ConvenienceKinetics;
-import org.sbml.squeezer.kinetics.InterfaceArbitraryEnzymeKinetics;
-import org.sbml.squeezer.kinetics.InterfaceBiBiKinetics;
-import org.sbml.squeezer.kinetics.InterfaceBiUniKinetics;
-import org.sbml.squeezer.kinetics.InterfaceGeneRegulatoryKinetics;
-import org.sbml.squeezer.kinetics.InterfaceIntegerStoichiometry;
-import org.sbml.squeezer.kinetics.InterfaceIrreversibleKinetics;
-import org.sbml.squeezer.kinetics.InterfaceModulatedKinetics;
-import org.sbml.squeezer.kinetics.InterfaceNonEnzymeKinetics;
-import org.sbml.squeezer.kinetics.InterfaceReversibleKinetics;
-import org.sbml.squeezer.kinetics.InterfaceUniUniKinetics;
-import org.sbml.squeezer.kinetics.InterfaceZeroProducts;
-import org.sbml.squeezer.kinetics.InterfaceZeroReactants;
+import org.sbml.squeezer.kinetics.*;
 import org.sbml.squeezer.util.Bundles;
 
 import de.zbit.sbml.util.SBMLtools;
@@ -146,7 +133,7 @@ public class ReactionType {
         Class[] classes = {
                 org.sbml.squeezer.kinetics.AdditiveModelLinear.class,
                 org.sbml.squeezer.kinetics.AdditiveModelNonLinear.class,
-                org.sbml.squeezer.kinetics.AlternativeMassAction.class,
+                MassActionWithEquilibriumConstant.class,
                 org.sbml.squeezer.kinetics.CommonModularRateLaw.class,
                 org.sbml.squeezer.kinetics.ConvenienceKinetics.class,
                 org.sbml.squeezer.kinetics.DirectBindingModularRateLaw.class,
@@ -927,7 +914,6 @@ public class ReactionType {
      * classes).
      */
     public Class<?>[] identifyPossibleKineticLaws() {
-        System.out.println("IN iPKL");
         Set<Class> types = new HashSet<Class>();
         boolean emptyListOfReactants = representsEmptySet(reaction.getListOfReactants());
         boolean emptyListOfProducts = representsEmptySet(reaction.getListOfProducts());

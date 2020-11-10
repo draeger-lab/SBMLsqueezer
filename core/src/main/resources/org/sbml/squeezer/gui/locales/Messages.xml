@@ -49,7 +49,7 @@
 
   <!-- AlternativeMassAction -->
 
-  <entry key="ALTERNATIVE_MASS_ACTION_SIMPLE_NAME">Alternative mass-action</entry>
+  <entry key="ALTERNATIVE_MASS_ACTION_SIMPLE_NAME">Mass-action with equilibrium constant</entry>
   
   <!-- CommonModularRateLaw -->
   
@@ -87,6 +87,14 @@
   <!-- HillRaddeEquation -->
   
   <entry key="HILL_RADDE_EQUATION">Hill-Radde equation</entry>
+
+  <!-- Hill-Type rate law, microscopic form -->
+
+  <entry key="HILL_TYPE_MICROSCOPIC_SIMPLE_NAME">Hill-type rate law, microscopic form</entry>
+
+  <!-- Hill-Type rate law, reduced form -->
+
+  <entry key="HILL_TYPE_REDUCED_SIMPLE_NAME">Hill-type rate law, reduced form</entry>
   
   <!-- HSystem -->
   

@@ -164,8 +164,7 @@
   <entry key="GROUP_GENE_REGULATION_KINETICS_TOOLTIP">Wählen Sie die Standard-Ratengleichung, mit der genregulatorische Prozesse modelliert werden sollen.</entry>
   <entry key="GROUP_REVERSIBILITY">Reversibilität</entry>
   <entry key="GROUP_REVERSIBILITY_TOOLTIP">In einigen Studien wurde festgestellt, dass ein Modell realitätsnäher sein kann, werden alle Reaktionen als reversible Prozesse betrachtet. Hier können Sie auswählen, ob Sie die Information über die Reversibilität der Reaktionen unverändert beibehalten möchten, oder alle Reaktionen auf reversibel umstellen wollen. Im jedem Fall werden alle kinetischen Gleichungen entsprechend dieser Einstellung erzeugt.</entry>
- 
-  
+
   
   
   

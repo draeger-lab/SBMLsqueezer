@@ -1024,5 +1024,4 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
     protected boolean showsSaveMenuEntry() {
         return true;
     }
-
 }

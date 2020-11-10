@@ -15,7 +15,7 @@ import java.util.ResourceBundle;
 /**
  *
  */
-public class AlternativeMassAction extends GeneralizedMassAction implements
+public class MassActionWithEquilibriumConstant extends GeneralizedMassAction implements
         InterfaceNonEnzymeKinetics, InterfaceReversibleKinetics, InterfaceModulatedKinetics {
 
     /**
@@ -24,7 +24,7 @@ public class AlternativeMassAction extends GeneralizedMassAction implements
      * @throws RateLawNotApplicableException
      * @throws XMLStreamException
      */
-    public AlternativeMassAction(Reaction parentReaction, Object... types)
+    public MassActionWithEquilibriumConstant(Reaction parentReaction, Object... types)
             throws RateLawNotApplicableException, XMLStreamException {
         super(parentReaction, types);
     }
@@ -50,7 +50,6 @@ public class AlternativeMassAction extends GeneralizedMassAction implements
                 if (stoichiometry != 1d) {
                     basis.raiseByThePowerOf(stoichiometry);
                     ASTNode exp = basis.getRightChild();
-                    System.out.println("Else: " + stoichiometry);
                     if ((stoichiometry != 0d) && (getLevel() > 2) && !exp.isSetUnits()) {
                         // The right child must be the stoichiometric coefficient because we just set it as exponent.
                         exp.setUnits(Unit.Kind.DIMENSIONLESS);
@@ -96,7 +95,6 @@ public class AlternativeMassAction extends GeneralizedMassAction implements
         ASTNode kEq = new ASTNode(parameterFactory.parameterEquilibriumConstant(r));
         ASTNode multProd = null;
         for(SpeciesReference specRef:r.getListOfProducts()) {
-            System.out.println("SpecRefProd: " + specRef);
             multProd = createTerm(multProd, specRef);
         }
         return ASTNode.frac(multProd, kEq);

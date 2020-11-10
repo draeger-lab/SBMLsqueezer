@@ -186,7 +186,17 @@ InterfaceIntegerStoichiometry, InterfaceGeneRegulatoryKinetics {
     if (!isSetSBOTerm()) {
       return MESSAGES.getString("GENERALIZED_HILL_EQUATION_SIMPLE_NAME");
     }
-    return SBO.getTerm(getSBOTerm()).getName().replace("\\,", ",");
+    else {
+      switch (getSBOTerm()) {
+        case 192:
+          return MESSAGES.getString("GENERALIZED_HILL_EQUATION_SIMPLE_NAME");
+        case 195:
+          return MESSAGES.getString("HILL_TYPE_MICROSCOPIC_SIMPLE_NAME");
+        case 198:
+          return MESSAGES.getString("HILL_TYPE_REDUCED_SIMPLE_NAME");
+        default:
+          return SBO.getTerm(getSBOTerm()).getName().replace("\\,", ",");
+      }
+    }
   }
-  
 }

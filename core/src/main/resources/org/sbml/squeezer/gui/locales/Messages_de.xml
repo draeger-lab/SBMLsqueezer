@@ -44,32 +44,32 @@
 
   <!-- AdditiveModelNonLinear -->
 
-  <entry key="ADDITIVE_MODEL_NON_LINEAR_SIMPLE_NAME">Nicht-Lineares additives Modell, allgemeine Form</entry>
+  <entry key="ADDITIVE_MODEL_NON_LINEAR_SIMPLE_NAME">Nicht-lineares additives Modell, allgemeine Form</entry>
 
   <!-- AlternativeMassAction -->
 
-  <entry key="ALTERNATIVE_MASS_ACTION_SIMPLE_NAME">Alternative Massenwirkungskinetik</entry>
+  <entry key="ALTERNATIVE_MASS_ACTION_SIMPLE_NAME">Massenwirkungskinetik mit Gleichgewichtskonstante</entry>
 
   <!-- CommonModularRateLaw -->
 
-  <entry key="COMMON_MODULAR_RATE_LAW_SIMPLE_NAME">Allgemeine moduläre Ratengleichung (CM)</entry>
+  <entry key="COMMON_MODULAR_RATE_LAW_SIMPLE_NAME">Allgemeine modulare Ratengleichung (CM)</entry>
 
   <!-- ConvenienceKinetics -->
 
-  <entry key="CONVENIENCE_KINETICS_SIMPLE_NAME">Einfache kinetische Gleichung</entry>
-  <entry key="THERMODYNAMICALLY_INDEPENDENT_CONVENIENCE_KINETICS">thermodynamisch-unabhängige einfache kinetische Gleichung</entry>
-  <entry key="CONVENIENCE_KINETICS">einfache kinetische Gleichung</entry>
+  <entry key="CONVENIENCE_KINETICS_SIMPLE_NAME">Einfache Form der zweckmäßigen Enzymkinetik</entry>
+  <entry key="THERMODYNAMICALLY_INDEPENDENT_CONVENIENCE_KINETICS">Thermodynamisch unabhängige Form der zweckmäßigen Enzymkinetik</entry>
+  <entry key="CONVENIENCE_KINETICS">Einfache Form der zweckmäßigen Enzymkinetik</entry>
   <entry key="UNKNOWN_STOICHIOMETRY_CK">Unbekannte Stöchiometrie in Reaktion {0} für Reaktionsteilnehmer {1}.</entry>
   <entry key="ONLY_INTEGER_STOICHIOMETRY_CK">{0} kann nur mit ganzähligen Stöchiometrien umgehen.</entry>
 
 
     <!-- DirectBindingModularRateLaw -->
 
-  <entry key="DIRECT_BINDING_MODULAR_RATE_LAW_SIMPLE_NAME">Direkte Bindungs moduläre Ratengleichung (CM)</entry>
+  <entry key="DIRECT_BINDING_MODULAR_RATE_LAW_SIMPLE_NAME">Modulare Ratengleichung mit direkter Bindung (DM)</entry>
 
   <!-- ForceDependentModularRateLaw -->
 
-  <entry key="FORCE_DEPENDENT_MODULAR_RATE_LAW_SIMPLE_NAME">Kraft-abhängige moduläre Ratengleichung  (FM)</entry>
+  <entry key="FORCE_DEPENDENT_MODULAR_RATE_LAW_SIMPLE_NAME">Kraftabhängige modulare Ratengleichung (FM)</entry>
 
   <!-- GeneralizedMassAction -->
 
@@ -77,24 +77,32 @@
 
   <!-- HillEquation -->
 
-  <entry key="GENERALIZED_HILL_EQUATION_SIMPLE_NAME">Verallgemeinerte Hill Gleichung</entry>
+  <entry key="GENERALIZED_HILL_EQUATION_SIMPLE_NAME">Verallgemeinerte Hill-Gleichung</entry>
 
   <!-- HillHinzeEquation -->
 
-  <entry key="HILL_HINZE_EQUATION_SIMPLE_NAME">Hill-Hinze Gleichung</entry>
-  <entry key="HILL_EQUATION_SIMPLE_NAME">Hill Gleichung</entry>
+  <entry key="HILL_HINZE_EQUATION_SIMPLE_NAME">Hill-Hinze-Gleichung</entry>
+  <entry key="HILL_EQUATION_SIMPLE_NAME">Hill-Gleichung</entry>
 
   <!-- HillRaddeEquation -->
 
-  <entry key="HILL_RADDE_EQUATION">Hill-Radde Gleichung</entry>
+  <entry key="HILL_RADDE_EQUATION">Hill-Radde-Gleichung</entry>
+
+  <!-- Hill-Type rate law, microscopic form -->
+
+  <entry key="HILL_TYPE_MICROSCOPIC_SIMPLE_NAME">Hill-Typ Ratengleichung, mikroskopische Form</entry>
+
+  <!-- Hill-Type rate law, reduced form -->
+
+  <entry key="HILL_TYPE_REDUCED_SIMPLE_NAME">Hill-Typ Ratengleichung, reduzierte Form</entry>
 
   <!-- HSystem -->
 
-  <entry key="HSYSTEM_SIMPLE_NAME">H-System Gleichung von Hadeler (2003)</entry>
+  <entry key="HSYSTEM_SIMPLE_NAME">H-System-Gleichung von Hadeler (2003)</entry>
 
   <!-- IrrevCompetNonCooperativeEnzymes -->
 
-  <entry key="IRREV_COMPET_NON_COOP_ENZYMES_SIMPLE_NAME">Irreversible nicht-exlusive nicht-kooperative kompetetive Inhibition</entry>
+  <entry key="IRREV_COMPET_NON_COOP_ENZYMES_SIMPLE_NAME">Irreversible nicht-exklusive nicht-kooperative kompetitive Inhibition</entry>
 
   <!-- IrrevNonModulatedNonInteractingEnzymes -->
 
@@ -211,11 +219,11 @@
 
   <!-- NetGeneratorNonLinear -->
 
-  <entry key="NET_GENERATOR_NON_LINEAR_SIMPLE_NAME">Nicht-Lineares additives Modell, NetGenerator Form</entry>
+  <entry key="NET_GENERATOR_NON_LINEAR_SIMPLE_NAME">Nicht-lineares additives Modell, NetGenerator-Form</entry>
 
   <!-- NetGeneratorLinear -->
 
-  <entry key="NET_GENERATOR_LINEAR_SIMPLE_NAME">Lineares additives Modell, NetGenerator Form</entry>
+  <entry key="NET_GENERATOR_LINEAR_SIMPLE_NAME">Lineares additives Modell, NetGenerator-Form</entry>
 
   <!-- No qualitative or quantative model dialog -->
 
@@ -233,11 +241,11 @@
 
   <!-- PingPongMechanism -->
 
-  <entry key="PING_PONG_MEACHANISM_SIMPLE_NAME">Ping-Pong Mechanismus</entry>
+  <entry key="PING_PONG_MEACHANISM_SIMPLE_NAME">Ping-Pong-Mechanismus</entry>
 
   <!-- PowerLawModularRateLaw -->
 
-  <entry key="POWER_MODULAR_RATE_LAW_SIMPLE_NAME">Energie-abhängige moduläre Ratengleichung (PM)</entry>
+  <entry key="POWER_MODULAR_RATE_LAW_SIMPLE_NAME">Modulare Ratengleichung mit Potenzgesetz (PM)</entry>
   
   <!-- ProgressAdapter -->
   
@@ -252,7 +260,7 @@
 
   <entry key="RANDOM_ORDER_MEACHANISM_SIMPLE_NAME">Mechanismus zufälliger Ordnung</entry>
   <!-- TODO: Better translation -->
-  <entry key="RAPID_EQUILIBRIUM_RANDOM_ORDER_TERNARY_COMPLEY_MEACHANISM">{0} dreifach-Komplex Mechanismus raschen Gleichgewichts und zufälliger Ordnungrapid-equilibrium {1}</entry>
+  <entry key="RAPID_EQUILIBRIUM_RANDOM_ORDER_TERNARY_COMPLEY_MEACHANISM">{0} dreifach-Komplex Mechanismus raschen Gleichgewichts und zufälliger Ordnungrapid-Gleichgewichts {1}</entry>
 
   <!-- ReactionType -->
   
@@ -265,7 +273,7 @@
   
   <!-- SBMLsqueezer -->
   
-  <entry key="CREATING_KINETIC_LAWS">Erzeuge kinetisce Gleichungen.</entry>
+  <entry key="CREATING_KINETIC_LAWS">Erzeuge kinetische Gleichungen.</entry>
   <entry key="DONE">erledigt.</entry>
   <entry key="DONE_IN_MS">erledigt in {0} ms.</entry>
   <entry key="EMPTY_INPUT_FILE_LIST">Leere Liste von Eingabedateien. Nichts zu tun.</entry>
@@ -314,7 +322,7 @@
 
   <!-- SimultaneousBindingModularRateLaw -->
 
-  <entry key="SIMULTANEOUS_BINDING_MODULAR_RATE_LAW_SIMPLE_NAME">Moduläre Ratengleichung mit silmutaner Bindung (SM)</entry>
+  <entry key="SIMULTANEOUS_BINDING_MODULAR_RATE_LAW_SIMPLE_NAME">Modulare Ratengleichung mit simultaner Bindung (SM)</entry>
 
   <!-- SSystem -->
 
@@ -322,11 +330,11 @@
 
   <!-- Vohradsky -->
 
-  <entry key="VOHRADSKY_SIMPLE_NAME">Nicht-Lineares additives Modell von Vohradský (2001)</entry>
+  <entry key="VOHRADSKY_SIMPLE_NAME">Nicht-lineares additives Modell von Vohradský (2001)</entry>
 
   <!-- Weaver -->
 
-  <entry key="WEAVER_SIMPLE_NAME">Nicht-Lineares additives Modell von Weaver et al. (1999)</entry>
+  <entry key="WEAVER_SIMPLE_NAME">Nicht-lineares additives Modell von Weaver et al. (1999)</entry>
 
   <!-- ZerothOrderForwardGMAK -->
 
