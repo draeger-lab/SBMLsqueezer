@@ -909,7 +909,7 @@
     description="Build a minimal version of SysBio for SBMLsqueezer"
   >
     <!-- The relative path of the SysBio project -->
-    <property name="sysbio.dir" value="${basedir}/../SysBio"/>
+    <property name="sysbio.dir" value="${basedir}/../../SysBio"/>
     <property name="sysbio.lib" value="${sysbio.dir}/lib"/>
     <path id="sysbio.classpath">
       <fileset dir="${sysbio.lib}" includes="**.jar, **/*.jar, **.zip"/>
@@ -920,17 +920,14 @@
       <fileset dir="${sysbio.dir}/resources"/>
       <fileset dir="${sysbio.dir}/examples"/>
     </path>
-    
-  	<echo message="Determining the revision number of SysBio"/>
-    <exec executable="svnversion" outputproperty="svnversion"/>
-  	<property name="sysbio.revision" value="1387"/> <!--${svnversion}"/-->
 
-    <echo message="Deleting all previous versions of SysBio JAR files"/>
+
+<!--    <echo message="Deleting all previous versions of SysBio JAR files"/>
     <delete verbose="${verbose}">
       <fileset dir="${lib}">
         <include name="SysBio**.jar"/>
       </fileset>
-    </delete>
+    </delete>-->
 
     <echo message="Compile the entire SysBio project"/>
     <delete dir="${sysbio.dir}/bin"/>
@@ -977,10 +974,10 @@
         <attribute name="Built-By" value="${user.name}"/>
         <section name="SysBio">
           <attribute name="Specification-Title"    value="SysBio"/>
-          <attribute name="Specification-Version"  value="Revision ${sysbio.revision}"/>
+          <attribute name="Specification-Version"  value="Revision 2"/>
           <attribute name="Specification-Vendor"   value="Center for Bioinformatics Tuebingen (ZBIT)"/>
           <attribute name="Implementation-Title"   value="SysBio"/>
-          <attribute name="Implementation-Version" value="Revision ${sysbio.revision} ${TODAY} (Build ${DSTAMP}-${TSTAMP})"/>
+          <attribute name="Implementation-Version" value="Revision 2 ${TODAY} (Build ${DSTAMP}-${TSTAMP})"/>
           <attribute name="Implementation-Vendor"  value="University of Tübingen"/>
         </section>
       </manifest>

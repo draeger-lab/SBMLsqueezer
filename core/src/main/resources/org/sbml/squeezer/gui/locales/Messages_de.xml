@@ -274,6 +274,7 @@
   <!-- SBMLsqueezer -->
   
   <entry key="CREATING_KINETIC_LAWS">Erzeuge kinetische Gleichungen.</entry>
+  <entry key="CREATING_FUNCTION_TERMS">Erzeuge allgemeine Funktionsterme</entry>
   <entry key="DONE">erledigt.</entry>
   <entry key="DONE_IN_MS">erledigt in {0} ms.</entry>
   <entry key="EMPTY_INPUT_FILE_LIST">Leere Liste von Eingabedateien. Nichts zu tun.</entry>

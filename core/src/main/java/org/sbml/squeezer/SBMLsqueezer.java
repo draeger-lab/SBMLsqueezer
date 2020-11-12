@@ -511,7 +511,12 @@ public class SBMLsqueezer<T> extends Launcher {
       ftg.setSign(sign);
       ftg.setDefaultTerm(defaultTerm);
       ftg.setDefaultSign(sbmlIo.getSelectedModel());
+
+      time = System.currentTimeMillis();
+      logger.info(MESSAGES.getString("CREATING_DEFAULT_FUNCTION_TERMS"));
       ftg.generateFunctionTerms(sbmlIo.getSelectedModel());
+      logger.info(MessageFormat.format(MESSAGES.getString("DONE_IN_MS"), (System.currentTimeMillis() - time)));
+
       ftg.storeChanges(sbmlIo.getSelectedModel());
 
       time = System.currentTimeMillis();

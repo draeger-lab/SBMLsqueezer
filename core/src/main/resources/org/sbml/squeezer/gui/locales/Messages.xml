@@ -322,6 +322,7 @@
   <!-- SBMLsqueezer -->
   
   <entry key="CREATING_KINETIC_LAWS">Creating kinetic laws.</entry>
+  <entry key="CREATING_DEFAULT_FUNCTION_TERMS">Creating default function terms.</entry>
   <entry key="DONE">done.</entry>
   <entry key="DONE_IN_MS">done in {0} ms.</entry>
   <entry key="EMPTY_INPUT_FILE_LIST">Empty list of input files. Nothing to do.</entry>
