@@ -349,10 +349,9 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
                         } catch (Throwable exc) {
                             GUITools.showErrorMessage(this, exc);
                         }
-                    }
-                    else {
+                    } else {
                         Model model = sbmlIO.getSelectedModel();
-                        QualModelPlugin qm = (QualModelPlugin)(model.getPlugin(QualConstants.shortLabel));
+                        QualModelPlugin qm = (QualModelPlugin) (model.getPlugin(QualConstants.shortLabel));
                         boolean isQuan = model.getReactionCount() > 0;
                         boolean isQual = qm.getTransitionCount() > 0;
                         if (isQuan && isQual) {
@@ -360,24 +359,21 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
                             GeneratorSelectionDialog dialog = new GeneratorSelectionDialog(this, sbmlIO);
                             dialog.setVisible(true);
                             changesStoredInSBML = dialog.areChangesStoredInSBML();
-                        }
-                        else if(isQuan) {
+                        } else if (isQuan) {
                             // whole quantitative model
                             KineticLawSelectionWizard wizard = new KineticLawSelectionWizard(this, sbmlIO);
                             wizard.getDialog().addWindowListener(EventHandler.create(WindowListener.class, this,
                                     "windowClosed", ""));
                             wizard.showModalDialog();
                             changesStoredInSBML = wizard.isKineticsAndParametersStoredInSBML();
-                        }
-                        else if(isQual) {
+                        } else if (isQual) {
                             // whole qualitative model
                             FunctionTermGeneratorWizard wizard = new FunctionTermGeneratorWizard(this, sbmlIO);
                             wizard.getDialog().addWindowListener(EventHandler.create(WindowListener.class, this,
                                     "windowClosed", ""));
                             wizard.showModalDialog();
                             changesStoredInSBML = wizard.areFunctionTermsStoredInSBML();
-                        }
-                        else {
+                        } else {
                             // neither qualitative nor quantitative model
                             JOptionPane.showMessageDialog(null, "<html>" +
                                     MESSAGES.getString("NO_QUAL_OR_QUAN_DIALOG_1") + "<br>" +
@@ -395,8 +391,7 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
                 case TO_LATEX:
                     if (e.getSource() instanceof Reaction) {
                         new SBML2LaTeXGUI(this, (Reaction) e.getSource());
-                    }
-                    else if (e.getSource() instanceof Model) {
+                    } else if (e.getSource() instanceof Model) {
                         new SBML2LaTeXGUI(this, ((Model) e.getSource()).getParentSBMLObject());
                     } else {
                         if (sbmlIO.getSelectedModel() != null) {
@@ -512,8 +507,7 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
             tree.addPopupMenuItem(sabioItem, Reaction.class, Model.class, SBMLDocument.class);
             tree.addPopupMenuItem(squeezeItem, Reaction.class, Model.class, SBMLDocument.class);
             tree.addPopupMenuItem(latexItem, Reaction.class, Model.class, SBMLDocument.class);
-        }
-        else if(((QualModelPlugin) sbmlIO.getSelectedModel().getPlugin(QualConstants.shortLabel)).getTransitionCount() > 0) {
+        } else if (((QualModelPlugin) sbmlIO.getSelectedModel().getPlugin(QualConstants.shortLabel)).getTransitionCount() > 0) {
             tree.addPopupMenuItem(sabioItem);
             tree.addPopupMenuItem(squeezeItem, Transition.class, Model.class, SBMLDocument.class);
             tree.addPopupMenuItem(latexItem);
@@ -791,6 +785,15 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
     public URL getURLOnlineHelp() {
         return SBMLsqueezer.class.getResource(MESSAGES.getString("URL_ONLINE_HELP"));
     }
+
+    /* (non-Javadoc)
+     * @see de.zbit.gui.BaseFrame#getAboutIcon()
+     */
+    @Override
+    public Icon getAboutIcon() {
+        return UIManager.getIcon("SBMLsqueezerIcon_64");
+    }
+
 
     /* (non-Javadoc)
      * @see de.zbit.gui.BaseFrame#openFile(de.zbit.sbml.io.OpenedFile<org.sbml.jsbml.SBMLDocument>[])
