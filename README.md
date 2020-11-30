@@ -43,4 +43,4 @@ of ordinary differential equations is provided.
    
 ## Users' Guide
 
-For more information, see the [Users' Guide](http://vg08.met.vgwort.de/na/d4b8e9ae1bed423884cea07e52756b43?l=http://www.cogsys.cs.uni-tuebingen.de/software/SBMLsqueezer/doc/SBMLsqueezer2.1UsersGuide.pdf)
+For more information, see the [Users' Guide](http://www.cogsys.cs.uni-tuebingen.de/software/SBMLsqueezer/doc/SBMLsqueezer2.1UsersGuide.pdf)
