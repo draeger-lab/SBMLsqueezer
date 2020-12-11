@@ -70,7 +70,7 @@
         <property name="build.src" value="${basedir}/build/src"/>
         <property name="build.dest" value="${basedir}/build/classes"/>
         <property name="doc" value="${basedir}/doc/api"/>
-        <property name="lib" value="${basedir}/lib"/>
+        <property name="lib" value="${basedir}/src/lib/maven"/>
         <property name="dist" value="${basedir}/dist"/>
         <property name="dist.dir" value="${dist}/${Name}-${version}"/>
         <property name="resources" value="${basedir}/resources"/>
