@@ -236,4 +236,115 @@
   <entry key="ONE_ACTI">One activator, no inhibitors</entry>
   <entry key="NONE">None</entry>
 
+  <!-- Kinetic Law Options -->
+
+  <!-- Additive Model Linear -->
+
+  <entry key="ADDITIVE_MODEL_LINEAR_SIMPLE_NAME">Linear additive model, general form</entry>
+
+  <!-- AdditiveModelNonLinear -->
+
+  <entry key="ADDITIVE_MODEL_NON_LINEAR_SIMPLE_NAME">Non-linear additive model, general form</entry>
+
+  <!-- AlternativeMassAction -->
+
+  <entry key="MASS_ACTION_WITH_EQUILIBRIUM_CONSTANT_SIMPLE_NAME">Mass-action with equilibrium constant</entry>
+
+  <!-- CommonModularRateLaw -->
+
+  <entry key="COMMON_MODULAR_RATE_LAW_SIMPLE_NAME">Common modular rate law (CM)</entry>
+
+  <!-- ConvenienceKinetics -->
+
+  <entry key="CONVENIENCE_KINETICS_SIMPLE_NAME">Convenience kinetics</entry>
+
+  <!-- DirectBindingModularRateLaw -->
+
+  <entry key="DIRECT_BINDING_MODULAR_RATE_LAW_SIMPLE_NAME">Direct binding modular rate law (DM)</entry>
+
+  <!-- ForceDependentModularRateLaw -->
+
+  <entry key="FORCE_DEPENDENT_MODULAR_RATE_LAW_SIMPLE_NAME">Force-dependent modular rate law (FM)</entry>
+
+  <!-- GeneralizedMassAction -->
+
+  <entry key="GENERALIZED_MASS_ACTION_SIMPLE_NAME">Generalized mass-action</entry>
+
+  <!-- HillHinzeEquation -->
+
+  <entry key="HILL_HINZE_EQUATION_SIMPLE_NAME">Hill-Hinze equation</entry>
+  <entry key="HILL_EQUATION_SIMPLE_NAME">Hill equation</entry>
+
+  <!-- HillRaddeEquation -->
+
+  <entry key="HILL_RADDE_EQUATION">Hill-Radde equation</entry>
+
+  <!-- Hill-Type rate law, microscopic form -->
+
+  <entry key="HILL_TYPE_MICROSCOPIC_SIMPLE_NAME">Hill-type rate law, microscopic form</entry>
+
+  <!-- Hill-Type rate law, reduced form -->
+
+  <entry key="HILL_TYPE_REDUCED_SIMPLE_NAME">Hill-type rate law, reduced form</entry>
+
+  <!-- HSystem -->
+
+  <entry key="HSYSTEM_SIMPLE_NAME">H-system equation by Hadeler (2003)</entry>
+
+  <!-- IrrevCompetNonCooperativeEnzymes -->
+
+  <entry key="IRREV_COMPET_NON_COOP_ENZYMES_SIMPLE_NAME">Irreversible non-exclusive non-cooperative competitive inihibition</entry>
+
+  <!-- IrrevNonModulatedNonInteractingEnzymes -->
+
+  <entry key="IRREV_NON_MODULATED_NON_INTERACTING_ENZYMES_SIMPLE_NAME">Irreversible non-modulated non-interacting reactant enzymes</entry>
+
+  <!-- MichaelisMenten -->
+
+  <entry key="MICHAELIS_MENTEN_SIMPLE_NAME">Michaelis-Menten</entry>
+
+  <!-- NetGeneratorNonLinear -->
+
+  <entry key="NET_GENERATOR_NON_LINEAR_SIMPLE_NAME">Non-linear additive model, NetGenerator form</entry>
+
+  <!-- NetGeneratorLinear -->
+
+  <entry key="NET_GENERATOR_LINEAR_SIMPLE_NAME">Linear additive model, NetGenerator form</entry>
+
+  <!-- PingPongMechanism -->
+
+  <entry key="PING_PONG_MEACHANISM_SIMPLE_NAME">Ping-Pong mechanism</entry>
+
+  <!-- PowerLawModularRateLaw -->
+
+  <entry key="POWER_MODULAR_RATE_LAW_SIMPLE_NAME">Power-law modular rate law (PM)</entry>
+
+  <!-- RandomOrderMechanism -->
+
+  <entry key="RANDOM_ORDER_MEACHANISM_SIMPLE_NAME">Random order mechanism</entry>
+
+  <!-- SimultaneousBindingModularRateLaw -->
+
+  <entry key="SIMULTANEOUS_BINDING_MODULAR_RATE_LAW_SIMPLE_NAME">Simultaneous binding modular rate law (SM)</entry>
+
+  <!-- SSystem -->
+
+  <entry key="SSYSTEM_SIMPLE_NAME">S-System-based kinetic</entry>
+
+  <!-- Vohradsky -->
+
+  <entry key="VOHRADSKY_SIMPLE_NAME">Non-linear additive model by Vohradský (2001)</entry>
+
+  <!-- Weaver -->
+
+  <entry key="WEAVER_SIMPLE_NAME">Non-linear additive model by Weaver et al. (1999)</entry>
+
+  <!-- ZerothOrderForwardGMAK -->
+
+  <entry key="ZEROTH_ORDER_FORWARD_GMAK_SIMPLE_NAME">Zeroth order forward mass action kinetics</entry>
+
+  <!-- ZerothOrderReverseGMAK -->
+
+  <entry key="ZEROTH_ORDER_REVERSE_GMAK_SIMPLE_NAME">Zeroth order reverse mass action kinetics</entry>
+
 </properties>

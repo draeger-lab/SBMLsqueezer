@@ -165,12 +165,125 @@
   <entry key="GROUP_REVERSIBILITY">Reversibilität</entry>
   <entry key="GROUP_REVERSIBILITY_TOOLTIP">In einigen Studien wurde festgestellt, dass ein Modell realitätsnäher sein kann, werden alle Reaktionen als reversible Prozesse betrachtet. Hier können Sie auswählen, ob Sie die Information über die Reversibilität der Reaktionen unverändert beibehalten möchten, oder alle Reaktionen auf reversibel umstellen wollen. Im jedem Fall werden alle kinetischen Gleichungen entsprechend dieser Einstellung erzeugt.</entry>
 
-  
-  
-  
-  
-  
-  
+  <!-- Kinetic equation -->
+
+  <!--   AdditiveModelLinear -->
+
+  <entry key="ADDITIVE_MODEL_LINEAR_SIMPLE_NAME">Lineares additives Modell, allgemeine Form</entry>
+
+  <!-- AdditiveModelNonLinear -->
+
+  <entry key="ADDITIVE_MODEL_NON_LINEAR_SIMPLE_NAME">Nicht-lineares additives Modell, allgemeine Form</entry>
+
+  <!-- MassActionWithEquilibriumConstant -->
+
+  <entry key="MASS_ACTION_WITH_EQUILIBRIUM_CONSTANT_SIMPLE_NAME">Massenwirkungskinetik mit Gleichgewichtskonstante</entry>
+
+  <!-- CommonModularRateLaw -->
+
+  <entry key="COMMON_MODULAR_RATE_LAW_SIMPLE_NAME">Allgemeine modulare Ratengleichung (CM)</entry>
+
+  <!-- ConvenienceKinetics -->
+
+  <entry key="CONVENIENCE_KINETICS_SIMPLE_NAME">Einfache Form der zweckmäßigen Enzymkinetik</entry>
+
+  <!-- DirectBindingModularRateLaw -->
+
+  <entry key="DIRECT_BINDING_MODULAR_RATE_LAW_SIMPLE_NAME">Modulare Ratengleichung mit direkter Bindung (DM)</entry>
+
+  <!-- ForceDependentModularRateLaw -->
+
+  <entry key="FORCE_DEPENDENT_MODULAR_RATE_LAW_SIMPLE_NAME">Kraftabhängige modulare Ratengleichung (FM)</entry>
+
+  <!-- GeneralizedMassAction -->
+
+  <entry key="GENERALIZED_MASS_ACTION_SIMPLE_NAME">Verallgemeinerte Massenwirkungskinetik</entry>
+
+  <!-- HillHinzeEquation -->
+
+  <entry key="HILL_HINZE_EQUATION_SIMPLE_NAME">Hill-Hinze-Gleichung</entry>
+  <entry key="HILL_EQUATION_SIMPLE_NAME">Hill-Gleichung</entry>
+
+  <!-- HillRaddeEquation -->
+
+  <entry key="HILL_RADDE_EQUATION_SIMPLE_NAME">Hill-Radde-Gleichung</entry>
+
+  <!-- Hill-Type rate law, microscopic form -->
+
+  <entry key="HILL_TYPE_MICROSCOPIC_SIMPLE_NAME">Hill-Typ Ratengleichung, mikroskopische Form</entry>
+
+  <!-- Hill-Type rate law, reduced form -->
+
+  <entry key="HILL_TYPE_REDUCED_SIMPLE_NAME">Hill-Typ Ratengleichung, reduzierte Form</entry>
+
+  <!-- HSystem -->
+
+  <entry key="HSYSTEM_SIMPLE_NAME">H-System-Gleichung von Hadeler (2003)</entry>
+
+  <!-- IrrevCompetNonCooperativeEnzymes -->
+
+  <entry key="IRREV_COMPET_NON_COOPERATIVE_ENZYMES_SIMPLE_NAME">Irreversible nicht-exklusive nicht-kooperative kompetitive Inhibition</entry>
+
+  <!-- IrrevNonModulatedNonInteractingEnzymes -->
+
+  <entry key="IRREV_NON_MODULATED_NON_INTERACTING_ENZYMES_SIMPLE_NAME">Irreversible nicht-modulierte nicht-interagierende Reaktanten-Enzyme</entry>
+
+  <!-- MichaelisMenten -->
+
+  <entry key="MICHAELIS_MENTEN_SIMPLE_NAME">Michaelis-Menten</entry>
+
+  <!-- NetGeneratorNonLinear -->
+
+  <entry key="NET_GENERATOR_NON_LINEAR_SIMPLE_NAME">Nicht-lineares additives Modell, NetGenerator-Form</entry>
+
+  <!-- NetGeneratorLinear -->
+
+  <entry key="NET_GENERATOR_LINEAR_SIMPLE_NAME">Lineares additives Modell, NetGenerator-Form</entry>
+
+  <!-- Ordered Mechanism -->
+
+  <entry key="ORDERED_MECHANISM_SIMPLE_NAME">Geordneter Mechanismus</entry>
+
+  <!-- PingPongMechanism -->
+
+  <entry key="PING_PONG_MECHANISM_SIMPLE_NAME">Ping-Pong-Mechanismus</entry>
+
+  <!-- PowerLawModularRateLaw -->
+
+  <entry key="POWER_LAW_MODULAR_RATE_LAW_SIMPLE_NAME">Modulare Ratengleichung mit Potenzgesetz (PM)</entry>
+
+  <!-- Random Order -->
+
+  <entry key="RANDOM_ORDER_MECHANISM_SIMPLE_NAME">Mechanismus zufälliger Ordnung</entry>
+
+  <!-- SimultaneousBindingModularRateLaw -->
+
+  <entry key="SIMULTANEOUS_BINDING_MODULAR_RATE_LAW_SIMPLE_NAME">Modulare Ratengleichung mit simultaner Bindung (SM)</entry>
+
+  <!-- SSystem -->
+
+  <entry key="SSYSTEM_SIMPLE_NAME">S-System-basierte kinetische Gleichung</entry>
+
+  <!-- Vohradsky -->
+
+  <entry key="VOHRADSKY_SIMPLE_NAME">Nicht-lineares additives Modell von Vohradský (2001)</entry>
+
+  <!-- Weaver -->
+
+  <entry key="WEAVER_SIMPLE_NAME">Nicht-lineares additives Modell von Weaver et al. (1999)</entry>
+
+  <!-- ZerothOrderForwardGMAK -->
+
+  <entry key="ZEROTH_ORDER_FORWARDGMAK_SIMPLE_NAME">Massenwirkungskinetik nullter Ordnung</entry>
+
+  <!-- ZerothOrderReverseGMAK -->
+
+  <entry key="ZEROTH_ORDER_REVERSEGMAK_SIMPLE_NAME">Umgekehrte Massenwirkungskinetik nullter Ordnung</entry>
+
+
+
+
+
   <!-- HIER!!! -->
   
   

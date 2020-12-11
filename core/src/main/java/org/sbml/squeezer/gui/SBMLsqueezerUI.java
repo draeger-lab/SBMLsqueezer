@@ -70,6 +70,8 @@ import org.sbml.squeezer.gui.wizard.KineticLawSelectionWizard;
 import org.sbml.squeezer.io.IOOptions;
 import org.sbml.squeezer.io.SBMLio;
 import org.sbml.squeezer.io.SqSBMLReader;
+import org.sbml.squeezer.kinetics.AdditiveModelLinear;
+import org.sbml.squeezer.kinetics.BasicKineticLaw;
 import org.sbml.squeezer.sabiork.wizard.SABIORKWizard;
 import org.sbml.squeezer.util.Bundles;
 import org.sbml.tolatex.LaTeXOptions;
