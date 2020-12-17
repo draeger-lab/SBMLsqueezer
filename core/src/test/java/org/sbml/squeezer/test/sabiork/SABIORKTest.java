@@ -26,9 +26,7 @@ package org.sbml.squeezer.test.sabiork;
 import static org.junit.Assert.*;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import javax.xml.stream.XMLStreamException;
 import org.junit.Test;
 import org.sbml.jsbml.KineticLaw;
@@ -50,11 +48,12 @@ public class SABIORKTest {
   WebServiceResponseException, IOException, XMLStreamException {
     Integer[] expecteds = new Integer[] { 23934, 23936, 23937, 23938,
         23939, 23940, 23941, 54637 };
-    List<Integer> actuals = SABIORK.getIDs(SABIORK.QueryField.ORGANISM
+    Set<Integer> expectedSet = new HashSet<>(Arrays.asList(expecteds));
+    Set<Integer> actualSet = new HashSet<>(SABIORK.getIDs(SABIORK.QueryField.ORGANISM
       + ":\"homo sapiens\""
       + SABIORK.getFilterOptionsQuery(true, false, true, true, 10.0,
-        14.0, -10.0, 115.0, true, true, false, null));
-    assertArrayEquals(expecteds, actuals.toArray());
+        14.0, -10.0, 115.0, true, true, false, null)));
+    assertEquals(expectedSet, actualSet);
   }
   
   @Test
@@ -86,17 +85,18 @@ public class SABIORKTest {
   public void testGetKineticLawsString() throws WebServiceConnectException,
   WebServiceResponseException, IOException, XMLStreamException {
     Integer[] expecteds = new Integer[] { 54637, 23941, 23939, 23940, 23938, 23936, 23937, 23934};
+    Set<Integer> expectedSet = new HashSet<>(Arrays.asList(expecteds));
     List<KineticLaw> kineticLaws = SABIORK
         .getKineticLaws(SABIORK.QueryField.ORGANISM
           + ":\"homo sapiens\""
           + SABIORK.getFilterOptionsQuery(true, false, true,
             true, 10.0, 14.0, -10.0, 115.0, true, true,
             false, null));
-    List<Integer> actuals = new ArrayList<Integer>();
+    Set<Integer> actualSet = new HashSet<>();
     for (KineticLaw kineticLaw : kineticLaws) {
-      actuals.add(Integer.valueOf(SABIORK.getKineticLawID(kineticLaw)));
+      actualSet.add(Integer.valueOf(SABIORK.getKineticLawID(kineticLaw)));
     }
-    assertArrayEquals(expecteds, actuals.toArray());
+    assertEquals(expectedSet, actualSet);
   }
   
   @Test
@@ -104,9 +104,10 @@ public class SABIORKTest {
   WebServiceResponseException, IOException, XMLStreamException {
     String[] expecteds = new String[] { "lung", "lung mast cell", "lung cancer cell",
     "lung mucoepidermoid carcinoma" };
-    List<String> actuals = SABIORK.getSuggestions(
-      SABIORK.QueryField.TISSUE, "lu");
-    assertArrayEquals(expecteds, actuals.toArray());
+    Set<String> expectedSet = new HashSet<>(Arrays.asList(expecteds));
+    Set<String> actualSet = new HashSet<>(SABIORK.getSuggestions(
+      SABIORK.QueryField.TISSUE, "lu"));
+    assertEquals(expectedSet, actualSet);
   }
   
   @Test
@@ -159,8 +160,8 @@ public class SABIORKTest {
   
   @Test
   public void testGetSearchTermsQuery() {
-    String expected = SABIORK.QueryField.ORGANISM + ":\"homo sapiens\""
-        + " AND " + SABIORK.QueryField.TISSUE + ":liver";
+    String expected = "( " + SABIORK.QueryField.ORGANISM + ":\"homo sapiens\""
+        + " AND " + SABIORK.QueryField.TISSUE + ":liver" + " )";
     List<ValuePair<SABIORK.QueryField, String>> searchTerms = new ArrayList<ValuePair<SABIORK.QueryField, String>>();
     searchTerms.add(new ValuePair<SABIORK.QueryField, String>(
         SABIORK.QueryField.ORGANISM, "  homo sapiens   "));
