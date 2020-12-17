@@ -151,6 +151,7 @@ TableModelListener, ChangeListener {
     comboBoxConstraints.setSelectedItem(SABIORK.QueryField.PATHWAY);
     comboBoxSearchField.setText("");
     tableSearchTermsModelA.loadSettings();
+    tableSearchTermsModelA.fireTableDataChanged();
   }
   
   /*
