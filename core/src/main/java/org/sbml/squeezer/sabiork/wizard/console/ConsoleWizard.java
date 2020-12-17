@@ -26,11 +26,7 @@ package org.sbml.squeezer.sabiork.wizard.console;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import javax.xml.stream.XMLStreamException;
 
@@ -47,270 +43,279 @@ import org.sbml.squeezer.sabiork.wizard.model.WizardModel;
 
 /**
  * The console version of the SABIO-RK wizard.
- * 
+ *
  * @author Matthias Rall
- * 
  * @since 2.0
  */
 public class ConsoleWizard {
-  
-  private WizardModel model;
-  private boolean overwriteExistingRateLaws;
-  private String pathway;
-  private String tissue;
-  private String organism;
-  private String cellularLocation;
-  private Boolean isWildtype;
-  private Boolean isMutant;
-  private Boolean isRecombinant;
-  private Boolean hasKineticData;
-  private Double lowerpHValue;
-  private Double upperpHValue;
-  private Double lowerTemperature;
-  private Double upperTemperature;
-  private Boolean isDirectSubmission;
-  private Boolean isJournal;
-  private Boolean isEntriesInsertedSince;
-  private String dateSubmitted;
-  
-  /**
-   * 
-   * @param sbmlDocument
-   * @param overwriteExistingRateLaws
-   * @param pathway
-   * @param tissue
-   * @param organism
-   * @param cellularLocation
-   * @param isWildtype
-   * @param isMutant
-   * @param isRecombinant
-   * @param hasKineticData
-   * @param lowerpHValue
-   * @param upperpHValue
-   * @param lowerTemperature
-   * @param upperTemperature
-   * @param isDirectSubmission
-   * @param isJournal
-   * @param isEntriesInsertedSince
-   * @param dateSubmitted
-   */
-  public ConsoleWizard(SBMLDocument sbmlDocument, boolean overwriteExistingRateLaws,
-    String pathway, String tissue, String organism,
-    String cellularLocation, Boolean isWildtype, Boolean isMutant,
-    Boolean isRecombinant, Boolean hasKineticData, Double lowerpHValue,
-    Double upperpHValue, Double lowerTemperature,
-    Double upperTemperature, Boolean isDirectSubmission,
-    Boolean isJournal, Boolean isEntriesInsertedSince,
-    String dateSubmitted) {
-    model = new WizardModel(sbmlDocument, true);
-    this.overwriteExistingRateLaws = overwriteExistingRateLaws;
-    this.pathway = pathway;
-    this.tissue = tissue;
-    this.organism = organism;
-    this.cellularLocation = cellularLocation;
-    this.isWildtype = isWildtype;
-    this.isMutant = isMutant;
-    this.isRecombinant = isRecombinant;
-    this.hasKineticData = hasKineticData;
-    this.lowerpHValue = lowerpHValue;
-    this.upperpHValue = upperpHValue;
-    this.lowerTemperature = lowerTemperature;
-    this.upperTemperature = upperTemperature;
-    this.isDirectSubmission = isDirectSubmission;
-    this.isJournal = isJournal;
-    this.isEntriesInsertedSince = isEntriesInsertedSince;
-    this.dateSubmitted = dateSubmitted;
-  }
-  
-  /**
-   * Returns the reactions according to the overwriteExistingLaws option.
-   * 
-   * @return a list of {@link Reaction} that can be equipped with laws from SABIO-RK
-   */
-  private List<Reaction> getSelectedReactions() {
-    List<Reaction> reactions = new ArrayList<Reaction>();
-    if (overwriteExistingRateLaws) {
-      reactions = model.getReactions();
-    }
-    else {
-      reactions = model.getReactionsWithoutKineticLaw();
-    }
-    return reactions;
-  }
-  
-  /**
-   * Returns a SABIO-RK query for the given query fields.
-   * 
-   * @param pathway
-   * @param tissue
-   * @param organism
-   * @param cellularLocation
-   * @return a SABIO-RK query for the given query fields
-   */
-  private String getSearchTermsQuery(String pathway, String tissue,
-    String organism, String cellularLocation) {
-    List<ValuePair<QueryField, String>> searchTerms = new ArrayList<ValuePair<QueryField, String>>();
-    if (pathway instanceof String) {
-      searchTerms.add(new ValuePair<SABIORK.QueryField, String>(
-          SABIORK.QueryField.PATHWAY, pathway));
-    }
-    if (tissue instanceof String) {
-      searchTerms.add(new ValuePair<SABIORK.QueryField, String>(
-          SABIORK.QueryField.TISSUE, tissue));
-    }
-    if (organism instanceof String) {
-      searchTerms.add(new ValuePair<SABIORK.QueryField, String>(
-          SABIORK.QueryField.ORGANISM, organism));
-    }
-    if (cellularLocation instanceof String) {
-      searchTerms.add(new ValuePair<SABIORK.QueryField, String>(
-          SABIORK.QueryField.CELLULAR_LOCATION, cellularLocation));
-    }
-    return SABIORK.getSearchTermsQuery(searchTerms);
-  }
-  
-  /**
-   * Returns a SABIO-RK query for multiple filter options. If a filter option
-   * is set to {@code null} the default value of that filter option will
-   * be used. The query returned can be directly appended to another SABIO-RK
-   * query since it already consists of a leading 'AND' or 'NOT'.
-   * 
-   * @param isWildtype
-   * @param isMutant
-   * @param isRecombinant
-   * @param hasKineticData
-   * @param lowerpHValue
-   * @param upperpHValue
-   * @param lowerTemperature
-   * @param upperTemperature
-   * @param isDirectSubmission
-   * @param isJournal
-   * @param isEntriesInsertedSince
-   * @param dateSubmitted
-   * @return a SABIO-RK query for the given filter options
-   */
-  private String getFilterOptionsQuery(Boolean isWildtype, Boolean isMutant,
-    Boolean isRecombinant, Boolean hasKineticData, Double lowerpHValue,
-    Double upperpHValue, Double lowerTemperature,
-    Double upperTemperature, Boolean isDirectSubmission,
-    Boolean isJournal, Boolean isEntriesInsertedSince,
-    String dateSubmitted) {
-    Date date = null;
-    if (dateSubmitted instanceof String) {
-      try {
-        date = new SimpleDateFormat("dd/MM/yyyy").parse(dateSubmitted);
-      } catch (ParseException e) {
-        date = null;
-        isEntriesInsertedSince = false;
-      }
-    }
-    return SABIORK.getFilterOptionsQuery(isWildtype, isMutant,
-      isRecombinant, hasKineticData, lowerpHValue, upperpHValue,
-      lowerTemperature, upperTemperature, isDirectSubmission,
-      isJournal, isEntriesInsertedSince, date);
-  }
-  
-  /**
-   * Starts the SABIO-RK wizard and returns the changed reactions.
-   * 
-   * @return the list of changed reactions
-   */
-  public Set<Reaction> getResult() {
-    Set<Reaction> changedReactions = new HashSet<Reaction>();
-    List<Reaction> selectedReactions = getSelectedReactions();
-    String searchTermsQuery = getSearchTermsQuery(pathway, tissue,
-      organism, cellularLocation);
-    String filterOptionsQuery = getFilterOptionsQuery(isWildtype, isMutant,
-      isRecombinant, hasKineticData, lowerpHValue, upperpHValue,
-      lowerTemperature, upperTemperature, isDirectSubmission,
-      isJournal, isEntriesInsertedSince, dateSubmitted);
-    
+
+    private WizardModel model;
+    private boolean overwriteExistingRateLaws;
+    private String pathway;
+    private String tissue;
+    private String organism;
+    private String cellularLocation;
+    private Boolean isWildtype;
+    private Boolean isMutant;
+    private Boolean isRecombinant;
+    private Boolean hasKineticData;
+    private Double lowerpHValue;
+    private Double upperpHValue;
+    private Double lowerTemperature;
+    private Double upperTemperature;
+    private Boolean isDirectSubmission;
+    private Boolean isJournal;
+    private Boolean isEntriesInsertedSince;
+    private String dateSubmitted;
+
     /**
-     * Search for Kinetic Laws
+     * @param sbmlDocument
+     * @param overwriteExistingRateLaws
+     * @param pathway
+     * @param tissue
+     * @param organism
+     * @param cellularLocation
+     * @param isWildtype
+     * @param isMutant
+     * @param isRecombinant
+     * @param hasKineticData
+     * @param lowerpHValue
+     * @param upperpHValue
+     * @param lowerTemperature
+     * @param upperTemperature
+     * @param isDirectSubmission
+     * @param isJournal
+     * @param isEntriesInsertedSince
+     * @param dateSubmitted
      */
-    List<SearchAResult> searchAResults = new ArrayList<SearchAResult>();
-    for (Reaction selectedReaction : selectedReactions) {
-      List<KineticLawImporter> possibleKineticLawImporters = new ArrayList<KineticLawImporter>();
-      List<KineticLawImporter> impossibleKineticLawImporters = new ArrayList<KineticLawImporter>();
-      List<KineticLawImporter> totalKineticLawImporters = new ArrayList<KineticLawImporter>();
-      String keggReactionID = model.getKeggReactionID(selectedReaction);
-      if (!keggReactionID.isEmpty()) {
-        StringBuilder query = new StringBuilder(
-          SABIORK.QueryField.KEGG_REACTION_ID + ":"
-              + keggReactionID);
-        if (!searchTermsQuery.isEmpty()) {
-          query.append(" AND " + searchTermsQuery);
+    public ConsoleWizard(SBMLDocument sbmlDocument, boolean overwriteExistingRateLaws,
+                         String pathway, String tissue, String organism,
+                         String cellularLocation, Boolean isWildtype, Boolean isMutant,
+                         Boolean isRecombinant, Boolean hasKineticData, Double lowerpHValue,
+                         Double upperpHValue, Double lowerTemperature,
+                         Double upperTemperature, Boolean isDirectSubmission,
+                         Boolean isJournal, Boolean isEntriesInsertedSince,
+                         String dateSubmitted) {
+        model = new WizardModel(sbmlDocument, true);
+        this.overwriteExistingRateLaws = overwriteExistingRateLaws;
+        this.pathway = pathway;
+        this.tissue = tissue;
+        this.organism = organism;
+        this.cellularLocation = cellularLocation;
+        this.isWildtype = isWildtype;
+        this.isMutant = isMutant;
+        this.isRecombinant = isRecombinant;
+        this.hasKineticData = hasKineticData;
+        this.lowerpHValue = lowerpHValue;
+        this.upperpHValue = upperpHValue;
+        this.lowerTemperature = lowerTemperature;
+        this.upperTemperature = upperTemperature;
+        this.isDirectSubmission = isDirectSubmission;
+        this.isJournal = isJournal;
+        this.isEntriesInsertedSince = isEntriesInsertedSince;
+        this.dateSubmitted = dateSubmitted;
+    }
+
+    /**
+     * Returns the reactions according to the overwriteExistingLaws option.
+     *
+     * @return a list of {@link Reaction} that can be equipped with laws from SABIO-RK
+     */
+    private List<Reaction> getSelectedReactions() {
+        List<Reaction> reactions = new ArrayList<Reaction>();
+        if (overwriteExistingRateLaws) {
+            reactions = model.getReactions();
+        } else {
+            reactions = model.getReactionsWithoutKineticLaw();
         }
-        query.append(filterOptionsQuery);
-        List<KineticLaw> kineticLaws = new ArrayList<KineticLaw>();
-        try {
-          kineticLaws = SABIORK.getKineticLaws(query.toString());
-        } catch (WebServiceConnectException e) {
-          System.err.println(e.getMessage());
-          return changedReactions;
-        } catch (WebServiceResponseException e) {
-          System.err.println(e.getMessage());
-          return changedReactions;
-        } catch (IOException e) {
-          System.err.println(e.getMessage());
-          return changedReactions;
-        } catch (XMLStreamException e) {
-          System.err.println(e.getMessage());
-          return changedReactions;
+        return reactions;
+    }
+
+    /**
+     * Returns a SABIO-RK query for the given query fields.
+     *
+     * @param pathway
+     * @param tissue
+     * @param organism
+     * @param cellularLocation
+     * @return a SABIO-RK query for the given query fields
+     */
+    private String getSearchTermsQuery(String pathway, String tissue,
+                                       String organism, String cellularLocation) {
+        List<ValuePair<QueryField, String>> searchTerms = new ArrayList<ValuePair<QueryField, String>>();
+        if (pathway instanceof String) {
+            searchTerms.add(new ValuePair<SABIORK.QueryField, String>(
+                    SABIORK.QueryField.PATHWAY, pathway));
         }
-        for (KineticLaw kineticLaw : kineticLaws) {
-          if (kineticLaw != null) {
-            KineticLawImporter kineticLawImporter = new KineticLawImporter(
-              kineticLaw, selectedReaction);
-            totalKineticLawImporters.add(kineticLawImporter);
-            if (kineticLawImporter.isImportableKineticLaw()) {
-              possibleKineticLawImporters.add(kineticLawImporter);
-            } else {
-              impossibleKineticLawImporters
-              .add(kineticLawImporter);
+        if (tissue instanceof String) {
+            searchTerms.add(new ValuePair<SABIORK.QueryField, String>(
+                    SABIORK.QueryField.TISSUE, tissue));
+        }
+        if (organism instanceof String) {
+            searchTerms.add(new ValuePair<SABIORK.QueryField, String>(
+                    SABIORK.QueryField.ORGANISM, organism));
+        }
+        if (cellularLocation instanceof String) {
+            searchTerms.add(new ValuePair<SABIORK.QueryField, String>(
+                    SABIORK.QueryField.CELLULAR_LOCATION, cellularLocation));
+        }
+        return SABIORK.getSearchTermsQuery(searchTerms);
+    }
+
+    /**
+     * Returns a SABIO-RK query for multiple filter options. If a filter option
+     * is set to {@code null} the default value of that filter option will
+     * be used. The query returned can be directly appended to another SABIO-RK
+     * query since it already consists of a leading 'AND' or 'NOT'.
+     *
+     * @param isWildtype
+     * @param isMutant
+     * @param isRecombinant
+     * @param hasKineticData
+     * @param lowerpHValue
+     * @param upperpHValue
+     * @param lowerTemperature
+     * @param upperTemperature
+     * @param isDirectSubmission
+     * @param isJournal
+     * @param isEntriesInsertedSince
+     * @param dateSubmitted
+     * @return a SABIO-RK query for the given filter options
+     */
+    private String getFilterOptionsQuery(Boolean isWildtype, Boolean isMutant,
+                                         Boolean isRecombinant, Boolean hasKineticData, Double lowerpHValue,
+                                         Double upperpHValue, Double lowerTemperature,
+                                         Double upperTemperature, Boolean isDirectSubmission,
+                                         Boolean isJournal, Boolean isEntriesInsertedSince,
+                                         String dateSubmitted) {
+        Date date = null;
+        if (dateSubmitted instanceof String) {
+            try {
+                date = new SimpleDateFormat("dd/MM/yyyy").parse(dateSubmitted);
+            } catch (ParseException e) {
+                date = null;
+                isEntriesInsertedSince = false;
             }
-          }
         }
-      }
-      searchAResults.add(new SearchAResult(selectedReaction,
-        possibleKineticLawImporters, impossibleKineticLawImporters,
-        totalKineticLawImporters));
-      System.out.println(selectedReaction.getName() + " ["
-          + possibleKineticLawImporters.size() + "|"
-          + impossibleKineticLawImporters.size() + "|"
-          + totalKineticLawImporters.size() + "]");
+        return SABIORK.getFilterOptionsQuery(isWildtype, isMutant,
+                isRecombinant, hasKineticData, lowerpHValue, upperpHValue,
+                lowerTemperature, upperTemperature, isDirectSubmission,
+                isJournal, isEntriesInsertedSince, date);
     }
-    
+
     /**
-     * Get all importable Kinetic Laws
+     * Starts the SABIO-RK wizard and returns the changed reactions.
+     *
+     * @return the list of changed reactions
      */
-    List<KineticLawImporter> selectedKineticLawImporters = new ArrayList<KineticLawImporter>();
-    for (SearchAResult searchAResult : searchAResults) {
-      KineticLawImporter selectedKineticLawImporter = searchAResult
-          .getSelectedKineticLawImporter();
-      if (selectedKineticLawImporter != null) {
-        selectedKineticLawImporters.add(selectedKineticLawImporter);
-      }
-    }
-    
-    /**
-     * Print search result
-     */
-    if (selectedKineticLawImporters.isEmpty()) {
-      System.out.println("No results were found for your query.");
-    } else {
-      for (KineticLawImporter selectedKineticLawImporter : selectedKineticLawImporters) {
-        if (selectedKineticLawImporter.isImportableKineticLaw()) {
-          selectedKineticLawImporter.importKineticLaw();
-          changedReactions.add(selectedKineticLawImporter.getReaction());
-          System.out.println("\n\n"
-              + selectedKineticLawImporter.getReport());
+    public Set<Reaction> getResult() {
+        Set<Reaction> changedReactions = new HashSet<Reaction>();
+        List<Reaction> selectedReactions = getSelectedReactions();
+        String searchTermsQuery = getSearchTermsQuery(pathway, tissue,
+                organism, cellularLocation);
+        String filterOptionsQuery = getFilterOptionsQuery(isWildtype, isMutant,
+                isRecombinant, hasKineticData, lowerpHValue, upperpHValue,
+                lowerTemperature, upperTemperature, isDirectSubmission,
+                isJournal, isEntriesInsertedSince, dateSubmitted);
+
+        /**
+         * Search for Kinetic Laws
+         */
+        List<SearchAResult> searchAResults = new ArrayList<SearchAResult>();
+        System.out.println("Reaction ID [ Num. of possible kinetic importers| Num. of impossible kinetic importers | " +
+                "Num. of total kinetic Importers]");
+        for (Reaction selectedReaction : selectedReactions) {
+            List<KineticLawImporter> possibleKineticLawImporters = new ArrayList<KineticLawImporter>();
+            List<KineticLawImporter> impossibleKineticLawImporters = new ArrayList<KineticLawImporter>();
+            List<KineticLawImporter> totalKineticLawImporters = new ArrayList<KineticLawImporter>();
+            HashMap<SABIORK.QueryField, List<String>> reactionIDs = model.getReactionIDs(selectedReaction);
+            if (!reactionIDs.isEmpty()) {
+                StringBuilder query = new StringBuilder("");
+                for (Map.Entry<SABIORK.QueryField, List<String>> entry : reactionIDs.entrySet()) {
+                    for (String id : entry.getValue()) {
+                        if (query.length() == 0) {
+                            query.append("( " + entry.getKey() + ":" + id);
+                        } else {
+                            query.append(" OR " + entry.getKey() + ":" + id);
+                        }
+                    }
+                }
+                if(query.length() > 0) {
+                    query.append(" )");
+                }
+                if (!searchTermsQuery.isEmpty()) {
+                    query.append(" AND " + searchTermsQuery);
+                }
+                query.append(filterOptionsQuery);
+                List<KineticLaw> kineticLaws = new ArrayList<>();
+                try {
+                    kineticLaws = SABIORK.getKineticLaws(query.toString());
+                } catch (WebServiceConnectException e) {
+                    System.err.println(e.getMessage());
+                    return changedReactions;
+                } catch (WebServiceResponseException e) {
+                    System.err.println(e.getMessage());
+                    return changedReactions;
+                } catch (IOException e) {
+                    System.err.println(e.getMessage());
+                    return changedReactions;
+                } catch (XMLStreamException e) {
+                    System.err.println(e.getMessage());
+                    return changedReactions;
+                }
+                for (KineticLaw kineticLaw : kineticLaws) {
+                    if (kineticLaw != null) {
+                        KineticLawImporter kineticLawImporter = new KineticLawImporter(
+                                kineticLaw, selectedReaction);
+                        totalKineticLawImporters.add(kineticLawImporter);
+                        if (kineticLawImporter.isImportableKineticLaw()) {
+                            possibleKineticLawImporters.add(kineticLawImporter);
+                        } else {
+                            impossibleKineticLawImporters
+                                    .add(kineticLawImporter);
+                        }
+                    }
+                }
+            }
+            searchAResults.add(new SearchAResult(selectedReaction,
+                    possibleKineticLawImporters, impossibleKineticLawImporters,
+                    totalKineticLawImporters));
+            System.out.println(selectedReaction.getId() + " ["
+                    + possibleKineticLawImporters.size() + "|"
+                    + impossibleKineticLawImporters.size() + "|"
+                    + totalKineticLawImporters.size() + "]");
         }
-      }
-      System.out.println("\n\nThe specified changes will be applied to your model.\n");
-      model.applyChanges();
+
+        /**
+         * Get all importable Kinetic Laws
+         */
+        List<KineticLawImporter> selectedKineticLawImporters = new ArrayList<KineticLawImporter>();
+        for (SearchAResult searchAResult : searchAResults) {
+            KineticLawImporter selectedKineticLawImporter = searchAResult
+                    .getSelectedKineticLawImporter();
+            if (selectedKineticLawImporter != null) {
+                selectedKineticLawImporters.add(selectedKineticLawImporter);
+            }
+        }
+
+        /**
+         * Print search result
+         */
+        if (selectedKineticLawImporters.isEmpty()) {
+            System.out.println("No results were found for your query.");
+        } else {
+            for (KineticLawImporter selectedKineticLawImporter : selectedKineticLawImporters) {
+                if (selectedKineticLawImporter.isImportableKineticLaw()) {
+                    selectedKineticLawImporter.importKineticLaw();
+                    changedReactions.add(selectedKineticLawImporter.getReaction());
+                    System.out.println("\n\n"
+                            + selectedKineticLawImporter.getReport());
+                }
+            }
+            System.out.println("\n\nThe specified changes will be applied to your model.\n");
+            model.applyChanges();
+        }
+        return changedReactions;
     }
-    return changedReactions;
-  }
-  
+
 }

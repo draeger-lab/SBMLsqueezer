@@ -35,6 +35,7 @@ import java.net.UnknownHostException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -69,6 +70,10 @@ public class SABIORK {
     ENTRY_ID("EntryID"),
     PATHWAY("Pathway"),
     KEGG_REACTION_ID("KeggReactionID"),
+    RHEA_REACTION_ID("RheaReactionID"),
+    METANETX_REACTION_ID("MetaNetXReactionID"),
+    REACTOME_REACTION_ID("ReactomeReactionID"),
+    METACYC_REACTION_ID("MetaCycReactionID"),
     SABIO_REACTION_ID("SabioReactionID"),
     ANY_ROLE("AnyRole"),
     SUBSTRATE("Substrate"),
@@ -587,19 +592,33 @@ public class SABIORK {
   public static String getSearchTermsQuery(
     List<ValuePair<QueryField, String>> searchTerms) {
     StringBuilder searchTermsQuery = new StringBuilder();
+    List<QueryField> reactionQueryFields = Arrays.asList(QueryField.KEGG_REACTION_ID, QueryField.REACTOME_REACTION_ID, QueryField.METACYC_REACTION_ID,
+            QueryField.METANETX_REACTION_ID, QueryField.RHEA_REACTION_ID);
     for (ValuePair<QueryField, String> searchTerm : searchTerms) {
       String value = searchTerm.getV().trim();
       if (!value.isEmpty()) {
+        QueryField key = searchTerm.getL();
         if (searchTermsQuery.length() > 0) {
-          searchTermsQuery.append(" AND ");
+            if(reactionQueryFields.contains(key)) {
+              searchTermsQuery.append(" OR ");
+            }
+            else {
+              searchTermsQuery.append(" AND ");
+            }
+        }
+        else {
+          searchTermsQuery.append("( ");
         }
         if (value.contains(" ")) {
-          searchTermsQuery.append(searchTerm.getL() + ":\"" + value
+          searchTermsQuery.append(key + ":\"" + value
             + "\"");
         } else {
-          searchTermsQuery.append(searchTerm.getL() + ":" + value);
+          searchTermsQuery.append(key + ":" + value);
         }
       }
+    }
+    if(searchTermsQuery.length() > 0) {
+        searchTermsQuery.append(" )");
     }
     return searchTermsQuery.toString();
   }

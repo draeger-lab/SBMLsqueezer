@@ -30,6 +30,9 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -153,7 +156,8 @@ TableModelListener, ChangeListener {
     comboBoxSearchItems.setSelectedItem(SABIORK.QueryField.ENTRY_ID);
     comboBoxSearchField.setText("");
     tableSearchTermsModelM.loadSettings();
-    performSelectedReactionKeggIDSearch();
+    //performSelectedReactionKeggIDSearch();
+    performSelectedReactionIDsSearch();
   }
   
   /*
@@ -164,7 +168,7 @@ TableModelListener, ChangeListener {
   public CardID getPreviousCardID() {
     return CardID.REACTIONS_M;
   }
-  
+
   /*
    * (non-Javadoc)
    * @see org.sbml.squeezer.sabiork.wizard.gui.Card#getNextCardID()
@@ -203,6 +207,26 @@ TableModelListener, ChangeListener {
       }
     }
   }
+
+  /**
+   * Performs a search if the KeggID of the selected {@link Reaction} exists.
+   */
+  private void performSelectedReactionIDsSearch() {
+    if (model.hasSelectedReaction()) {
+      HashMap<SABIORK.QueryField, List<String>> reactionIDs = model.getReactionIDs(model
+              .getSelectedReaction());
+      if (!reactionIDs.isEmpty()) {
+        for(Map.Entry<SABIORK.QueryField, List<String>> entry: reactionIDs.entrySet()) {
+          for(String id: entry.getValue()) {
+            tableSearchTermsModelM.add(new ValuePair<SABIORK.QueryField, String>(
+                    entry.getKey(), id));
+          }
+        }
+        dialog.setButtonState(ButtonState.NEXT_BACK_ENABLED);
+      }
+    }
+  }
+
   
   /*
    * (non-Javadoc)

@@ -30,7 +30,9 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 
@@ -311,20 +313,32 @@ PropertyChangeListener {
         List<KineticLawImporter> possibleKineticLawImporters = new ArrayList<KineticLawImporter>();
         List<KineticLawImporter> impossibleKineticLawImporters = new ArrayList<KineticLawImporter>();
         List<KineticLawImporter> totalKineticLawImporters = new ArrayList<KineticLawImporter>();
-        String keggReactionID = model.getKeggReactionID(selectedReaction);
-        if (!keggReactionID.isEmpty()) {
-          StringBuilder query = new StringBuilder(
-            SABIORK.QueryField.KEGG_REACTION_ID + ":" + keggReactionID);
-          if (!searchTermsQuery.isEmpty()) {
+        HashMap<SABIORK.QueryField, List<String>> reactionIDs = model.getReactionIDs(selectedReaction);
+
+        if(!reactionIDs.isEmpty()) {
+          StringBuilder query = new StringBuilder("");
+          for(Map.Entry<SABIORK.QueryField, List<String>> entry: reactionIDs.entrySet()) {
+            for(String id: entry.getValue()) {
+              if(query.length() == 0) {
+                query.append("( " + entry.getKey() + ":" + id);
+              }
+              else {
+                query.append(" OR " + entry.getKey() + ":" + id);
+              }
+            }
+          }
+          query.append(" )");
+          if(!searchTermsQuery.isEmpty()) {
             query.append(" AND " + searchTermsQuery);
           }
           query.append(filterOptionsQuery);
+          //System.out.println("Query: " + query);
           try {
             List<KineticLaw> kineticLaws = SABIORK.getKineticLaws(query.toString());
             for (KineticLaw kineticLaw : kineticLaws) {
               if (kineticLaw != null) {
                 KineticLawImporter kineticLawImporter = new KineticLawImporter(
-                  kineticLaw, selectedReaction);
+                        kineticLaw, selectedReaction);
                 totalKineticLawImporters.add(kineticLawImporter);
                 if (kineticLawImporter.isImportableKineticLaw()) {
                   possibleKineticLawImporters.add(kineticLawImporter);
@@ -347,8 +361,8 @@ PropertyChangeListener {
         }
         if (!isCancelled()) {
           publish(tableResultsModel.createSearchAResult(selectedReaction,
-            possibleKineticLawImporters, impossibleKineticLawImporters,
-            totalKineticLawImporters));
+                  possibleKineticLawImporters, impossibleKineticLawImporters,
+                  totalKineticLawImporters));
           setProgress(Math.round((i + 1f) / selectedReactionCount * 100f));
         } else {
           break;

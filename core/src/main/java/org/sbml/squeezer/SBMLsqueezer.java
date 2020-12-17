@@ -487,6 +487,7 @@ public class SBMLsqueezer<T> extends Launcher {
           SBPreferences prefs = new SBPreferences(OptionsGeneral.class);
           overwriteExistingRateLaws = prefs.getBoolean(OptionsGeneral.OVERWRITE_EXISTING_RATE_LAWS);
         }
+        logger.info("Obtaining kinetic laws from SABIO_RK...");
         reactionsWithSABIOKinetics = squeezeWithKineticsFromSABIORK(sbmlIo.getSelectedModel().getSBMLDocument(), overwriteExistingRateLaws);
       }
       KineticLawGenerator klg = new KineticLawGenerator(sbmlIo.getSelectedModel(), reactionsWithSABIOKinetics);

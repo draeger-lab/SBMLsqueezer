@@ -233,8 +233,7 @@ public class KineticLawImporter {
     for (SpeciesReference referencedSpeciesReference : referencedSpeciesReferences) {
       for (SpeciesReference referenceableSpeciesReference : referenceableSpeciesReferences) {
         if (isMatch(referencedSpeciesReference, referenceableSpeciesReference)) {
-          matches
-          .put(referencedSpeciesReference, referenceableSpeciesReference);
+          matches.put(referencedSpeciesReference, referenceableSpeciesReference);
           break;
         }
       }
