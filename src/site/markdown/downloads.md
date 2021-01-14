@@ -16,10 +16,10 @@ You can find all release notes in the table for each version of SBMLsqueezer.
 <tr>
     <td><a href="https://github.com/draeger-lab/SBMLsqueezer/releases/download/v2.2/SBMLsqueezer-2.2.jar">
     SBMLsqueezer-2.2.jar</a></td>
-    <td>11.3MB</td>
+    <td>14.9MB</td>
     <td><a href="https://github.com/draeger-lab/SBMLsqueezer/releases/download/v2.2/SBMLsqueezer-2.2-SourceCode.zip">
     SBMLsqueezer-2.2.zip</a></td>
-    <td>342MB</td>
+    <td>17.6MB</td>
     <td><a href="https://github.com/draeger-lab/SBMLsqueezer/releases/tag/v2.2">Release Notes 2.2</a></td>
     <td>2020-11-03</td>
 </tr>
