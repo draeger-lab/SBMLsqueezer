@@ -918,7 +918,7 @@
             description="Build a minimal version of SysBio for SBMLsqueezer"
     >
         <!-- The relative path of the SysBio project -->
-        <property name="sysbio.dir" value="${basedir}/../../SysBio"/>
+        <property name="sysbio.dir" value="${basedir}/../SysBio"/>
         <property name="sysbio.lib" value="${sysbio.dir}/lib"/>
         <path id="sysbio.classpath">
             <fileset dir="${sysbio.lib}" includes="**.jar, **/*.jar, **.zip"/>
