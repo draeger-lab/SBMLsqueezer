@@ -51,10 +51,7 @@ import javax.swing.event.ChangeListener;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
-import org.sbml.jsbml.Model;
-import org.sbml.jsbml.Reaction;
-import org.sbml.jsbml.SBMLDocument;
-import org.sbml.jsbml.SBMLException;
+import org.sbml.jsbml.*;
 import org.sbml.jsbml.ext.qual.QualConstants;
 import org.sbml.jsbml.ext.qual.QualModelPlugin;
 import org.sbml.jsbml.ext.qual.Transition;

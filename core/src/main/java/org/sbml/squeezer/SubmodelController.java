@@ -23,39 +23,24 @@
  */
 package org.sbml.squeezer;
 
+import java.awt.*;
 import java.text.MessageFormat;
-import java.util.HashSet;
-import java.util.LinkedList;
+import java.util.*;
 import java.util.List;
-import java.util.ResourceBundle;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.sbml.jsbml.AssignmentRule;
-import org.sbml.jsbml.Compartment;
-import org.sbml.jsbml.Constraint;
+import de.zbit.gui.JTabbedPaneDraggableAndCloseable;
+import de.zbit.sbml.gui.SBMLModelSplitPane;
+import de.zbit.sbml.gui.SBMLNode;
+import de.zbit.sbml.gui.SBMLTreeSearchComponent;
+import jdk.tools.jaotc.LoadedClass;
+import org.sbml.jsbml.*;
 import org.sbml.jsbml.Event;
-import org.sbml.jsbml.EventAssignment;
-import org.sbml.jsbml.FunctionDefinition;
-import org.sbml.jsbml.InitialAssignment;
-import org.sbml.jsbml.KineticLaw;
-import org.sbml.jsbml.ListOf;
-import org.sbml.jsbml.LocalParameter;
-import org.sbml.jsbml.Model;
-import org.sbml.jsbml.ModifierSpeciesReference;
-import org.sbml.jsbml.Parameter;
-import org.sbml.jsbml.QuantityWithUnit;
-import org.sbml.jsbml.RateRule;
-import org.sbml.jsbml.Reaction;
-import org.sbml.jsbml.Rule;
-import org.sbml.jsbml.SBMLDocument;
-import org.sbml.jsbml.SBO;
-import org.sbml.jsbml.Species;
-import org.sbml.jsbml.SpeciesReference;
-import org.sbml.jsbml.Unit;
-import org.sbml.jsbml.UnitDefinition;
 import org.sbml.jsbml.util.ValuePair;
+import org.sbml.jsbml.xml.XMLNode;
+import org.sbml.squeezer.gui.SBMLsqueezerUI;
+import org.sbml.squeezer.sabiork.wizard.gui.JDialogWizard;
 import org.sbml.squeezer.util.Bundles;
 import org.sbml.squeezer.util.ProgressAdapter;
 import org.sbml.squeezer.util.ProgressAdapter.TypeOfProgress;
@@ -63,6 +48,9 @@ import org.sbml.squeezer.util.ProgressAdapter.TypeOfProgress;
 import de.zbit.sbml.util.SBMLtools;
 import de.zbit.util.ResourceManager;
 import de.zbit.util.progressbar.AbstractProgressBar;
+
+import javax.swing.*;
+import javax.swing.tree.TreeNode;
 
 /**
  * This class is responsible for miniModel creation and the synchronisation
@@ -727,7 +715,13 @@ public class SubmodelController {
     Reaction submodelReaction = kineticLaw.getParentSBMLObject();
     Reaction reaction = modelOrig.getReaction(submodelReaction.getId());
     reaction.setReversible(reversibility || reaction.getReversible());
-    reaction.setKineticLaw(kineticLaw.clone());
+    //reaction.setKineticLaw(kineticLaw.clone());
+    if(reaction.isSetKineticLaw()) {
+      updateKineticLaw(kineticLaw.clone(), reaction);
+    }
+    else {
+      reaction.setKineticLaw(kineticLaw.clone());
+    }
     // set the BoundaryCondition to true for genes if not set anyway:
     if (reaction.isSetListOfReactants()) {
       setBoundaryCondition(reaction.getListOfReactants(), setBoundaryCondition);
@@ -765,7 +759,40 @@ public class SubmodelController {
     
     return reaction;
   }
-  
+
+  public void updateKineticLaw(KineticLaw kineticLaw, Reaction reaction) {
+    KineticLaw ogKineticLaw = reaction.getKineticLaw();
+    ogKineticLaw.setMath(kineticLaw.getMath());
+    ogKineticLaw.setListOfLocalParameters(kineticLaw.getListOfLocalParameters().clone());
+    if (!kineticLaw.getMetaId().isEmpty()) {
+      ogKineticLaw.setMetaId(kineticLaw.getMetaId());
+    }
+    if (!kineticLaw.getId().isEmpty()) {
+      ogKineticLaw.setId(kineticLaw.getId());
+    }
+    if (!kineticLaw.getName().isEmpty()) {
+      ogKineticLaw.setName(kineticLaw.getName());
+    }
+    if(!kineticLaw.getHistory().isEmpty()) {
+      ogKineticLaw.setHistory(kineticLaw.getHistory());
+    }
+    if(kineticLaw.getSBOTerm() != -1) {
+      ogKineticLaw.setSBOTerm(kineticLaw.getSBOTerm());
+    }
+    if(kineticLaw.getNotes() != null) {
+      ogKineticLaw.setNotes(kineticLaw.getNotes());
+    }
+   if(kineticLaw.getLevel() != -1) {
+      ogKineticLaw.setLevel(kineticLaw.getLevel());
+    }
+   if(kineticLaw.getVersion() != -1) {
+     ogKineticLaw.setVersion(kineticLaw.getVersion());
+   }
+    if(!kineticLaw.getAnnotation().isEmpty()) {
+      ogKineticLaw.setAnnotation(kineticLaw.getAnnotation());
+    }
+  }
+
   /**
    * 
    * @param model
@@ -1276,7 +1303,20 @@ public class SubmodelController {
     storeUnits();
     storeParameters(submodel);
     storeFunctionDefinitions(submodel);
-    
+
+/*    boolean reacStored = false;
+    if(!reacStored) {
+      Component[] comps = ((SBMLsqueezerUI)dialog.getParent()).getComponents();
+      Component[] comps2 = ((JRootPane)comps[0]).getComponents();
+      Component[] comps3 = ((JLayeredPane)comps2[1]).getComponents();
+      Component[] comps4 = ((JPanel)comps3[0]).getComponents();
+      Component[] comps5 = ((JTabbedPaneDraggableAndCloseable)comps4[1]).getComponents();
+      Component[] comps6 = ((SBMLModelSplitPane)comps5[0]).getComponents();
+      JTree t = ((SBMLTreeSearchComponent)comps6[0]).getTree();
+      System.out.println("LastComp: " + t.getLastSelectedPathComponent());
+      System.out.println("LastCompParent: " + ((SBMLNode)t.getLastSelectedPathComponent()).getParent());
+      reacStored = true;
+    }*/
     for (int i = 0; i < submodel.getReactionCount(); i++) {
       Reaction r = submodel.getReaction(i);
       if (r.isSetKineticLaw()) {
