@@ -23,34 +23,19 @@
  */
 package org.sbml.squeezer;
 
-import java.awt.*;
-import java.text.MessageFormat;
-import java.util.*;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import de.zbit.gui.JTabbedPaneDraggableAndCloseable;
-import de.zbit.sbml.gui.SBMLModelSplitPane;
-import de.zbit.sbml.gui.SBMLNode;
-import de.zbit.sbml.gui.SBMLTreeSearchComponent;
-import jdk.tools.jaotc.LoadedClass;
+import de.zbit.sbml.util.SBMLtools;
+import de.zbit.util.ResourceManager;
+import de.zbit.util.progressbar.AbstractProgressBar;
 import org.sbml.jsbml.*;
-import org.sbml.jsbml.Event;
-import org.sbml.jsbml.util.ValuePair;
-import org.sbml.jsbml.xml.XMLNode;
-import org.sbml.squeezer.gui.SBMLsqueezerUI;
-import org.sbml.squeezer.sabiork.wizard.gui.JDialogWizard;
 import org.sbml.squeezer.util.Bundles;
 import org.sbml.squeezer.util.ProgressAdapter;
 import org.sbml.squeezer.util.ProgressAdapter.TypeOfProgress;
 
-import de.zbit.sbml.util.SBMLtools;
-import de.zbit.util.ResourceManager;
-import de.zbit.util.progressbar.AbstractProgressBar;
-
-import javax.swing.*;
 import javax.swing.tree.TreeNode;
+import java.text.MessageFormat;
+import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * This class is responsible for miniModel creation and the synchronisation
@@ -417,7 +402,7 @@ public class SubmodelController {
     if (progressAdapter != null) {
       progressAdapter.finished();
     }
-    
+
     return submodel;
   }
   
@@ -856,6 +841,14 @@ public class SubmodelController {
         }
       }
     }
+    //Check rules
+    if(model.isSetListOfRules()) {
+      for(Rule r: model.getListOfRules()) {
+        List<String> unitList = new ArrayList<>();
+        getUnitsOfLeaves(unitList, r);
+        neededUnits.addAll(unitList);
+      }
+    }
     if (model.isSetListOfUnitDefinitions()) {
       for (i = model.getUnitDefinitionCount() - 1; i >= 0; i--) {
         UnitDefinition udef = model.getUnitDefinition(i);
@@ -901,6 +894,30 @@ public class SubmodelController {
       }
     }
     
+  }
+
+  /**
+   * Gets Units of all of the leaf nodes of the tree of a tree node r
+   * This is currently only used for rules (03-16-2021).
+   *
+   * @param unitList
+   * @param r
+   */
+  private void getUnitsOfLeaves(List<String> unitList, TreeNode r) {
+
+    int childCount = r.getChildCount();
+    for(int i = 0; i < childCount; i++) {
+      TreeNode curChild = r.getChildAt(i);
+      if(curChild.getChildCount() == 0) {
+        String units = ((ASTNode)curChild).getUnits();
+        if(units != null) {
+          unitList.add(units);
+        }
+      }
+      else {
+        getUnitsOfLeaves(unitList, curChild);
+      }
+    }
   }
   
   /**
@@ -1327,7 +1344,7 @@ public class SubmodelController {
         progressAdapter.progressOn();
       }
     }
-    
+
     if (removeUnnecessaryParameters) {
       removeUnnecessaryParameters(modelOrig);
       removeUnnecessaryUnits(modelOrig);
@@ -1336,7 +1353,7 @@ public class SubmodelController {
     if (progressBar != null) {
       progressAdapter.finished();
     }
-    
+
   }
   
   public void setGenerateLawsForAllReactions(

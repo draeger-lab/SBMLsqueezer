@@ -23,30 +23,12 @@
  */
 package org.sbml.squeezer;
 
-import static de.zbit.util.Utils.getMessage;
-
-import java.io.File;
-import java.lang.reflect.Constructor;
-import java.text.MessageFormat;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.ResourceBundle;
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import org.sbml.jsbml.KineticLaw;
-import org.sbml.jsbml.Model;
-import org.sbml.jsbml.ModifierSpeciesReference;
-import org.sbml.jsbml.Reaction;
-import org.sbml.jsbml.SBO;
-import org.sbml.jsbml.Species;
-import org.sbml.jsbml.SpeciesReference;
+import de.zbit.sbml.util.SBMLtools;
+import de.zbit.util.ResourceManager;
+import de.zbit.util.prefs.Option;
+import de.zbit.util.prefs.SBPreferences;
+import de.zbit.util.progressbar.AbstractProgressBar;
+import org.sbml.jsbml.*;
 import org.sbml.squeezer.kinetics.BasicKineticLaw;
 import org.sbml.squeezer.kinetics.OptionsRateLaws;
 import org.sbml.squeezer.kinetics.TypeStandardVersion;
@@ -56,11 +38,14 @@ import org.sbml.squeezer.util.ModelChangeListener;
 import org.sbml.squeezer.util.ProgressAdapter;
 import org.sbml.squeezer.util.ProgressAdapter.TypeOfProgress;
 
-import de.zbit.sbml.util.SBMLtools;
-import de.zbit.util.ResourceManager;
-import de.zbit.util.prefs.Option;
-import de.zbit.util.prefs.SBPreferences;
-import de.zbit.util.progressbar.AbstractProgressBar;
+import java.io.File;
+import java.lang.reflect.Constructor;
+import java.text.MessageFormat;
+import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import static de.zbit.util.Utils.getMessage;
 
 /**
  * This class identifies and generates the missing kinetic laws for a the
@@ -757,7 +742,7 @@ public class KineticLawGenerator {
    * store the generated Kinetics in SBML-File as MathML.
    */
   public void storeKineticLaws() {
-    
+
     if (getFastReactions().size() > 0) {
       logger.log(Level.FINE, MessageFormat.format(MESSAGES.getString("THE_MODEL_CONTAINS"),
         getFastReactions().size(), getModel().getId())
@@ -776,11 +761,11 @@ public class KineticLawGenerator {
     submodelController.setProgressBar(progressBar);
     submodelController.storeKineticLaws(isRemoveUnnecessaryParameters());
     getModel().removeTreeNodeChangeListener(chl);
-    
+
     if (progressAdapter != null) {
       progressAdapter.finished();
     }
-    
+
   }
   
   /**

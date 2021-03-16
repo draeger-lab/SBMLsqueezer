@@ -5,7 +5,7 @@ import de.zbit.util.ResourceManager;
 import org.sbml.jsbml.*;
 import org.sbml.squeezer.RateLawNotApplicableException;
 import org.sbml.squeezer.util.Bundles;
-import sun.security.krb5.internal.ASRep;
+//import sun.security.krb5.internal.ASRep;
 
 import javax.xml.stream.XMLStreamException;
 import java.util.LinkedList;

@@ -380,6 +380,8 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
                     if (changesStoredInSBML) {
                         try {
                             split.updateUI();
+                            System.out.println("Rule: " + ((ASTNode)((this.sbmlIO.getSelectedModel().getListOfRules().get(155).getChildAt(0).getChildAt(0).getChildAt(4)))).getUnits());
+                            System.out.println("Rule: " + this.sbmlIO.getSelectedModel().getListOfRules().get(155).getDerivedUnitDefinition());
                         } catch (Exception exc) {
                             exc.printStackTrace();
                         }
